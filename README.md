@@ -8,7 +8,7 @@ their product.
 ## Table of Contents
 
 - [Goals](#goals)
-- [Project Diagrams](#project-diagrams)
+- [Architecture diagram](#architecture-diagram)
 - [Getting Started](#getting-started)
 - [Requirements](#requirements)
 - [Deploy the app](#deploy-the-app)
@@ -19,9 +19,9 @@ their product.
 The goal isn’t to dictate what kind of SaaS app to build. Instead, this kit provides a solid
 foundation that can be extended in any direction.
 
-## Project Diagrams
+## Architecture diagram
 
-
+![Architecture-diagram](./.github/images/do-diagram.png)
 
 ## Getting Started
 
