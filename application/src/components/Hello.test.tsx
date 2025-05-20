@@ -3,7 +3,7 @@ import Hello from './Hello';
 
 describe('Hello Component', () => {
   it('renders correctly with provided name', () => {
-    const testName = 'Lorenzo';
+    const testName = 'Test user';
 
     render(<Hello name={testName} />);
 
