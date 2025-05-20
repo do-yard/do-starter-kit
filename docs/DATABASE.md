@@ -1,4 +1,4 @@
-# Professional Database Setup Guide
+# Postgres Database setup Guide
 
 This document outlines best practices for configuring and connecting to PostgreSQL databases in this project, supporting both local development using Docker and production deployments via DigitalOcean Managed Databases.
 
