@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
 import { Providers } from 'context/Providers';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import MaterialThemeProvider from '../components/Theme/Theme';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -20,8 +24,12 @@ export const metadata: Metadata = {
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
   <html lang="en">
-    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-      <Providers>{children}</Providers>
+    <body className={`${geistSans.variable} ${geistMono.variable}`} style={{ margin: 0, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
+      <Providers>
+          <MaterialThemeProvider>
+            {children}
+          </MaterialThemeProvider>
+        </Providers>
     </body>
   </html>
 );
