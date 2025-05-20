@@ -67,11 +67,15 @@ const typography = {
   fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
   h1: {
     fontSize: '2.5rem',
-    fontWeight: 500,
+    fontWeight: 700,
+    marginBottom: '16px', // 2 * 8px
+    color: '#fff', // Used in hero section
   },
   h2: {
     fontSize: '2rem',
-    fontWeight: 500,
+    fontWeight: 700, // Was 500, now matches usage
+    marginBottom: '48px', // 6 * 8px
+    color: '#fff', // Default, can be overridden
   },
   h3: {
     fontSize: '1.75rem',
@@ -83,7 +87,8 @@ const typography = {
   },
   h5: {
     fontSize: '1.25rem',
-    fontWeight: 500,
+    fontWeight: 600, // Matches usage in cards
+    color: '#111827', // text.dark
   },
   h6: {
     fontSize: '1rem',
@@ -97,6 +102,11 @@ const typography = {
     fontSize: '0.875rem',
     lineHeight: 1.43,
   },
+  subtitle1: {
+    fontSize: '1.25rem',
+    marginBottom: '32px', // 4 * 8px
+    color: '#6b7280', // text.light
+  },
 };
 
 // Define component overrides
@@ -107,10 +117,11 @@ const components: ThemeOptions['components'] = {
     },
     styleOverrides: {
       contained: {
-        boxShadow: 'none',
-        '&:hover': {
-          boxShadow: 'none',
-        },
+        textTransform: 'none',
+        fontWeight: 600,
+        height: 44,
+        paddingLeft: 32, // px: 4
+        paddingRight: 32,
       },
     },
   },
@@ -118,6 +129,9 @@ const components: ThemeOptions['components'] = {
     styleOverrides: {
       root: {
         backgroundImage: 'none',
+        border: 'none',
+        backgroundColor: '#fff', // background.paper
+        color: 'rgba(0, 0, 0, 0.87)', // text.primary
       },
     },
   },
