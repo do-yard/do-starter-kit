@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, CardContent, TextField, Typography, Box } from '@mui/material';
+import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
 import Link from 'next/link';
 import FormButton from './FormButton';
 
@@ -35,7 +35,7 @@ const SignUpForm: React.FC = () => {
           </Typography>
         </Box>
 
-        <CardContent sx={{ p: 3, pt: 0 }}>
+        <CardContent sx={{ p: 3, pt: 0, pb: 1 }}>
           <form onSubmit={handleSubmit}>
             <Box display="grid" gap={2}>
               <Box display="flex" flexDirection="column" gap={1}>
@@ -89,6 +89,7 @@ const SignUpForm: React.FC = () => {
               <FormButton>Sign Up</FormButton>
             </Box>
           </form>
+          <Divider sx={{ my: 2 }} />
         </CardContent>
 
         <Box display="flex" justifyContent="center" alignItems="center" p={3} pt={0}>

@@ -34,7 +34,7 @@ const LoginForm: React.FC = () => {
           </Typography>
         </Box>
 
-        <CardContent sx={{ p: 3, pt: 0 }}>
+        <CardContent sx={{ p: 3, pt: 0, pb: 1 }}>
           <form onSubmit={handleSubmit}>
             <Box display="grid" gap={2}>
               <Box display="flex" flexDirection="column" gap={1}>
@@ -75,7 +75,7 @@ const LoginForm: React.FC = () => {
             </Box>
           </form>
 
-          <Divider sx={{ my: 3 }} />
+          <Divider sx={{ my: 2 }} />
         </CardContent>
 
         <Box display="flex" justifyContent="space-between" alignItems="center" p={3} pt={0}>
