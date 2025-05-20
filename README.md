@@ -21,7 +21,7 @@ foundation that can be extended in any direction.
 
 ## Architecture diagram
 
-![Architecture-diagram](docs\images\do-architecture-diagram.drawio.png)
+![Architecture-diagram](docs/images/do-architecture-diagram.drawio.png)
 
 ## Getting Started
 
