@@ -25,13 +25,17 @@ foundation that can be extended in any direction.
 
 ## Getting Started
 
-This guide describes how to use DigitalOcean App Platform to run a sample Next.js application.
+[This guide](./docs/Getting-started.md) describes how to use DigitalOcean App Platform to run a sample Next.js application.
 
 **Note**: Following these steps may result in charges for the use of DigitalOcean services.
 
 ### Requirements
 
 - You need a DigitalOcean account. If you do not already have one, first [sign up](https://cloud.digitalocean.com/registrations/new).
+
+### Database setup
+
+To setup the Postgres database for Digital Ocean deployment or local development please follow the [Postgres Database setup Guide](./docs/DATABASE.md)
 
 ## Deploy the App
 
