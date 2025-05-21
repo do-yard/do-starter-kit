@@ -13,7 +13,7 @@
 
 1. In the Spaces dashboard, click **Access Keys** tab.
 2. Click **Create Access Key**.
-3. You can give access to specific buckets or all buckets under the **Select access scope**. If "Limited Access" is selected, select "Read/Write/Delete" permissions for the bucket. 
+3. Under **Select access scope**, choose 'Limited Access'. Select your previously created bucket and select "Read/Write/Delete" permissions in the dropdow. 
 3. Give your key a name and click **Create Access Key**.
 4. Copy the **Access Key ID** and **Secret Key**. You will not be able to see the secret again!
 
