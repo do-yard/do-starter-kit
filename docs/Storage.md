@@ -35,10 +35,6 @@ Add a `.env` file if not already created, under the /application folder and add 
 
 Run your application locally. File uploads and downloads should now use your DigitalOcean Spaces bucket.
 
----
-
-For more details, see the [DigitalOcean Spaces documentation](https://docs.digitalocean.com/products/spaces/).
-
 ### Environment variables
 
 For DigitalOcean Apps and local environments, the environment variables for Spaces are the following:
@@ -55,3 +51,7 @@ DO_SPACES_BUCKET=my-app-bucket
 - Replace `your-access-key-here` and `your-secret-key-here` with the values you generated.
 - Set the endpoint and region to match your Space's region.
 - Set the bucket name to the name you chose for your Space.
+
+---
+
+For more details, see the [DigitalOcean Spaces documentation](https://docs.digitalocean.com/products/spaces/).
