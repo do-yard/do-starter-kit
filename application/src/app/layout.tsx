@@ -24,12 +24,13 @@ export const metadata: Metadata = {
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
   <html lang="en">
-    <body className={`${geistSans.variable} ${geistMono.variable}`} style={{ margin: 0, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
+    <body
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      style={{ margin: 0, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}
+    >
       <Providers>
-          <MaterialThemeProvider>
-            {children}
-          </MaterialThemeProvider>
-        </Providers>
+        <MaterialThemeProvider>{children}</MaterialThemeProvider>
+      </Providers>
     </body>
   </html>
 );
