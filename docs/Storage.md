@@ -17,11 +17,34 @@
 3. Give your key a name and click **Create Access Key**.
 4. Copy the **Access Key ID** and **Secret Key**. You will not be able to see the secret again!
 
-## 3. Configure Your Local `.env` File
+## 3. Configure your DigitalOcean App
 
-Add the following variables to your `.env` file in the root of your project:
+1. In the left sidebar, click on **App Platform**.
+2. Under 'Apps' click on your app name.
+3. Click on the **Settings** tab.
+4. Under 'Components' at the top of the tab, select **application**.
+5. Go to **Environment variables** -> 'Edit'
+6. Add the environment variables listed in [Environment variables](#environment-variables).
+7. Click **Save**
+
+## 4. Configure Your Local `.env` File
+
+Add a `.env` file if not already created, under the /application folder and add the Spaces [Environment variables](#environment-variables).
+
+## 4. Test Your Connection
+
+Run your application locally. File uploads and downloads should now use your DigitalOcean Spaces bucket.
+
+---
+
+For more details, see the [DigitalOcean Spaces documentation](https://docs.digitalocean.com/products/spaces/).
+
+### Environment variables
+
+For DigitalOcean Apps and local environments, the environment variables for Spaces are the following:
 
 ```
+STORAGE_PROVIDER=Spaces
 DO_SPACES_KEY=your-access-key-id-here
 DO_SPACES_SECRET=your-secret-key-here
 DO_SPACES_ENDPOINT=https://nyc3.digitaloceanspaces.com
@@ -32,11 +55,3 @@ DO_SPACES_BUCKET=my-app-bucket
 - Replace `your-access-key-here` and `your-secret-key-here` with the values you generated.
 - Set the endpoint and region to match your Space's region.
 - Set the bucket name to the name you chose for your Space.
-
-## 4. Test Your Connection
-
-Run your application locally. File uploads and downloads should now use your DigitalOcean Spaces bucket.
-
----
-
-For more details, see the [DigitalOcean Spaces documentation](https://docs.digitalocean.com/products/spaces/).
