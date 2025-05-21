@@ -48,7 +48,7 @@ npm install
 cp env-example .env
 ```
 
-> Note: update connection string with your current database credentials.
+> Note: update connection string with your current database credentials. See [database guide](DATABASE.md).
 > Initialize Prisma ORM client and run the pending migrations.
 
 ```bash
