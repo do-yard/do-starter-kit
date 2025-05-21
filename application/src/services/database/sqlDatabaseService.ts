@@ -1,6 +1,6 @@
 import { DatabaseClient } from './database';
 import { prisma } from '../../lib/prisma';
-import { Subscription, Note, User } from '../../../types';
+import { Subscription, Note, User } from 'types';
 
 export class SqlDatabaseService implements DatabaseClient {
   // User operations

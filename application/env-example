@@ -1,7 +1,14 @@
 # Database configuration for your application
+
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_kit_db
 
+# Auth.js configuration
+
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-nextauth-secret
+
 # PostgreSQL container configuration (required locally for Docker)
+
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=saas_kit_db
