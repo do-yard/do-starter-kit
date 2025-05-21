@@ -37,6 +37,10 @@ foundation that can be extended in any direction.
 
 To setup the Postgres database for Digital Ocean deployment or local development please follow the [Postgres Database setup Guide](./docs/DATABASE.md)
 
+### Storage setup
+
+To setup Spaces storage for local development please follow the [DigitalOcean Spaces Storage Setup](./docs/Storage.md) guide.
+
 ## Deploy the App
 
 Click the following button to deploy the app to App Platform. If you are not currently logged in with your DigitalOcean account, this button prompts you to log in.
