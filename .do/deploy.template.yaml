@@ -4,7 +4,7 @@
 
 spec:
   # Name of the deployment
-  name: digitalocean-saas-starter-kit
+  name: do-starter-kit
   # Optionally you can chose a region where the deployment will be hosted
   # Otherwise, DO will chose the nearest region for you in the wizard
   # region: nyc
@@ -16,6 +16,7 @@ spec:
       git:
         branch: main # Git branch to deploy
         repo_clone_url: https://github.com/ajot/do-starter-kit # Repository URL
+        deploy_on_push: true
       source_dir: ./application # Directory containing the service source code
       build_command: "npm install && npm run build" # Command to build the service
       run_command: "npm run start" # Command to run the service
@@ -26,29 +27,17 @@ spec:
         # These variables are using variable binding
         # You can check the documentation about variable binding here:
         # https://docs.digitalocean.com/products/app-platform/how-to/use-environment-variables/#using-bindable-variables-within-environment-variables
-        - key: "POSTGRES_HOST"
-          value: "${saas-kit-db.HOSTNAME}"
-          type: "SECRET"
-        - key: "POSTGRES_PORT"
-          value: "${saas-kit-db.PORT}"
-          type: "SECRET"
-        - key: "POSTGRES_DB"
-          value: "${saas-kit-db.DATABASE}"
-          type: "SECRET"
-        - key: "POSTGRES_USER"
-          value: "${saas-kit-db.USERNAME}"
-          type: "SECRET"
-        - key: "POSTGRES_PASSWORD"
-          value: "${saas-kit-db.PASSWORD}"
+        - key: "DATABASE_URL"
+          value: "${do-starter-kit-db.DATABASE_URL}"
           type: "SECRET"
 
   # Configuration for databases
   databases:
-    - name: saas-kit-db # Name of the resource
+    - name: do-starter-kit-db # Name of the resource
       engine: PG # Database engine (PostgreSQL)
       version: "15" # Database version
       production: false # Whether the database is for production
-      cluster_name: saas-kit-db-cluster # Name of the database cluster
+      cluster_name: do-starter-kit-cluster # Name of the database cluster
       # Optionally you can specify the database name and user, otherwise the resource name will be used
       # db_name: example-db
       # db_user: example-user

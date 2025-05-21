@@ -1,0 +1,26 @@
+name: ${APP_NAME}
+
+services:
+  - name: application
+    environment_slug: node-js
+    source_dir: ./application
+    github:
+      repo: ajot/do-starter-kit
+      branch: ${GITHUB_BRANCH}
+      deploy_on_push: false
+    build_command: "npm install && npm run build"
+    run_command: "npm run start"
+    http_port: 3000
+    routes:
+      - path: /
+    envs:
+      - key: "DATABASE_URL"
+        value: "${${DB_NAME}.DATABASE_URL}"
+        type: "SECRET"
+
+databases:
+  - name: ${DB_NAME}
+    engine: PG
+    version: "15"
+    production: false
+    cluster_name: ${CLUSTER_NAME}
