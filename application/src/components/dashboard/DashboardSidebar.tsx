@@ -90,7 +90,7 @@ const DashboardSidebar = () => {
       }}
     >
       <SidebarHeader>
-        <Typography variant="h5" fontWeight={600}>
+        <Typography variant="h5" fontWeight={600} color="grey.300">
           SaaS App
         </Typography>
       </SidebarHeader>
