@@ -38,6 +38,7 @@ POSTGRES_DB=saas_kit_db
 From the project root, run:
 
 ```bash
+cd application
 docker-compose up -d
 ```
 
@@ -59,7 +60,6 @@ Next.js will automatically load environment variables from `.env`. You may place
 ### Step 4: Run the App
 
 ```bash
-cd application
 npm run dev
 ```
 
