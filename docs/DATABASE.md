@@ -17,7 +17,7 @@ Before you begin, ensure the following are available:
 
 ### Step 1: Define Environment Variables
 
-Create a `.env.local` file inside the `application/` directory:
+Create a `.env` file inside the `application/` directory:
 
 ```dotenv
 # Local application database configuration
@@ -115,11 +115,10 @@ curl -X PUT \
   "https://api.digitalocean.com/v2/databases/YOUR_DATABASE_ID/firewall"
 ```
 
-
 ## 🧯 Security Best Practices
 
 - **Do not** commit `.env` or credentials
 - Expire or revoke unused access tokens
 - Remove whitelisted IPs when no longer needed
----
 
+---
