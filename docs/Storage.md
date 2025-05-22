@@ -6,8 +6,8 @@
 2. In the left sidebar, click on **Spaces Object Storage**.
 3. Click the **Create Bucket** button.
 4. Choose a datacenter region (e.g., `nyc3`).
-6. Enter a unique name for your Space (e.g., `my-app-bucket`).
-7. Click **Create a Spaces Bucket**.
+5. Enter a unique name for your Space (e.g., `my-app-bucket`).
+6. Click **Create a Spaces Bucket**.
 
 ## 2. Generate Access Keys
 
