@@ -34,7 +34,7 @@ A professional and modern Next.js template for quickly bootstrapping SaaS applic
 Clone the repository:
 
 ```bash
-git clone https://github.com/southworks/digital-ocean-saas-starter-kit/
+git clone https://github.com/ajot/do-starter-kit
 cd application
 ```
 
@@ -48,7 +48,7 @@ npm install
 cp env-example .env
 ```
 
-> Note: update connection string with your current database credentials. See [database guide](DATABASE.md).
+> Note: update the connection string with your current database credentials. See [database guide](./database.md).
 > Initialize Prisma ORM client and run the pending migrations.
 
 ```bash
