@@ -41,6 +41,19 @@ spec:
         - key: "POSTGRES_PASSWORD"
           value: "${saas-kit-db.PASSWORD}"
           type: "SECRET"
+        - key: "SPACES_KEY"
+          value: ""
+        - key: "SPACES_SECRET"
+          value: ""
+          type: "SECRET"
+        - key: "SPACES_BUCKETNAME"
+          value: ""
+        - key: "SPACES_REGION"
+          value: ""
+        - key: "SPACES_ENDPOINT"
+          value: ""
+        - key: "STORAGE_PROVIDER"
+          value: "Spaces"
 
   # Configuration for databases
   databases:
