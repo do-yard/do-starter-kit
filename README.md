@@ -25,7 +25,7 @@ foundation that can be extended in any direction.
 
 ## Getting Started
 
-[This guide](./docs/Getting-started.md) describes how to use DigitalOcean App Platform to run a sample Next.js application.
+[This guide](./docs/getting-started.md) describes how to use DigitalOcean App Platform to run a sample Next.js application.
 
 **Note**: Following these steps may result in charges for the use of DigitalOcean services.
 
@@ -35,7 +35,7 @@ foundation that can be extended in any direction.
 
 ### Database setup
 
-To setup the Postgres database for Digital Ocean deployment or local development please follow the [Postgres Database setup Guide](./docs/DATABASE.md)
+To set up the Postgres database for Digital Ocean deployment or local development please follow the [Postgres Database setup Guide](./docs/database.md)
 
 ### Storage setup
 
