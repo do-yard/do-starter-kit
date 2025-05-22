@@ -64,14 +64,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   providers,
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id; // Add user ID to the token
       }
+
+      if (trigger === 'update') {
+        token.image = session.user.image;
+      }
+
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id as string;
+
+      if (token.image) {
+        session.user.image = token.image as string;
+      }
+
       return session;
     },
   },

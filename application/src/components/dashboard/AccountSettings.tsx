@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Box, Typography, TextField, Button, styled } from '@mui/material';
 import Paper from '../common/Paper';
+import { useDropzone } from 'react-dropzone';
+import { useSession } from 'next-auth/react';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
   border: '2px dashed',
@@ -16,44 +18,64 @@ const StyledFileInput = styled('div')(({ theme }) => ({
   },
 }));
 
-const HiddenInput = styled('input')({
-  border: 0,
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  margin: '-1px 0 0 -1px',
-  overflow: 'hidden',
-  padding: 0,
-  position: 'absolute',
-  width: 1,
-  whiteSpace: 'nowrap',
-});
-
 export default function AccountSettings() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     profileImage: null as File | null,
   });
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const session = useSession();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData((prev) => ({ ...prev, profileImage: e.target.files![0] }));
-    }
-  };
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      setUploadError(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form data:', formData);
-    // Here you would typically make an API call to update the user's profile
-  };
+      try {
+        const formDataToSubmit = new FormData();
+        formDataToSubmit.append('file', formData.profileImage!);
+
+        //for now just update the picture
+        const response = await fetch('/api/profile/upload-picture', {
+          method: 'POST',
+          body: formDataToSubmit,
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          const errorJson = JSON.parse(errorText);
+          throw new Error((errorJson as { error: string }).error || 'Failed to upload image');
+        }
+
+        const json = await response.json();
+
+        const user = session.data?.user;
+
+        if (user) {
+          user.image = json.url;
+          session.update({ user: user });
+        }
+      } catch (error) {
+        setUploadError((error as Error).message || 'An error occurred while uploading the image.');
+      }
+    },
+    [formData, session]
+  );
+
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    if (acceptedFiles.length > 0) {
+      setFormData((prev) => ({ ...prev, profileImage: acceptedFiles[0] }));
+    }
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
     <Box sx={{ width: '100%', color: '#fff', pt: 4 }}>
@@ -166,21 +188,25 @@ export default function AccountSettings() {
                 <Typography variant="body2" fontWeight={500} sx={{ color: '#fff' }}>
                   Profile Image
                 </Typography>
-                <StyledFileInput
-                  onClick={() => fileInputRef.current?.click()}
-                  sx={{ color: '#fff', borderColor: '#374151' }}
-                >
-                  <HiddenInput
-                    ref={fileInputRef}
-                    id="profileImage"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                  <Typography variant="body2" color="#9ca3af">
-                    Drag &apos;n&apos; drop a profile image here, or click to select one
+                {/* Show selected file name if present */}
+                {formData.profileImage && (
+                  <Typography variant="caption" color="#9ca3af" sx={{ mb: 1 }}>
+                    Selected file: {formData.profileImage.name}
                   </Typography>
+                )}
+                <StyledFileInput sx={{ color: '#fff', borderColor: '#374151' }}>
+                  <div {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    <Typography variant="body2" color="#9ca3af">
+                      Drag &apos;n&apos; drop a profile image here, or click to select one
+                    </Typography>
+                  </div>
                 </StyledFileInput>
+                {uploadError && (
+                  <Typography variant="caption" color="error" sx={{ mt: 1 }}>
+                    {uploadError}
+                  </Typography>
+                )}
               </Box>
             </Box>
 

@@ -6,8 +6,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { StorageService } from './storage';
-import { v4 as uuidv4 } from 'uuid';
-import { serverConfig } from '../../../settings';
+import { serverConfig } from 'settings/settings';
 
 export class SpacesStorageService implements StorageService {
   private client: S3Client;
@@ -40,13 +39,12 @@ export class SpacesStorageService implements StorageService {
     return `uploads/${userId}/${fileName}`;
   }
 
-  async uploadFile(userId: string, file: File): Promise<string> {
-    const originalName = file.name;
-    const extension = originalName.includes('.')
-      ? originalName.substring(originalName.lastIndexOf('.'))
-      : '';
-    const fileName = `${uuidv4()}${extension}`;
-
+  async uploadFile(
+    userId: string,
+    fileName: string,
+    file: File,
+    options?: { public: boolean }
+  ): Promise<string> {
     const fileBuffer = await file.arrayBuffer();
 
     const command = new PutObjectCommand({
@@ -54,6 +52,7 @@ export class SpacesStorageService implements StorageService {
       Key: this.getFilePath(userId, fileName),
       Body: Buffer.from(fileBuffer),
       ContentType: file.type,
+      ACL: options?.public ? 'public-read' : 'private',
     });
 
     await this.client.send(command);
