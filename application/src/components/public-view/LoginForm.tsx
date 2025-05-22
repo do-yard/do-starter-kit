@@ -24,10 +24,10 @@ const LoginForm: React.FC = () => {
       password,
     });
 
-    if (res?.ok) {
-      router.push('/');
-    } else {
-      setError('Invalid email or password.');
+    if (!res || res.error || res.code) {
+      setError(res?.code || 'Something went wrong');
+    } else if (res.ok && res.url) {
+      router.push(res.url);
     }
   };
 
