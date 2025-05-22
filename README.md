@@ -58,8 +58,10 @@ If you want to use the one click deploy button from your forked repo, follow the
 
 Otherwise, to deploy the new forked repo manually, visit the [control panel](https://cloud.digitalocean.com/apps) and click the **Create App** button. This takes you to the app creation page. Under **Service Provider**, select **GitHub**. Then, under **Repository**, select your newly-forked repo. Ensure that your branch is set to **main**. Finally, click **Next** and configure the rest of the deployment.
 
+## Continues Integration and Development environments
+
+Dedicated workflows to validate code quality and provision development deployments in DigitalOcean App Platform are available. Learn more in [Workflows Documentation](/docs/workflows.md)
+
 ## License
 
 This repo is covered under [The MIT License](LICENSE).
-
-
