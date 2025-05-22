@@ -92,7 +92,7 @@ Environment: dynamically set via input (`dev1`, or `dev2`)
 
 ![alt text](images/workflow-trigger.png)
 
-- Run the deployment manually using Github CLI running:
+- Run the deployment manually using GitHub CLI running:
 
 ```bash
 gh workflow run "Deploy" --ref main -f environment=dev1
