@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Box, Typography, TextField, Button, styled } from '@mui/material';
 import Paper from '../common/Paper';
 
@@ -35,6 +35,8 @@ export default function AccountSettings() {
     email: '',
     profileImage: null as File | null,
   });
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -165,10 +167,11 @@ export default function AccountSettings() {
                   Profile Image
                 </Typography>
                 <StyledFileInput
-                  onClick={() => document.getElementById('profileImage')?.click()}
+                  onClick={() => fileInputRef.current?.click()}
                   sx={{ color: '#fff', borderColor: '#374151' }}
                 >
                   <HiddenInput
+                    ref={fileInputRef}
                     id="profileImage"
                     type="file"
                     accept="image/*"
