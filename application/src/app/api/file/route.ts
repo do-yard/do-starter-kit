@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     const fileName = await storageService.uploadFile(userId, file);
     const fileUrl = await storageService.getFileUrl(userId, fileName);
 
-    return NextResponse.json({ name: fileName, url: fileUrl });
+    return NextResponse.json({ path: fileName, url: fileUrl });
   } catch (error) {
     console.error('Server error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

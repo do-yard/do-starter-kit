@@ -6,14 +6,14 @@
 2. In the left sidebar, click on **Spaces Object Storage**.
 3. Click the **Create Bucket** button.
 4. Choose a datacenter region (e.g., `nyc3`).
-6. Enter a unique name for your Space (e.g., `my-app-bucket`).
-7. Click **Create a Spaces Bucket**.
+5. Enter a unique name for your Space (e.g., `my-app-bucket`).
+6. Click **Create a Spaces Bucket**.
 
 ## 2. Generate Access Keys
 
 1. In the Spaces dashboard, click **Access Keys** tab.
 2. Click **Create Access Key**.
-3. Under **Select access scope**, choose 'Limited Access'. Select your previously created bucket and select "Read/Write/Delete" permissions in the dropdow. 
+3. Under **Select access scope**, choose 'Limited Access'. Select your previously created bucket and select "Read/Write/Delete" permissions in the dropdown. 
 3. Give your key a name and click **Create Access Key**.
 4. Copy the **Access Key ID** and **Secret Key**. You will not be able to see the secret again!
 
