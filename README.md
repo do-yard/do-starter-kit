@@ -35,7 +35,7 @@ foundation that can be extended in any direction.
 
 ### Database setup
 
-To setup the Postgres database for Digital Ocean deployment or local development please follow the [Postgres Database setup Guide](./docs/database.md)
+To set up the Postgres database for Digital Ocean deployment or local development please follow the [Postgres Database setup Guide](./docs/database.md)
 
 ## Deploy the App
 
