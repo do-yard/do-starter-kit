@@ -1,16 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { Box, Typography, AppBar, Toolbar, Button } from '@mui/material'
-
-const session = false; // Replace with actual session check
+import { Box, Typography, AppBar, Toolbar, Button } from '@mui/material';
+import { useSession, signOut } from 'next-auth/react';
 
 const NavBar = () => {
+  const { data: session } = useSession();
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' });
+  };
+
   const navLinks = session
     ? [
         { href: '/pricing', label: 'Pricing' },
         { href: '/faq', label: 'FAQ' },
-        { href: '#', label: 'Sign out', onClick: () => {} },
+        { href: '#', label: 'Sign out', onClick: handleLogout },
       ]
     : [
         { href: '/pricing', label: 'Pricing' },

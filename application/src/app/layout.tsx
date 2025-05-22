@@ -5,7 +5,6 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import MaterialThemeProvider from '../components/Theme/Theme';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -24,12 +23,11 @@ export const metadata: Metadata = {
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
   <html lang="en">
-    <body className={`${geistSans.variable} ${geistMono.variable}`} style={{ margin: 0, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}>
-      <Providers>
-          <MaterialThemeProvider>
-            {children}
-          </MaterialThemeProvider>
-        </Providers>
+    <body
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      style={{ margin: 0, WebkitFontSmoothing: 'antialiased', MozOsxFontSmoothing: 'grayscale' }}
+    >
+      <Providers>{children}</Providers>
     </body>
   </html>
 );

@@ -4,16 +4,39 @@ import React, { useState } from 'react';
 import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
 import Link from 'next/link';
 import FormButton from './FormButton';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const SignUpForm: React.FC = () => {
+  const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
-    console.log('Signing up with:', { email, password, confirmPassword });
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    const res = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+      name: 'User',
+      isSignUp: 'true',
+    });
+
+    if (res?.ok) {
+      router.push('/');
+    } else {
+      setError('Failed to sign up. The user may already exist.');
+    }
   };
 
   return (
@@ -84,6 +107,12 @@ const SignUpForm: React.FC = () => {
                 />
               </Box>
             </Box>
+
+            {error && (
+              <Typography color="error" fontSize={14} mt={2}>
+                {error}
+              </Typography>
+            )}
 
             <Box mt={3}>
               <FormButton>Sign Up</FormButton>

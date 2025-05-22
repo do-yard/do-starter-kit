@@ -1,5 +1,5 @@
 import { serverConfig } from '../../../settings';
-import { Note, Subscription, User } from '../../../types';
+import { Note, Subscription, User } from 'types';
 import { SqlDatabaseService } from './sqlDatabaseService';
 
 export type DatabaseProvider = 'Postgres';

@@ -43,6 +43,13 @@ spec:
           value: ""
         - key: "STORAGE_PROVIDER"
           value: "Spaces"
+        - key: "NEXTAUTH_SECRET"
+          value: "your-nextauth-secret"
+          type: "SECRET"
+        - key: "NEXTAUTH_URL"
+          value: "${APP_URL}"
+        - key: "AUTH_TRUST_HOST"
+          value: "true"
 
   # Configuration for databases
   databases:

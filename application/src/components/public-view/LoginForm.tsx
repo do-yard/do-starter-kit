@@ -4,15 +4,31 @@ import React, { useState } from 'react';
 import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
 import Link from 'next/link';
 import FormButton from './FormButton';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const LoginForm: React.FC = () => {
+  const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
-    console.log('Logging in with:', { email, password });
+    const res = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+    });
+
+    if (res?.ok) {
+      router.push('/');
+    } else {
+      setError('Invalid email or password.');
+    }
   };
 
   return (
@@ -69,6 +85,12 @@ const LoginForm: React.FC = () => {
                 />
               </Box>
             </Box>
+
+            {error && (
+              <Typography color="error" fontSize={14} mt={2}>
+                {error}
+              </Typography>
+            )}
 
             <Box mt={3}>
               <FormButton>Log In with Email</FormButton>
