@@ -41,11 +41,11 @@ For DigitalOcean Apps and local environments, the environment variables for Spac
 
 ```
 STORAGE_PROVIDER=Spaces
-DO_SPACES_KEY=your-access-key-id-here
-DO_SPACES_SECRET=your-secret-key-here
-DO_SPACES_ENDPOINT=https://nyc3.digitaloceanspaces.com
-DO_SPACES_REGION=nyc3
-DO_SPACES_BUCKET=my-app-bucket
+SPACES_KEY=your-access-key-id-here
+SPACES_SECRET=your-secret-key-here
+SPACES_ENDPOINT=https://nyc3.digitaloceanspaces.com
+SPACES_REGION=nyc3
+SPACES_BUCKET=my-app-bucket
 ```
 
 - Replace `your-access-key-here` and `your-secret-key-here` with the values you generated.
