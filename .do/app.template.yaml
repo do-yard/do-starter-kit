@@ -17,6 +17,19 @@ services:
       - key: "DATABASE_URL"
         value: "${${DB_NAME}.DATABASE_URL}"
         type: "SECRET"
+      - key: "SPACES_KEY"
+        value: "${SPACES_KEY}"
+      - key: "SPACES_SECRET"
+        value: "${SPACES_SECRET}"
+        type: "SECRET"
+      - key: "SPACES_BUCKETNAME"
+        value: "${SPACES_BUCKETNAME}"
+      - key: "SPACES_REGION"
+        value: "${SPACES_REGION}"
+      - key: "SPACES_ENDPOINT"
+        value: "${SPACES_ENDPOINT}"
+      - key: "STORAGE_PROVIDER"
+        value: "Spaces"
 
 databases:
   - name: ${DB_NAME}
