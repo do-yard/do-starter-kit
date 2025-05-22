@@ -1,6 +1,6 @@
 import { DatabaseClient } from './database';
 import { prisma } from '../../lib/prisma';
-import { Subscription, Note, User } from 'types';
+import { Subscription, Note, User, UserWithSubscriptions } from 'types';
 
 export class SqlDatabaseService implements DatabaseClient {
   // User operations
@@ -14,8 +14,23 @@ export class SqlDatabaseService implements DatabaseClient {
     findByEmailAndPassword: async (email: string, passwordHash: string): Promise<User | null> => {
       return prisma.user.findFirst({ where: { email, passwordHash } });
     },
+    findAll: async (): Promise<UserWithSubscriptions[]> => {
+      return prisma.user.findMany({
+        include: { subscriptions: true },
+        orderBy: { name: 'asc' },
+      });
+    },
     create: async (user: Omit<User, 'id' | 'createdAt'>): Promise<User> => {
-      return prisma.user.create({ data: user });
+      const newUser = await prisma.user.create({ data: user });
+      await prisma.subscription.create({
+        data: {
+          userId: newUser.id,
+          plan: 'FREE',
+          status: 'ACTIVE',
+        },
+      });
+
+      return newUser;
     },
     update: async (id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>): Promise<User> => {
       return prisma.user.update({ where: { id }, data: user });

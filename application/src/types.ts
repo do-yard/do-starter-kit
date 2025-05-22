@@ -1,9 +1,9 @@
 // User type
 export interface User {
   id: string;
-  name: string | null;
+  name: string;
   email: string;
-  passwordHash: string | null;
+  passwordHash: string;
   image: string | null;
 
   role: Role;
@@ -34,3 +34,7 @@ export type Role = 'USER' | 'ADMIN';
 export type SubscriptionStatus = 'ACTIVE' | 'CANCELED' | 'TRIALING';
 
 export type SubscriptionPlan = 'FREE' | 'PRO';
+
+export interface UserWithSubscriptions extends User {
+  subscriptions: Subscription[];
+}

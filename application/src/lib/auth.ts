@@ -66,12 +66,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id; // Add user ID to the token
+        token.id = user.id;
+        token.role = (user as User).role;
+        token.email = (user as User).email;
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id as string;
+      session.user.role = token.role as string;
+      session.user.email = token.email as string;
       return session;
     },
   },
@@ -84,3 +88,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     newUser: '/signup',
   },
 });
+
+// Extend NextAuth types to include 'role' on session.user
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      role: string;
+    }
+  }
+}

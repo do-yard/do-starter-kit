@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
 import Link from 'next/link';
 import FormButton from './FormButton';
-import { signIn } from 'next-auth/react';
+import { getSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 const LoginForm: React.FC = () => {
@@ -24,8 +24,13 @@ const LoginForm: React.FC = () => {
       password,
     });
 
-    if (res?.ok) {
-      router.push('/');
+    if (res?.ok && !res.error) {
+      const session = await getSession();
+      if (session?.user?.role === 'ADMIN') {
+        router.push('/admin/dashboard');
+      } else {
+        router.push('/dashboard');
+      }
     } else {
       setError('Invalid email or password.');
     }
