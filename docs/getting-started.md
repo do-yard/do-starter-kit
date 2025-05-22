@@ -48,6 +48,7 @@ npm install
 cp env-example .env
 ```
 
+> Recommendation: Generate a strong authentication password using [Password Generator](https://passwords-generator.org/)
 > Note: update the connection string with your current database credentials. See [database guide](./database.md).
 > Initialize Prisma ORM client and run the pending migrations.
 
