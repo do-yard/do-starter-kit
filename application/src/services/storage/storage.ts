@@ -1,5 +1,5 @@
 import { serverConfig } from '../../../settings';
-import { SpacesStorageService } from './SpacesStorageService';
+import { SpacesStorageService } from './spacesStorageService';
 
 // Storage provider types
 export type StorageProvider = 'Spaces';
