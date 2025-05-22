@@ -88,7 +88,7 @@ Environment: dynamically set via input (`dev1`, or `dev2`)
 
 - Keep `.do/app.template.yaml` up to date with all required variables.
 - Use the GitHub Environments UI to define secrets/vars to avoid exposing sensitive data.
-- Run the deployment manually through [Github Actions Page](https://github.com/ajot/do-starter-kit/actions/workflows/deploy.yml):
+- Run the deployment manually through [GitHub Actions Page](https://github.com/ajot/do-starter-kit/actions/workflows/deploy.yml):
 
 ![alt text](images/workflow-trigger.png)
 
