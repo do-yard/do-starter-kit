@@ -6,10 +6,12 @@ jest.mock('uuid', () => ({
 // Mock storage service
 const mockUploadFile = jest.fn();
 const mockGetFileUrl = jest.fn();
+const mockDeleteFile = jest.fn();
 jest.mock('../../../../services/storage/storage', () => ({
   createStorageService: () => ({
     uploadFile: mockUploadFile,
     getFileUrl: mockGetFileUrl,
+    deleteFile: mockDeleteFile,
   }),
 }));
 
@@ -17,6 +19,12 @@ jest.mock('../../../../services/storage/storage', () => ({
 const mockAuth = jest.fn();
 jest.mock('../../../../lib/auth', () => ({
   auth: async () => mockAuth(),
+}));
+
+// Mock url helper
+const mockGetFileNameFromUrl = jest.fn();
+jest.mock('../../../../helpers/fileName', () => ({
+  getFileNameFromUrl: () => mockGetFileNameFromUrl(),
 }));
 
 // Mock database client
@@ -43,6 +51,8 @@ describe('upload picture should', () => {
   beforeEach(() => {
     mockAuth.mockResolvedValue({ user: { id: 'user-123' } });
     mockFindById.mockResolvedValue({ id: 'user-id', image: 'image-url' });
+    mockDeleteFile.mockResolvedValue({});
+    mockGetFileNameFromUrl.mockReturnValue('url');
   });
 
   function createFile(name: string, type: string, size: number) {
@@ -125,7 +135,7 @@ describe('upload picture should', () => {
     mockGetFileUrl.mockResolvedValueOnce('https://example.com/file-url');
     const res = await POST(req);
     const json = await res.json();
-    expect(json).toEqual({ error: 'User not found' });
+    expect(json).toEqual({ error: "User doesn't exist" });
     expect(res.status).toBe(404);
   });
 
@@ -134,6 +144,17 @@ describe('upload picture should', () => {
     mockUploadFile.mockResolvedValueOnce('mock-uuid.jpg');
     mockGetFileUrl.mockResolvedValueOnce('https://example.com/file-url');
     mockUpdate.mockRejectedValueOnce(new Error('DB update failed'));
+    const file = createFile('test.jpg', 'image/jpeg', 100);
+    const req = createRequestWithFile(file);
+    const res = await POST(req);
+    const json = await res.json();
+    expect(json).toEqual({ error: 'File upload failed' });
+    expect(res.status).toBe(500);
+  });
+
+  it('return error if db delete fails', async () => {
+    // auth is mocked as authenticated
+    mockDeleteFile.mockRejectedValueOnce(new Error('DB update failed'));
     const file = createFile('test.jpg', 'image/jpeg', 100);
     const req = createRequestWithFile(file);
     const res = await POST(req);
