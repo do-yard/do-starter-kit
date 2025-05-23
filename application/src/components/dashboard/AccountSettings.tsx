@@ -51,8 +51,6 @@ export default function AccountSettings() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form data:', formData);
-    // Here you would typically make an API call to update the user's profile
   };
 
   return (
