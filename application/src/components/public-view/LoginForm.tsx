@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
 import Link from 'next/link';
 import FormButton from './FormButton';
-import { getSession, signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { usePrefetchRouter } from 'hooks/navigation';
 
 const LoginForm: React.FC = () => {
@@ -27,12 +27,7 @@ const LoginForm: React.FC = () => {
     if (!res || res.error) {
       setError(res?.code || 'Something went wrong');
     } else if (res.ok) {
-      const session = await getSession();
-      if (session?.user?.role === 'ADMIN') {
-        navigate('/admin/dashboard');
-      } else {
-        navigate('/dashboard');
-      }
+      navigate('/dashboard');
     }
   };
 

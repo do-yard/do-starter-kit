@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback } from 'react';
-import { Person, Receipt, Settings, CreditCard, Logout } from '@mui/icons-material';
+import { Person, Receipt, Settings, CreditCard, Logout, Assessment } from '@mui/icons-material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -16,7 +16,7 @@ import {
   styled,
   Avatar,
 } from '@mui/material';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 interface SidebarLinkProps {
   href: string;
@@ -120,15 +120,35 @@ const DashboardSidebar = () => {
 
       <Box sx={{ p: 2 }}>
         <List sx={{ p: 0 }}>
+          {session.data?.user?.role === 'ADMIN' && (
+            <SidebarLink href="/admin/dashboard" icon={<Assessment fontSize="small" />}>
+              Admin Dashboard
+            </SidebarLink>
+          )}
           <SidebarLink href="/dashboard/account" icon={<Settings fontSize="small" />}>
             Account Settings
           </SidebarLink>
           <SidebarLink href="/dashboard/billing" icon={<CreditCard fontSize="small" />}>
             Billing
           </SidebarLink>
-          <SidebarLink href="/logout" icon={<Logout fontSize="small" />}>
-            Logout
-          </SidebarLink>
+          <ListItem disablePadding sx={{ mb: 0.5 }}>
+            <ListItemButton
+              onClick={() => signOut({ callbackUrl: '/' })}
+              sx={{
+                borderRadius: 1,
+                py: 1,
+                px: 1.5,
+                color: 'grey.300',
+                '&:hover': { bgcolor: 'grey.800', color: 'grey.50' },
+                fontSize: 14,
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}>
+                <Logout fontSize="small" />
+              </ListItemIcon>
+                Logout
+            </ListItemButton>
+          </ListItem>
         </List>
       </Box>
     </Drawer>
