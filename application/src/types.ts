@@ -31,7 +31,7 @@ export interface Note {
 // Enums for Role, SubscriptionStatus, and SubscriptionPlan
 export type Role = 'USER' | 'ADMIN';
 
-export type SubscriptionStatus = 'ACTIVE' | 'CANCELED' | 'TRIALING';
+export type SubscriptionStatus = 'ACTIVE' | 'CANCELED' | 'PENDING';
 
 export type SubscriptionPlan = 'FREE' | 'PRO';
 
