@@ -8,7 +8,7 @@ Before proceeding with deployment, ensure you have:
 
 - A [DigitalOcean account](https://cloud.digitalocean.com/registrations/new)
 - Your application code pushed to a GitHub repository
-- A DigitalOcean Spaces bucket created for file storage (see [Storage.md](./Storage.md))
+- A DigitalOcean Spaces bucket created for file storage (see [Storage.md](./storage.md))
 - (Optional) A custom domain you want to use for your application
 
 ## Deployment Options
@@ -74,7 +74,7 @@ The following environment variables are required:
    SPACES_ENDPOINT=your-region.digitaloceanspaces.com
    SPACES_BUCKET=your-bucket-name
    ```
-   - Get these values from your DigitalOcean Spaces setup (see [Storage.md](./Storage.md))
+   - Get these values from your DigitalOcean Spaces setup (see [Storage.md](./storage.md))
 
 4. **Application-specific Environment Variables**:
    ```

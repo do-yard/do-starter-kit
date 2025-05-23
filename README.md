@@ -16,7 +16,7 @@ This guide describes how to use DigitalOcean App Platform to deploy a complete S
 ### Requirements
 
 * You need a DigitalOcean account. If you do not already have one, first [sign up](https://cloud.digitalocean.com/registrations/new).
-* You must create a DigitalOcean Space (object storage) manually for file uploads. See [Storage setup instructions](./docs/Storage.md).
+* You must create a DigitalOcean Space (object storage) manually for file uploads. See [Storage setup instructions](./docs/storage.md).
 * For local development, you need Docker installed (or access to a Postgres database).
 
 ## Deploy the App
@@ -67,7 +67,7 @@ SPACES_ENDPOINT=your-region.digitaloceanspaces.com
 SPACES_BUCKET=your-bucket-name
 ```
 
-For details on setting up storage, see the [Storage Guide](./docs/Storage.md).
+For details on setting up storage, see the [Storage Guide](./docs/storage.md).
 
 ## Local Development
 
@@ -129,7 +129,7 @@ For detailed documentation on all aspects of this starter kit:
 - **[Testing Guide](./docs/testing-guide.md)** - Running and writing tests
 - **[Deployment Guide](./docs/deployment-guide.md)** - Detailed deployment steps
 - **[Database Guide](./docs/database.md)** - Database setup and management
-- **[Storage Guide](./docs/Storage.md)** - DigitalOcean Spaces configuration
+- **[Storage Guide](./docs/storage.md)** - DigitalOcean Spaces configuration
 
 To learn more about App Platform and how to manage your applications, see [DigitalOcean App Platform documentation](https://www.digitalocean.com/docs/app-platform/).
 

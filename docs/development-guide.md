@@ -48,7 +48,7 @@ Edit the `.env` file with your specific configuration:
    - Set `NEXTAUTH_URL` to your development URL (usually `http://localhost:3000`)
 
 3. **DigitalOcean Spaces Configuration**:
-   - Follow the instructions in [Storage.md](./Storage.md) to set up your Spaces bucket
+   - Follow the instructions in [Storage.md](./storage.md) to set up your Spaces bucket
    - Add your access key, secret, bucket name, and region
 
 ### Step 4: Set Up the Database
@@ -116,7 +116,7 @@ Follow the project structure outlined in [project-structure.md](./project-struct
 ### File Storage
 
 For file uploads and storage:
-1. Make sure your DigitalOcean Spaces is configured (see [Storage.md](./Storage.md))
+1. Make sure your DigitalOcean Spaces is configured (see [Storage.md](./storage.md))
 2. Use the storage service from `src/services/storage/spacesStorageService.ts`
 
 ## Code Style and Linting
