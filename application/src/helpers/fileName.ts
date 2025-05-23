@@ -1,2 +1,7 @@
-export const getFileNameFromUrl = (url?: string | null) =>
-  url ? url.split('/')[5].split('?')[0] : url;
+export const getFileNameFromUrl = (url?: string | null) => {
+  if (!url) return url;
+
+  const parsedUrl = new URL(url);
+  const segments = parsedUrl.pathname.split('/');
+  return segments[segments.length - 1];
+};
