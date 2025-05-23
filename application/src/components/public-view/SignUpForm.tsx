@@ -5,10 +5,10 @@ import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/mat
 import Link from 'next/link';
 import FormButton from './FormButton';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { usePrefetchRouter } from 'hooks/navigation';
 
 const SignUpForm: React.FC = () => {
-  const router = useRouter();
+  const { navigate } = usePrefetchRouter();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -32,10 +32,10 @@ const SignUpForm: React.FC = () => {
       isSignUp: 'true',
     });
 
-    if (res?.ok) {
-      router.push('/');
-    } else {
-      setError('Failed to sign up. The user may already exist.');
+    if (!res || res.error) {
+      setError(res?.code || 'Something went wrong');
+    } else if (res.ok) {
+      navigate('/dashboard');
     }
   };
 
