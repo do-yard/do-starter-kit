@@ -43,7 +43,6 @@ After clicking the Deploy button or setting up your fork, follow these steps:
 
 1. **Configure environment variables and database:**
    - Set up the required environment variables (see [Environment Variables](#environment-variables) below)
-   - Add a managed PostgreSQL database cluster
    
 2. **Deploy your application:**
    - Provide a name for your app and select a region
