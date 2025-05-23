@@ -6,13 +6,7 @@ declare module 'next-auth' {
       id: string;
       email: string;
       role: UserRole;
+      image: string | null;
     };
-  }
-}
-
-declare module 'next-auth/jwt' {
-  interface JWT {
-    id: string;
-    role: UserRole;
   }
 }
