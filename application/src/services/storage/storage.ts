@@ -1,4 +1,4 @@
-import { serverConfig } from '../../../settings';
+import { serverConfig } from 'settings/settings';
 import { SpacesStorageService } from './spacesStorageService';
 
 // Storage provider types
@@ -6,7 +6,12 @@ export type StorageProvider = 'Spaces';
 
 // Common interface for all storage providers
 export interface StorageService {
-  uploadFile(userId: string, file: File): Promise<string>;
+  uploadFile(
+    userId: string,
+    fileName: string,
+    file: File,
+    options?: { ACL?: 'public-read' | 'private' }
+  ): Promise<string>;
   getFileUrl(userId: string, fileName: string, expiresIn?: number): Promise<string>;
   deleteFile(userId: string, fileName: string): Promise<void>;
 }
