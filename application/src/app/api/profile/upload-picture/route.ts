@@ -39,34 +39,28 @@ export async function POST(request: NextRequest) {
       : '';
     const fileName = `${uuidv4()}${extension}`;
 
+    const db = createDatabaseClient();
+    const dbUser = await db.user.findById(userId);
+
+    if (!dbUser) {
+      return NextResponse.json({ error: "User doesn't exist" }, { status: 404 });
+    }
     // Upload the file
     try {
-      const db = createDatabaseClient();
-      const dbUser = await db.user.findById(userId);
-
-      if (!dbUser) {
-        return NextResponse.json({ error: "User doesn't exist" }, { status: 404 });
-      }
-      const imageName = getFileNameFromUrl(dbUser.image);
-
-      if (imageName) {
-        await storageService.deleteFile(userId, imageName);
-      }
-
       const uploadedFileName = await storageService.uploadFile(userId, fileName, file, {
         ACL: 'public-read',
       });
       const fileUrl = await storageService.getFileUrl(userId, uploadedFileName);
 
-      //Save the file URL to the database
-      const user = await db.user.findById(userId);
+      const oldImageName = getFileNameFromUrl(dbUser.image);
 
-      if (!user) {
-        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      if (oldImageName) {
+        await storageService.deleteFile(userId, oldImageName);
       }
-      user.image = fileUrl;
 
-      await db.user.update(user.id, user);
+      dbUser.image = fileUrl;
+
+      await db.user.update(dbUser.id, dbUser);
 
       return NextResponse.json({ name: uploadedFileName, url: fileUrl }, { status: 200 });
     } catch (error) {
