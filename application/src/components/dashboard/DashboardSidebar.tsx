@@ -15,14 +15,16 @@ import {
   Divider,
   styled,
 } from '@mui/material';
+import { signOut } from 'next-auth/react';
 
 interface SidebarLinkProps {
   href: string;
   icon: React.ReactNode;
   children: React.ReactNode;
+  onClick?: () => void;
 }
 
-const SidebarLink = ({ href, icon, children }: SidebarLinkProps) => {
+const SidebarLink = ({ href, icon, children, onClick }: SidebarLinkProps) => {
   const pathname = usePathname();
   const isActive = pathname === href;
 
@@ -30,7 +32,9 @@ const SidebarLink = ({ href, icon, children }: SidebarLinkProps) => {
     <ListItem disablePadding sx={{ mb: 0.5 }}>
       <ListItemButton
         component={Link}
+        prefetch={true}
         href={href}
+        onClick={onClick}
         selected={isActive}
         sx={{
           borderRadius: 1,
@@ -73,6 +77,9 @@ const SidebarHeader = styled(Box)(({ theme }) => ({
 }));
 
 const DashboardSidebar = () => {
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' });
+  };
   return (
     <Drawer
       variant="permanent"
@@ -116,7 +123,7 @@ const DashboardSidebar = () => {
           <SidebarLink href="/dashboard/billing" icon={<CreditCard fontSize="small" />}>
             Billing
           </SidebarLink>
-          <SidebarLink href="/logout" icon={<Logout fontSize="small" />}>
+          <SidebarLink href="" onClick={handleLogout} icon={<Logout fontSize="small" />}>
             Logout
           </SidebarLink>
         </List>

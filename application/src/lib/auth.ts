@@ -6,6 +6,24 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from './prisma';
 import { hashPassword, verifyPassword } from 'helpers/hash';
 import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
+import { UserRole } from 'types';
+
+const getRedirectPathForRole = (role: string): string => {
+  switch (role) {
+    case 'USER':
+    default:
+      return '/dashboard';
+  }
+};
+
+const hasRole = (userOrToken: unknown): userOrToken is { id: string; role: UserRole } => {
+  return (
+    typeof userOrToken === 'object' &&
+    userOrToken !== null &&
+    'role' in userOrToken &&
+    'id' in userOrToken
+  );
+};
 
 const providers: Provider[] = [
   Credentials({
@@ -55,7 +73,7 @@ const providers: Provider[] = [
         throw new InvalidCredentialsError();
       }
 
-      return user;
+      return { ...user, redirectPath: getRedirectPathForRole(user.role) };
     },
   }),
 ];
@@ -66,13 +84,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers,
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
+      if (user && hasRole(user)) {
         token.id = user.id;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id as string;
+      if (token && hasRole(token)) {
+        session.user.id = token.id;
+        session.user.role = token.role;
+      }
       return session;
     },
   },
