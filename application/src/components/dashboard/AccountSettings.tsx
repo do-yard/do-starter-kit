@@ -47,6 +47,7 @@ export default function AccountSettings() {
 
         if (formData.profileImage === null) {
           setUploadError('Please select a profile image before submitting');
+          setIsLoading(false);
           return;
         }
 
