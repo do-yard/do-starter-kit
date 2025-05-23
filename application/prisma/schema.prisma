@@ -45,9 +45,9 @@ enum Role {
 }
 
 enum SubscriptionStatus {
+  PENDING
   ACTIVE
   CANCELED
-  TRIALING
 }
 
 enum SubscriptionPlan {

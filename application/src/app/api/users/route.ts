@@ -46,7 +46,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Only allow updating specific fields (e.g., name, email, role)
-    const allowedFields = ['name', 'role'];
+    const allowedFields = ['name', 'role', 'subscriptions'];
     // Remove fields from updateData that are not allowed
     Object.keys(updateData).forEach((key) => {
       if (!allowedFields.includes(key)) {
@@ -59,7 +59,15 @@ export async function PATCH(request: NextRequest) {
     }
 
     const dbClient = createDatabaseClient();
-    const updatedUser = await dbClient.user.update(id, updateData);
+    const updatedUser = await dbClient.user.update(id, {
+      name: updateData.name,
+      role: updateData.role,
+    });
+
+    if (updateData.subscriptions) {
+      const userSubscriptions = await dbClient.subscription.findByUserId(id);  
+      await dbClient.subscription.update(userSubscriptions[0].id, updateData.subscriptions[0]);
+    }
 
     return NextResponse.json({ user: updatedUser });
   } catch (error) {

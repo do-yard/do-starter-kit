@@ -30,6 +30,7 @@ import {
 } from '@mui/material';
 import { ApiClient } from '../../lib/apiClient';
 import { UserWithSubscriptions } from '../../types';
+import Toast from '../common/Toast';
 
 const statusColor = (status: string) => {
   switch (status) {
@@ -59,6 +60,13 @@ export default function AdminDashboard() {
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserWithSubscriptions | null>(null);
   const [editForm, setEditForm] = useState<Partial<UserWithSubscriptions>>({});
+
+  // Toast state
+  const [toast, setToast] = useState<{ open: boolean; message: string; severity: 'success' | 'error' | 'info' }>({
+    open: false,
+    message: '',
+    severity: 'info',
+  });
 
   // Open modal and set form state
   const handleEditClick = (user: UserWithSubscriptions) => {
@@ -95,25 +103,24 @@ export default function AdminDashboard() {
 
   const handleEditButton = async () => {
     if (!selectedUser) return;
-    await updateUser(selectedUser.id, { name: editForm.name });
-  }
+    await updateUser(selectedUser.id, { name: editForm.name, subscriptions: editForm.subscriptions });
+  };
 
   const updateUser = async (userId: string, fields: Partial<UserWithSubscriptions>) => {
     if (!userId) return;
     try {
-      setIsLoadingEdit(true)
+      setIsLoadingEdit(true);
       const api = new ApiClient();
       await api.updateUser(userId, fields);
       // Refresh users
       const data = await api.getUsers();
       setUsers(data.users || []);
       handleEditClose();
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      setToast({ open: true, message: 'User updated successfully!', severity: 'success' });
     } catch (err) {
-      alert('Failed to update user');
-    }
-    finally {
-      setIsLoadingEdit(false)
+      setToast({ open: true, message: 'Failed to update user', severity: 'error' });
+    } finally {
+      setIsLoadingEdit(false);
     }
   };
 
@@ -207,7 +214,7 @@ export default function AdminDashboard() {
               <MenuItem value="">All</MenuItem>
               <MenuItem value="ACTIVE">Active</MenuItem>
               <MenuItem value="CANCELED">Canceled</MenuItem>
-              <MenuItem value="TRIALING">Trialing</MenuItem>
+              <MenuItem value="PENDING">Pending</MenuItem>
             </TextField>
           </Stack>
           {loading ? (
@@ -341,9 +348,9 @@ export default function AdminDashboard() {
                 onChange={handleEditSubscriptionChange}
                 fullWidth
               >
+                <MenuItem value="PENDING">PENDING</MenuItem>
                 <MenuItem value="ACTIVE">ACTIVE</MenuItem>
                 <MenuItem value="CANCELED">CANCELED</MenuItem>
-                <MenuItem value="TRIALING">TRIALING</MenuItem>
               </Select>
             </Stack>
           </Stack>
@@ -354,6 +361,13 @@ export default function AdminDashboard() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Toast
+        open={toast.open}
+        message={toast.message}
+        severity={toast.severity}
+        onClose={() => setToast((prev) => ({ ...prev, open: false }))}
+      />
     </Box>
   );
 }
