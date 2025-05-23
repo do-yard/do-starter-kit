@@ -1,3 +1,4 @@
+import { getFileNameFromUrl } from 'helpers/fileName';
 import { auth } from 'lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
@@ -44,9 +45,9 @@ export async function POST(request: NextRequest) {
       const dbUser = await db.user.findById(userId);
 
       if (!dbUser) {
-        return NextResponse.json({ error: "User doesn't exist" }, { status: 401 });
+        return NextResponse.json({ error: "User doesn't exist" }, { status: 404 });
       }
-      const imageName = dbUser.image?.split('/')[5].split('?')[0];
+      const imageName = getFileNameFromUrl(dbUser.image);
 
       if (imageName) {
         await storageService.deleteFile(userId, imageName);
