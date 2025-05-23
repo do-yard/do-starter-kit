@@ -30,7 +30,7 @@ const LoginForm: React.FC = () => {
       setError(res?.code || 'Something went wrong');
       setNavigating(false);
     } else if (res.ok) {
-      navigate('/dashboard');
+      navigate('/');
     }
   };
 
