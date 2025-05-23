@@ -108,6 +108,7 @@ declare module "next-auth" {
       id: string;
       email: string;
       role: string;
+      image: string;
     }
   }
 }
