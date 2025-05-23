@@ -79,7 +79,7 @@ const DashboardSidebar = () => {
 
   const getProfileIcon = useCallback(() => {
     const url = session.data?.user?.image ?? undefined;
-    return <Avatar src={url} />;
+    return <Avatar src={url} alt="User Avatar" />;
   }, [session]);
 
   return (

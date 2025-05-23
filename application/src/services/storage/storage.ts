@@ -10,7 +10,7 @@ export interface StorageService {
     userId: string,
     fileName: string,
     file: File,
-    options?: { public: boolean }
+    options?: { ACL?: 'public-read' | 'private' }
   ): Promise<string>;
   getFileUrl(userId: string, fileName: string, expiresIn?: number): Promise<string>;
   deleteFile(userId: string, fileName: string): Promise<void>;
