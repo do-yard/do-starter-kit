@@ -34,8 +34,8 @@ const SignUpForm: React.FC = () => {
 
     if (!res || res.error || res.code) {
       setError(res?.code || 'Something went wrong');
-    } else if (res.ok && res.url) {
-      navigate(res.url);
+    } else if (res.ok) {
+      navigate('/dashboard');
     }
   };
 
