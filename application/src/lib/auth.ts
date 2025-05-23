@@ -5,12 +5,7 @@ import { createDatabaseClient } from 'services/database/database';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from './prisma';
 import { hashPassword, verifyPassword } from 'helpers/hash';
-import {
-  MissingCredentialsError,
-  InvalidNameError,
-  UserAlreadyExistsError,
-  IncorrectPasswordError,
-} from './errors';
+import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
 
 const providers: Provider[] = [
   Credentials({
@@ -29,7 +24,7 @@ const providers: Provider[] = [
 
       if (credentials?.isSignUp === 'true') {
         if (!credentials.name) {
-          throw new InvalidNameError();
+          throw new InvalidCredentialsError();
         }
 
         const userExists = await dbClient.user.findByEmail(credentials.email as string);
@@ -52,12 +47,12 @@ const providers: Provider[] = [
 
       const user = await dbClient.user.findByEmail(credentials.email as string);
       if (!user || !user.passwordHash) {
-        throw new IncorrectPasswordError();
+        throw new InvalidCredentialsError();
       }
 
       const isValid = await verifyPassword(credentials.password as string, user.passwordHash);
       if (!isValid) {
-        throw new IncorrectPasswordError();
+        throw new InvalidCredentialsError();
       }
 
       return user;

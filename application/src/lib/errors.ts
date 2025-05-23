@@ -8,10 +8,6 @@ export class UserAlreadyExistsError extends CredentialsSignin {
   code = 'User already exists';
 }
 
-export class IncorrectPasswordError extends CredentialsSignin {
-  code = 'Incorrect password';
-}
-
-export class InvalidNameError extends CredentialsSignin {
-  code = 'Name is required';
+export class InvalidCredentialsError extends CredentialsSignin {
+  code = 'Invalid credentials';
 }

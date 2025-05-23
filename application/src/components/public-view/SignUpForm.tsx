@@ -32,8 +32,6 @@ const SignUpForm: React.FC = () => {
       isSignUp: 'true',
     });
 
-    console.log('signIn response:', res);
-
     if (!res || res.error || res.code) {
       setError(res?.code || 'Something went wrong');
     } else if (res.ok && res.url) {
