@@ -5,6 +5,7 @@ import { Box, Typography, TextField, Button, styled, CircularProgress } from '@m
 import Paper from '../common/Paper';
 import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
+import DoneIcon from '@mui/icons-material/Done';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
   border: '2px dashed',
@@ -26,6 +27,7 @@ export default function AccountSettings() {
   });
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const session = useSession();
 
@@ -71,6 +73,8 @@ export default function AccountSettings() {
           session.update({ user: user });
         }
         setIsLoading(false);
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
       } catch (error) {
         setUploadError((error as Error).message || 'An error occurred while uploading the image.');
         setIsLoading(false);
@@ -123,9 +127,10 @@ export default function AccountSettings() {
                   onChange={handleInputChange}
                   fullWidth
                   variant="outlined"
+                  disabled={isLoading}
                   InputProps={{
                     sx: {
-                      color: '#fff',
+                      color: isLoading ? '#9ca3af' : '#fff',
                       '& .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#374151',
                       },
@@ -134,6 +139,10 @@ export default function AccountSettings() {
                       },
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#6b7280',
+                      },
+                      '&.Mui-disabled': {
+                        color: '#9ca3af',
+                        backgroundColor: 'rgba(55,65,81,0.2)',
                       },
                     },
                   }}
@@ -168,9 +177,10 @@ export default function AccountSettings() {
                   onChange={handleInputChange}
                   fullWidth
                   variant="outlined"
+                  disabled={isLoading}
                   InputProps={{
                     sx: {
-                      color: '#fff',
+                      color: isLoading ? '#9ca3af' : '#fff',
                       '& .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#374151',
                       },
@@ -179,6 +189,10 @@ export default function AccountSettings() {
                       },
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#6b7280',
+                      },
+                      '&.Mui-disabled': {
+                        color: '#9ca3af',
+                        backgroundColor: 'rgba(55,65,81,0.2)',
                       },
                     },
                   }}
@@ -204,9 +218,16 @@ export default function AccountSettings() {
                     Selected file: {formData.profileImage.name}
                   </Typography>
                 )}
-                <StyledFileInput sx={{ color: '#fff', borderColor: '#374151' }}>
+                <StyledFileInput
+                  sx={{
+                    color: isLoading ? '#9ca3af' : '#fff',
+                    borderColor: isLoading ? '#6b7280' : '#374151',
+                    backgroundColor: isLoading ? 'rgba(55,65,81,0.2)' : 'transparent',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                  }}
+                >
                   <div {...getRootProps()}>
-                    <input {...getInputProps()} />
+                    <input {...getInputProps()} disabled={isLoading} />
                     <Typography variant="body2" color="#9ca3af">
                       Drag &apos;n&apos; drop a profile image here, or click to select one
                     </Typography>
@@ -240,9 +261,22 @@ export default function AccountSettings() {
                   marginRight: 2,
                 }}
               >
-                Save Changes
+                {isLoading ? (
+                  <>
+                    <CircularProgress style={{ marginRight: 6 }} />
+                    Saving...
+                  </>
+                ) : (
+                  'Save Changes'
+                )}
               </Button>
-              {isLoading ? <CircularProgress /> : null}
+              {showSuccess && (
+                <span
+                  style={{ color: 'green', marginLeft: 8, display: 'flex', alignItems: 'center' }}
+                >
+                  <DoneIcon />
+                </span>
+              )}
             </Box>
           </form>
         </Box>
