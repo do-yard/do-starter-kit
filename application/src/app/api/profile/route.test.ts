@@ -41,7 +41,7 @@ jest.mock('../../../../services/database/database', () => ({
 
 import { NextRequest } from 'next/server';
 // Import the handler after mocks
-import { POST } from './route';
+import { PATCH } from './route';
 
 describe('upload picture should', () => {
   beforeEach(() => {
@@ -77,7 +77,7 @@ describe('upload picture should', () => {
     // auth is mocked as authenticated
     const file = createFile('test.txt', 'text/plain', 100);
     const req = createRequestWithFileAndName(file, null);
-    const res = await POST(req);
+    const res = await PATCH(req);
     const json = await res.json();
     expect(json).toEqual({ error: 'Only JPG or PNG files are allowed' });
     expect(res.status).toBe(400);
@@ -87,7 +87,7 @@ describe('upload picture should', () => {
     // auth is mocked as authenticated
     const file = createFile('test.jpg', 'image/jpeg', 6 * 1024 * 1024);
     const req = createRequestWithFileAndName(file, null);
-    const res = await POST(req);
+    const res = await PATCH(req);
     const json = await res.json();
     expect(json).toEqual({ error: 'File size must be 5MB or less' });
     expect(res.status).toBe(400);
@@ -98,7 +98,7 @@ describe('upload picture should', () => {
     mockUploadFile.mockRejectedValueOnce(new Error('Upload failed'));
     const file = createFile('test.jpg', 'image/jpeg', 100);
     const req = createRequestWithFileAndName(file, null);
-    const res = await POST(req);
+    const res = await PATCH(req);
     const json = await res.json();
     expect(json).toEqual({ error: 'Internal server error' });
     expect(res.status).toBe(500);
@@ -110,7 +110,7 @@ describe('upload picture should', () => {
     mockGetFileUrl.mockResolvedValueOnce('https://example.com/file-url');
     const file = createFile('test.jpg', 'image/jpeg', 100);
     const req = createRequestWithFileAndName(file, null);
-    const res = await POST(req);
+    const res = await PATCH(req);
     const json = await res.json();
     expect(json).toEqual({ name: 'mockName', image: 'https://example.com/file-url' });
     expect(res.status).toBe(200);
@@ -120,7 +120,7 @@ describe('upload picture should', () => {
     mockAuth.mockResolvedValueOnce(null);
     const file = createFile('test.jpg', 'image/jpeg', 100);
     const req = createRequestWithFileAndName(file, null);
-    const res = await POST(req);
+    const res = await PATCH(req);
     const json = await res.json();
     expect(json).toEqual({ error: 'Unauthorized' });
     expect(res.status).toBe(401);
@@ -133,7 +133,7 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     mockUploadFile.mockResolvedValueOnce('mock-uuid.jpg');
     mockGetFileUrl.mockResolvedValueOnce('https://example.com/file-url');
-    const res = await POST(req);
+    const res = await PATCH(req);
     const json = await res.json();
     expect(json).toEqual({ error: "User doesn't exist" });
     expect(res.status).toBe(404);
@@ -146,7 +146,7 @@ describe('upload picture should', () => {
     mockUpdate.mockRejectedValueOnce(new Error('DB update failed'));
     const file = createFile('test.jpg', 'image/jpeg', 100);
     const req = createRequestWithFileAndName(file, null);
-    const res = await POST(req);
+    const res = await PATCH(req);
     const json = await res.json();
     expect(json).toEqual({ error: 'Internal server error' });
     expect(res.status).toBe(500);
@@ -157,7 +157,7 @@ describe('upload picture should', () => {
     mockDeleteFile.mockRejectedValueOnce(new Error('DB update failed'));
     const file = createFile('test.jpg', 'image/jpeg', 100);
     const req = createRequestWithFileAndName(file, null);
-    const res = await POST(req);
+    const res = await PATCH(req);
     const json = await res.json();
     expect(json).toEqual({ error: 'Internal server error' });
     expect(res.status).toBe(500);
@@ -168,7 +168,7 @@ describe('upload picture should', () => {
     mockGetFileUrl.mockResolvedValueOnce('https://example.com/file-url');
     const file = createFile('test.jpg', 'image/jpeg', 100);
     const req = createRequestWithFileAndName(file, 'testNewName');
-    const res = await POST(req);
+    const res = await PATCH(req);
     const json = await res.json();
     expect(json).toEqual({ name: 'testNewName', image: 'https://example.com/file-url' });
     expect(mockUpdate).toHaveBeenCalledWith('user-id', {
@@ -182,7 +182,7 @@ describe('upload picture should', () => {
   it('update name if only receive name param', async () => {
     // auth is mocked as authenticated
     const req = createRequestWithFileAndName(null, 'testNewName');
-    const res = await POST(req);
+    const res = await PATCH(req);
     const json = await res.json();
     expect(json).toEqual({ name: 'testNewName', image: 'image-url' });
     expect(mockUpdate).toHaveBeenCalledWith('user-id', {
@@ -196,7 +196,7 @@ describe('upload picture should', () => {
   it('fails name param is empty string', async () => {
     // auth is mocked as authenticated
     const req = createRequestWithFileAndName(null, '');
-    const res = await POST(req);
+    const res = await PATCH(req);
     const json = await res.json();
     expect(json).toEqual({ error: 'Name invalid' });
     expect(res.status).toBe(400);

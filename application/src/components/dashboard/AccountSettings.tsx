@@ -62,8 +62,8 @@ export default function AccountSettings() {
         }
 
         //for now just update the picture
-        const response = await fetch('/api/profile/upload-picture', {
-          method: 'POST',
+        const response = await fetch('/api/profile', {
+          method: 'PATCH',
           body: formDataToSubmit,
         });
 
@@ -145,8 +145,8 @@ export default function AccountSettings() {
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#6b7280',
                       },
-                      '&.Mui-disabled': {
-                        color: '#9ca3af',
+                      '&. Mui-disabled': {
+                        color: '#fff',
                         backgroundColor: 'rgba(55,65,81,0.2)',
                       },
                     },

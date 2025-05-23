@@ -5,7 +5,7 @@ import { createDatabaseClient } from 'services/database/database';
 import { createStorageService } from 'services/storage/storage';
 import { v4 as uuidv4 } from 'uuid';
 
-export async function POST(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
