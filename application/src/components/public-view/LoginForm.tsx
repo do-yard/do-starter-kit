@@ -24,7 +24,7 @@ const LoginForm: React.FC = () => {
       password,
     });
 
-    if (!res || res.error || res.code) {
+    if (!res || res.error) {
       setError(res?.code || 'Something went wrong');
     } else if (res.ok) {
       navigate('/dashboard');

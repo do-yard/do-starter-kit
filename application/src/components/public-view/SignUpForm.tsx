@@ -32,7 +32,7 @@ const SignUpForm: React.FC = () => {
       isSignUp: 'true',
     });
 
-    if (!res || res.error || res.code) {
+    if (!res || res.error) {
       setError(res?.code || 'Something went wrong');
     } else if (res.ok) {
       navigate('/dashboard');
