@@ -2,10 +2,6 @@
 
 This DigitalOcean SaaS Starter Kit is built with modern technologies to provide a solid foundation for your SaaS application.
 
-![Tech Stack Architecture](./images/do-architecture-diagram.drawio.png)
-
-The architecture diagram above shows how the different technologies work together within the starter kit.
-
 ## Core Technologies
 
 - **Next.js 14+** - Full-stack React framework with App Router for optimized routing and server components

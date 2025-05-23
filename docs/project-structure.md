@@ -76,10 +76,10 @@ Implementation of core services:
 ```
 services/
 ├── database/                # Database connection and queries
-└── storage/                 # File storage (DigitalOcean Spaces)
+└── storage/                 # File storage
 ```
 
-### Database (`prisma/`)
+### Database (`prisma`)
 
 Prisma ORM configuration:
 

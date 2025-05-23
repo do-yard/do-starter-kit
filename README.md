@@ -4,6 +4,12 @@ This repository contains a complete SaaS starter kit for building professional S
 
 **Note**: Following these steps may result in charges for the use of DigitalOcean services.
 
+## Architecture Overview
+
+![Architecture Diagram](./docs/images/do-architecture-diagram.drawio.png)
+
+The architecture diagram above shows the complete structure of the SaaS Starter Kit, including how components interact with DigitalOcean services.
+
 ## Get Started
 
 This guide describes how to use DigitalOcean App Platform to deploy a complete SaaS application with:
@@ -55,17 +61,31 @@ After clicking the Deploy button or setting up your fork, follow these steps:
 
 ## Environment Variables
 
-Your app requires the following environment variables:
+The following environment variables are required:
 
-```
-DATABASE_URL=postgres://username:password@host:port/database
-NEXTAUTH_URL=https://your-app-url
-NEXTAUTH_SECRET=your-secure-random-string
-SPACES_KEY=your-spaces-access-key
-SPACES_SECRET=your-spaces-secret-key
-SPACES_ENDPOINT=your-region.digitaloceanspaces.com
-SPACES_BUCKET=your-bucket-name
-```
+1. **Database Environment Variables**:
+   ```
+   DATABASE_URL=postgres://username:password@host:port/database
+   ```
+   - This will be automatically configured if you create a DigitalOcean Managed Database
+
+2. **NextAuth Environment Variables**:
+   ```
+   NEXTAUTH_URL=https://your-app-name.ondigitalocean.app
+   NEXTAUTH_SECRET=your-secure-random-string
+   ```
+   - Generate a secure random string for `NEXTAUTH_SECRET` using a tool like [Password Generator](https://passwords-generator.org/)
+   - `NEXTAUTH_URL` should be your app's full URL (will be available after first deployment)
+
+3. **DigitalOcean Spaces Environment Variables**:
+   ```
+   SPACES_KEY=your-spaces-access-key
+   SPACES_SECRET=your-spaces-secret-key
+   SPACES_ENDPOINT=your-region.digitaloceanspaces.com
+   SPACES_BUCKET=your-bucket-name
+   ```
+   - Get these values from your DigitalOcean Spaces setup (see [storage.md](./storage.md))
+
 
 For details on setting up storage, see the [Storage Guide](./docs/storage.md).
 
@@ -126,8 +146,6 @@ For detailed documentation on all aspects of this starter kit:
 - **[Project Structure](./docs/project-structure.md)** - Codebase organization
 - **[Tech Stack](./docs/tech-stack.md)** - Technologies used
 - **[Development Guide](./docs/development-guide.md)** - Local development workflow
-- **[Testing Guide](./docs/testing-guide.md)** - Running and writing tests
-- **[Deployment Guide](./docs/deployment-guide.md)** - Detailed deployment steps
 - **[Database Guide](./docs/database.md)** - Database setup and management
 - **[Storage Guide](./docs/storage.md)** - DigitalOcean Spaces configuration
 
