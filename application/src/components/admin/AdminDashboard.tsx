@@ -123,7 +123,7 @@ export default function AdminDashboard() {
       setUsers(data.users || []);
       handleEditClose();
       setToast({ open: true, message: 'User updated successfully!', severity: 'success' });
-    } catch (err) {
+    } catch {
       setToast({ open: true, message: 'Failed to update user', severity: 'error' });
     } finally {
       setIsLoadingEdit(false);
@@ -142,7 +142,6 @@ export default function AdminDashboard() {
       setError(null);
       try {
         const api = new ApiClient();
-        // Assume getUsers supports pagination: getUsers({ page, pageSize, searchName, filterPlan, filterStatus })
         const data = await api.getUsers({
           page,
           pageSize,
@@ -152,7 +151,7 @@ export default function AdminDashboard() {
         });
         setUsers(data.users || []);
         setTotalUsers(data.total || 0);
-      } catch (err) {
+      } catch {
         setError('Failed to fetch users');
       } finally {
         setLoading(false);

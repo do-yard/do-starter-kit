@@ -23,17 +23,17 @@ export class SqlDatabaseService implements DatabaseClient {
       const page = options?.page || 1;
       const pageSize = options?.pageSize || 10;
       const skip = (page - 1) * pageSize;
-      const where: any = {};
+      const where: Record<string, unknown> = {};
       if (options?.searchName) {
         where.name = { contains: options.searchName, mode: 'insensitive' };
       }
       if (options?.filterPlan || options?.filterStatus) {
         where.subscriptions = { some: {} };
         if (options.filterPlan) {
-          where.subscriptions.some.plan = options.filterPlan;
+          (where.subscriptions as { some: Record<string, unknown> }).some.plan = options.filterPlan;
         }
         if (options.filterStatus) {
-          where.subscriptions.some.status = options.filterStatus;
+          (where.subscriptions as { some: Record<string, unknown> }).some.status = options.filterStatus;
         }
       }
       const [users, total] = await Promise.all([

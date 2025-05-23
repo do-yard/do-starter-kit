@@ -4,11 +4,9 @@ import AdminDashboard from './AdminDashboard';
 
 // Update mock to support total and pageSize
 jest.mock('../../lib/apiClient', () => {
-  let lastArgs: any = {};
   return {
     ApiClient: jest.fn().mockImplementation(() => ({
-      getUsers: jest.fn().mockImplementation((args) => {
-        lastArgs = args || {};
+      getUsers: jest.fn().mockImplementation((args: Record<string, unknown>) => {
         const allUsers = [
           {
             id: '1',
@@ -36,8 +34,8 @@ jest.mock('../../lib/apiClient', () => {
           }
         ];
         // Simulate pagination
-        const page = args?.page || 1;
-        const pageSize = args?.pageSize || 10;
+        const page = args?.page as number || 1;
+        const pageSize = args?.pageSize as number || 10;
         const start = (page - 1) * pageSize;
         const end = start + pageSize;
         return Promise.resolve({
