@@ -27,6 +27,7 @@ import {
   IconButton,
   Select,
   CircularProgress,
+  Pagination,
 } from '@mui/material';
 import { ApiClient } from '../../lib/apiClient';
 import { UserWithSubscriptions } from '../../types';
@@ -54,6 +55,11 @@ export default function AdminDashboard() {
   const [searchName, setSearchName] = useState('');
   const [filterPlan, setFilterPlan] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalUsers, setTotalUsers] = useState(0);
 
   // Modal state
   const [openEdit, setOpenEdit] = useState(false);
@@ -136,31 +142,24 @@ export default function AdminDashboard() {
       setError(null);
       try {
         const api = new ApiClient();
-        const data = await api.getUsers();
+        // Assume getUsers supports pagination: getUsers({ page, pageSize, searchName, filterPlan, filterStatus })
+        const data = await api.getUsers({
+          page,
+          pageSize,
+          searchName,
+          filterPlan,
+          filterStatus,
+        });
         setUsers(data.users || []);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-      } catch (err: any) {
+        setTotalUsers(data.total || 0);
+      } catch (err) {
         setError('Failed to fetch users');
       } finally {
         setLoading(false);
       }
     };
     fetchUsers();
-  }, []);
-
-  const filteredUsers = users.filter((user) => {
-    const matchesName = searchName
-      ? user.name.toLowerCase().includes(searchName.toLowerCase())
-      : true;
-
-    const userPlan = user.subscriptions.length ? user.subscriptions[0].plan : '';
-    const matchesPlan = filterPlan ? userPlan === filterPlan : true;
-
-    const userStatus = user.subscriptions.length ? user.subscriptions[0].status : '';
-    const matchesStatus = filterStatus ? userStatus === filterStatus : true;
-
-    return matchesName && matchesPlan && matchesStatus;
-  });
+  }, [page, pageSize, searchName, filterPlan, filterStatus]);
 
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', px: 2, py: 4 }}>
@@ -177,7 +176,7 @@ export default function AdminDashboard() {
           }
         />
         <CardContent sx={{ pt: 0 }}>
-          <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={3}>
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={3} alignItems="center">
             <TextField
               label="Search by name"
               variant="outlined"
@@ -185,7 +184,7 @@ export default function AdminDashboard() {
               fullWidth
               sx={{ maxWidth: { md: 300 } }}
               value={searchName}
-              onChange={(e) => setSearchName(e.target.value)}
+              onChange={(e) => { setSearchName(e.target.value); setPage(1); }}
             />
             <TextField
               select
@@ -195,7 +194,7 @@ export default function AdminDashboard() {
               fullWidth
               sx={{ maxWidth: { md: 200 } }}
               value={filterPlan}
-              onChange={(e) => setFilterPlan(e.target.value)}
+              onChange={(e) => { setFilterPlan(e.target.value); setPage(1); }}
             >
               <MenuItem value="">All</MenuItem>
               <MenuItem value="FREE">Free</MenuItem>
@@ -209,12 +208,26 @@ export default function AdminDashboard() {
               fullWidth
               sx={{ maxWidth: { md: 200 } }}
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
+              onChange={(e) => { setFilterStatus(e.target.value); setPage(1); }}
             >
               <MenuItem value="">All</MenuItem>
               <MenuItem value="ACTIVE">Active</MenuItem>
               <MenuItem value="CANCELED">Canceled</MenuItem>
               <MenuItem value="PENDING">Pending</MenuItem>
+            </TextField>
+            <TextField
+              select
+              label="Rows per page"
+              variant="outlined"
+              size="small"
+              sx={{ maxWidth: 120 }}
+              value={pageSize}
+              onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+            >
+              <MenuItem value={5}>5</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={20}>20</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
             </TextField>
           </Stack>
           {loading ? (
@@ -224,68 +237,80 @@ export default function AdminDashboard() {
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
-            <TableContainer component={Paper} variant="outlined">
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell>Plan</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Joined</TableCell>
-                    <TableCell>Admin</TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredUsers.map((user) => {
-                    const plan = user.subscriptions.length ? user.subscriptions[0].plan : 'none';
-                    const status = user.subscriptions.length ? user.subscriptions[0].status : 'none';
-                    return (
-                      <TableRow key={user.id}>
-                        <TableCell>{user.name}</TableCell>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>{plan}</TableCell>
-                        <TableCell>
-                          <Chip
-                            label={status}
-                            color={statusColor(status)}
-                            size="small"
-                            sx={{
-                              color: '#fff',
-                              textTransform: 'capitalize',
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell>{new Date(user.createdAt).toISOString().slice(0, 10)}</TableCell>
-                        <TableCell>
-                          {isLoadingEdit && user.id === selectedUser?.id ? (
-                            <CircularProgress size={20} />
-                          ) : (
-                            <Switch
-                              checked={user.role === 'ADMIN'}
-                              onChange={(_, checked) => handleAdminSwitchChange(user, checked)}
-                            />
-                          )}
-
-                        </TableCell>
-                        <TableCell>
-                          <Stack direction="row" spacing={1}>
-                            <Button
-                              variant="outlined"
+            <>
+              <TableContainer component={Paper} variant="outlined">
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Name</TableCell>
+                      <TableCell>Email</TableCell>
+                      <TableCell>Plan</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Joined</TableCell>
+                      <TableCell>Admin</TableCell>
+                      <TableCell>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {users.map((user) => {
+                      const plan = user.subscriptions.length ? user.subscriptions[0].plan : 'none';
+                      const status = user.subscriptions.length ? user.subscriptions[0].status : 'none';
+                      return (
+                        <TableRow key={user.id}>
+                          <TableCell>{user.name}</TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>{plan}</TableCell>
+                          <TableCell>
+                            <Chip
+                              label={status}
+                              color={statusColor(status)}
                               size="small"
-                              onClick={() => handleEditClick(user)}
-                            >
-                              Edit
-                            </Button>
-                          </Stack>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                              sx={{
+                                color: '#fff',
+                                textTransform: 'capitalize',
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell>{new Date(user.createdAt).toISOString().slice(0, 10)}</TableCell>
+                          <TableCell>
+                            {isLoadingEdit && user.id === selectedUser?.id ? (
+                              <CircularProgress size={20} />
+                            ) : (
+                              <Switch
+                                checked={user.role === 'ADMIN'}
+                                onChange={(_, checked) => handleAdminSwitchChange(user, checked)}
+                              />
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Stack direction="row" spacing={1}>
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                onClick={() => handleEditClick(user)}
+                              >
+                                Edit
+                              </Button>
+                            </Stack>
+                          </TableCell>
+                        </TableRow>
+                      )
+                    })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Box display="flex" justifyContent="flex-end" alignItems="center" mt={2}>
+                <Pagination
+                  count={Math.ceil(totalUsers / pageSize) || 1}
+                  page={page}
+                  onChange={(_, value) => setPage(value)}
+                  color="primary"
+                  shape="rounded"
+                  showFirstButton
+                  showLastButton
+                />
+              </Box>
+            </>
           )}
         </CardContent>
       </Card>

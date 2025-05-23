@@ -16,9 +16,14 @@ export async function GET(request: NextRequest) {
     }
 
     const dbClient = createDatabaseClient();
-    const users = await dbClient.user.findAll();
-
-    return NextResponse.json({ users });
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const pageSize = parseInt(searchParams.get('pageSize') || '10', 10);
+    const searchName = searchParams.get('searchName') || undefined;
+    const filterPlan = searchParams.get('filterPlan') || undefined;
+    const filterStatus = searchParams.get('filterStatus') || undefined;
+    const { users, total } = await dbClient.user.findAll({ page, pageSize, searchName, filterPlan, filterStatus });
+    return NextResponse.json({ users, total });
   } catch (error) {
     console.error('Server error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

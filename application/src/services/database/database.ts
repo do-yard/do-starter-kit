@@ -11,7 +11,14 @@ export interface DatabaseClient {
     findById: (id: string) => Promise<User | null>;
     findByEmail: (email: string) => Promise<User | null>;
     findByEmailAndPassword: (email: string, passwordHash: string) => Promise<User | null>;
-    findAll: () => Promise<UserWithSubscriptions[]>;
+    findAll: (options?: {
+      page?: number;
+      pageSize?: number;
+      searchName?: string;
+      filterPlan?: string;
+      filterStatus?: string;
+    }) => Promise<{ users: UserWithSubscriptions[]; total: number }>;
+
     create: (user: Omit<User, 'id' | 'createdAt'>) => Promise<User>;
     update: (id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>) => Promise<User>;
     delete: (id: string) => Promise<void>;
