@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Person, Receipt, Settings, CreditCard, Logout } from '@mui/icons-material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -14,8 +14,10 @@ import {
   Typography,
   Divider,
   styled,
+  Avatar,
 } from '@mui/material';
 import { signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
 interface SidebarLinkProps {
   href: string;
@@ -80,6 +82,13 @@ const DashboardSidebar = () => {
   const handleLogout = () => {
     signOut({ callbackUrl: '/' });
   };
+  const session = useSession();
+
+  const getProfileIcon = useCallback(() => {
+    const url = session.data?.user?.image ?? undefined;
+    return <Avatar src={url} alt="User Avatar" />;
+  }, [session]);
+
   return (
     <Drawer
       variant="permanent"
@@ -96,10 +105,11 @@ const DashboardSidebar = () => {
         },
       }}
     >
-      <SidebarHeader>
+      <SidebarHeader justifyContent={'space-between'}>
         <Typography variant="h5" fontWeight={600} color="grey.300">
           SaaS App
         </Typography>
+        {getProfileIcon()}
       </SidebarHeader>
 
       <Box sx={{ p: 2, flex: 1, overflowY: 'auto' }}>

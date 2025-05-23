@@ -16,13 +16,8 @@ const getRedirectPathForRole = (role: string): string => {
   }
 };
 
-const hasRole = (userOrToken: unknown): userOrToken is { id: string; role: UserRole } => {
-  return (
-    typeof userOrToken === 'object' &&
-    userOrToken !== null &&
-    'role' in userOrToken &&
-    'id' in userOrToken
-  );
+const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
+  return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
 };
 
 const providers: Provider[] = [
@@ -83,18 +78,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   providers,
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user && hasRole(user)) {
         token.id = user.id;
         token.role = user.role;
       }
+
+      if (trigger === 'update') {
+        token.image = session.user.image;
+      }
+
       return token;
     },
     async session({ session, token }) {
-      if (token && hasRole(token)) {
-        session.user.id = token.id;
-        session.user.role = token.role;
+      session.user.id = token.id as string;
+
+      if (token.image) {
+        session.user.image = token.image as string;
       }
+
       return session;
     },
   },
