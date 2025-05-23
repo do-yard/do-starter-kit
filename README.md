@@ -67,6 +67,8 @@ The following environment variables are required:
    DATABASE_URL=postgres://username:password@host:port/database
    ```
    - This will be automatically configured if you create a DigitalOcean Managed Database
+   - For details on setting up the database, see the [Database Guide](./docs/database.md).
+
 
 2. **NextAuth Environment Variables**:
    ```
@@ -83,10 +85,7 @@ The following environment variables are required:
    SPACES_ENDPOINT=your-region.digitaloceanspaces.com
    SPACES_BUCKET=your-bucket-name
    ```
-   - Get these values from your DigitalOcean Spaces setup (see [storage.md](./storage.md))
-
-
-For details on setting up storage, see the [Storage Guide](./docs/storage.md).
+   - Get these values from your DigitalOcean Spaces setup (see [storage.md](./docs/storage.md))
 
 ## Local Development
 
