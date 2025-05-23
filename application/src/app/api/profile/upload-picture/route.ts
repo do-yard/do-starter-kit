@@ -40,13 +40,24 @@ export async function POST(request: NextRequest) {
 
     // Upload the file
     try {
+      const db = createDatabaseClient();
+      const dbUser = await db.user.findById(userId);
+
+      if (!dbUser) {
+        return NextResponse.json({ error: "User doesn't exist" }, { status: 401 });
+      }
+      const imageName = dbUser.image?.split('/')[5].split('?')[0];
+
+      if (imageName) {
+        await storageService.deleteFile(userId, imageName);
+      }
+
       const uploadedFileName = await storageService.uploadFile(userId, fileName, file, {
-        public: true,
+        ACL: 'public-read',
       });
-      const fileUrl = await storageService.getFileUrl(userId, fileName);
+      const fileUrl = await storageService.getFileUrl(userId, uploadedFileName);
 
       //Save the file URL to the database
-      const db = createDatabaseClient();
       const user = await db.user.findById(userId);
 
       if (!user) {

@@ -43,7 +43,7 @@ export class SpacesStorageService implements StorageService {
     userId: string,
     fileName: string,
     file: File,
-    options?: { public: boolean }
+    { ACL = 'private' }: { ACL?: 'public-read' | 'private' }
   ): Promise<string> {
     const fileBuffer = await file.arrayBuffer();
 
@@ -52,7 +52,7 @@ export class SpacesStorageService implements StorageService {
       Key: this.getFilePath(userId, fileName),
       Body: Buffer.from(fileBuffer),
       ContentType: file.type,
-      ACL: options?.public ? 'public-read' : 'private',
+      ACL,
     });
 
     await this.client.send(command);

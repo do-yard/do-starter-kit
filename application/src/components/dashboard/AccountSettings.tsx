@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
-import { Box, Typography, TextField, Button, styled } from '@mui/material';
+import { Box, Typography, TextField, Button, styled, CircularProgress } from '@mui/material';
 import Paper from '../common/Paper';
 import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
@@ -25,6 +25,7 @@ export default function AccountSettings() {
     profileImage: null as File | null,
   });
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const session = useSession();
 
@@ -37,10 +38,17 @@ export default function AccountSettings() {
     async (e: React.FormEvent) => {
       e.preventDefault();
       setUploadError(null);
+      setIsLoading(true);
 
       try {
         const formDataToSubmit = new FormData();
-        formDataToSubmit.append('file', formData.profileImage!);
+
+        if (formData.profileImage === null) {
+          setUploadError('Please select a profile image before submitting');
+          return;
+        }
+
+        formDataToSubmit.append('file', formData.profileImage);
 
         //for now just update the picture
         const response = await fetch('/api/profile/upload-picture', {
@@ -62,8 +70,10 @@ export default function AccountSettings() {
           user.image = json.url;
           session.update({ user: user });
         }
+        setIsLoading(false);
       } catch (error) {
         setUploadError((error as Error).message || 'An error occurred while uploading the image.');
+        setIsLoading(false);
       }
     },
     [formData, session]
@@ -210,7 +220,9 @@ export default function AccountSettings() {
               </Box>
             </Box>
 
-            <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 4 }}>
+            <Box
+              sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', mt: 4 }}
+            >
               <Button
                 type="submit"
                 variant="contained"
@@ -225,10 +237,12 @@ export default function AccountSettings() {
                   padding: '8px 16px',
                   fontWeight: 500,
                   fontSize: '0.875rem',
+                  marginRight: 2,
                 }}
               >
                 Save Changes
               </Button>
+              {isLoading ? <CircularProgress /> : null}
             </Box>
           </form>
         </Box>
