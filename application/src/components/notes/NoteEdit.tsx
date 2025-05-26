@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Paper, styled, CircularProgress } from '@mui/material';
-import { NotesApiClient } from 'lib/api/NotesApiClient';
+import { NotesApiClient } from 'lib/api/notes';
 
 const apiClient = new NotesApiClient();
 

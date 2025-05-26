@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import CreateNote from 'components/notes/CreateNote';
-import { NotesApiClient } from 'lib/api/NotesApiClient';
+import { NotesApiClient } from 'lib/api/notes';
 
 const CreateNotePage = () => {
   const router = useRouter();

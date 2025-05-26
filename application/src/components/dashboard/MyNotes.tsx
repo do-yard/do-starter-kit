@@ -23,7 +23,7 @@ import {
 import { SxProps, Theme } from '@mui/material/styles';
 import Paper from '../common/Paper';
 import { Add, Search, List, GridView, Edit, Save } from '@mui/icons-material';
-import { Note, NotesApiClient } from 'lib/api/NotesApiClient';
+import { Note, NotesApiClient } from 'lib/api/notes';
 
 // Styled components
 const StyledTableCell = styled(TableCell)(({ theme }) => ({

@@ -3,7 +3,7 @@
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import NoteEdit from 'components/notes/NoteEdit';
-import { NotesApiClient } from 'lib/api/NotesApiClient';
+import { NotesApiClient } from 'lib/api/notes';
 
 const EditNotePage = () => {
   const params = useParams();

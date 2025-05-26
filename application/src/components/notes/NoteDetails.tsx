@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button, Paper, styled, CircularProgress } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
-import { NotesApiClient } from 'lib/api/NotesApiClient';
+import { NotesApiClient } from 'lib/api/notes';
 
 const apiClient = new NotesApiClient();
 
