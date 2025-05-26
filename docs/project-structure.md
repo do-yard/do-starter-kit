@@ -43,7 +43,12 @@ app/
 │   └── dashboard/           # Authenticated dashboard area
 │       ├── layout.tsx       # Dashboard layout
 │       ├── page.tsx         # Dashboard index page
-│       └── account/         # User account settings
+│       ├── account/         # User account settings
+│       └── my-notes/        # User's notes list page
+│       └── notes/           # Notes CRUD routes
+│           ├── [id]/        # Note details and edit
+│           │   └── edit/    # Note edit page
+│           └── new/         # Create note page
 ├── (public)/                # Publicly accessible routes
 │   ├── layout.tsx           # Public layout
 │   ├── page.tsx             # Homepage
@@ -52,7 +57,9 @@ app/
 └── api/                     # API routes (serverless functions)
     ├── auth/                # Authentication endpoints
     ├── health/              # Health check endpoint
-    └── profile/             # User profile endpoints
+    ├── profile/             # User profile endpoints
+    └── notes/               # Notes API endpoints
+        └── [id]/            # Single note API endpoints
 ```
 
 ### Components (`src/components/`)
@@ -65,6 +72,7 @@ components/
 ├── dashboard/               # Dashboard-specific components
 ├── Footer/                  # Site footer
 ├── NavBar/                  # Navigation bar
+├── notes/                   # Note-related components (create, edit, details)
 ├── public-view/             # Components for public pages
 └── Theme/                   # Theming components
 ```
