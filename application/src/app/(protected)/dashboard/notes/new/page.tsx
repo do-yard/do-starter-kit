@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import CreateNote from '../../../../../components/notes/CreateNote';
-import { ApiClient } from '../../../../../lib/apiClient';
+import { ApiClient } from 'lib/apiClient';
+import CreateNote from 'components/notes/CreateNote';
 
 const CreateNotePage = () => {
   const router = useRouter();

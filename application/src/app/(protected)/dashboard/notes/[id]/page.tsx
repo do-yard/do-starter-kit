@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import NoteDetail from '../../../../../components/notes/NoteDetail';
+import NoteDetail from 'components/notes/NoteDetails';
 
 const NotePage = () => {
   const params = useParams();

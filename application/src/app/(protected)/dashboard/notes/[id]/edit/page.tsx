@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import NoteEdit from '../../../../../../components/notes/NoteEdit';
-import { ApiClient } from '../../../../../../lib/apiClient';
+import { ApiClient } from 'lib/apiClient';
+import NoteEdit from 'components/notes/NoteEdit';
 
 const apiClient = new ApiClient();
 
