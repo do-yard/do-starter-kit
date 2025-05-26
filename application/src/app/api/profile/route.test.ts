@@ -7,7 +7,7 @@ jest.mock('uuid', () => ({
 const mockUploadFile = jest.fn();
 const mockGetFileUrl = jest.fn();
 const mockDeleteFile = jest.fn();
-jest.mock('../../../../services/storage/storage', () => ({
+jest.mock('../../../services/storage/storage', () => ({
   createStorageService: () => ({
     uploadFile: mockUploadFile,
     getFileUrl: mockGetFileUrl,
@@ -17,20 +17,20 @@ jest.mock('../../../../services/storage/storage', () => ({
 
 // Mock auth
 const mockAuth = jest.fn();
-jest.mock('../../../../lib/auth', () => ({
+jest.mock('../../../lib/auth', () => ({
   auth: async () => mockAuth(),
 }));
 
 // Mock url helper
 const mockGetFileNameFromUrl = jest.fn();
-jest.mock('../../../../helpers/fileName', () => ({
+jest.mock('../../../helpers/fileName', () => ({
   getFileNameFromUrl: () => mockGetFileNameFromUrl(),
 }));
 
 // Mock database client
 const mockFindById = jest.fn();
 const mockUpdate = jest.fn();
-jest.mock('../../../../services/database/database', () => ({
+jest.mock('../../../services/database/database', () => ({
   createDatabaseClient: () => ({
     user: {
       findById: mockFindById,
