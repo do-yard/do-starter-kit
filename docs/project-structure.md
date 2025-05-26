@@ -62,6 +62,8 @@ app/
         └── [id]/            # Single note API endpoints
 ```
 
+> In the notes section, both on pages and API, you can add your own functionality
+
 ### Components (`src/components/`)
 
 Organized by feature area:
