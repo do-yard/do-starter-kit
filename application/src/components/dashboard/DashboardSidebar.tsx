@@ -133,7 +133,7 @@ const DashboardSidebar = () => {
           <SidebarLink href="/dashboard/billing" icon={<CreditCard fontSize="small" />}>
             Billing
           </SidebarLink>
-          <SidebarLink href="" onClick={handleLogout} icon={<Logout fontSize="small" />}>
+          <SidebarLink href="#" onClick={handleLogout} icon={<Logout fontSize="small" />}>
             Logout
           </SidebarLink>
         </List>
