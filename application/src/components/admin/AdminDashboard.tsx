@@ -29,7 +29,7 @@ import {
   CircularProgress,
   Pagination,
 } from '@mui/material';
-import { ApiClient } from '../../lib/apiClient';
+import { ApiClient } from '../../lib/api/users';
 import { UserWithSubscriptions } from '../../types';
 import Toast from '../common/Toast';
 

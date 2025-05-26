@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '../../../lib/auth';
 import { createDatabaseClient } from 'services/database/database';
-import { RouteHandler, User } from 'types';
+import { RouteHandler } from 'types';
 
 const getHandler: RouteHandler = async (request: NextRequest) => {
   try {
