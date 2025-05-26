@@ -155,6 +155,7 @@ For detailed documentation on all aspects of this starter kit:
 - **[Development Guide](./docs/development-guide.md)** - Local development workflow
 - **[Database Guide](./docs/database.md)** - Database setup and management
 - **[Storage Guide](./docs/storage.md)** - DigitalOcean Spaces configuration
+- **[Stripe Setup](./docs/stripe-setup.md)** - Stripe setup and configuration
 
 To learn more about App Platform and how to manage your applications, see [DigitalOcean App Platform documentation](https://www.digitalocean.com/docs/app-platform/).
 

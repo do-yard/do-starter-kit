@@ -1,0 +1,27 @@
+# Setting up Stripe
+
+This sample application uses Stripe to manage user subscriptions. The subscription is made of a product and two prices/plans. We offer a script to create these resources automatically but first, you will need to generate the required Stripe credentials. Follow these steps:
+
+1. Create a [Stripe](https://stripe.com/) account or log in if you already have one.
+2. Got to your dashboard and locate the API keys card shown there.
+3. Copy the **Publishable key** and the **Secret key** and store them in a safe place.
+
+## Create Stripe resources
+
+This sample presents you with a PowerShell script to create the required resources in Stripe. Follow these steps:
+
+1. Open a `powershell` terminal and cd in to the `./scripts` directory
+2. Run the script with the command `./stripe_setup.ps1`
+
+The script will ask you for the Stripe's key you created before:
+
+1. Enter your Stripe public key and press enter.
+2. Enter your Stripe secret key and press enter.
+3. Enter a name for your product and press enter.
+
+After this the script will create a product with your product name and two prices, one free and another pro, linked to that product.
+In the script outputs you will see the respective IDs for the product and the prices. _Use this IDs in the deployment templates as the required environment variables_:
+
+- BILLING_STRIPE_PRODUCTID
+- BILLING_STRIPE_PRICEID_PRO
+- BILLING_STRIPE_PRICEID_FREE

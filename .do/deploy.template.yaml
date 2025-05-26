@@ -50,6 +50,12 @@ spec:
           value: "${APP_URL}"
         - key: "AUTH_TRUST_HOST"
           value: "true"
+        - key: "BILLING_STRIPE_PRODUCTID"
+          value: ""
+        - key: "BILLING_STRIPE_PRICEID_PRO"
+          value: ""
+        - key: "BILLING_STRIPE_PRICEID_FREE"
+          value: ""
 
   # Configuration for databases
   databases:
