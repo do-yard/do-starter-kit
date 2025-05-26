@@ -1,6 +1,8 @@
 'use client';
 
+import { NavigatingContext } from 'context/Navigation';
 import { useRouter } from 'next/navigation';
+import { useContext } from 'react';
 
 export const usePrefetchRouter = () => {
   const router = useRouter();
@@ -16,3 +18,5 @@ export const usePrefetchRouter = () => {
 
   return { navigate };
 };
+
+export const useNavigating = () => useContext(NavigatingContext);

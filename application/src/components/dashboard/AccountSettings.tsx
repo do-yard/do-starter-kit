@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Box, Typography, TextField, Button, styled, CircularProgress } from '@mui/material';
 import Paper from '../common/Paper';
 import { useDropzone } from 'react-dropzone';
@@ -31,6 +31,22 @@ export default function AccountSettings() {
 
   const session = useSession();
 
+  useEffect(() => {
+    if (!session.data?.user) {
+      return;
+    }
+
+    if (formData.name !== '') {
+      return;
+    }
+
+    setFormData({
+      name: session.data?.user?.name ?? '',
+      email: session.data?.user?.email ?? '',
+      profileImage: null,
+    });
+  }, [formData.name, session]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -45,17 +61,17 @@ export default function AccountSettings() {
       try {
         const formDataToSubmit = new FormData();
 
-        if (formData.profileImage === null) {
-          setUploadError('Please select a profile image before submitting');
-          setIsLoading(false);
-          return;
+        if (formData.profileImage !== null) {
+          formDataToSubmit.append('file', formData.profileImage);
         }
 
-        formDataToSubmit.append('file', formData.profileImage);
+        if (formData.name) {
+          formDataToSubmit.append('name', formData.name);
+        }
 
         //for now just update the picture
-        const response = await fetch('/api/profile/upload-picture', {
-          method: 'POST',
+        const response = await fetch('/api/profile', {
+          method: 'PATCH',
           body: formDataToSubmit,
         });
 
@@ -67,12 +83,9 @@ export default function AccountSettings() {
 
         const json = await response.json();
 
-        const user = session.data?.user;
+        session.update({ user: { name: json.name, image: json.image } });
+        setFormData((prev) => ({ ...prev, profileImage: null, name: json.name }));
 
-        if (user) {
-          user.image = json.url;
-          session.update({ user: user });
-        }
         setIsLoading(false);
         setShowSuccess(true);
         setTimeout(() => setShowSuccess(false), 3000);
@@ -141,8 +154,9 @@ export default function AccountSettings() {
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#6b7280',
                       },
-                      '&.Mui-disabled': {
-                        color: '#9ca3af',
+                      '& .Mui-disabled': {
+                        WebkitTextFillColor: '#fff',
+                        color: '#fff',
                         backgroundColor: 'rgba(55,65,81,0.2)',
                       },
                     },
@@ -178,7 +192,7 @@ export default function AccountSettings() {
                   onChange={handleInputChange}
                   fullWidth
                   variant="outlined"
-                  disabled={isLoading}
+                  disabled={true}
                   InputProps={{
                     sx: {
                       color: isLoading ? '#9ca3af' : '#fff',
@@ -191,9 +205,14 @@ export default function AccountSettings() {
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#6b7280',
                       },
-                      '&.Mui-disabled': {
-                        color: '#9ca3af',
+                      '& .Mui-disabled': {
+                        WebkitTextFillColor: '#fff',
+                        color: '#fff',
                         backgroundColor: 'rgba(55,65,81,0.2)',
+                      },
+                      '&.MuiInputBase-input::placeholder': {
+                        color: '#6b7280',
+                        opacity: 1,
                       },
                     },
                   }}
@@ -201,7 +220,7 @@ export default function AccountSettings() {
                     '& .MuiInputLabel-root': {
                       color: '#9ca3af',
                     },
-                    '& .MuiInputBase-input::placeholder': {
+                    '&.MuiInputBase-input::placeholder': {
                       color: '#6b7280',
                       opacity: 1,
                     },

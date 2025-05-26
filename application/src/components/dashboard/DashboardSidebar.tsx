@@ -22,9 +22,10 @@ interface SidebarLinkProps {
   href: string;
   icon: React.ReactNode;
   children: React.ReactNode;
+  onClick?: () => void;
 }
 
-const SidebarLink = ({ href, icon, children }: SidebarLinkProps) => {
+const SidebarLink = ({ href, icon, children, onClick }: SidebarLinkProps) => {
   const pathname = usePathname();
   const isActive = pathname === href;
 
@@ -32,7 +33,9 @@ const SidebarLink = ({ href, icon, children }: SidebarLinkProps) => {
     <ListItem disablePadding sx={{ mb: 0.5 }}>
       <ListItemButton
         component={Link}
+        prefetch={true}
         href={href}
+        onClick={onClick}
         selected={isActive}
         sx={{
           borderRadius: 1,
@@ -75,6 +78,9 @@ const SidebarHeader = styled(Box)(({ theme }) => ({
 }));
 
 const DashboardSidebar = () => {
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' });
+  };
   const session = useSession();
 
   const getProfileIcon = useCallback(() => {
@@ -131,24 +137,9 @@ const DashboardSidebar = () => {
           <SidebarLink href="/dashboard/billing" icon={<CreditCard fontSize="small" />}>
             Billing
           </SidebarLink>
-          <ListItem disablePadding sx={{ mb: 0.5 }}>
-            <ListItemButton
-              onClick={() => signOut({ callbackUrl: '/' })}
-              sx={{
-                borderRadius: 1,
-                py: 1,
-                px: 1.5,
-                color: 'grey.300',
-                '&:hover': { bgcolor: 'grey.800', color: 'grey.50' },
-                fontSize: 14,
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 36, color: 'inherit' }}>
-                <Logout fontSize="small" />
-              </ListItemIcon>
-                Logout
-            </ListItemButton>
-          </ListItem>
+          <SidebarLink href="#" onClick={handleLogout} icon={<Logout fontSize="small" />}>
+            Logout
+          </SidebarLink>
         </List>
       </Box>
     </Drawer>

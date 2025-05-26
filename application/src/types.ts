@@ -6,7 +6,7 @@ export interface User {
   passwordHash: string;
   image: string | null;
 
-  role: Role;
+  role: UserRole;
   createdAt: Date;
 }
 
@@ -29,7 +29,7 @@ export interface Note {
 }
 
 // Enums for Role, SubscriptionStatus, and SubscriptionPlan
-export type Role = 'USER' | 'ADMIN';
+export type UserRole = 'USER' | 'ADMIN';
 
 export type SubscriptionStatus = 'ACTIVE' | 'CANCELED' | 'PENDING';
 
