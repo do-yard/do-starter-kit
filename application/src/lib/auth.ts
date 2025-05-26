@@ -6,8 +6,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from './prisma';
 import { hashPassword, verifyPassword } from 'helpers/hash';
 import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
-import { User } from 'types';
-import { UserRole } from 'types';
+import { User, UserRole } from 'types';
 
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
@@ -91,7 +90,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (token && hasRole(token)) {
         session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        session.user.role = token.role as UserRole;
       }
     
       session.user.email = token.email as string;
