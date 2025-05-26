@@ -1,11 +1,12 @@
 import { getFileNameFromUrl } from 'helpers/fileName';
-import { auth } from 'lib/auth';
+import { auth, withAuth } from 'lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
 import { createStorageService } from 'services/storage/storage';
 import { v4 as uuidv4 } from 'uuid';
+import { RouteHandler } from 'types';
 
-export async function PATCH(request: NextRequest) {
+const patchHandler: RouteHandler = async (request: NextRequest) => {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
@@ -76,3 +77,5 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const PATCH = withAuth(patchHandler);
