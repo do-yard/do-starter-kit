@@ -14,9 +14,6 @@ export async function middleware(request: NextRequest) {
   const isLoggedIn = !!session?.user;
   const role = session?.user?.role as UserRole;
 
-  console.log('Middleware session:', session);
-  console.log('Middleware pathname:', pathname);
-
   if (pathname === '/' && isLoggedIn && role) {
     return NextResponse.redirect(new URL(ROLE_HOME_URL[role], request.url));
   }
