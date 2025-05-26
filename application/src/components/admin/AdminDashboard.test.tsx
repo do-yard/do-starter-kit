@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AdminDashboard from './AdminDashboard';
 
 // Update mock to support total and pageSize
-jest.mock('../../lib/apiClient', () => {
+jest.mock('../../lib/api/users', () => {
   return {
     ApiClient: jest.fn().mockImplementation(() => ({
       getUsers: jest.fn().mockImplementation((args: Record<string, unknown>) => {
