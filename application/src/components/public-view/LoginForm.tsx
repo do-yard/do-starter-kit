@@ -26,9 +26,9 @@ const LoginForm: React.FC = () => {
       password,
     });
 
+    setNavigating(false);
     if (!res || res.error) {
       setError(res?.code || 'Something went wrong');
-      setNavigating(false);
     } else if (res.ok) {
       navigate('/');
     }

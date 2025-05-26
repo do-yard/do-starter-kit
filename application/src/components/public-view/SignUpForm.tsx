@@ -17,17 +17,15 @@ const SignUpForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    setNavigating(true);
-
     e.preventDefault();
     setError(null);
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
-      setNavigating(false);
       return;
     }
 
+    setNavigating(true);
     const res = await signIn('credentials', {
       redirect: false,
       email,
@@ -36,9 +34,9 @@ const SignUpForm: React.FC = () => {
       isSignUp: 'true',
     });
 
+    setNavigating(false);
     if (!res || res.error) {
       setError(res?.code || 'Something went wrong');
-      setNavigating(false);
     } else if (res.ok) {
       navigate('/');
     }
