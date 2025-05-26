@@ -115,15 +115,3 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     newUser: '/signup',
   },
 });
-
-// Extend NextAuth types to include 'role' on session.user
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      email: string;
-      role: string;
-      image: string;
-    }
-  }
-}
