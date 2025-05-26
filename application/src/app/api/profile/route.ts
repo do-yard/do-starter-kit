@@ -1,24 +1,18 @@
 import { getFileNameFromUrl } from 'helpers/fileName';
-import { auth, withAuth } from 'lib/auth';
+import { withAuth } from '../../../lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
 import { createStorageService } from 'services/storage/storage';
 import { v4 as uuidv4 } from 'uuid';
-import { RouteHandler } from 'types';
+import { RouteHandler, User } from 'types';
 
-const patchHandler: RouteHandler = async (request: NextRequest) => {
+const patchHandler: RouteHandler = async (request: NextRequest, user: User ) => {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const newName = formData.get('name') as string | null;
 
-    // Get userId from authjs session
-    const session = await auth();
-    const userId = session?.user?.id;
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const userId = user?.id;
     const db = createDatabaseClient();
     const dbUser = await db.user.findById(userId);
 
