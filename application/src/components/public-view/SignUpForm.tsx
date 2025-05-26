@@ -5,10 +5,11 @@ import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/mat
 import Link from 'next/link';
 import FormButton from './FormButton';
 import { signIn } from 'next-auth/react';
-import { usePrefetchRouter } from 'hooks/navigation';
+import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 
 const SignUpForm: React.FC = () => {
   const { navigate } = usePrefetchRouter();
+  const { setNavigating } = useNavigating();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +25,7 @@ const SignUpForm: React.FC = () => {
       return;
     }
 
+    setNavigating(true);
     const res = await signIn('credentials', {
       redirect: false,
       email,
@@ -32,10 +34,11 @@ const SignUpForm: React.FC = () => {
       isSignUp: 'true',
     });
 
+    setNavigating(false);
     if (!res || res.error) {
       setError(res?.code || 'Something went wrong');
     } else if (res.ok) {
-      navigate('/dashboard');
+      navigate('/');
     }
   };
 

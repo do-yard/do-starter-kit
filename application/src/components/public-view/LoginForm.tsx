@@ -5,7 +5,7 @@ import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/mat
 import Link from 'next/link';
 import FormButton from './FormButton';
 import { signIn } from 'next-auth/react';
-import { usePrefetchRouter } from 'hooks/navigation';
+import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 
 const LoginForm: React.FC = () => {
   const { navigate } = usePrefetchRouter();
@@ -13,8 +13,10 @@ const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const { setNavigating } = useNavigating();
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setNavigating(true);
     e.preventDefault();
     setError(null);
 
@@ -24,10 +26,11 @@ const LoginForm: React.FC = () => {
       password,
     });
 
+    setNavigating(false);
     if (!res || res.error) {
       setError(res?.code || 'Something went wrong');
     } else if (res.ok) {
-      navigate('/dashboard');
+      navigate('/');
     }
   };
 
