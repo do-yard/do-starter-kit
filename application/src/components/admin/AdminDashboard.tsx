@@ -37,7 +37,7 @@ const statusColor = (status: string) => {
   switch (status) {
     case 'ACTIVE':
       return 'success';
-    case 'Pending':
+    case 'PENDING':
       return 'info';
     case 'CANCELED':
       return 'default';
