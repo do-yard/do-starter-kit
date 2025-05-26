@@ -1,4 +1,6 @@
-# DigitalOcean Spaces Storage Setup
+# 📂 DigitalOcean Spaces Storage Setup
+
+This guide explains how to set up and configure DigitalOcean Spaces storage for file uploads in the SaaS Starter Kit.
 
 ## 1. Create a Spaces Bucket in DigitalOcean
 
@@ -41,11 +43,10 @@ For DigitalOcean Apps and local environments, the environment variables for Spac
 
 ```
 STORAGE_PROVIDER=Spaces
-SPACES_KEY=your-access-key-id-here
-SPACES_SECRET=your-secret-key-here
-SPACES_ENDPOINT=https://nyc3.digitaloceanspaces.com
-SPACES_REGION=nyc3
-SPACES_BUCKET=my-app-bucket
+SPACES_KEY=your-spaces-access-key
+SPACES_SECRET=your-spaces-secret-key
+SPACES_ENDPOINT=your-region.digitaloceanspaces.com
+SPACES_BUCKET=your-bucket-name
 ```
 
 - Replace `your-access-key-here` and `your-secret-key-here` with the values you generated.
