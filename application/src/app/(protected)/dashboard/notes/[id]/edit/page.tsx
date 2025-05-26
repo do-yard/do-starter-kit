@@ -2,15 +2,14 @@
 
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ApiClient } from 'lib/apiClient';
 import NoteEdit from 'components/notes/NoteEdit';
-
-const apiClient = new ApiClient();
+import { NotesApiClient } from 'lib/api/NotesApiClient';
 
 const EditNotePage = () => {
   const params = useParams();
   const router = useRouter();
   const noteId = params.id as string;
+  const apiClient = new NotesApiClient();
 
   const handleSave = async (note: { id: string; title: string; content: string }) => {
     try {

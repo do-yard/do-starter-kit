@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Paper, styled, CircularProgress } from '@mui/material';
-import { ApiClient } from '../../lib/apiClient';
+import { NotesApiClient } from 'lib/api/NotesApiClient';
 
-const apiClient = new ApiClient();
+const apiClient = new NotesApiClient();
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,

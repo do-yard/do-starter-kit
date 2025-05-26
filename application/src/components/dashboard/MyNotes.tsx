@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import { ApiClient, Note } from '../../lib/apiClient';
 import {
   Box,
   Typography,
@@ -24,6 +23,7 @@ import {
 import { SxProps, Theme } from '@mui/material/styles';
 import Paper from '../common/Paper';
 import { Add, Search, List, GridView, Edit, Save } from '@mui/icons-material';
+import { Note, NotesApiClient } from 'lib/api/NotesApiClient';
 
 // Styled components
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -87,7 +87,7 @@ const StyledSelect = styled(Select)(({ theme }) => ({
 }));
 
 // Create an instance of the ApiClient
-const apiClient = new ApiClient();
+const apiClient = new NotesApiClient();
 
 const MyNotes: React.FC = () => {
   const [viewMode, setViewMode] = useState('list');
