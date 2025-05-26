@@ -6,6 +6,11 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from './prisma';
 import { hashPassword, verifyPassword } from 'helpers/hash';
 import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
+import { UserRole } from 'types';
+
+const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
+  return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
+};
 
 const providers: Provider[] = [
   Credentials({
@@ -66,21 +71,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers,
   callbacks: {
     async jwt({ token, user, trigger, session }) {
-      if (user) {
+      if (user && hasRole(user)) {
         token.id = user.id;
+        token.role = user.role;
       }
 
       if (trigger === 'update') {
         token.image = session.user.image;
+        token.name = session.user.name;
       }
 
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id as string;
+      if (token && hasRole(token)) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as UserRole;
+      }
 
       if (token.image) {
         session.user.image = token.image as string;
+      }
+
+      if (token.name) {
+        session.user.name = token.name as string;
       }
 
       return session;

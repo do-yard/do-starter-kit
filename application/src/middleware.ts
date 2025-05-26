@@ -1,18 +1,34 @@
-import { auth } from 'lib/auth';
 import { NextResponse, NextRequest } from 'next/server';
+import { auth } from 'lib/auth';
+import { UserRole } from 'types';
+
+const ROLE_HOME_URL: Record<UserRole, string> = {
+  USER: '/dashboard',
+  ADMIN: '/dashboard',
+};
 
 export async function middleware(request: NextRequest) {
   const session = await auth();
+  const { pathname } = request.nextUrl;
 
-  if (!session?.user) {
-    const loginUrl = new URL('/login', request.url);
+  const isLoggedIn = !!session?.user;
+  const role = session?.user?.role as UserRole;
 
-    return NextResponse.redirect(loginUrl);
+  if (pathname === '/' && isLoggedIn && role) {
+    return NextResponse.redirect(new URL(ROLE_HOME_URL[role], request.url));
+  }
+
+  if (pathname.startsWith('/dashboard') && !isLoggedIn) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  if (isLoggedIn && role && (pathname === '/login' || pathname === '/signup')) {
+    return NextResponse.redirect(new URL(ROLE_HOME_URL[role] ?? '/', request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/', '/login', '/signup', '/dashboard', '/dashboard/:path*'],
 };
