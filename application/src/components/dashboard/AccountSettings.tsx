@@ -195,7 +195,7 @@ export default function AccountSettings() {
                   disabled={true}
                   InputProps={{
                     sx: {
-                      color: '#fff',
+                      color: isLoading ? '#9ca3af' : '#fff',
                       '& .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#374151',
                       },

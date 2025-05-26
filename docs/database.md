@@ -1,19 +1,19 @@
-# Postgres Database setup Guide
+# 🗄️ Postgres Database Guide
 
-This document outlines best practices for configuring and connecting to PostgreSQL databases in this project, supporting both local development using Docker and production deployments via DigitalOcean Managed Databases.
+This guide provides detailed instructions for setting up and working with PostgreSQL databases for the SaaS Starter Kit, covering both local development with Docker and production deployments with DigitalOcean Managed Databases.
 
----
+![Database Architecture](./images/do-architecture-diagram.drawio.png)
 
-## 🧰 Prerequisites
+The architecture diagram above shows how the database integrates with other components in the SaaS Starter Kit.
+
+## Prerequisites
 
 Before you begin, ensure the following are available:
 
 - [Docker](https://www.docker.com/) and Docker Compose installed
 - Project cloned locally via Git
 
----
-
-## ⚙️ Environment Setup
+## Environment Setup
 
 ### Step 1: Define Environment Variables
 

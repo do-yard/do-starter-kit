@@ -1,14 +1,27 @@
-# Database configuration for your application
+# Database configuration
+DATABASE_PROVIDER=Postgres  # Supported: Postgres
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_kit_db  # Connection string for Prisma and app
 
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_kit_db
-
-# Auth.js configuration
-
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-nextauth-secret
-
-# PostgreSQL container configuration (required locally for Docker)
-
+# PostgreSQL container configuration (required locally for Docker Compose)
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=saas_kit_db
+POSTGRES_HOST=localhost  # Host for local Postgres (update if using Docker)
+POSTGRES_PORT=5432       # Port for local Postgres (update if using Docker)
+
+# Auth.js configuration
+NEXTAUTH_URL=http://localhost:3000  # Public URL of your app
+NEXTAUTH_SECRET=your-nextauth-secret  # Generate with `openssl rand -base64 32`
+
+# Storage configuration (DigitalOcean Spaces)
+STORAGE_PROVIDER=Spaces  # Supported: Spaces
+SPACES_KEY=your-access-key-id-here  # DigitalOcean Spaces Access Key
+SPACES_SECRET=your-secret-key-here  # DigitalOcean Spaces Secret Key
+SPACES_ENDPOINT=https://nyc3.digitaloceanspaces.com  # Spaces endpoint URL
+SPACES_REGION=nyc3  # Spaces region
+SPACES_BUCKET=my-app-bucket  # Spaces bucket name
+
+# (Optional) Additional configuration
+# LOG_LEVEL=info
+# EMAIL_PROVIDER=... # If using email features
+
