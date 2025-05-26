@@ -53,7 +53,7 @@ export async function PATCH(request: NextRequest) {
       const uploadedFileName = await storageService.uploadFile(userId, fileName, file, {
         ACL: 'public-read',
       });
-      const fileUrl = await storageService.getFileUrl(userId, uploadedFileName);
+      const fileUrl = (await storageService.getFileUrl(userId, uploadedFileName)).split('?')[0];
 
       const oldImageName = getFileNameFromUrl(dbUser.image);
 

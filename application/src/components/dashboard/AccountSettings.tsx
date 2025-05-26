@@ -32,12 +32,20 @@ export default function AccountSettings() {
   const session = useSession();
 
   useEffect(() => {
+    if (!session.data?.user) {
+      return;
+    }
+
+    if (formData.name !== '') {
+      return;
+    }
+
     setFormData({
       name: session.data?.user?.name ?? '',
       email: session.data?.user?.email ?? '',
       profileImage: null,
     });
-  }, [session]);
+  }, [formData.name, session]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -76,6 +84,7 @@ export default function AccountSettings() {
         const json = await response.json();
 
         session.update({ user: { name: json.name, image: json.image } });
+        setFormData((prev) => ({ ...prev, profileImage: null, name: json.name }));
 
         setIsLoading(false);
         setShowSuccess(true);
@@ -145,7 +154,8 @@ export default function AccountSettings() {
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#6b7280',
                       },
-                      '&. Mui-disabled': {
+                      '& .Mui-disabled': {
+                        WebkitTextFillColor: '#fff',
                         color: '#fff',
                         backgroundColor: 'rgba(55,65,81,0.2)',
                       },
@@ -200,13 +210,17 @@ export default function AccountSettings() {
                         color: '#fff',
                         backgroundColor: 'rgba(55,65,81,0.2)',
                       },
+                      '&.MuiInputBase-input::placeholder': {
+                        color: '#6b7280',
+                        opacity: 1,
+                      },
                     },
                   }}
                   sx={{
                     '& .MuiInputLabel-root': {
                       color: '#9ca3af',
                     },
-                    '& .MuiInputBase-input::placeholder': {
+                    '&.MuiInputBase-input::placeholder': {
                       color: '#6b7280',
                       opacity: 1,
                     },
