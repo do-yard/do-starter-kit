@@ -222,12 +222,13 @@ const Home = () => (
           variant="contained"
           href="/signup"
           component={Link}
+          prefetch={true}
           sx={{
             color: 'black',
             borderRadius: 16,
             bgcolor: 'white',
             '&:hover': { bgcolor: '#E9EAEF' },
-          }} // Only override color for this button
+          }}
         >
           Start Your Free Trial
         </Button>

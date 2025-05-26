@@ -24,6 +24,7 @@ const SignUpForm: React.FC = () => {
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
+      setNavigating(false);
       return;
     }
 

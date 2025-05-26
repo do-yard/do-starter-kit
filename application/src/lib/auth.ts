@@ -8,14 +8,6 @@ import { hashPassword, verifyPassword } from 'helpers/hash';
 import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
 import { UserRole } from 'types';
 
-const getRedirectPathForRole = (role: string): string => {
-  switch (role) {
-    case 'USER':
-    default:
-      return '/dashboard';
-  }
-};
-
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
 };
@@ -68,7 +60,7 @@ const providers: Provider[] = [
         throw new InvalidCredentialsError();
       }
 
-      return { ...user, redirectPath: getRedirectPathForRole(user.role) };
+      return user;
     },
   }),
 ];
@@ -91,7 +83,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id as string;
+      if (token && hasRole(token)) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as UserRole;
+      }
 
       if (token.image) {
         session.user.image = token.image as string;

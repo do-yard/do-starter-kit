@@ -1,8 +1,8 @@
-import { auth } from 'lib/auth';
 import { NextResponse, NextRequest } from 'next/server';
+import { auth } from 'lib/auth';
 import { UserRole } from 'types';
 
-export const ROLE_HOME_URL: Record<UserRole, string> = {
+const ROLE_HOME_URL: Record<UserRole, string> = {
   USER: '/dashboard',
   ADMIN: '/dashboard',
 };
@@ -12,22 +12,18 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isLoggedIn = !!session?.user;
-  const userRole = session?.user?.role as UserRole | undefined;
+  const role = session?.user?.role as UserRole;
 
-  if (pathname === '/' && isLoggedIn && userRole) {
-    const home = ROLE_HOME_URL[userRole] ?? '/dashboard';
-    const redirectUrl = new URL(home, request.url);
-    return NextResponse.redirect(redirectUrl);
+  if (pathname === '/' && isLoggedIn && role) {
+    return NextResponse.redirect(new URL(ROLE_HOME_URL[role], request.url));
   }
 
   if (pathname.startsWith('/dashboard') && !isLoggedIn) {
-    const loginUrl = new URL('/login', request.url);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (isLoggedIn && (pathname === '/login' || pathname === '/signup')) {
-    const rootUrl = new URL('/', request.url);
-    return NextResponse.redirect(rootUrl);
+  if (isLoggedIn && role && (pathname === '/login' || pathname === '/signup')) {
+    return NextResponse.redirect(new URL(ROLE_HOME_URL[role] ?? '/', request.url));
   }
 
   return NextResponse.next();
