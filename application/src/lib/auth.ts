@@ -28,6 +28,9 @@ const providers: Provider[] = [
           throw new InvalidCredentialsError();
         }
 
+        const userCount = await dbClient.user.count();
+        const isFirstUser = userCount === 0;
+
         const userExists = await dbClient.user.findByEmail(credentials.email as string);
         if (userExists) {
           throw new UserAlreadyExistsError();
@@ -40,7 +43,7 @@ const providers: Provider[] = [
           email: credentials.email as string,
           image: null,
           passwordHash: hashedPassword,
-          role: 'USER',
+          role: isFirstUser ? 'ADMIN' : 'USER',
         });
 
         return user;

@@ -18,11 +18,11 @@ export interface DatabaseClient {
       filterPlan?: string;
       filterStatus?: string;
     }) => Promise<{ users: UserWithSubscriptions[]; total: number }>;
-
     create: (user: Omit<User, 'id' | 'createdAt'>) => Promise<User>;
     update: (id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>) => Promise<User>;
     delete: (id: string) => Promise<void>;
-  };
+    count: () => Promise<number>;
+  }
   subscription: {
     findById: (id: string) => Promise<Subscription | null>;
     findByUserId: (userId: string) => Promise<Subscription[]>;

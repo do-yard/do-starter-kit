@@ -65,6 +65,9 @@ export class SqlDatabaseService implements DatabaseClient {
     delete: async (id: string): Promise<void> => {
       await prisma.user.delete({ where: { id } });
     },
+    count: async (): Promise<number> => {
+      return prisma.user.count();
+    }
   };
   subscription = {
     findById: async (id: string): Promise<Subscription | null> => {
