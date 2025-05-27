@@ -82,13 +82,23 @@ The following environment variables are required:
    - `NEXTAUTH_URL` should be your app's full URL (will be available after first deployment)
 
 3. **DigitalOcean Spaces Environment Variables**:
+
    ```
    SPACES_KEY=your-spaces-access-key
    SPACES_SECRET=your-spaces-secret-key
    SPACES_ENDPOINT=your-region.digitaloceanspaces.com
    SPACES_BUCKET=your-bucket-name
    ```
+
    - Get these values from your DigitalOcean Spaces setup (see [storage.md](./docs/storage.md))
+
+4. **Stripe Environment Variables**
+   ```
+   BILLING_STRIPE_PRODUCTID
+   BILLING_STRIPE_PRICEID_PRO
+   BILLING_STRIPE_PRICEID_FREE
+   ```
+   - Get these values from your Stripe setup (see [stripe-setup.md](./docs/stripe-setup.md))
 
 ## Local Development
 
