@@ -130,8 +130,8 @@ const components: ThemeOptions['components'] = {
       root: {
         backgroundImage: 'none',
         border: 'none',
-        backgroundColor: '#fff', // background.paper
-        color: 'rgba(0, 0, 0, 0.87)', // text.primary
+        //backgroundColor: '#fff', // background.paper
+        //color: 'rgba(0, 0, 0, 0.87)', // text.primary
       },
     },
   },

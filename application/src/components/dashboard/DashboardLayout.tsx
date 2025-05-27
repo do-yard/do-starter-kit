@@ -13,9 +13,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       sx={{
         display: 'flex',
         minHeight: '100vh',
-        width: '100%',
-        bgcolor: '#030712',
-        color: '#fff',
+        width: '100%'
       }}
       className="dashboard"
     >

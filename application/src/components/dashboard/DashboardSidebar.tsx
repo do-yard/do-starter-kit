@@ -41,10 +41,10 @@ const SidebarLink = ({ href, icon, children, onClick }: SidebarLinkProps) => {
           borderRadius: 1,
           py: 1,
           px: 1.5,
-          color: isActive ? 'grey.50' : 'grey.300',
-          bgcolor: isActive ? 'grey.800' : 'transparent',
+          color: isActive ? 'grey.50' : 'grey.800',
+          bgcolor: isActive ? 'grey.700' : 'transparent',
           '&:hover': {
-            bgcolor: 'grey.800',
+            bgcolor: 'grey.200',
           },
         }}
       >
@@ -74,7 +74,7 @@ const SidebarHeader = styled(Box)(({ theme }) => ({
   height: '3.5rem',
   padding: theme.spacing(0, 2),
   borderBottom: '1px solid',
-  borderColor: '#1f2937',
+  borderColor: '#e5e7eb',
 }));
 
 const DashboardSidebar = () => {
@@ -97,15 +97,13 @@ const DashboardSidebar = () => {
         '& .MuiDrawer-paper': {
           width: 256,
           boxSizing: 'border-box',
-          bgcolor: '#030712',
-          color: '#fff',
           borderRight: 1,
-          borderColor: '#1f2937',
+          borderColor: '#e5e7eb',
         },
       }}
     >
       <SidebarHeader justifyContent={'space-between'}>
-        <Typography variant="h5" fontWeight={600} color="grey.300">
+        <Typography variant="h5" fontWeight={600} color="grey.800">
           SaaS App
         </Typography>
         {getProfileIcon()}
@@ -122,7 +120,7 @@ const DashboardSidebar = () => {
         </List>
       </Box>
 
-      <Divider sx={{ borderColor: '#1f2937' }} />
+      <Divider sx={{ borderColor: '#e5e7eb' }} />
 
       <Box sx={{ p: 2 }}>
         <List sx={{ p: 0 }}>

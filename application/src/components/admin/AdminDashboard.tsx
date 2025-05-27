@@ -166,7 +166,7 @@ export default function AdminDashboard() {
         Admin Dashboard
       </Typography>
 
-      <Card variant="outlined" sx={{ mb: 4 }}>
+      <Card variant="outlined" sx={{ mb: 4 }} className="box-card-border">
         <CardHeader
           title={
             <Typography variant="h6" fontWeight="bold">

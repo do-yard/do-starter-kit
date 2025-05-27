@@ -43,7 +43,7 @@ const LoginForm: React.FC = () => {
       alignItems="center"
       bgcolor="#f3f4f6"
     >
-      <Card sx={{ width: '100%', maxWidth: 400, boxShadow: 2 }}>
+      <Card sx={{ width: '100%', maxWidth: 400, boxShadow: 0 }} className='box-card-border'>
         <Box display="flex" flexDirection="column" gap={1.5} p={3}>
           <Typography fontWeight="bold" variant="h5">
             Log In

@@ -106,16 +106,16 @@ export default function AccountSettings() {
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
-    <Box sx={{ width: '100%', color: '#fff', pt: 4 }}>
+    <Box sx={{ width: '100%', pt: 4 }}>
       <Box sx={{ maxWidth: '800px', mx: 'auto', mb: 4 }}>
-        <Typography variant="h3" fontWeight="bold" sx={{ color: '#fff' }}>
+        <Typography variant="h3" fontWeight="bold">
           Account Settings
         </Typography>
       </Box>
 
       <Paper>
         <Box sx={{ p: 3, width: '100%' }}>
-          <Typography variant="h4" fontWeight={600} sx={{ mb: 2, color: '#fff' }}>
+          <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
             Profile Information
           </Typography>
           <Typography variant="body2" color="#9ca3af" sx={{ mb: 3 }}>
@@ -129,7 +129,6 @@ export default function AccountSettings() {
                   htmlFor="name"
                   variant="body2"
                   fontWeight={500}
-                  sx={{ color: '#fff' }}
                 >
                   Name
                 </Typography>
@@ -153,6 +152,7 @@ export default function AccountSettings() {
                       },
                       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                         borderColor: '#6b7280',
+                        backgroundColor: 'rgb(218, 218, 218)',
                       },
                       '& .Mui-disabled': {
                         WebkitTextFillColor: '#fff',
@@ -179,7 +179,6 @@ export default function AccountSettings() {
                   htmlFor="email"
                   variant="body2"
                   fontWeight={500}
-                  sx={{ color: '#fff' }}
                 >
                   Email
                 </Typography>
@@ -206,8 +205,6 @@ export default function AccountSettings() {
                         borderColor: '#6b7280',
                       },
                       '& .Mui-disabled': {
-                        WebkitTextFillColor: '#fff',
-                        color: '#fff',
                         backgroundColor: 'rgba(55,65,81,0.2)',
                       },
                       '&.MuiInputBase-input::placeholder': {
@@ -229,7 +226,7 @@ export default function AccountSettings() {
               </Box>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="body2" fontWeight={500} sx={{ color: '#fff' }}>
+                <Typography variant="body2" fontWeight={500}>
                   Profile Image
                 </Typography>
                 {/* Show selected file name if present */}
@@ -268,8 +265,8 @@ export default function AccountSettings() {
                 type="submit"
                 variant="contained"
                 sx={{
-                  backgroundColor: '#fff',
-                  color: '#111827',
+                  backgroundColor: '#111827',
+                  color: '#fff',
                   '&:hover': {
                     backgroundColor: '#f3f4f6',
                   },
