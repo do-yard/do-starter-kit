@@ -6,6 +6,7 @@ import Link from 'next/link';
 import FormButton from './FormButton';
 import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
+import { USER_ROLES } from 'lib/auth/roles';
 
 const SignUpForm: React.FC = () => {
   const { navigate } = usePrefetchRouter();
@@ -30,7 +31,7 @@ const SignUpForm: React.FC = () => {
       redirect: false,
       email,
       password,
-      name: 'User',
+      name: USER_ROLES.USER,
       isSignUp: 'true',
     });
 
