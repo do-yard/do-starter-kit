@@ -5,10 +5,20 @@ jest.mock('services/database/database', () => ({
   createDatabaseClient: jest.fn(),
 }));
 
-const { createDatabaseClient } = require('services/database/database');
+import { createDatabaseClient } from 'services/database/database';
+
+type MockDbClient = {
+  user: {
+    update: jest.Mock;
+  };
+  subscription: {
+    findByUserId: jest.Mock;
+    update: jest.Mock;
+  };
+};
 
 describe('updateUser', () => {
-  let mockDbClient: any;
+  let mockDbClient: MockDbClient;
 
   beforeEach(() => {
     mockDbClient = {
@@ -27,7 +37,7 @@ describe('updateUser', () => {
     jest.clearAllMocks();
   });
 
-  function makeRequest(body: any) {
+  function makeRequest(body: Record<string, unknown>) {
     return {
       json: jest.fn().mockResolvedValue(body),
     } as unknown as NextRequest;

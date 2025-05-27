@@ -5,10 +5,17 @@ jest.mock('services/database/database', () => ({
   createDatabaseClient: jest.fn(),
 }));
 
-const { createDatabaseClient } = require('services/database/database');
+import { createDatabaseClient } from 'services/database/database';
+
+type MockDbClient = {
+  user: {
+    findAll: jest.Mock;
+  };
+};
+
 
 describe('getAllUsers', () => {
-  let mockDbClient: any;
+  let mockDbClient: MockDbClient;
 
   beforeEach(() => {
     mockDbClient = {
