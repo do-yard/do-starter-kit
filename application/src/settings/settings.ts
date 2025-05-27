@@ -1,6 +1,7 @@
 export interface ServerConfig {
   storageProvider: string;
   databaseProvider: string;
+  billingProvider: string;
   Spaces: {
     accessKey?: string;
     secretKey?: string;
@@ -8,16 +9,23 @@ export interface ServerConfig {
     region?: string;
     endpoint?: string;
   };
+  Stripe: {
+    stripeSecretKey?: string;
+  };
 }
 
 export const serverConfig: ServerConfig = {
   storageProvider: process.env.STORAGE_PROVIDER || 'Spaces',
   databaseProvider: process.env.DATABASE_PROVIDER || 'Postgres',
+  billingProvider: process.env.BILLING_PROVIDER || 'Stripe',
   Spaces: {
     accessKey: process.env.SPACES_KEY,
     secretKey: process.env.SPACES_SECRET,
     bucketName: process.env.SPACES_BUCKETNAME,
     region: process.env.SPACES_REGION,
     endpoint: process.env.SPACES_ENDPOINT,
+  },
+  Stripe: {
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
   },
 };
