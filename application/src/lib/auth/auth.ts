@@ -3,10 +3,11 @@ import Credentials from 'next-auth/providers/credentials';
 import type { Provider } from 'next-auth/providers';
 import { createDatabaseClient } from 'services/database/database';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import { prisma } from './prisma';
+import { prisma } from '../prisma';
 import { hashPassword, verifyPassword } from 'helpers/hash';
-import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
 import { User, UserRole } from 'types';
+import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
+import { USER_ROLES } from './roles';
 
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
@@ -47,7 +48,7 @@ const providers: Provider[] = [
           email: credentials.email as string,
           image: null,
           passwordHash: hashedPassword,
-          role: isFirstUser ? 'ADMIN' : 'USER',
+          role: isFirstUser ? USER_ROLES.ADMIN : USER_ROLES.USER,
         });
 
         return user;

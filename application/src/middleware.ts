@@ -1,10 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { auth } from 'lib/auth';
+import { auth } from 'lib/auth/auth';
 import { UserRole } from 'types';
+import { USER_ROLES } from 'lib/auth/roles';
 
 const ROLE_HOME_URL: Record<UserRole, string> = {
-  USER: '/dashboard',
-  ADMIN: '/dashboard',
+  [USER_ROLES.USER]: '/dashboard',
+  [USER_ROLES.ADMIN]: '/dashboard',
 };
 
 export async function middleware(request: NextRequest) {
