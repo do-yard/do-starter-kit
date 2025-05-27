@@ -1,3 +1,4 @@
+import { USER_ROLES } from './roles';
 import { withAuth } from './withAuth';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -39,8 +40,8 @@ describe('withAuth', () => {
   });
 
   it('returns 403 if user role is not allowed', async () => {
-    mockAuth.mockResolvedValue({ user: { id: '123', role: 'USER' } });
-    const wrapped = withAuth(handler, { allowedRoles: ['ADMIN'] });
+    mockAuth.mockResolvedValue({ user: { id: '123', role: USER_ROLES.USER } });
+    const wrapped = withAuth(handler, { allowedRoles: [USER_ROLES.ADMIN] });
     const response = await wrapped(createMockRequest());
     const json = await response.json();
     expect(response.status).toBe(403);
@@ -49,7 +50,7 @@ describe('withAuth', () => {
   });
 
   it('calls handler with valid session and no role restriction', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user-1', role: 'ADMIN' } });
+    mockAuth.mockResolvedValue({ user: { id: 'user-1', role: USER_ROLES.ADMIN } });
     const mockRes = NextResponse.json({ ok: true });
     handler.mockResolvedValue(mockRes);
 
@@ -57,23 +58,29 @@ describe('withAuth', () => {
     const response = await wrapped(createMockRequest());
 
     expect(response).toBe(mockRes);
-    expect(handler).toHaveBeenCalledWith(expect.any(Object), { id: 'user-1', role: 'ADMIN' });
+    expect(handler).toHaveBeenCalledWith(expect.any(Object), {
+      id: 'user-1',
+      role: USER_ROLES.ADMIN,
+    });
   });
 
   it('calls handler when role is allowed', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user-2', role: 'EDITOR' } });
+    mockAuth.mockResolvedValue({ user: { id: 'user-2', role: USER_ROLES.USER } });
     const mockRes = NextResponse.json({ ok: true });
     handler.mockResolvedValue(mockRes);
 
-    const wrapped = withAuth(handler, { allowedRoles: ['EDITOR', 'ADMIN'] });
+    const wrapped = withAuth(handler, { allowedRoles: [USER_ROLES.USER] });
     const response = await wrapped(createMockRequest());
 
     expect(response).toBe(mockRes);
-    expect(handler).toHaveBeenCalledWith(expect.any(Object), { id: 'user-2', role: 'EDITOR' });
+    expect(handler).toHaveBeenCalledWith(expect.any(Object), {
+      id: 'user-2',
+      role: USER_ROLES.USER,
+    });
   });
 
   it('returns 500 if handler throws', async () => {
-    mockAuth.mockResolvedValue({ user: { id: 'user-3', role: 'ADMIN' } });
+    mockAuth.mockResolvedValue({ user: { id: 'user-3', role: USER_ROLES.ADMIN } });
     handler.mockRejectedValue(new Error('Unexpected error'));
 
     const wrapped = withAuth(handler);

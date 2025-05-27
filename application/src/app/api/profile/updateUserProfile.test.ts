@@ -17,7 +17,7 @@ jest.mock('../../../services/storage/storage', () => ({
 
 // Mock auth
 const mockAuth = jest.fn();
-jest.mock('../../../lib/auth', () => ({
+jest.mock('../../../lib/auth/auth', () => ({
   auth: async () => mockAuth(),
 }));
 
