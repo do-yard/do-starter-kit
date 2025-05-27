@@ -1,18 +1,23 @@
 import { getFileNameFromUrl } from 'helpers/fileName';
-import { withAuth } from '../../../lib/auth';
+import { auth } from 'lib/auth';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
 import { createStorageService } from 'services/storage/storage';
 import { v4 as uuidv4 } from 'uuid';
-import { RouteHandler, User } from 'types';
 
-const patchHandler: RouteHandler = async (request: NextRequest, user: User ) => {
+export async function PATCH(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const newName = formData.get('name') as string | null;
 
-    const userId = user?.id;
+    // Get userId from authjs session
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const db = createDatabaseClient();
     const dbUser = await db.user.findById(userId);
 
@@ -71,5 +76,3 @@ const patchHandler: RouteHandler = async (request: NextRequest, user: User ) => 
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-
-export const PATCH = withAuth(patchHandler);

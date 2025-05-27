@@ -1,5 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server';
-
 // User type
 export interface User {
   id: string;
@@ -40,12 +38,3 @@ export type SubscriptionPlan = 'FREE' | 'PRO';
 export interface UserWithSubscriptions extends User {
   subscriptions: Subscription[];
 }
-
-export interface WithAuthOptions {
-  requiredRole?: UserRole;
-}
-
-export type RouteHandler = (
-  req: NextRequest,
-  user: User
-) => Promise<NextResponse> | NextResponse;

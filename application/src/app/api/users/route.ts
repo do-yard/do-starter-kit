@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '../../../lib/auth';
+import { auth } from '../../../lib/auth';
 import { createDatabaseClient } from 'services/database/database';
-import { RouteHandler } from 'types';
 
-const getHandler: RouteHandler = async (request: NextRequest) => {
+export async function GET(request: NextRequest) {
   try {
+    const session = await auth();
+
+    if (!session || !session.user || !session.user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (session.user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const dbClient = createDatabaseClient();
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1', 10);
@@ -20,8 +29,19 @@ const getHandler: RouteHandler = async (request: NextRequest) => {
   }
 }
 
-const patchHandler: RouteHandler = async (request: NextRequest) => {
+export async function PATCH(request: NextRequest) {
   try {
+    const session = await auth();
+
+    if (!session || !session.user || !session.user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Only allow admins to edit users
+    if (session.user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
     const body = await request.json();
     const { id, ...updateData } = body;
 
@@ -59,7 +79,3 @@ const patchHandler: RouteHandler = async (request: NextRequest) => {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-
-export const GET = withAuth(getHandler, { requiredRole: 'ADMIN' });
-
-export const PATCH = withAuth(patchHandler, { requiredRole: 'ADMIN' });

@@ -6,9 +6,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from './prisma';
 import { hashPassword, verifyPassword } from 'helpers/hash';
 import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
-import { User, UserRole, WithAuthOptions, RouteHandler } from 'types';
-import { NextResponse, NextRequest } from 'next/server';
-import { HTTP_STATUS_CODES } from './constants';
+import { User, UserRole } from 'types';
 
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
@@ -117,43 +115,3 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     newUser: '/signup',
   },
 });
-
-/**
- * Wraps an API route handler with authentication logic
- * @param handler The route handler function
- * @param options Authentication options
- */
-export function withAuth(handler: RouteHandler, options?: WithAuthOptions) {
-  return async function(req: NextRequest) {
-    try {
-      // Get session and user ID
-      const session = await auth();
-      const userId = session?.user?.id;
-      
-      // Check if user is authenticated
-      if (!userId) {
-        return NextResponse.json(
-          { error: 'Unauthorized' },
-          { status: HTTP_STATUS_CODES.UNAUTHORIZED }
-        );
-      }
-
-      // Check for required role if specified
-      if (options?.requiredRole && session?.user?.role !== options.requiredRole) {
-        return NextResponse.json(
-          { error: 'Forbidden' },
-          { status: HTTP_STATUS_CODES.FORBIDDEN }
-        );
-      }
-
-      // Call the handler with the authenticated user ID
-      return handler(req, session.user as User);
-    } catch (error) {
-      console.error('Authentication error:', error);
-      return NextResponse.json(
-        { error: 'Internal server error' },
-        { status: HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR }
-      );
-    }
-  };
-}
