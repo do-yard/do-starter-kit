@@ -1,4 +1,3 @@
-// services/profile/updateUserProfile.ts
 import { getFileNameFromUrl } from 'helpers/fileName';
 import { createDatabaseClient } from 'services/database/database';
 import { createStorageService } from 'services/storage/storage';
