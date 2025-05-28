@@ -1,6 +1,5 @@
 import { serverConfig } from 'settings/settings';
 import { StripeBillingService } from './stripeBillingService';
-import Stripe from 'stripe';
 
 // Storage provider types
 export type BillingProvider = 'Stripe';
@@ -9,10 +8,19 @@ export type BillingProvider = 'Stripe';
 export interface BillingService {
   listCustomer: (email: string) => Promise<{ id: string }[]>;
   createCustomer: (email: string, metadata?: Record<string, string>) => Promise<{ id: string }>;
-  listSubscription: (customerId: string) => Promise<any>;
-  createSubscription: (customerId: string, priceId: string) => Promise<Stripe.Subscription>;
+  listSubscription: (
+    customerId: string
+  ) => Promise<{ id: string; status: string; items: { id: string }[] }[]>;
+  createSubscription: (
+    customerId: string,
+    priceId: string
+  ) => Promise<{ clientSecret: string | undefined }>;
   cancelSubscription: (subscriptionId: string) => Promise<void>;
-  updateSubscription: (id: string, priceId: string) => Promise<any>;
+  updateSubscription: (
+    id: string,
+    itemId: string,
+    priceId: string
+  ) => Promise<{ clientSecret: string | undefined }>;
 }
 
 // Factory function to create the appropriate storage service

@@ -7,7 +7,10 @@ export type WithAuthOptions = {
   allowedRoles?: UserRole[];
 };
 
-type Handler = (req: NextRequest, user: { id: string; role: UserRole }) => Promise<Response>;
+type Handler = (
+  req: NextRequest,
+  user: { id: string; role: UserRole; email: string }
+) => Promise<Response>;
 
 /**
  * Higher-order function to wrap API route handlers with authentication and optional role-based authorization.
@@ -24,14 +27,14 @@ export const withAuth =
         return NextResponse.json(res, { status: HTTP_STATUS.UNAUTHORIZED });
       }
 
-      const { id, role } = session.user;
+      const { id, role, email } = session.user;
 
       if (options.allowedRoles && !options.allowedRoles.includes(role)) {
         const res: ErrorResponse = { error: 'Forbidden' };
         return NextResponse.json(res, { status: HTTP_STATUS.FORBIDDEN });
       }
 
-      return await handler(req, { id, role });
+      return await handler(req, { id, role, email });
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('Auth error:', error.message);

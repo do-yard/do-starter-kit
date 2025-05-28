@@ -32,7 +32,7 @@ export class StripeBillingService implements BillingService {
   }
 
   async createSubscription(customerId: string, priceId: string) {
-    return await this.stripe.subscriptions.create({
+    const result = await this.stripe.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
       payment_behavior: 'default_incomplete',
@@ -40,31 +40,72 @@ export class StripeBillingService implements BillingService {
         save_default_payment_method: 'on_subscription',
       },
     });
+
+    console.log('Stripe createSubscription result:', JSON.stringify(result));
+
+    if (
+      result.latest_invoice &&
+      typeof result.latest_invoice !== 'string' &&
+      'payment_intent' in result.latest_invoice &&
+      result.latest_invoice.payment_intent &&
+      typeof result.latest_invoice.payment_intent !== 'string'
+    ) {
+      return {
+        clientSecret:
+          (result.latest_invoice.payment_intent as Stripe.PaymentIntent).client_secret ?? undefined,
+      };
+    }
+
+    return {
+      clientSecret: undefined,
+    };
   }
 
   async listSubscription(customerId: string) {
-    return await this.stripe.subscriptions.list({
+    const result = await this.stripe.subscriptions.list({
       customer: customerId,
-      status: 'active',
       limit: 1,
     });
+
+    return result.data.map((subscription) => ({
+      id: subscription.id,
+      status: subscription.status,
+      items: subscription.items.data.map((item) => ({ id: item.id, priceId: item.price.id })),
+    }));
   }
 
   async cancelSubscription(subscriptionId: string) {
     await this.stripe.subscriptions.cancel(subscriptionId);
   }
 
-  async updateSubscription(id: string, priceId: string) {
-    return await this.stripe.subscriptions.update(id, {
+  async updateSubscription(id: string, itemId: string, priceId: string) {
+    const result = await this.stripe.subscriptions.update(id, {
       items: [
         {
-          id: subscription.items.data[0].id,
-          price: process.env.NEXT_PUBLIC_PRO_PRICE_ID,
+          id: itemId,
+          price: priceId,
         },
       ],
       proration_behavior: 'always_invoice',
       payment_behavior: 'default_incomplete',
       // expand: ["latest_invoice.payment_intent"],
     });
+
+    if (
+      result.latest_invoice &&
+      typeof result.latest_invoice !== 'string' &&
+      'payment_intent' in result.latest_invoice &&
+      result.latest_invoice.payment_intent &&
+      typeof result.latest_invoice.payment_intent !== 'string'
+    ) {
+      return {
+        clientSecret:
+          (result.latest_invoice.payment_intent as Stripe.PaymentIntent).client_secret ?? undefined,
+      };
+    }
+
+    return {
+      clientSecret: undefined,
+    };
   }
 }
