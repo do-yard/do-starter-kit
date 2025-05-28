@@ -22,7 +22,3 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
-
-.box-card-border {
-  border: '1px solid #e5e7eb'
-}

@@ -113,7 +113,7 @@ export default function AccountSettings() {
         </Typography>
       </Box>
 
-      <Paper>
+      <Paper sx={{ border: '1px solid', borderColor: 'grey.300' }}>
         <Box sx={{ p: 3, width: '100%' }}>
           <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
             Profile Information
