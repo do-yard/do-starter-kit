@@ -13,8 +13,6 @@ interface FeatureCardProps {
   icon: React.ReactElement;
   title: string;
   description: string;
-  cardColor?: string;
-  titleColor?: string;
 }
 
 const FeatureCard = ({
