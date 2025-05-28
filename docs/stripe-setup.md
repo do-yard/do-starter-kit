@@ -3,7 +3,7 @@
 This sample application uses Stripe to manage user subscriptions. The subscription is made of a product and two prices/plans. We offer a script to create these resources automatically but first, you will need to generate the required Stripe credentials. Follow these steps:
 
 1. Create a [Stripe](https://stripe.com/) account or log in if you already have one.
-2. Got to your dashboard and locate the API keys card shown there.
+2. Go to your dashboard and locate the API keys card shown there.
 3. Copy the **Publishable key** and the **Secret key** and store them in a safe place.
 
 ## Create Stripe resources
