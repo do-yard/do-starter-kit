@@ -3,9 +3,15 @@ import Credentials from 'next-auth/providers/credentials';
 import type { Provider } from 'next-auth/providers';
 import { createDatabaseClient } from 'services/database/database';
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import { prisma } from './prisma';
+import { prisma } from '../prisma';
 import { hashPassword, verifyPassword } from 'helpers/hash';
-import { User } from 'types';
+import { UserRole } from 'types';
+import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
+import { USER_ROLES } from './roles';
+
+const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
+  return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
+};
 
 const providers: Provider[] = [
   Credentials({
@@ -17,42 +23,43 @@ const providers: Provider[] = [
     },
     authorize: async (credentials) => {
       if (!credentials.email || !credentials.password) {
-        return null;
+        throw new MissingCredentialsError();
       }
 
       const dbClient = createDatabaseClient();
 
-      // Sign Up a new user
       if (credentials?.isSignUp === 'true') {
         if (!credentials.name) {
-          return null;
+          throw new InvalidCredentialsError();
         }
 
         const userExists = await dbClient.user.findByEmail(credentials.email as string);
         if (userExists) {
-          return null;
+          throw new UserAlreadyExistsError();
         }
 
         const hashedPassword = await hashPassword(credentials.password as string);
 
-        const user: Omit<User, 'id' | 'createdAt'> = {
+        const user = await dbClient.user.create({
           name: credentials.name as string,
-          image: null,
           email: credentials.email as string,
+          image: null,
           passwordHash: hashedPassword,
-          role: 'USER',
-        };
+          role: USER_ROLES.USER,
+        });
 
-        const newUser = await dbClient.user.create(user);
-        return newUser;
+        return user;
       }
 
-      // Login existing user
       const user = await dbClient.user.findByEmail(credentials.email as string);
-      if (!user || !user.passwordHash) return null;
+      if (!user || !user.passwordHash) {
+        throw new InvalidCredentialsError();
+      }
 
       const isValid = await verifyPassword(credentials.password as string, user.passwordHash);
-      if (!isValid) return null;
+      if (!isValid) {
+        throw new InvalidCredentialsError();
+      }
 
       return user;
     },
@@ -64,14 +71,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   providers,
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id; // Add user ID to the token
+    async jwt({ token, user, trigger, session }) {
+      if (user && hasRole(user)) {
+        token.id = user.id;
+        token.role = user.role;
       }
+
+      if (trigger === 'update') {
+        token.image = session.user.image;
+        token.name = session.user.name;
+      }
+
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id as string;
+      if (token && hasRole(token)) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as UserRole;
+      }
+
+      if (token.image) {
+        session.user.image = token.image as string;
+      }
+
+      if (token.name) {
+        session.user.name = token.name as string;
+      }
+
       return session;
     },
   },

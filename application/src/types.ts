@@ -1,3 +1,5 @@
+import { USER_ROLES } from 'lib/auth/roles';
+
 // User type
 export interface User {
   id: string;
@@ -6,7 +8,7 @@ export interface User {
   passwordHash: string | null;
   image: string | null;
 
-  role: Role;
+  role: UserRole;
   createdAt: Date;
 }
 
@@ -28,8 +30,7 @@ export interface Note {
   createdAt: Date;
 }
 
-// Enums for Role, SubscriptionStatus, and SubscriptionPlan
-export type Role = 'USER' | 'ADMIN';
+export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 
 export type SubscriptionStatus = 'ACTIVE' | 'CANCELED' | 'TRIALING';
 
