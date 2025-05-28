@@ -8,6 +8,10 @@ import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
 
+/**
+ * Formulario de registro de usuario.
+ * Incluye validación de contraseña, integración con Auth.js y manejo de errores.
+ */
 const SignUpForm: React.FC = () => {
   const { navigate } = usePrefetchRouter();
   const { setNavigating } = useNavigating();

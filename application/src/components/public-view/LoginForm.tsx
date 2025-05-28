@@ -7,6 +7,10 @@ import FormButton from './FormButton';
 import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 
+/**
+ * Formulario de inicio de sesión.
+ * Maneja autenticación por credenciales e integra con navegación inteligente.
+ */
 const LoginForm: React.FC = () => {
   const { navigate } = usePrefetchRouter();
 

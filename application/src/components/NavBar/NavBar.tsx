@@ -4,6 +4,10 @@ import Link from 'next/link';
 import { Box, Typography, AppBar, Toolbar, Button } from '@mui/material';
 import { useSession, signOut } from 'next-auth/react';
 
+/**
+ * Barra de navegación principal de la aplicación.
+ * Cambia dinámicamente los enlaces según el estado de sesión (log in / log out).
+ */
 const NavBar = () => {
   const { data: session } = useSession();
   const handleLogout = () => {

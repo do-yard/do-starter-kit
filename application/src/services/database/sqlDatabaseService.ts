@@ -2,6 +2,9 @@ import { DatabaseClient } from './database';
 import { prisma } from '../../lib/prisma';
 import { Subscription, Note, User } from 'types';
 
+/**
+ * Service for interacting with the SQL database using Prisma.
+ */
 export class SqlDatabaseService implements DatabaseClient {
   // User operations
   user = {

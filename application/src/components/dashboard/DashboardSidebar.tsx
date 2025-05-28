@@ -26,6 +26,15 @@ interface SidebarLinkProps {
   onClick?: () => void;
 }
 
+/**
+ * Enlace de navegación lateral usado dentro del sidebar.
+ * Cambia estilo automáticamente si la ruta es activa.
+ *
+ * @param href - Ruta de navegación.
+ * @param icon - Ícono visual del ítem.
+ * @param children - Texto del enlace.
+ * @param onClick - Función a ejecutar al hacer click (opcional).
+ */
 const SidebarLink = ({ href, icon, children, onClick }: SidebarLinkProps) => {
   const pathname = usePathname();
   const isActive = pathname === href;
@@ -78,6 +87,12 @@ const SidebarHeader = styled(Box)(({ theme }) => ({
   borderColor: '#1f2937',
 }));
 
+/**
+ * Sidebar permanente de navegación lateral del dashboard.
+ * Muestra links principales, foto de perfil y acciones como logout.
+ *
+ * Usa la sesión actual para mostrar el avatar del usuario.
+ */
 const DashboardSidebar = () => {
   const handleLogout = () => {
     signOut({ callbackUrl: '/' });

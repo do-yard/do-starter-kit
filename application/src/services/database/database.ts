@@ -34,7 +34,9 @@ export interface DatabaseClient {
   };
 }
 
-// Factory function to create the appropriate database service
+/**
+ * Factory function to create and return the appropriate database client based on the configured provider.
+ */
 export function createDatabaseClient(): DatabaseClient {
   const databaseProvider = serverConfig.databaseProvider;
 

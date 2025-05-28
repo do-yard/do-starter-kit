@@ -8,6 +8,12 @@ import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
 import { Button, Card, CardContent, Typography, Box } from '@mui/material';
 import Link from 'next/link';
 
+/**
+ * Página pública principal (landing page).
+ * Presenta las principales funcionalidades del starter kit y CTA para comenzar.
+ *
+ * @returns Página de inicio con presentación visual y llamada a la acción.
+ */
 const Home = () => (
   <Box sx={{ flexGrow: 1 }}>
     <Box

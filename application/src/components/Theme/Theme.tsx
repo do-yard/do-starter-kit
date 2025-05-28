@@ -38,9 +38,9 @@ const colors = {
     primary: 'rgba(0, 0, 0, 0.87)',
     secondary: 'rgba(0, 0, 0, 0.6)',
     disabled: 'rgba(0, 0, 0, 0.38)',
-    dark: '#111827',       // Dark text for headings
-    medium: '#4b5563',     // Medium gray for body text
-    light: '#6b7280',      // Light gray for secondary text
+    dark: '#111827', // Dark text for headings
+    medium: '#4b5563', // Medium gray for body text
+    light: '#6b7280', // Light gray for secondary text
   },
   error: {
     main: '#f44336',
@@ -150,8 +150,7 @@ const components: ThemeOptions['components'] = {
   MuiTextField: {
     styleOverrides: {
       root: {
-        '& .MuiOutlinedInput-root': {
-        },
+        '& .MuiOutlinedInput-root': {},
       },
     },
   },
@@ -168,6 +167,11 @@ const theme = createTheme({
   spacing: 8,
 });
 
+/**
+ * Provides the Material UI theme to all child components.
+ *
+ * @param children - The React node(s) to be wrapped with the theme provider.
+ */
 export default function MaterialThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider theme={theme}>
