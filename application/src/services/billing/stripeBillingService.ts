@@ -41,8 +41,6 @@ export class StripeBillingService implements BillingService {
       },
     });
 
-    console.log('Stripe createSubscription result:', JSON.stringify(result));
-
     if (
       result.latest_invoice &&
       typeof result.latest_invoice !== 'string' &&
@@ -88,7 +86,6 @@ export class StripeBillingService implements BillingService {
       ],
       proration_behavior: 'always_invoice',
       payment_behavior: 'default_incomplete',
-      // expand: ["latest_invoice.payment_intent"],
     });
 
     if (
