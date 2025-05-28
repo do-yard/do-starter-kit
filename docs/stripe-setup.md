@@ -17,11 +17,12 @@ The script will ask you for the Stripe's key you created before:
 
 1. Enter your Stripe public key and press enter.
 2. Enter your Stripe secret key and press enter.
-3. Enter a name for your product and press enter.
+3. Enter a name for your products and press enter.
 
 After this the script will create a product with your product name and two prices, one free and another pro, linked to that product.
 In the script outputs you will see the respective IDs for the product and the prices. _Use this IDs in the deployment templates as the required environment variables_:
 
-- BILLING_STRIPE_PRODUCTID
+- BILLING_STRIPE_PRODUCTID_PRO
+- BILLING_STRIPE_PRODUCTID_FREE
 - BILLING_STRIPE_PRICEID_PRO
 - BILLING_STRIPE_PRICEID_FREE

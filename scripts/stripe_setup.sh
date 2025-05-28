@@ -21,19 +21,35 @@ while true; do
 done
 
 # Prompt for product name
-echo -n "Enter your product name: "
-read PRODUCT_NAME
+echo -n "Enter your free product name: "
+read PRODUCT_FREE_NAME
 
-echo "Creating Product"
-PRODUCT_RESPONSE=$(curl -s -X POST https://api.stripe.com/v1/products \
+echo -n "Enter your pro product name: "
+read PRODUCT_PRO_NAME
+
+
+
+echo "Creating Pro Product"
+PRODUCT_PRO_RESPONSE=$(curl -s -X POST https://api.stripe.com/v1/products \
   -u "$STRIPE_SECRET_KEY:" \
-  -d name="$PRODUCT_NAME")
-PRODUCT_ID=$(echo "$PRODUCT_RESPONSE" | grep -o '"id": *"[^"]*"' | head -1 | cut -d '"' -f4)
-if [[ -z "$PRODUCT_ID" ]]; then
-  echo "Failed to create product: $PRODUCT_RESPONSE"
+  -d name="$PRODUCT_PRO_NAME")
+PRODUCT_PRO_ID=$(echo "$PRODUCT_PRO_RESPONSE" | grep -o '"id": *"[^"]*"' | head -1 | cut -d '"' -f4)
+if [[ -z "$PRODUCT_PRO_ID" ]]; then
+  echo "Failed to create product: $PRODUCT_PRO_RESPONSE"
   exit 1
 fi
-echo "Product created with ID: $PRODUCT_ID"
+echo "Pro Product created with ID: $PRODUCT_PRO_ID"
+
+echo "Creating Free Product"
+PRODUCT_FREE_RESPONSE=$(curl -s -X POST https://api.stripe.com/v1/products \
+  -u "$STRIPE_SECRET_KEY:" \
+  -d name="$PRODUCT_FREE_NAME")
+PRODUCT_FREE_ID=$(echo "$PRODUCT_FREE_RESPONSE" | grep -o '"id": *"[^"]*"' | head -1 | cut -d '"' -f4)
+if [[ -z "$PRODUCT_FREE_ID" ]]; then
+  echo "Failed to create product: $PRODUCT_FREE_RESPONSE"
+  exit 1
+fi
+echo "Free Product created with ID: $PRODUCT_FREE_ID"
 
 echo "Creating Prices"
 # Create PRO Price
@@ -42,9 +58,9 @@ PRO_PRICE_RESPONSE=$(curl -s -X POST https://api.stripe.com/v1/prices \
   -d currency=usd \
   -d unit_amount=1000 \
   -d recurring[interval]=month \
-  -d product="$PRODUCT_ID")
+  -d product="$PRODUCT_PRO_ID")
 PRO_PRICE_ID=$(echo "$PRO_PRICE_RESPONSE" | grep -o '"id": *"[^"]*"' | head -1 | cut -d '"' -f4)
-if [[ -z "$PRO_PRICE_ID" ]]; then
+if [[ -z "$PRODUCT_PRO_ID" ]]; then
   echo "Failed to create PRO price: $PRO_PRICE_RESPONSE"
   exit 1
 fi
@@ -56,7 +72,7 @@ FREE_PRICE_RESPONSE=$(curl -s -X POST https://api.stripe.com/v1/prices \
   -d currency=usd \
   -d unit_amount=0 \
   -d recurring[interval]=month \
-  -d product="$PRODUCT_ID")
+  -d product="$PRODUCT_FREE_ID")
 FREE_PRICE_ID=$(echo "$FREE_PRICE_RESPONSE" | grep -o '"id": *"[^"]*"' | head -1 | cut -d '"' -f4)
 if [[ -z "$FREE_PRICE_ID" ]]; then
   echo "Failed to create FREE price: $FREE_PRICE_RESPONSE"
@@ -65,6 +81,7 @@ fi
 echo "FREE Price created with ID: $FREE_PRICE_ID"
 
 echo -e '\033[0;32mStripe was setup correctly; the following App Platform'\''s environment variables should be set:\033[0m'
-echo -e "\033[0;33m- BILLING_STRIPE_PRODUCTID : $PRODUCT_ID (Product ID)\033[0m"
+echo -e "\033[0;33m- BILLING_STRIPE_PRODUCTID_PRO : $PRODUCT_PRO_ID (PRO Product ID)\033[0m"
+echo -e "\033[0;33m- BILLING_STRIPE_PRODUCTID_FREE : $PRODUCT_FREE_ID (FREE Product ID)\033[0m"
 echo -e "\033[0;33m- BILLING_STRIPE_PRICEID_PRO : $PRO_PRICE_ID (PRO price ID)\033[0m"
 echo -e "\033[0;33m- BILLING_STRIPE_PRICEID_FREE : $FREE_PRICE_ID (FREE price ID)\033[0m"

@@ -94,7 +94,8 @@ The following environment variables are required:
 
 4. **Stripe Environment Variables**
    ```
-   BILLING_STRIPE_PRODUCTID
+   BILLING_STRIPE_PRODUCTID_PRO
+   BILLING_STRIPE_PRODUCTID_FREE
    BILLING_STRIPE_PRICEID_PRO
    BILLING_STRIPE_PRICEID_FREE
    ```

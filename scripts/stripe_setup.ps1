@@ -17,19 +17,35 @@ do {
     }
 } while ([string]::IsNullOrWhiteSpace($STRIPE_SECRET_KEY))
 
-# Prompt the user for product name
-$PRODUCT_NAME = Read-Host "Enter your product name"
+# Prompt the user for products names
+$PRODUCT_FREE_NAME = Read-Host "Enter your free product name"
+$PRODUCT_PRO_NAME = Read-Host "Enter your pro product name"
 
-Write-Host "Creating Product"
+Write-Host "Creating Free Product"
 
 try {
     # Create Product
-    $PRODUCT_RESPONSE = Invoke-RestMethod -Uri "https://api.stripe.com/v1/products" `
+    $PRODUCT_FREE_RESPONSE = Invoke-RestMethod -Uri "https://api.stripe.com/v1/products" `
       -Headers @{ Authorization = "Bearer $STRIPE_SECRET_KEY" } `
       -Method Post `
-      -Body @{ name = $PRODUCT_NAME }
-    $PRODUCT_ID = $PRODUCT_RESPONSE.id
-    Write-Host "Product created with ID: $PRODUCT_ID" -ForegroundColor Green
+      -Body @{ name = $PRODUCT_FREE_NAME }
+    $PRODUCT_FREE_ID = $PRODUCT_FREE_RESPONSE.id
+    Write-Host "Free Product created with ID: $PRODUCT_FREE_ID" -ForegroundColor Green
+} catch {
+    Write-Host "Failed to create product: $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "Creating Pro Product"
+
+try {
+    # Create Product
+    $PRODUCT_PRO_RESPONSE = Invoke-RestMethod -Uri "https://api.stripe.com/v1/products" `
+      -Headers @{ Authorization = "Bearer $STRIPE_SECRET_KEY" } `
+      -Method Post `
+      -Body @{ name = $PRODUCT_PRO_NAME }
+    $PRODUCT_PRO_ID = $PRODUCT_PRO_RESPONSE.id
+    Write-Host "Pro Product created with ID: $PRODUCT_PRO_ID" -ForegroundColor Green
 } catch {
     Write-Host "Failed to create product: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
@@ -46,7 +62,7 @@ try {
           currency = "usd"
           unit_amount = 1000
           "recurring[interval]" = "month"
-          product = $PRODUCT_ID
+          product = $PRODUCT_PRO_ID
       }
     $PRO_PRICE_ID = $PRO_PRICE_RESPONSE.id
     Write-Host "PRO Price created with ID: $PRO_PRICE_ID" -ForegroundColor Green
@@ -64,7 +80,7 @@ try {
           currency = "usd"
           unit_amount = 0
           "recurring[interval]" = "month"
-          product = $PRODUCT_ID
+          product = $PRODUCT_FREE_ID
       }
     $FREE_PRICE_ID = $FREE_PRICE_RESPONSE.id
     Write-Host "FREE Price created with ID: $FREE_PRICE_ID" -ForegroundColor Green
@@ -75,6 +91,7 @@ try {
 
 
 Write-Host "`nStripe was setup correctly; the following App Platform's environment variables should be set:" -ForegroundColor Green
-Write-Host "- BILLING_STRIPE_PRODUCTID : $PRODUCT_ID (Product ID)" -ForegroundColor Yellow
+Write-Host "- BILLING_STRIPE_PRODUCTID_PRO : $PRODUCT_PRO_ID (PRO Product ID)" -ForegroundColor Yellow
+Write-Host "- BILLING_STRIPE_PRODUCTID_FREE : $PRODUCT_FREE_ID (FREE Product ID)" -ForegroundColor Yellow
 Write-Host "- BILLING_STRIPE_PRICEID_PRO : $PRO_PRICE_ID (PRO price ID)" -ForegroundColor Yellow
 Write-Host "- BILLING_STRIPE_PRICEID_FREE : $FREE_PRICE_ID (FREE price ID)" -ForegroundColor Yellow
