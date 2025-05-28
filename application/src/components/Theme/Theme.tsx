@@ -2,14 +2,17 @@
 
 import { ThemeProvider, createTheme, ThemeOptions } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import React from 'react';
+import React, { useMemo, useState, useContext, createContext, useEffect } from 'react';
+import IconButton from '@mui/material/IconButton';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 // Define color palette
 const colors = {
   primary: {
     main: '#1976d2',
     light: '#42a5f5',
-    dark: '#1565c0',
+    dark: '#EFC3CA',
     contrastText: '#fff',
   },
   secondary: {
@@ -88,7 +91,6 @@ const typography = {
   h5: {
     fontSize: '1.25rem',
     fontWeight: 600, // Matches usage in cards
-    color: '#111827', // text.dark
   },
   h6: {
     fontSize: '1rem',
@@ -129,50 +131,97 @@ const components: ThemeOptions['components'] = {
     styleOverrides: {
       root: {
         backgroundImage: 'none',
-        border: 'none',
-        //backgroundColor: '#fff', // background.paper
-        //color: 'rgba(0, 0, 0, 0.87)', // text.primary
+        border: 'none'
       },
     },
-  },
-  MuiListItemButton: {
-    styleOverrides: {
-      root: {
-        '&.Mui-selected': {
-          backgroundColor: colors.grey[800],
-          '&:hover': {
-            backgroundColor: colors.grey[700],
-          },
-        },
-      },
-    },
-  },
-  MuiTextField: {
-    styleOverrides: {
-      root: {
-        '& .MuiOutlinedInput-root': {
-        },
-      },
-    },
-  },
+  }
 };
 
-// Create the theme
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    ...colors,
-  },
-  typography,
-  components,
-  spacing: 8,
-});
+// Theme context for mode switching
+interface ThemeModeContextProps {
+  mode: 'light' | 'dark';
+  toggleMode: () => void;
+}
+const ThemeModeContext = createContext<ThemeModeContextProps | undefined>(undefined);
 
-export default function MaterialThemeProvider({ children }: { children: React.ReactNode }) {
+export function useThemeMode() {
+  const ctx = useContext(ThemeModeContext);
+  if (!ctx) throw new Error('useThemeMode must be used within ThemeModeProvider');
+  return ctx;
+}
+
+export function ThemeToggle() {
+  const { mode, toggleMode } = useThemeMode();
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      {children}
-    </ThemeProvider>
+    <IconButton onClick={toggleMode} color="inherit" aria-label="Toggle dark/light mode">
+      {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+    </IconButton>
+  );
+}
+
+// Create the theme
+export default function MaterialThemeProvider({ children }: { children: React.ReactNode }) {
+  const [mode, setMode] = useState<'light' | 'dark'>('light'); // Always start with 'light' for SSR
+
+  // On mount, sync mode with localStorage (SSR-safe)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('themeMode') as 'light' | 'dark' | null;
+      if (stored && stored !== mode) setMode(stored);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const toggleMode = () => {
+    setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('themeMode', mode);
+    }
+  }, [mode]);
+
+  // Only spread palette-relevant keys
+  const palette = useMemo(() => ({
+    mode, 
+    primary: mode === 'light' ? {
+      main: '#0061EB'
+    } : { main: '#76A4E6' }, // Example primary color
+    secondary: colors.secondary,
+    error: colors.error,
+    warning: colors.warning,
+    success: colors.success,
+    grey: colors.grey,
+    background: mode === 'dark'
+      ? { default: colors.grey[900], paper: colors.grey[800] }
+      : colors.background,
+    text: mode === 'dark'
+      ? {
+          primary: '#fff',
+          secondary: colors.grey[700],
+          disabled: colors.grey[600],
+          dark: '#fff',
+          medium: colors.grey[400],
+          light: colors.grey[500],
+        }
+      : colors.text
+  }), [mode]);
+
+  // Add a tooltip to the toggle button (optional, but recommended for accessibility)
+  // This is handled in ThemeToggle, but you may want to use Tooltip from MUI if desired.
+
+  return (
+    <ThemeModeContext.Provider value={{ mode, toggleMode }}>
+      <ThemeProvider theme={useMemo(() => createTheme({
+        palette,
+        typography: typography as ThemeOptions['typography'],
+        components: components as ThemeOptions['components'],
+        spacing: 8,
+      }), [palette])}>
+        <CssBaseline />
+        {children}
+      </ThemeProvider>
+    </ThemeModeContext.Provider>
   );
 }

@@ -9,7 +9,7 @@ import DoneIcon from '@mui/icons-material/Done';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
   border: '2px dashed',
-  borderColor: theme.palette.grey[700],
+  borderColor: "primary",
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(4),
   textAlign: 'center',
@@ -141,35 +141,6 @@ export default function AccountSettings() {
                   fullWidth
                   variant="outlined"
                   disabled={isLoading}
-                  InputProps={{
-                    sx: {
-                      color: isLoading ? '#9ca3af' : '#fff',
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#374151',
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#4b5563',
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#6b7280',
-                        backgroundColor: 'rgb(218, 218, 218)',
-                      },
-                      '& .Mui-disabled': {
-                        WebkitTextFillColor: '#fff',
-                        color: '#fff',
-                        backgroundColor: 'rgba(55,65,81,0.2)',
-                      },
-                    },
-                  }}
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      color: '#9ca3af',
-                    },
-                    '& .MuiInputBase-input::placeholder': {
-                      color: '#6b7280',
-                      opacity: 1,
-                    },
-                  }}
                 />
               </Box>
 
@@ -192,36 +163,6 @@ export default function AccountSettings() {
                   fullWidth
                   variant="outlined"
                   disabled={true}
-                  InputProps={{
-                    sx: {
-                      color: isLoading ? '#9ca3af' : '#fff',
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#374151',
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#4b5563',
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#6b7280',
-                      },
-                      '& .Mui-disabled': {
-                        backgroundColor: 'rgba(55,65,81,0.2)',
-                      },
-                      '&.MuiInputBase-input::placeholder': {
-                        color: '#6b7280',
-                        opacity: 1,
-                      },
-                    },
-                  }}
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      color: '#9ca3af',
-                    },
-                    '&.MuiInputBase-input::placeholder': {
-                      color: '#6b7280',
-                      opacity: 1,
-                    },
-                  }}
                 />
               </Box>
 
@@ -231,21 +172,15 @@ export default function AccountSettings() {
                 </Typography>
                 {/* Show selected file name if present */}
                 {formData.profileImage && (
-                  <Typography variant="caption" color="#9ca3af" sx={{ mb: 1 }}>
+                  <Typography variant="caption" sx={{ mb: 1 }}>
                     Selected file: {formData.profileImage.name}
                   </Typography>
                 )}
                 <StyledFileInput
-                  sx={{
-                    color: isLoading ? '#9ca3af' : '#fff',
-                    borderColor: isLoading ? '#6b7280' : '#374151',
-                    backgroundColor: isLoading ? 'rgba(55,65,81,0.2)' : 'transparent',
-                    cursor: isLoading ? 'not-allowed' : 'pointer',
-                  }}
                 >
                   <div {...getRootProps()}>
                     <input {...getInputProps()} disabled={isLoading} />
-                    <Typography variant="body2" color="#9ca3af">
+                    <Typography variant="body2">
                       Drag &apos;n&apos; drop a profile image here, or click to select one
                     </Typography>
                   </div>
@@ -265,11 +200,6 @@ export default function AccountSettings() {
                 type="submit"
                 variant="contained"
                 sx={{
-                  backgroundColor: '#111827',
-                  color: '#fff',
-                  '&:hover': {
-                    backgroundColor: '#f3f4f6',
-                  },
                   textTransform: 'none',
                   borderRadius: 1,
                   padding: '8px 16px',
@@ -280,7 +210,7 @@ export default function AccountSettings() {
               >
                 {isLoading ? (
                   <>
-                    <CircularProgress style={{ marginRight: 6 }} />
+                    <CircularProgress style={{ marginRight: 6, color: 'white' }} />
                     Saving...
                   </>
                 ) : (

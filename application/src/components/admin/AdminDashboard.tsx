@@ -32,6 +32,7 @@ import {
 import { ApiClient } from '../../lib/api/users';
 import { UserWithSubscriptions } from '../../types';
 import Toast from '../common/Toast';
+import { USER_ROLES } from '../../lib/auth/roles';
 
 const statusColor = (status: string) => {
   switch (status) {
@@ -133,7 +134,7 @@ export default function AdminDashboard() {
   // Add this function inside your AdminDashboard component
   const handleAdminSwitchChange = async (user: UserWithSubscriptions, checked: boolean) => {
     setSelectedUser(user);
-    await updateUser(user.id, { role: checked ? 'ADMIN' : 'USER' });
+    await updateUser(user.id, { role: checked ? USER_ROLES.ADMIN : USER_ROLES.USER });
   };
 
   useEffect(() => {
@@ -181,7 +182,13 @@ export default function AdminDashboard() {
               variant="outlined"
               size="small"
               fullWidth
-              sx={{ maxWidth: { md: 300 } }}
+              sx={{
+                color: 'grey.500',
+                maxWidth: { md: 300 },
+                '& .MuiFormLabel-root': {
+                  color: 'text.medium',
+                }
+              }}
               value={searchName}
               onChange={(e) => { setSearchName(e.target.value); setPage(1); }}
             />
@@ -191,7 +198,11 @@ export default function AdminDashboard() {
               variant="outlined"
               size="small"
               fullWidth
-              sx={{ maxWidth: { md: 200 } }}
+              sx={{ maxWidth: { md: 200 },
+                '& .MuiFormLabel-root': {
+                  color: 'text.medium',
+                }
+              }}
               value={filterPlan}
               onChange={(e) => { setFilterPlan(e.target.value); setPage(1); }}
             >
@@ -205,7 +216,11 @@ export default function AdminDashboard() {
               variant="outlined"
               size="small"
               fullWidth
-              sx={{ maxWidth: { md: 200 } }}
+              sx={{ maxWidth: { md: 200 },
+                '& .MuiFormLabel-root': {
+                  color: 'text.medium',
+                }
+              }}
               value={filterStatus}
               onChange={(e) => { setFilterStatus(e.target.value); setPage(1); }}
             >
@@ -219,7 +234,11 @@ export default function AdminDashboard() {
               label="Rows per page"
               variant="outlined"
               size="small"
-              sx={{ maxWidth: 120 }}
+              sx={{ maxWidth: 120,
+                '& .MuiFormLabel-root': {
+                  color: 'text.medium',
+                }
+              }}
               value={pageSize}
               onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
             >
@@ -265,7 +284,6 @@ export default function AdminDashboard() {
                               color={statusColor(status)}
                               size="small"
                               sx={{
-                                color: '#fff',
                                 textTransform: 'capitalize',
                               }}
                             />
@@ -320,11 +338,10 @@ export default function AdminDashboard() {
         <IconButton
           aria-label="close"
           onClick={handleEditClose}
-          sx={(theme) => ({
+          sx={() => ({
             position: 'absolute',
             right: 8,
-            top: 8,
-            color: theme.palette.grey[500],
+            top: 8
           })}
         >x</IconButton>
         <DialogContent>

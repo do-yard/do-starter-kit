@@ -8,6 +8,86 @@ import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
 import { Button, Card, CardContent, Typography, Box } from '@mui/material';
 import Link from 'next/link';
 
+// Reusable FeatureCard component
+interface FeatureCardProps {
+  icon: React.ReactElement;
+  title: string;
+  description: string;
+  cardColor?: string;
+  titleColor?: string;
+}
+
+const FeatureCard = ({
+  icon,
+  title,
+  description,
+}: FeatureCardProps) => (
+  <Card sx={{ backgroundColor: "white" }}>
+    <CardContent>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 16,
+        }}
+      >
+        {React.isValidElement(icon)
+          ? React.cloneElement(icon as React.ReactElement<unknown>)
+          : icon}
+      </div>
+      <Typography
+        variant="h5"
+        align="center"
+        color="black"
+        fontWeight={600}
+        gutterBottom
+      >
+        {title}
+      </Typography>
+      <Typography align="center" color="grey.700">
+        {description}
+      </Typography>
+    </CardContent>
+  </Card>
+);
+
+const features: FeatureCardProps[] = [
+  {
+    icon: <CloudQueueIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    title: 'DigitalOcean Integration',
+    description:
+      "Seamlessly deploy your application to DigitalOcean's robust cloud infrastructure.",
+  },
+  {
+    icon: <LockOutlineIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    title: 'Secure Authentication',
+    description: 'Built-in authentication system with email, Google, and GitHub login options.',
+  },
+  {
+    icon: <ElectricBoltIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    title: 'Optimized Performance',
+    description:
+      "Leverage DigitalOcean's global network for lightning-fast load times and reliability.",
+  },
+  {
+    icon: <DnsIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    title: 'Scalable Architecture',
+    description:
+      "Easily scale your application as your user base grows with DigitalOcean's flexible resources.",
+  },
+  {
+    icon: <RampLeftIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    title: 'CI/CD Pipeline',
+    description: 'Integrated continuous integration and deployment pipeline for smooth updates.'
+  },
+  {
+    icon: <CloudQueueIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    title: 'DigitalOcean Spaces',
+    description: 'Efficient file storage and CDN integration using DigitalOcean Spaces.'
+  }
+];
+
 const Home = () => (
   <Box sx={{ flexGrow: 1 }}>
     <Box
@@ -47,165 +127,9 @@ const Home = () => (
             gap: 32,
           }}
         >
-          <Card>
-            <CardContent>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 16,
-                }}
-              >
-                <CloudQueueIcon fontSize="large" color="primary" />
-              </div>
-              <Typography
-                variant="h5"
-                align="center"
-                color="text.dark"
-                fontWeight={600}
-                gutterBottom
-              >
-                DigitalOcean Integration
-              </Typography>
-              <Typography align="center" color="text.medium">
-                Seamlessly deploy your application to DigitalOcean&apos;s robust cloud
-                infrastructure.
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 16,
-                }}
-              >
-                <LockOutlineIcon fontSize="large" color="primary" />
-              </div>
-              <Typography
-                variant="h5"
-                align="center"
-                color="text.dark"
-                fontWeight={600}
-                gutterBottom
-              >
-                Secure Authentication
-              </Typography>
-              <Typography align="center" color="text.medium">
-                Built-in authentication system with email, Google, and GitHub login options.
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 16,
-                }}
-              >
-                <ElectricBoltIcon fontSize="large" color="primary" />
-              </div>
-              <Typography
-                variant="h5"
-                align="center"
-                color="text.dark"
-                fontWeight={600}
-                gutterBottom
-              >
-                Optimized Performance
-              </Typography>
-              <Typography align="center" color="text.medium">
-                Leverage DigitalOcean&apos;s global network for lightning-fast load times and
-                reliability.
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 16,
-                }}
-              >
-                <DnsIcon fontSize="large" color="primary" />
-              </div>
-              <Typography
-                variant="h5"
-                align="center"
-                color="text.dark"
-                fontWeight={600}
-                gutterBottom
-              >
-                Scalable Architecture
-              </Typography>
-              <Typography align="center" color="text.medium">
-                Easily scale your application as your user base grows with DigitalOcean&apos;s
-                flexible resources.
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 16,
-                }}
-              >
-                <RampLeftIcon fontSize="large" color="primary" />
-              </div>
-              <Typography
-                variant="h5"
-                align="center"
-                color="text.dark"
-                fontWeight={600}
-                gutterBottom
-              >
-                CI/CD Pipeline
-              </Typography>
-              <Typography align="center" color="text.medium">
-                Integrated continuous integration and deployment pipeline for smooth updates.
-              </Typography>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 16,
-                }}
-              >
-                <CloudQueueIcon fontSize="large" color="primary" />
-              </div>
-              <Typography
-                variant="h5"
-                align="center"
-                color="text.dark"
-                fontWeight={600}
-                gutterBottom
-              >
-                DigitalOcean Spaces
-              </Typography>
-              <Typography align="center" color="text.medium">
-                Efficient file storage and CDN integration using DigitalOcean Spaces.
-              </Typography>
-            </CardContent>
-          </Card>
+          {features.map((feature, idx) => (
+            <FeatureCard key={feature.title + idx} {...feature} />
+          ))}
         </div>
       </Box>
     </Box>

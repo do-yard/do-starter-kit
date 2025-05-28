@@ -40,25 +40,19 @@ const SidebarLink = ({ href, icon, children, onClick }: SidebarLinkProps) => {
         sx={{
           borderRadius: 1,
           py: 1,
-          px: 1.5,
-          color: isActive ? 'grey.50' : 'grey.800',
-          bgcolor: isActive ? 'grey.700' : 'transparent',
-          '&:hover': {
-            bgcolor: 'grey.200',
-          },
+          px: 1.5
         }}
       >
         <ListItemIcon
           sx={{
-            minWidth: 36,
-            color: 'inherit',
+            minWidth: 36
           }}
         >
           {icon}
         </ListItemIcon>
         <ListItemText
           primary={children}
-          primaryTypographyProps={{
+          sx={{
             fontSize: 14,
             fontWeight: 500,
           }}
@@ -73,8 +67,7 @@ const SidebarHeader = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   height: '3.5rem',
   padding: theme.spacing(0, 2),
-  borderBottom: '1px solid',
-  borderColor: '#e5e7eb',
+  borderBottom: `1px solid ${theme.palette.divider}`
 }));
 
 const DashboardSidebar = () => {
@@ -98,15 +91,17 @@ const DashboardSidebar = () => {
           width: 256,
           boxSizing: 'border-box',
           borderRight: 1,
-          borderColor: '#e5e7eb',
+          borderColor: 'divider'
         },
       }}
     >
       <SidebarHeader justifyContent={'space-between'}>
-        <Typography variant="h5" fontWeight={600} color="grey.800">
+        <Typography variant="h5" fontWeight={600}>
           SaaS App
         </Typography>
-        {getProfileIcon()}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {getProfileIcon()}
+        </Box>
       </SidebarHeader>
 
       <Box sx={{ p: 2, flex: 1, overflowY: 'auto' }}>
@@ -120,7 +115,7 @@ const DashboardSidebar = () => {
         </List>
       </Box>
 
-      <Divider sx={{ borderColor: '#e5e7eb' }} />
+      <Divider/>
 
       <Box sx={{ p: 2 }}>
         <List sx={{ p: 0 }}>
