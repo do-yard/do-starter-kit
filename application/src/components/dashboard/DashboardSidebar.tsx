@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback } from 'react';
-import { Person, Receipt, Settings, CreditCard, Logout } from '@mui/icons-material';
+import { Person, Receipt, Settings, CreditCard, Logout, Assessment } from '@mui/icons-material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -16,8 +16,7 @@ import {
   styled,
   Avatar,
 } from '@mui/material';
-import { signOut } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 interface SidebarLinkProps {
   href: string;
@@ -127,6 +126,11 @@ const DashboardSidebar = () => {
 
       <Box sx={{ p: 2 }}>
         <List sx={{ p: 0 }}>
+          {session.data?.user?.role === 'ADMIN' && (
+            <SidebarLink href="/admin/dashboard" icon={<Assessment fontSize="small" />}>
+              Admin Dashboard
+            </SidebarLink>
+          )}
           <SidebarLink href="/dashboard/account" icon={<Settings fontSize="small" />}>
             Account Settings
           </SidebarLink>

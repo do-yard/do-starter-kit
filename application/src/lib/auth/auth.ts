@@ -5,7 +5,7 @@ import { createDatabaseClient } from 'services/database/database';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '../prisma';
 import { hashPassword, verifyPassword } from 'helpers/hash';
-import { UserRole } from 'types';
+import { User, UserRole } from 'types';
 import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
 import { USER_ROLES } from './roles';
 
@@ -33,6 +33,9 @@ const providers: Provider[] = [
           throw new InvalidCredentialsError();
         }
 
+        const userCount = await dbClient.user.count();
+        const isFirstUser = userCount === 0;
+
         const userExists = await dbClient.user.findByEmail(credentials.email as string);
         if (userExists) {
           throw new UserAlreadyExistsError();
@@ -45,7 +48,7 @@ const providers: Provider[] = [
           email: credentials.email as string,
           image: null,
           passwordHash: hashedPassword,
-          role: USER_ROLES.USER,
+          role: isFirstUser ? USER_ROLES.ADMIN : USER_ROLES.USER,
         });
 
         return user;
@@ -74,7 +77,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user, trigger, session }) {
       if (user && hasRole(user)) {
         token.id = user.id;
-        token.role = user.role;
+        token.role = (user as User).role;
+        token.email = (user as User).email;
       }
 
       if (trigger === 'update') {
@@ -89,7 +93,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.id as string;
         session.user.role = token.role as UserRole;
       }
-
+    
+      session.user.email = token.email as string;
+      
       if (token.image) {
         session.user.image = token.image as string;
       }

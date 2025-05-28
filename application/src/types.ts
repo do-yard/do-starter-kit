@@ -3,9 +3,9 @@ import { USER_ROLES } from 'lib/auth/roles';
 // User type
 export interface User {
   id: string;
-  name: string | null;
+  name: string;
   email: string;
-  passwordHash: string | null;
+  passwordHash: string;
   image: string | null;
 
   role: UserRole;
@@ -32,6 +32,10 @@ export interface Note {
 
 export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 
-export type SubscriptionStatus = 'ACTIVE' | 'CANCELED' | 'TRIALING';
+export type SubscriptionStatus = 'ACTIVE' | 'CANCELED' | 'PENDING';
 
 export type SubscriptionPlan = 'FREE' | 'PRO';
+
+export interface UserWithSubscriptions extends User {
+  subscriptions: Subscription[];
+}
