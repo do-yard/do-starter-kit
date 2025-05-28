@@ -5,7 +5,7 @@ services:
     environment_slug: node-js
     source_dir: ./application
     github:
-      repo: ajot/do-starter-kit
+      repo: do-yard/do-starter-kit
       branch: ${GITHUB_BRANCH}
       deploy_on_push: false
     build_command: "npm install && npm run build"
