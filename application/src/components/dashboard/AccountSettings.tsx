@@ -9,7 +9,7 @@ import DoneIcon from '@mui/icons-material/Done';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
   border: '2px dashed',
-  borderColor: "primary",
+  borderColor: theme.palette.primary.main,
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(4),
   textAlign: 'center',
