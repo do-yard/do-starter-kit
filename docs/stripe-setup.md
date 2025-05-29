@@ -1,6 +1,6 @@
 # Setting up Stripe
 
-This sample application uses Stripe to manage user subscriptions. The subscription is made of a product and two prices/plans. We offer a script to create these resources automatically but first, you will need to generate the required Stripe credentials. Follow these steps:
+This sample application uses Stripe to manage user subscriptions. The subscription is made of two products and two prices (Free and Pro). We offer two scripts to create these resources automatically but first, you will need to generate the required Stripe credentials. Follow these steps:
 
 1. Create a [Stripe](https://stripe.com/) account or log in if you already have one.
 2. Go to your dashboard and locate the API keys card shown there.
@@ -8,10 +8,17 @@ This sample application uses Stripe to manage user subscriptions. The subscripti
 
 ## Create Stripe resources
 
-This sample presents you with a PowerShell script to create the required resources in Stripe. Follow these steps:
+This sample presents you with a PowerShell script if you run on Windows and bash script if run in Linux/Mac to create the required resources in Stripe. Follow these steps:
+
+### For Windows users
 
 1. Open a `powershell` terminal and cd in to the `./scripts` directory
 2. Run the script with the command `./stripe_setup.ps1`
+
+### For Linux/Mac users
+
+1. Open a `bash` terminal and cd in to the `./scripts` directory
+2. Run the script with the command `./stripe_setup.sh`
 
 The script will ask you for the Stripe's key you created before:
 
