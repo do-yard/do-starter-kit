@@ -1,7 +1,6 @@
 import { serverConfig } from '../../../settings';
-import { Note, Subscription, User, UserWithSubscriptions } from 'types';
+import { Note, Subscription, User, UserWithSubscriptions, SubscriptionStatus } from 'types';
 import { SqlDatabaseService } from './sqlDatabaseService';
-import { SubscriptionStatus } from '@prisma/client';
 
 export type DatabaseProvider = 'Postgres';
 
@@ -23,7 +22,7 @@ export interface DatabaseClient {
     update: (id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>) => Promise<User>;
     delete: (id: string) => Promise<void>;
     count: () => Promise<number>;
-  }
+  };
   subscription: {
     findByUserAndStatus: (
       userId: string,

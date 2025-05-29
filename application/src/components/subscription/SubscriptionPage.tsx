@@ -19,7 +19,6 @@ const Subscription = () => {
 
   const fetchSubscription = async () => {
     try {
-      await stripeApi.createCustomer();
       const { subscription } = await stripeApi.getSubscription();
       setSubscription(subscription);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
