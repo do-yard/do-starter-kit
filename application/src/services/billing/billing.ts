@@ -1,10 +1,10 @@
 import { serverConfig } from 'settings/settings';
 import { StripeBillingService } from './stripeBillingService';
 
-// Storage provider types
+// Billing provider types
 export type BillingProvider = 'Stripe';
 
-// Common interface for all storage providers
+// Common interface for all billing providers
 export interface BillingService {
   listCustomer: (email: string) => Promise<{ id: string }[]>;
   createCustomer: (email: string, metadata?: Record<string, string>) => Promise<{ id: string }>;
@@ -23,7 +23,9 @@ export interface BillingService {
   ) => Promise<{ clientSecret: string | undefined }>;
 }
 
-// Factory function to create the appropriate storage service
+/**
+ * Factory function to create and return the appropriate billing client based on the configured provider.
+ */
 export function createBillingService(): BillingService {
   const storageProvider = serverConfig.billingProvider;
 
