@@ -60,7 +60,7 @@ PRO_PRICE_RESPONSE=$(curl -s -X POST https://api.stripe.com/v1/prices \
   -d recurring[interval]=month \
   -d product="$PRODUCT_PRO_ID")
 PRO_PRICE_ID=$(echo "$PRO_PRICE_RESPONSE" | grep -o '"id": *"[^"]*"' | head -1 | cut -d '"' -f4)
-if [[ -z "$PRODUCT_PRO_ID" ]]; then
+if [[ -z "$PRO_PRICE_ID" ]]; then
   echo "Failed to create PRO price: $PRO_PRICE_RESPONSE"
   exit 1
 fi

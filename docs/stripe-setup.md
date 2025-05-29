@@ -26,8 +26,8 @@ The script will ask you for the Stripe's key you created before:
 2. Enter your Stripe secret key and press enter.
 3. Enter a name for your products and press enter.
 
-After this the script will create a product with your product name and two prices, one free and another pro, linked to that product.
-In the script outputs you will see the respective IDs for the product and the prices. _Use this IDs in the deployment templates as the required environment variables_:
+After this the script will create a product with your products names and two prices, one free and another pro, linked to those products.
+In the script outputs you will see the respective IDs for the products and the prices. _Use this IDs in the deployment templates as the required environment variables_:
 
 - NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID
 - NEXT_PUBLIC_STRIPE_FREE_PRICE_ID
