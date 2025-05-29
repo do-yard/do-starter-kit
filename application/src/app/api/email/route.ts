@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ResendEmailService } from '../../../services/email/resendEmailService';
 
+/**
+ * Handles POST requests to send an email using the ResendEmailService.
+ * Expects a JSON body with a 'to' email address.
+ */
 export async function POST(req: NextRequest) {
   try {
     const { to } = await req.json();

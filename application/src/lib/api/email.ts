@@ -1,3 +1,6 @@
+/**
+ * API client for sending emails via the backend email API.
+ */
 export class ApiClient {
   constructor(private baseURL = '/api') {}
 

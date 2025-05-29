@@ -2,6 +2,9 @@ import { Resend } from 'resend';
 import { serverConfig } from '../../../settings';
 import { EmailService } from './email';
 
+/**
+ * Email service implementation using the Resend API.
+ */
 export class ResendEmailService implements EmailService {
   private resend: Resend;
   private fromEmail: string;
