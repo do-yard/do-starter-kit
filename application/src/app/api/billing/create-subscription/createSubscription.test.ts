@@ -73,4 +73,11 @@ describe('createSubscription API', () => {
     expect(res.status).toBe(500);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
+
+  it('returns 400 if priceId is missing', async () => {
+    // @ts-expect-error Testing missing priceId
+    const res = await createSubscription(mockRequest({}), user);
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: 'Price ID is required' });
+  });
 });

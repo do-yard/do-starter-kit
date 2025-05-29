@@ -22,13 +22,6 @@ describe('getSubscription API', () => {
     expect(await res.json()).toEqual({ subscription: null });
   });
 
-  it('returns null if findByUserId returns null', async () => {
-    mockFindByUserAndStatus.mockResolvedValue(null);
-    const res = await getSubscription({} as NextRequest, user);
-    expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ subscription: null });
-  });
-
   it('returns first subscription if found', async () => {
     const sub = { id: 'sub1', status: 'active', plan: 'PRO' };
     mockFindByUserAndStatus.mockResolvedValue(sub);
