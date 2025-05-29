@@ -5,6 +5,11 @@ import { serverConfig } from 'settings/settings';
 import StripeCheckout from './StripeCheckout';
 import { StripeClient } from 'lib/api/stripe';
 import { SubscriptionPlan } from 'types';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Subscription = () => {
   const [subscription, setSubscription] = useState<{
@@ -67,53 +72,66 @@ const Subscription = () => {
   const isBasePlan = currentPlan === 'FREE';
   const isProPlan = currentPlan === 'PRO';
 
-  if (loading) return <p>Loading subscription data...</p>;
-  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (loading)
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}>
+        <CircularProgress />
+      </Box>
+    );
+  if (error) return <Alert severity="error">{error}</Alert>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Subscription</h1>
+    <Box p={4}>
+      <Typography variant="h4" fontWeight="bold" mb={3}>
+        Subscription
+      </Typography>
 
       {subscription ? (
-        <>
-          <p>
+        <Box display="flex" flexDirection="column" alignItems="flex-start">
+          <Typography mb={2}>
             Subscription status: <strong>{subscription.status}</strong> (
             {isProPlan ? 'Pro Plan' : isBasePlan ? 'Free Plan' : 'Unknown Plan'})
-          </p>
+          </Typography>
 
           {isBasePlan && (
-            <button
+            <Button
               onClick={handleUpgradeToPro}
               disabled={upgrading}
-              className="mt-4 bg-purple-500 text-white px-4 py-2 rounded"
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2 }}
             >
               {upgrading ? 'Upgrading...' : 'Upgrade to PRO'}
-            </button>
+            </Button>
           )}
 
-          <button
+          <Button
             onClick={handleCancel}
             disabled={loading}
-            className="mt-4 ml-4 bg-red-500 text-white px-4 py-2 rounded"
+            variant="contained"
+            color="error"
+            sx={{ mt: 2 }}
           >
             Cancel Subscription
-          </button>
-        </>
+          </Button>
+        </Box>
       ) : (
-        <>
+        <Box display={'flex'} flexDirection="column" alignItems="flex-start" mt={2}>
           <StripeCheckout
             priceId={basePlanId!}
             buttonText="Subscribe to Base Plan"
             onSubscribed={fetchSubscription}
           />
-          <StripeCheckout
-            priceId={proPlanId!}
-            buttonText="Subscribe to Pro Plan"
-            onSubscribed={fetchSubscription}
-          />
-        </>
+          <Box mt={2}>
+            <StripeCheckout
+              priceId={proPlanId!}
+              buttonText="Subscribe to Pro Plan"
+              onSubscribed={fetchSubscription}
+            />
+          </Box>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

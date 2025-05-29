@@ -4,6 +4,9 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useState } from 'react';
 import { StripeClient } from 'lib/api/stripe';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
 
@@ -37,10 +40,16 @@ const CheckoutForm = ({ onSubscribed }: { onSubscribed: () => void }) => {
   return (
     <form onSubmit={handleSubmit}>
       <PaymentElement />
-      <button type="submit" className="ml-4 mt-4 bg-blue-600 text-white px-4 py-2 rounded">
-        Complete Subscription
-      </button>
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+      <Box mt={2}>
+        <Button type="submit" variant="contained" color="primary">
+          Complete Subscription
+        </Button>
+      </Box>
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {error}
+        </Alert>
+      )}
     </form>
   );
 };
@@ -79,13 +88,9 @@ const StripeCheckout = ({ priceId, buttonText, onSubscribed }: StripeCheckoutPro
   }
 
   return (
-    <button
-      onClick={handleSubscribe}
-      disabled={loading}
-      className="bg-green-600 text-white px-4 py-2 rounded"
-    >
+    <Button onClick={handleSubscribe} disabled={loading} variant="contained" color="success">
       {loading ? 'Processing...' : buttonText}
-    </button>
+    </Button>
   );
 };
 
