@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 import { serverConfig } from 'settings/settings';
 import StripeCheckout from './StripeCheckout';
 import { StripeClient } from 'services/api/stripe';
+import { SubscriptionPlan } from 'types';
 
 const Subscription = () => {
   const [subscription, setSubscription] = useState<{
     id: string;
     status: string;
-    items: { id: string; priceId: string }[];
+    plan: SubscriptionPlan;
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,10 +63,10 @@ const Subscription = () => {
   const basePlanId = serverConfig.Stripe.freePriceId;
   const proPlanId = serverConfig.Stripe.proPriceId;
 
-  const currentPlan = subscription?.items[0].priceId;
+  const currentPlan = subscription?.plan;
 
-  const isBasePlan = currentPlan === basePlanId;
-  const isProPlan = currentPlan === proPlanId;
+  const isBasePlan = currentPlan === 'FREE';
+  const isProPlan = currentPlan === 'PRO';
 
   if (loading) return <p>Loading subscription data...</p>;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
@@ -78,7 +79,7 @@ const Subscription = () => {
         <>
           <p>
             Subscription status: <strong>{subscription.status}</strong> (
-            {isProPlan ? 'Pro Plan' : isBasePlan ? 'Base Plan' : 'Unknown Plan'})
+            {isProPlan ? 'Pro Plan' : isBasePlan ? 'Free Plan' : 'Unknown Plan'})
           </p>
 
           {isBasePlan && (

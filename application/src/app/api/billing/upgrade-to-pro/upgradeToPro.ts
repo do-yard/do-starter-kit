@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
+import { createDatabaseClient } from 'services/database/database';
 import { serverConfig } from 'settings/settings';
 
 export const upgradeToPro = async (
@@ -34,6 +35,25 @@ export const upgradeToPro = async (
       subscription.items[0].id,
       serverConfig.Stripe.proPriceId
     );
+
+    const db = createDatabaseClient();
+    const dbSubscription = await db.subscription.findByUserAndStatus(user.id, 'ACTIVE');
+
+    if (!dbSubscription) {
+      return NextResponse.json(
+        { error: 'Active subscription not found in database' },
+        { status: 404 }
+      );
+    }
+
+    await db.subscription.update(dbSubscription.id, {
+      status: 'CANCELED',
+    });
+    await db.subscription.create({
+      userId: user.id,
+      status: 'ACTIVE',
+      plan: 'PRO',
+    });
 
     return NextResponse.json({ clientSecret });
   } catch (err: unknown) {

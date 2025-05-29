@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
+import { createDatabaseClient } from 'services/database/database';
+import { serverConfig } from 'settings/settings';
 
 export const createSubscription = async (
   request: NextRequest,
@@ -22,6 +24,13 @@ export const createSubscription = async (
     }
 
     const { clientSecret } = await billingService.createSubscription(customerId, priceId);
+
+    const db = createDatabaseClient();
+    await db.subscription.create({
+      userId: user.id,
+      status: 'ACTIVE',
+      plan: priceId === serverConfig.Stripe.proPriceId ? 'PRO' : 'FREE',
+    });
 
     return NextResponse.json({ clientSecret });
   } catch (err: unknown) {

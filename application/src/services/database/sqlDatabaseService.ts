@@ -1,6 +1,6 @@
 import { DatabaseClient } from './database';
 import { prisma } from '../../lib/prisma';
-import { Subscription, Note, User, UserWithSubscriptions } from 'types';
+import { Subscription, Note, User, UserWithSubscriptions, SubscriptionStatus } from 'types';
 
 /**
  * Service for interacting with the SQL database using Prisma.
@@ -36,7 +36,8 @@ export class SqlDatabaseService implements DatabaseClient {
           (where.subscriptions as { some: Record<string, unknown> }).some.plan = options.filterPlan;
         }
         if (options.filterStatus) {
-          (where.subscriptions as { some: Record<string, unknown> }).some.status = options.filterStatus;
+          (where.subscriptions as { some: Record<string, unknown> }).some.status =
+            options.filterStatus;
         }
       }
       const [users, total] = await Promise.all([
@@ -70,9 +71,17 @@ export class SqlDatabaseService implements DatabaseClient {
     },
     count: async (): Promise<number> => {
       return prisma.user.count();
-    }
+    },
   };
   subscription = {
+    findByUserAndStatus: async (
+      userId: string,
+      status: SubscriptionStatus
+    ): Promise<Subscription | null> => {
+      return prisma.subscription.findFirst({
+        where: { userId, status },
+      });
+    },
     findById: async (id: string): Promise<Subscription | null> => {
       return prisma.subscription.findUnique({ where: { id } });
     },
@@ -82,7 +91,10 @@ export class SqlDatabaseService implements DatabaseClient {
     create: async (subscription: Omit<Subscription, 'id' | 'createdAt'>): Promise<Subscription> => {
       return prisma.subscription.create({ data: subscription });
     },
-    update: async (id: string, subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>): Promise<Subscription> => {
+    update: async (
+      id: string,
+      subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>
+    ): Promise<Subscription> => {
       return prisma.subscription.update({ where: { id }, data: subscription });
     },
     delete: async (id: string): Promise<void> => {

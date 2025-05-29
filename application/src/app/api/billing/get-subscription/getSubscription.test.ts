@@ -1,13 +1,11 @@
 import { getSubscription } from './getSubscription';
 import { NextRequest } from 'next/server';
 
-const mockListCustomer = jest.fn();
-const mockListSubscription = jest.fn();
+const mockFindByUserAndStatus = jest.fn();
 
-jest.mock('services/billing/billing', () => ({
-  createBillingService: () => ({
-    listCustomer: mockListCustomer,
-    listSubscription: mockListSubscription,
+jest.mock('services/database/database', () => ({
+  createDatabaseClient: () => ({
+    subscription: { findByUserAndStatus: mockFindByUserAndStatus },
   }),
 }));
 
@@ -17,32 +15,30 @@ describe('getSubscription API', () => {
     jest.clearAllMocks();
   });
 
-  it('returns null if customer not found', async () => {
-    mockListCustomer.mockResolvedValue([]);
+  it('returns null if no subscription found', async () => {
+    mockFindByUserAndStatus.mockResolvedValue(null);
     const res = await getSubscription({} as NextRequest, user);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ subscription: null });
   });
 
-  it('returns null if no subscriptions found', async () => {
-    mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
-    mockListSubscription.mockResolvedValue([]);
+  it('returns null if findByUserId returns null', async () => {
+    mockFindByUserAndStatus.mockResolvedValue(null);
     const res = await getSubscription({} as NextRequest, user);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ subscription: null });
   });
 
   it('returns first subscription if found', async () => {
-    mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
-    const sub = { id: 'sub1', status: 'active' };
-    mockListSubscription.mockResolvedValue([sub]);
+    const sub = { id: 'sub1', status: 'active', plan: 'PRO' };
+    mockFindByUserAndStatus.mockResolvedValue(sub);
     const res = await getSubscription({} as NextRequest, user);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ subscription: sub });
   });
 
   it('returns 500 on error', async () => {
-    mockListCustomer.mockRejectedValue(new Error('fail'));
+    mockFindByUserAndStatus.mockRejectedValue(new Error('fail'));
     const res = await getSubscription({} as NextRequest, user);
     expect(res.status).toBe(500);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });

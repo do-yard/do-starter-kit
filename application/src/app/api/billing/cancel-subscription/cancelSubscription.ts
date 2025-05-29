@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
+import { createDatabaseClient } from 'services/database/database';
 
 export const cancelSubscription = async (
   request: NextRequest,
@@ -23,6 +24,20 @@ export const cancelSubscription = async (
     }
 
     await billingService.cancelSubscription(sub.id);
+
+    const db = createDatabaseClient();
+    const dbSubscription = await db.subscription.findByUserAndStatus(user.id, 'ACTIVE');
+
+    if (!dbSubscription) {
+      return NextResponse.json(
+        { error: 'Active subscription not found in database' },
+        { status: 404 }
+      );
+    }
+
+    await db.subscription.update(dbSubscription.id, {
+      status: 'CANCELED',
+    });
 
     return NextResponse.json({ canceled: true });
   } catch (err: unknown) {
