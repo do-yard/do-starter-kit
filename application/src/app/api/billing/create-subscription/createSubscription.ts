@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
 import { serverConfig } from 'settings/settings';
+import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 
 export const createSubscription = async (
   request: NextRequest,
@@ -36,8 +37,11 @@ export const createSubscription = async (
     const db = createDatabaseClient();
     await db.subscription.create({
       userId: user.id,
-      status: 'ACTIVE',
-      plan: priceId === serverConfig.Stripe.proPriceId ? 'PRO' : 'FREE',
+      status: SubscriptionStatusEnum.ACTIVE,
+      plan:
+        priceId === serverConfig.Stripe.proPriceId
+          ? SubscriptionPlanEnum.PRO
+          : SubscriptionPlanEnum.FREE,
     });
 
     return NextResponse.json({ clientSecret });

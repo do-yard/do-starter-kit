@@ -1,6 +1,8 @@
+import { Subscript } from '@mui/icons-material';
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
+import { SubscriptionStatusEnum } from 'types';
 
 export const cancelSubscription = async (
   request: NextRequest,
@@ -26,7 +28,10 @@ export const cancelSubscription = async (
     await billingService.cancelSubscription(sub.id);
 
     const db = createDatabaseClient();
-    const dbSubscription = await db.subscription.findByUserAndStatus(user.id, 'ACTIVE');
+    const dbSubscription = await db.subscription.findByUserAndStatus(
+      user.id,
+      SubscriptionStatusEnum.ACTIVE
+    );
 
     if (!dbSubscription) {
       return NextResponse.json(
@@ -36,7 +41,7 @@ export const cancelSubscription = async (
     }
 
     await db.subscription.update(dbSubscription.id, {
-      status: 'CANCELED',
+      status: SubscriptionStatusEnum.CANCELED,
     });
 
     return NextResponse.json({ canceled: true });

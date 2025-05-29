@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
+import { SubscriptionStatusEnum } from 'types';
 
 export const getSubscription = async (
   request: NextRequest,
@@ -7,7 +8,10 @@ export const getSubscription = async (
 ): Promise<Response> => {
   try {
     const db = createDatabaseClient();
-    const subscription = await db.subscription.findByUserAndStatus(user.id, 'ACTIVE');
+    const subscription = await db.subscription.findByUserAndStatus(
+      user.id,
+      SubscriptionStatusEnum.ACTIVE
+    );
 
     return NextResponse.json({ subscription: subscription });
   } catch (err: unknown) {

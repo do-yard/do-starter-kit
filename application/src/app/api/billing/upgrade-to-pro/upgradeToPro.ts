@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
 import { serverConfig } from 'settings/settings';
+import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 
 export const upgradeToPro = async (
   request: NextRequest,
@@ -37,7 +38,10 @@ export const upgradeToPro = async (
     );
 
     const db = createDatabaseClient();
-    const dbSubscription = await db.subscription.findByUserAndStatus(user.id, 'ACTIVE');
+    const dbSubscription = await db.subscription.findByUserAndStatus(
+      user.id,
+      SubscriptionStatusEnum.ACTIVE
+    );
 
     if (!dbSubscription) {
       return NextResponse.json(
@@ -47,12 +51,12 @@ export const upgradeToPro = async (
     }
 
     await db.subscription.update(dbSubscription.id, {
-      status: 'CANCELED',
+      status: SubscriptionStatusEnum.CANCELED,
     });
     await db.subscription.create({
       userId: user.id,
-      status: 'ACTIVE',
-      plan: 'PRO',
+      status: SubscriptionStatusEnum.ACTIVE,
+      plan: SubscriptionPlanEnum.PRO,
     });
 
     return NextResponse.json({ clientSecret });

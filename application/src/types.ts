@@ -39,3 +39,14 @@ export type SubscriptionPlan = 'FREE' | 'PRO';
 export interface UserWithSubscriptions extends User {
   subscriptions: Subscription[];
 }
+
+export enum SubscriptionStatusEnum {
+  ACTIVE = 'ACTIVE',
+  CANCELED = 'CANCELED',
+  PENDING = 'PENDING',
+}
+
+export enum SubscriptionPlanEnum {
+  FREE = 'FREE',
+  PRO = 'PRO',
+}
