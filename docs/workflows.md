@@ -47,9 +47,9 @@ This workflow performs an automated deployment to the DigitalOcean App Platform 
 
 ### Input Parameters
 
-| Name          | Description                   | Default | Options        |
-| ------------- | ----------------------------- | ------- | -------------- |
-| `environment` | Target deployment environment | `dev1`  | `dev1`, `dev2` |
+| Name          | Description                   | Default | Options                  |
+| ------------- | ----------------------------- | ------- | ------------------------ |
+| `environment` | Target deployment environment | `dev`   | `dev`, `staging`, `prod` |
 
 ### Workflow Structure
 
@@ -60,7 +60,7 @@ Calls the CI workflow (`ci.yml`) to lint, test, and build the application before
 #### 2. Job: `deploy`
 
 Runs on: `ubuntu-latest`  
-Environment: dynamically set via input (`dev1`, or `dev2`)
+Environment: dynamically set via input (`dev`, `staging` or `prod`)
 
 ##### Steps:
 
@@ -79,7 +79,7 @@ Environment: dynamically set via input (`dev1`, or `dev2`)
 ## 📌 Notes
 
 - All workflows rely on `ubuntu-latest` runners and require Node.js 20.
-- You should maintain the list of environment variables and secrets in the GitHub UI under **Settings > Environments** for each environment (`dev1`, `dev2`) or global repository variables/secrets.
+- You should maintain the list of environment variables and secrets in the GitHub UI under **Settings > Environments** for each environment (`dev`, `staging`, `prod`) or global repository variables/secrets.
 - No variables are hardcoded in the workflow YAMLs; they are injected dynamically from the environment, allowing easier maintenance and environment-specific behavior.
 
 ---
@@ -95,7 +95,7 @@ Environment: dynamically set via input (`dev1`, or `dev2`)
 - Run the deployment manually using GitHub CLI running:
 
 ```bash
-gh workflow run "Deploy" --ref main -f environment=dev1
+gh workflow run "Deploy" --ref main -f environment=dev
 ```
 
 ---
