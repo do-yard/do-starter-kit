@@ -10,9 +10,13 @@ interface AdminLayout {
   children: ReactNode;
 }
 
+/**
+ * Layout component for the admin dashboard that restricts access to admin users.
+ *
+ * @param children - The child components to render within the layout.
+ */
 const AdminDashboardLayout = ({ children }: AdminLayout) => {
   const { data: session, status } = useSession();
-
   if (status === 'loading') {
     return (
       <Box
@@ -27,15 +31,14 @@ const AdminDashboardLayout = ({ children }: AdminLayout) => {
     );
   }
 
-  if (status === 'unauthenticated' || (status === 'authenticated' && session.user?.role !== USER_ROLES.ADMIN)) {
+  if (
+    status === 'unauthenticated' ||
+    (status === 'authenticated' && session.user?.role !== USER_ROLES.ADMIN)
+  ) {
     redirect('/');
   }
 
-  return (
-    <>
-      {children}
-    </>
-  )
-}
+  return <>{children}</>;
+};
 
 export default AdminDashboardLayout;

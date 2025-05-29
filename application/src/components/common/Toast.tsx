@@ -9,7 +9,16 @@ interface ToastProps {
   onClose: () => void;
 }
 
-const Toast: React.FC<ToastProps> = ({ open, message, severity = 'info', autoHideDuration = 4000, onClose }) => (
+/**
+ * Toast component displays a message in a Snackbar with optional severity and auto-hide duration.
+ */
+const Toast: React.FC<ToastProps> = ({
+  open,
+  message,
+  severity = 'info',
+  autoHideDuration = 4000,
+  onClose,
+}) => (
   <Snackbar
     open={open}
     autoHideDuration={autoHideDuration}
