@@ -1,5 +1,8 @@
 import { SubscriptionPlan } from 'types';
 
+/**
+ *  StripeClient class for managing Stripe subscriptions.
+ */
 export class StripeClient {
   constructor(private baseURL = '/api/billing') {}
 

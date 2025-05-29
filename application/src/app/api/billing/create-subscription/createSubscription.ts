@@ -4,6 +4,11 @@ import { createDatabaseClient } from 'services/database/database';
 import { serverConfig } from 'settings/settings';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 
+/**
+ * Creates a subscription for a user. Free or Pro plans are supported.
+ *
+ * @param user - The user object containing id and role and email.
+ */
 export const createSubscription = async (
   request: NextRequest,
   user: { id: string; role: string; email: string }

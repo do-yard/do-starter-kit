@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
 
+/**
+ * Creates a customer in the billing system.
+ *
+ * @param user - The user object containing id and role and email.
+ */
 export const createCustomer = async (
   request: NextRequest,
   user: { id: string; role: string; email: string }

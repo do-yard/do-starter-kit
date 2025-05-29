@@ -11,6 +11,11 @@ import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 
+/**
+ * Main component for managing user subscriptions.
+ *
+ * @returns Subscription component that displays the user's subscription status and allows them to manage their subscription.
+ */
 const Subscription = () => {
   const [subscription, setSubscription] = useState<{
     id: string;
@@ -49,10 +54,7 @@ const Subscription = () => {
   const handleUpgradeToPro = async () => {
     setUpgrading(true);
     try {
-      const { clientSecret } = await stripeApi.updateToProSubscription();
-      if (clientSecret) {
-        window.location.reload();
-      }
+      await stripeApi.updateToProSubscription();
     } catch {
       setError('Upgrade failed');
     } finally {

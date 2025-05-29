@@ -4,6 +4,11 @@ import { createDatabaseClient } from 'services/database/database';
 import { serverConfig } from 'settings/settings';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 
+/**
+ * Upgrades the user's subscription to Pro.
+ *
+ * @param user - The user object containing id and role and email.
+ */
 export const upgradeToPro = async (
   request: NextRequest,
   user: { id: string; role: string; email: string }

@@ -3,6 +3,11 @@ import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
 import { SubscriptionStatusEnum } from 'types';
 
+/**
+ * Cancel an active subscription for a user.
+ *
+ * @param user - The user object containing id and role and email.
+ */
 export const cancelSubscription = async (
   request: NextRequest,
   user: { id: string; role: string; email: string }

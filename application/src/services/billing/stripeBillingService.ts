@@ -2,6 +2,10 @@ import { serverConfig } from 'settings/settings';
 import { BillingService } from './billing';
 import Stripe from 'stripe';
 
+/**
+ * StripeBillingService is a service that implements the BillingService interface
+ * using the Stripe API for managing billing operations such as customers and subscriptions.
+ */
 export class StripeBillingService implements BillingService {
   private stripe: Stripe;
 
