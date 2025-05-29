@@ -10,7 +10,7 @@ import Image from 'next/image';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
   border: '2px dashed',
-  borderColor: theme.palette.primary.main,
+  borderColor: theme.palette.grey[400],
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(4),
   textAlign: 'center',
@@ -216,12 +216,6 @@ export default function AccountSettings() {
                 ) : (
                   <StyledFileInput
                     {...getRootProps()}
-                    sx={{
-                      color: isLoading ? '#9ca3af' : '#fff',
-                      borderColor: isLoading ? '#6b7280' : '#374151',
-                      backgroundColor: isLoading ? 'rgba(55,65,81,0.2)' : 'transparent',
-                      cursor: isLoading ? 'not-allowed' : 'pointer',
-                    }}
                   >
                     <input {...getInputProps()} disabled={isLoading} />
                     <Typography variant="body2">
