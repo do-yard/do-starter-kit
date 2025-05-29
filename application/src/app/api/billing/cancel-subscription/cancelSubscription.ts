@@ -1,4 +1,3 @@
-import { Subscript } from '@mui/icons-material';
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
