@@ -8,6 +8,12 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
+/**
+ * Main layout for protected dashboard pages.
+ * Apply sidebar structure + scrollable content.
+ *
+ * @param children - Main content rendered in dashboard area.
+ */
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
     <Box

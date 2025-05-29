@@ -22,6 +22,12 @@ export const metadata: Metadata = {
   description: 'SaaS App template',
 };
 
+/**
+ * Root layout of the application.
+ * Applies global fonts, base styles and provides shared context through the Providers component.
+ *
+ * @returns HTML layout with fonts and providers applied.
+ */
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
   <html lang="en">
     <body

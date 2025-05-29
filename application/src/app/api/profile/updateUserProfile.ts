@@ -4,6 +4,11 @@ import { createStorageService } from 'services/storage/storage';
 import { v4 as uuidv4 } from 'uuid';
 import { NextRequest, NextResponse } from 'next/server';
 
+/**
+ * Updates the user's profile information, including name and profile image.
+ *
+ * @param user - The user object containing id and role.
+ */
 export const updateUserProfile = async (
   request: NextRequest,
   user: { id: string; role: string }

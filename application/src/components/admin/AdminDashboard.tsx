@@ -47,6 +47,9 @@ const statusColor = (status: string) => {
   }
 };
 
+/**
+ * Admin dashboard component for managing users, roles, and subscriptions.
+ */
 export default function AdminDashboard() {
   const [users, setUsers] = useState<UserWithSubscriptions[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +72,11 @@ export default function AdminDashboard() {
   const [editForm, setEditForm] = useState<Partial<UserWithSubscriptions>>({});
 
   // Toast state
-  const [toast, setToast] = useState<{ open: boolean; message: string; severity: 'success' | 'error' | 'info' }>({
+  const [toast, setToast] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error' | 'info';
+  }>({
     open: false,
     message: '',
     severity: 'info',
@@ -82,7 +89,7 @@ export default function AdminDashboard() {
       name: user.name,
       email: user.email,
       role: user.role,
-      subscriptions: user.subscriptions
+      subscriptions: user.subscriptions,
     });
     setOpenEdit(true);
   };
@@ -110,7 +117,10 @@ export default function AdminDashboard() {
 
   const handleEditButton = async () => {
     if (!selectedUser) return;
-    await updateUser(selectedUser.id, { name: editForm.name, subscriptions: editForm.subscriptions });
+    await updateUser(selectedUser.id, {
+      name: editForm.name,
+      subscriptions: editForm.subscriptions,
+    });
   };
 
   const updateUser = async (userId: string, fields: Partial<UserWithSubscriptions>) => {
@@ -167,7 +177,7 @@ export default function AdminDashboard() {
         Admin Dashboard
       </Typography>
 
-      <Card variant="outlined" sx={{ mb: 4, border: '1px solid', borderColor: 'grey.300'}}>
+      <Card variant="outlined" sx={{ mb: 4, border: '1px solid', borderColor: 'grey.300' }}>
         <CardHeader
           title={
             <Typography variant="h6" fontWeight="bold">
@@ -187,10 +197,13 @@ export default function AdminDashboard() {
                 maxWidth: { md: 300 },
                 '& .MuiFormLabel-root': {
                   color: 'text.medium',
-                }
+                },
               }}
               value={searchName}
-              onChange={(e) => { setSearchName(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setSearchName(e.target.value);
+                setPage(1);
+              }}
             />
             <TextField
               select
@@ -198,13 +211,17 @@ export default function AdminDashboard() {
               variant="outlined"
               size="small"
               fullWidth
-              sx={{ maxWidth: { md: 200 },
+              sx={{
+                maxWidth: { md: 200 },
                 '& .MuiFormLabel-root': {
                   color: 'text.medium',
-                }
+                },
               }}
               value={filterPlan}
-              onChange={(e) => { setFilterPlan(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setFilterPlan(e.target.value);
+                setPage(1);
+              }}
             >
               <MenuItem value="">All</MenuItem>
               <MenuItem value="FREE">Free</MenuItem>
@@ -216,13 +233,17 @@ export default function AdminDashboard() {
               variant="outlined"
               size="small"
               fullWidth
-              sx={{ maxWidth: { md: 200 },
+              sx={{
+                maxWidth: { md: 200 },
                 '& .MuiFormLabel-root': {
                   color: 'text.medium',
-                }
+                },
               }}
               value={filterStatus}
-              onChange={(e) => { setFilterStatus(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setFilterStatus(e.target.value);
+                setPage(1);
+              }}
             >
               <MenuItem value="">All</MenuItem>
               <MenuItem value="ACTIVE">Active</MenuItem>
@@ -234,13 +255,17 @@ export default function AdminDashboard() {
               label="Rows per page"
               variant="outlined"
               size="small"
-              sx={{ maxWidth: 120,
+              sx={{
+                maxWidth: 120,
                 '& .MuiFormLabel-root': {
                   color: 'text.medium',
-                }
+                },
               }}
               value={pageSize}
-              onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setPage(1);
+              }}
             >
               <MenuItem value={5}>5</MenuItem>
               <MenuItem value={10}>10</MenuItem>
@@ -272,7 +297,9 @@ export default function AdminDashboard() {
                   <TableBody>
                     {users.map((user) => {
                       const plan = user.subscriptions.length ? user.subscriptions[0].plan : 'none';
-                      const status = user.subscriptions.length ? user.subscriptions[0].status : 'none';
+                      const status = user.subscriptions.length
+                        ? user.subscriptions[0].status
+                        : 'none';
                       return (
                         <TableRow key={user.id}>
                           <TableCell>{user.name}</TableCell>
@@ -288,7 +315,9 @@ export default function AdminDashboard() {
                               }}
                             />
                           </TableCell>
-                          <TableCell>{new Date(user.createdAt).toISOString().slice(0, 10)}</TableCell>
+                          <TableCell>
+                            {new Date(user.createdAt).toISOString().slice(0, 10)}
+                          </TableCell>
                           <TableCell>
                             {isLoadingEdit && user.id === selectedUser?.id ? (
                               <CircularProgress size={20} />
@@ -311,7 +340,7 @@ export default function AdminDashboard() {
                             </Stack>
                           </TableCell>
                         </TableRow>
-                      )
+                      );
                     })}
                   </TableBody>
                 </Table>
@@ -341,9 +370,11 @@ export default function AdminDashboard() {
           sx={() => ({
             position: 'absolute',
             right: 8,
-            top: 8
+            top: 8,
           })}
-        >x</IconButton>
+        >
+          x
+        </IconButton>
         <DialogContent>
           <Stack spacing={2}>
             <Stack direction="row" alignItems="center" spacing={2}>
@@ -397,7 +428,12 @@ export default function AdminDashboard() {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button disabled={isLoadingEdit} onClick={handleEditButton} variant="contained" startIcon={isLoadingEdit ? <CircularProgress size={20} /> : null}>
+          <Button
+            disabled={isLoadingEdit}
+            onClick={handleEditButton}
+            variant="contained"
+            startIcon={isLoadingEdit ? <CircularProgress size={20} /> : null}
+          >
             Save Changes
           </Button>
         </DialogActions>

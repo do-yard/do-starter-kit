@@ -8,19 +8,17 @@ import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
 import { Button, Card, CardContent, Typography, Box } from '@mui/material';
 import Link from 'next/link';
 
-// Reusable FeatureCard component
 interface FeatureCardProps {
   icon: React.ReactElement;
   title: string;
   description: string;
 }
 
-const FeatureCard = ({
-  icon,
-  title,
-  description,
-}: FeatureCardProps) => (
-  <Card sx={{ backgroundColor: "white" }}>
+/**
+ * FeatureCard component to display individual feature cards.
+ */
+const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
+  <Card sx={{ backgroundColor: 'white' }}>
     <CardContent>
       <div
         style={{
@@ -34,13 +32,7 @@ const FeatureCard = ({
           ? React.cloneElement(icon as React.ReactElement<unknown>)
           : icon}
       </div>
-      <Typography
-        variant="h5"
-        align="center"
-        color="black"
-        fontWeight={600}
-        gutterBottom
-      >
+      <Typography variant="h5" align="center" color="black" fontWeight={600} gutterBottom>
         {title}
       </Typography>
       <Typography align="center" color="grey.700">
@@ -52,40 +44,43 @@ const FeatureCard = ({
 
 const features: FeatureCardProps[] = [
   {
-    icon: <CloudQueueIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    icon: <CloudQueueIcon sx={{ color: '#2563eb' }} fontSize="large" />,
     title: 'DigitalOcean Integration',
     description:
       "Seamlessly deploy your application to DigitalOcean's robust cloud infrastructure.",
   },
   {
-    icon: <LockOutlineIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    icon: <LockOutlineIcon sx={{ color: '#2563eb' }} fontSize="large" />,
     title: 'Secure Authentication',
     description: 'Built-in authentication system with email, Google, and GitHub login options.',
   },
   {
-    icon: <ElectricBoltIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    icon: <ElectricBoltIcon sx={{ color: '#2563eb' }} fontSize="large" />,
     title: 'Optimized Performance',
     description:
       "Leverage DigitalOcean's global network for lightning-fast load times and reliability.",
   },
   {
-    icon: <DnsIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    icon: <DnsIcon sx={{ color: '#2563eb' }} fontSize="large" />,
     title: 'Scalable Architecture',
     description:
       "Easily scale your application as your user base grows with DigitalOcean's flexible resources.",
   },
   {
-    icon: <RampLeftIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    icon: <RampLeftIcon sx={{ color: '#2563eb' }} fontSize="large" />,
     title: 'CI/CD Pipeline',
-    description: 'Integrated continuous integration and deployment pipeline for smooth updates.'
+    description: 'Integrated continuous integration and deployment pipeline for smooth updates.',
   },
   {
-    icon: <CloudQueueIcon sx={{ color: '#2563eb' }} fontSize='large' />,
+    icon: <CloudQueueIcon sx={{ color: '#2563eb' }} fontSize="large" />,
     title: 'DigitalOcean Spaces',
-    description: 'Efficient file storage and CDN integration using DigitalOcean Spaces.'
-  }
+    description: 'Efficient file storage and CDN integration using DigitalOcean Spaces.',
+  },
 ];
 
+/**
+ * Home page component for the DigitalOcean SaaS starter kit.
+ */
 const Home = () => (
   <Box sx={{ flexGrow: 1 }}>
     <Box

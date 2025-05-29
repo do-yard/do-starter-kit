@@ -41,9 +41,9 @@ const colors = {
     primary: 'rgba(0, 0, 0, 0.87)',
     secondary: 'rgba(0, 0, 0, 0.6)',
     disabled: 'rgba(0, 0, 0, 0.38)',
-    dark: '#111827',       // Dark text for headings
-    medium: '#4b5563',     // Medium gray for body text
-    light: '#6b7280',      // Light gray for secondary text
+    dark: '#111827', // Dark text for headings
+    medium: '#4b5563', // Medium gray for body text
+    light: '#6b7280', // Light gray for secondary text
   },
   error: {
     main: '#f44336',
@@ -131,10 +131,10 @@ const components: ThemeOptions['components'] = {
     styleOverrides: {
       root: {
         backgroundImage: 'none',
-        border: 'none'
+        border: 'none',
       },
     },
-  }
+  },
 };
 
 // Theme context for mode switching
@@ -144,12 +144,18 @@ interface ThemeModeContextProps {
 }
 const ThemeModeContext = createContext<ThemeModeContextProps | undefined>(undefined);
 
+/**
+ * Custom hook to access the theme mode context.
+ */
 export function useThemeMode() {
   const ctx = useContext(ThemeModeContext);
   if (!ctx) throw new Error('useThemeMode must be used within ThemeModeProvider');
   return ctx;
 }
 
+/**
+ * Theme toggle button component for switching between light and dark mode.
+ */
 export function ThemeToggle() {
   const { mode, toggleMode } = useThemeMode();
   return (
@@ -159,7 +165,9 @@ export function ThemeToggle() {
   );
 }
 
-// Create the theme
+/**
+ * Provides the Material UI theme and color mode context to the application.
+ */
 export default function MaterialThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<'light' | 'dark'>('light'); // Always start with 'light' for SSR
 
@@ -183,42 +191,56 @@ export default function MaterialThemeProvider({ children }: { children: React.Re
   }, [mode]);
 
   // Only spread palette-relevant keys
-  const palette = useMemo(() => ({
-    mode, 
-    primary: mode === 'light' ? {
-      main: '#0061EB'
-    } : { main: '#76A4E6' }, // Example primary color
-    secondary: colors.secondary,
-    error: colors.error,
-    warning: colors.warning,
-    success: colors.success,
-    grey: colors.grey,
-    background: mode === 'dark'
-      ? { default: colors.grey[900], paper: colors.grey[800] }
-      : colors.background,
-    text: mode === 'dark'
-      ? {
-          primary: '#fff',
-          secondary: colors.grey[700],
-          disabled: colors.grey[600],
-          dark: '#fff',
-          medium: colors.grey[400],
-          light: colors.grey[500],
-        }
-      : colors.text
-  }), [mode]);
+  const palette = useMemo(
+    () => ({
+      mode,
+      primary:
+        mode === 'light'
+          ? {
+              main: '#0061EB',
+            }
+          : { main: '#76A4E6' }, // Example primary color
+      secondary: colors.secondary,
+      error: colors.error,
+      warning: colors.warning,
+      success: colors.success,
+      grey: colors.grey,
+      background:
+        mode === 'dark'
+          ? { default: colors.grey[900], paper: colors.grey[800] }
+          : colors.background,
+      text:
+        mode === 'dark'
+          ? {
+              primary: '#fff',
+              secondary: colors.grey[700],
+              disabled: colors.grey[600],
+              dark: '#fff',
+              medium: colors.grey[400],
+              light: colors.grey[500],
+            }
+          : colors.text,
+    }),
+    [mode]
+  );
 
   // Add a tooltip to the toggle button (optional, but recommended for accessibility)
   // This is handled in ThemeToggle, but you may want to use Tooltip from MUI if desired.
 
   return (
     <ThemeModeContext.Provider value={{ mode, toggleMode }}>
-      <ThemeProvider theme={useMemo(() => createTheme({
-        palette,
-        typography: typography as ThemeOptions['typography'],
-        components: components as ThemeOptions['components'],
-        spacing: 8,
-      }), [palette])}>
+      <ThemeProvider
+        theme={useMemo(
+          () =>
+            createTheme({
+              palette,
+              typography: typography as ThemeOptions['typography'],
+              components: components as ThemeOptions['components'],
+              spacing: 8,
+            }),
+          [palette]
+        )}
+      >
         <CssBaseline />
         {children}
       </ThemeProvider>

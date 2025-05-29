@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
 
-export const updateUser = async (
-    request: NextRequest
-): Promise<NextResponse> => {
+/**
+ * Updates a user with the provided data in the request body.
+ * Only allows updating specific fields: name, role, and subscriptions.
+ *
+ * @param request - The Next.js request object containing user update data.
+ * @returns A NextResponse with the updated user or an error message.
+ */
+export const updateUser = async (request: NextRequest): Promise<NextResponse> => {
   try {
     const body = await request.json();
     const { id, ...updateData } = body;
@@ -18,7 +23,7 @@ export const updateUser = async (
     // Remove fields from updateData that are not allowed
     Object.keys(updateData).forEach((key) => {
       if (!allowedFields.includes(key)) {
-      delete updateData[key];
+        delete updateData[key];
       }
     });
 
@@ -33,7 +38,7 @@ export const updateUser = async (
     });
 
     if (updateData.subscriptions) {
-      const userSubscriptions = await dbClient.subscription.findByUserId(id);  
+      const userSubscriptions = await dbClient.subscription.findByUserId(id);
       await dbClient.subscription.update(userSubscriptions[0].id, updateData.subscriptions[0]);
     }
 
@@ -42,4 +47,4 @@ export const updateUser = async (
     console.error('Server error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
+};
