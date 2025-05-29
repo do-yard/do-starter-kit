@@ -28,7 +28,7 @@ export class ResendEmailService implements EmailService {
       });
     } catch (error) {
         console.error('Error sending email:', error);
-        throw new Error('Failed to send email');
+        throw new Error(`Failed to send email: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 }
