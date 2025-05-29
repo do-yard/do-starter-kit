@@ -8,7 +8,7 @@ import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { StripeClient } from 'services/api/stripe';
+import { StripeClient } from 'lib/api/stripe';
 
 /**
  * User registration form.

@@ -3,7 +3,7 @@
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useState } from 'react';
-import { StripeClient } from 'services/api/stripe';
+import { StripeClient } from 'lib/api/stripe';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
 

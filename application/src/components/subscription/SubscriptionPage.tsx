@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { serverConfig } from 'settings/settings';
 import StripeCheckout from './StripeCheckout';
-import { StripeClient } from 'services/api/stripe';
+import { StripeClient } from 'lib/api/stripe';
 import { SubscriptionPlan } from 'types';
 
 const Subscription = () => {
