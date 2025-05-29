@@ -16,19 +16,6 @@ type StripeCheckoutProps = {
   onSubscribed: () => void;
 };
 
-/**
- * StripeCheckout component handles the subscription process using Stripe Checkout.
- *
- * This component displays a button to initiate a subscription. When clicked, it creates a Stripe subscription
- * and, if required, displays a payment form using Stripe Elements. Upon successful payment, it calls the `onSubscribed` callback.
- *
- * @param {Object} props - Component props.
- * @param {string} props.priceId - The Stripe Price ID to subscribe to.
- * @param {string} props.buttonText - The text to display on the subscription button.
- * @param {() => void} props.onSubscribed - Callback function called when the subscription is successful.
- *
- * @returns {JSX.Element} The rendered StripeCheckout component.
- */
 const CheckoutForm = ({ onSubscribed }: { onSubscribed: () => void }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -67,6 +54,19 @@ const CheckoutForm = ({ onSubscribed }: { onSubscribed: () => void }) => {
   );
 };
 
+/**
+ * StripeCheckout component handles the subscription process using Stripe Checkout.
+ *
+ * This component displays a button to initiate a subscription. When clicked, it creates a Stripe subscription
+ * and, if required, displays a payment form using Stripe Elements. Upon successful payment, it calls the `onSubscribed` callback.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.priceId - The Stripe Price ID to subscribe to.
+ * @param {string} props.buttonText - The text to display on the subscription button.
+ * @param {() => void} props.onSubscribed - Callback function called when the subscription is successful.
+ *
+ * @returns {JSX.Element} The rendered StripeCheckout component.
+ */
 const StripeCheckout = ({ priceId, buttonText, onSubscribed }: StripeCheckoutProps) => {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
