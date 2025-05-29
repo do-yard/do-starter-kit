@@ -34,24 +34,21 @@ export default function AccountSettings() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const session = useSession();
+  const user = session.data?.user;
 
   useEffect(() => {
-    if (!session.data?.user) {
-      return;
-    }
-
-    if (formData.name !== '') {
-      return;
-    }
+    if (isInitialized || !user) return;
 
     setFormData({
-      name: session.data?.user?.name ?? '',
-      email: session.data?.user?.email ?? '',
+      name: user.name ?? '',
+      email: user.email ?? '',
       profileImage: null,
     });
-  }, [formData.name, session]);
+    setIsInitialized(true);
+  }, [isInitialized, user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
