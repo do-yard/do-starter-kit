@@ -6,6 +6,7 @@ import Paper from '../common/Paper';
 import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
 import DoneIcon from '@mui/icons-material/Done';
+import Image from 'next/image';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
   border: '2px dashed',
@@ -104,6 +105,20 @@ export default function AccountSettings() {
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!formData.profileImage) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(formData.profileImage);
+    setPreviewUrl(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [formData.profileImage]);
 
   return (
     <Box sx={{ width: '100%', color: '#fff', pt: 4 }}>
@@ -238,21 +253,51 @@ export default function AccountSettings() {
                     Selected file: {formData.profileImage.name}
                   </Typography>
                 )}
-                <StyledFileInput
-                  sx={{
-                    color: isLoading ? '#9ca3af' : '#fff',
-                    borderColor: isLoading ? '#6b7280' : '#374151',
-                    backgroundColor: isLoading ? 'rgba(55,65,81,0.2)' : 'transparent',
-                    cursor: isLoading ? 'not-allowed' : 'pointer',
-                  }}
-                >
-                  <div {...getRootProps()}>
+
+                {previewUrl ? (
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Box
+                      sx={{
+                        width: 200,
+                        height: 200,
+                        position: 'relative',
+                        mx: 'auto',
+                        mb: 2,
+                        borderRadius: 2,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Image
+                        src={previewUrl}
+                        alt="Selected profile image preview"
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </Box>
+                    <Button
+                      variant="outlined"
+                      onClick={() => setFormData((prev) => ({ ...prev, profileImage: null }))}
+                      disabled={isLoading}
+                    >
+                      Change Image
+                    </Button>
+                  </Box>
+                ) : (
+                  <StyledFileInput
+                    {...getRootProps()}
+                    sx={{
+                      color: isLoading ? '#9ca3af' : '#fff',
+                      borderColor: isLoading ? '#6b7280' : '#374151',
+                      backgroundColor: isLoading ? 'rgba(55,65,81,0.2)' : 'transparent',
+                      cursor: isLoading ? 'not-allowed' : 'pointer',
+                    }}
+                  >
                     <input {...getInputProps()} disabled={isLoading} />
                     <Typography variant="body2" color="#9ca3af">
                       Drag &apos;n&apos; drop a profile image here, or click to select one
                     </Typography>
-                  </div>
-                </StyledFileInput>
+                  </StyledFileInput>
+                )}
                 {uploadError && (
                   <Typography variant="caption" color="error" sx={{ mt: 1 }}>
                     {uploadError}
