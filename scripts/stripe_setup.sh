@@ -81,7 +81,7 @@ fi
 echo "FREE Price created with ID: $FREE_PRICE_ID"
 
 echo -e '\033[0;32mStripe was setup correctly; the following App Platform'\''s environment variables should be set:\033[0m'
-echo -e "\033[0;33m- BILLING_STRIPE_PRODUCTID_PRO : $PRODUCT_PRO_ID (PRO Product ID)\033[0m"
-echo -e "\033[0;33m- BILLING_STRIPE_PRODUCTID_FREE : $PRODUCT_FREE_ID (FREE Product ID)\033[0m"
-echo -e "\033[0;33m- BILLING_STRIPE_PRICEID_PRO : $PRO_PRICE_ID (PRO price ID)\033[0m"
-echo -e "\033[0;33m- BILLING_STRIPE_PRICEID_FREE : $FREE_PRICE_ID (FREE price ID)\033[0m"
+echo -e "\033[0;33m- NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID : $PRODUCT_PRO_ID (PRO Product ID)\033[0m"
+echo -e "\033[0;33m- NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID : $PRODUCT_FREE_ID (FREE Product ID)\033[0m"
+echo -e "\033[0;33m- NEXT_PUBLIC_STRIPE_PRO_PRICE_ID : $PRO_PRICE_ID (PRO price ID)\033[0m"
+echo -e "\033[0;33m- NEXT_PUBLIC_STRIPE_FREE_PRICE_ID : $FREE_PRICE_ID (FREE price ID)\033[0m"

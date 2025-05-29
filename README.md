@@ -94,10 +94,10 @@ The following environment variables are required:
 
 4. **Stripe Environment Variables**
    ```
-   BILLING_STRIPE_PRODUCTID_PRO
-   BILLING_STRIPE_PRODUCTID_FREE
-   BILLING_STRIPE_PRICEID_PRO
-   BILLING_STRIPE_PRICEID_FREE
+   NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID
+   NEXT_PUBLIC_STRIPE_FREE_PRICE_ID
+   NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID
+   NEXT_PUBLIC_STRIPE_PRO_PRICE_ID
    ```
    - Get these values from your Stripe setup (see [stripe-setup.md](./docs/stripe-setup.md))
 

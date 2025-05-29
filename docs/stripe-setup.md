@@ -22,7 +22,7 @@ The script will ask you for the Stripe's key you created before:
 After this the script will create a product with your product name and two prices, one free and another pro, linked to that product.
 In the script outputs you will see the respective IDs for the product and the prices. _Use this IDs in the deployment templates as the required environment variables_:
 
-- BILLING_STRIPE_PRODUCTID_PRO
-- BILLING_STRIPE_PRODUCTID_FREE
-- BILLING_STRIPE_PRICEID_PRO
-- BILLING_STRIPE_PRICEID_FREE
+- NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID
+- NEXT_PUBLIC_STRIPE_FREE_PRICE_ID
+- NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID
+- NEXT_PUBLIC_STRIPE_PRO_PRICE_ID

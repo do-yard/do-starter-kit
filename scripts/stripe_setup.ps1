@@ -91,7 +91,7 @@ try {
 
 
 Write-Host "`nStripe was setup correctly; the following App Platform's environment variables should be set:" -ForegroundColor Green
-Write-Host "- BILLING_STRIPE_PRODUCTID_PRO : $PRODUCT_PRO_ID (PRO Product ID)" -ForegroundColor Yellow
-Write-Host "- BILLING_STRIPE_PRODUCTID_FREE : $PRODUCT_FREE_ID (FREE Product ID)" -ForegroundColor Yellow
+Write-Host "- NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID : $PRODUCT_PRO_ID (PRO Product ID)" -ForegroundColor Yellow
+Write-Host "- NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID : $PRODUCT_FREE_ID (FREE Product ID)" -ForegroundColor Yellow
 Write-Host "- BILLING_STRIPE_PRICEID_PRO : $PRO_PRICE_ID (PRO price ID)" -ForegroundColor Yellow
-Write-Host "- BILLING_STRIPE_PRICEID_FREE : $FREE_PRICE_ID (FREE price ID)" -ForegroundColor Yellow
+Write-Host "- NEXT_PUBLIC_STRIPE_PRO_PRICE_ID : $FREE_PRICE_ID (FREE price ID)" -ForegroundColor Yellow
