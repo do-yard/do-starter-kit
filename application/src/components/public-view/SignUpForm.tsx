@@ -8,6 +8,7 @@ import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { StripeClient } from 'services/api/stripe';
 
 /**
  * User registration form.
@@ -40,6 +41,9 @@ const SignUpForm: React.FC = () => {
       isSignUp: 'true',
     });
 
+    const billingApi = new StripeClient();
+    await billingApi.createCustomer();
+
     setNavigating(false);
     if (!res || res.error) {
       setError(res?.code || 'Something went wrong');
@@ -58,7 +62,15 @@ const SignUpForm: React.FC = () => {
         alignItems="center"
         bgcolor="#f3f4f6"
       >
-        <Card sx={{ width: '100%', maxWidth: 400, boxShadow: 0, border: '1px solid', borderColor: 'grey.300' }}>
+        <Card
+          sx={{
+            width: '100%',
+            maxWidth: 400,
+            boxShadow: 0,
+            border: '1px solid',
+            borderColor: 'grey.300',
+          }}
+        >
           <Box display="flex" flexDirection="column" gap={1.5} p={3}>
             <Typography fontWeight="bold" variant="h5">
               Sign Up
