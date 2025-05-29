@@ -6,10 +6,10 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { NavigatingProvider } from './Navigation';
 
 /**
- * Wrapper global que agrupa todos los context providers usados en la aplicación.
- * Incluye sesión, tema, usuario y navegación.
+ * Global wrapper that groups all context providers used in the application.
+ * Includes session, theme, user and navigation.
  *
- * @param children - Árbol de componentes que recibirán estos contextos.
+ * @param children - Tree of components that will receive these contexts.
  */
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (

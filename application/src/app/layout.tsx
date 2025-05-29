@@ -23,10 +23,10 @@ export const metadata: Metadata = {
 };
 
 /**
- * Root layout de la aplicación.
- * Aplica fuentes globales, estilos base y provee contexto compartido a través del componente Providers.
+ * Root layout of the application.
+ * Applies global fonts, base styles and provides shared context through the Providers component.
  *
- * @returns HTML layout con fuentes y providers aplicados.
+ * @returns HTML layout with fonts and providers applied.
  */
 const RootLayout = ({ children }: { children: React.ReactNode }) => (
   <html lang="en">

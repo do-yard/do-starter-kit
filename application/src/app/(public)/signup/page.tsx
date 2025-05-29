@@ -2,10 +2,10 @@ import SignUpForm from 'components/public-view/SignUpForm';
 import React from 'react';
 
 /**
- * Página de registro de usuarios.
- * Presenta las mismas características visuales que la landing, con CTA para iniciar el registro.
+ * User registration page.
+ * Presents the same visual characteristics as the landing page, with CTA to initiate the registration.
  *
- * @returns Página de registro con presentación de beneficios y llamada a la acción.
+ * @returns Registration page with benefits presentation and call to action.
  */
 const SignupPage: React.FC = () => {
   return <SignUpForm />;

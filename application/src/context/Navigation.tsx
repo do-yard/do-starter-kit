@@ -3,8 +3,8 @@
 import { createContext, useState } from 'react';
 
 /**
- * Contexto global para manejar el estado de navegación (`navigating`).
- * Permite mostrar loaders durante transiciones o requests controladas.
+ * Global context to handle the navigation state (`navigating`).
+ * Allows to show loaders during transitions or controlled requests.
  */
 export const NavigatingContext = createContext<{
   navigating: boolean;
@@ -12,10 +12,10 @@ export const NavigatingContext = createContext<{
 }>({ navigating: false, setNavigating: () => {} });
 
 /**
- * Proveedor de contexto de navegación.
- * Provee el estado `navigating` y la función `setNavigating` a toda la app.
+ * Navigation context provider.
+ * Provides `navigating` state and `setNavigating` function to the whole app.
  *
- * @param children - Componentes hijos que podrán acceder al contexto.
+ * @param children - Child components that will be able to access the context.
  */
 export const NavigatingProvider = ({ children }: { children: React.ReactNode }) => {
   const [navigating, setNavigating] = useState(false);

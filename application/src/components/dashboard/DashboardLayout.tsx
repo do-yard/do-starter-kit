@@ -8,10 +8,10 @@ interface DashboardLayoutProps {
 }
 
 /**
- * Layout principal para páginas protegidas del dashboard.
- * Aplica estructura de sidebar + contenido scrollable.
+ * Main layout for protected dashboard pages.
+ * Apply sidebar structure + scrollable content.
  *
- * @param children - Contenido principal renderizado en el área del dashboard.
+ * @param children - Main content rendered in dashboard area.
  */
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (

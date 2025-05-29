@@ -2,9 +2,9 @@ import React from 'react';
 import Button from '@mui/material/Button';
 
 /**
- * Botón de formulario estilizado para acciones de submit.
+ * Stylized form button for submit actions.
  *
- * @param children - Texto o contenido del botón.
+ * @param children - Button text or content.
  */
 const FormButton: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Button

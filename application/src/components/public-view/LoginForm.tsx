@@ -8,8 +8,8 @@ import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 
 /**
- * Formulario de inicio de sesión.
- * Maneja autenticación por credenciales e integra con navegación inteligente.
+ * Login form.
+ * Handles authentication by credentials and integrates with intelligent navigation.
  */
 const LoginForm: React.FC = () => {
   const { navigate } = usePrefetchRouter();

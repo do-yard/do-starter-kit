@@ -21,8 +21,8 @@ const footerSections = [
 ];
 
 /**
- * Footer de la aplicación.
- * Muestra secciones con enlaces organizados por categorías y copyright.
+ * Footer of the application.
+ * Displays sections with links organized by categories and copyright.
  */
 export default function Footer() {
   return (

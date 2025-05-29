@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useContext } from 'react';
 
 /**
- * Hook personalizado para navegar con prefetch en Next.js App Router.
- * Intenta precargar la ruta antes de hacer `router.push`.
+ * Custom hook to browse with prefetch in Next.js App Router.
+ * Try to prefetch route before doing `router.push`.
  *
- * @returns Objeto con método `navigate(href)` para navegación con prefetch.
+ * @returns Object with `navigate(href)` method for prefetch navigation.
  */
 export const usePrefetchRouter = () => {
   const router = useRouter();
@@ -26,9 +26,9 @@ export const usePrefetchRouter = () => {
 };
 
 /**
- * Hook para acceder al estado global de navegación (`navigating`).
- * Útil para mostrar o esconder spinners de carga.
+ * Hook to access the global navigation state (`navigating`).
+ * Useful to show or hide loading spinners.
  *
- * @returns Objeto `{ navigating, setNavigating }` desde el contexto.
+ * @returns `{ navigating, setNavigating }` object from context.
  */
 export const useNavigating = () => useContext(NavigatingContext);

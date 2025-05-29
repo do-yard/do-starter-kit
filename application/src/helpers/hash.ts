@@ -3,21 +3,21 @@ import bcrypt from 'bcryptjs';
 const SALT_ROUNDS = 12;
 
 /**
- * Hashea una contraseña usando bcrypt.
+ * Hashes a password using bcrypt.
  *
- * @param password - Contraseña en texto plano.
- * @returns Contraseña hasheada.
+ * @param password - Plain text password.
+ * @returns Password hashed.
  */
 export const hashPassword = async (password: string): Promise<string> => {
   return await bcrypt.hash(password, SALT_ROUNDS);
 };
 
 /**
- * Verifica una contraseña comparándola con un hash.
+ * Verify a password by comparing it with a hash.
  *
- * @param plainPassword - Contraseña sin encriptar.
- * @param hashedPassword - Contraseña encriptada previamente.
- * @returns `true` si coinciden, `false` en caso contrario.
+ * @param plainPassword - Unencrypted password.
+ * @param hashedPassword - Previously encrypted password.
+ * @returns `true` if they match, `false` otherwise.
  */
 export const verifyPassword = async (
   plainPassword: string,

@@ -2,10 +2,10 @@ import { auth } from 'lib/auth/auth';
 import { Typography, Box } from '@mui/material';
 
 /**
- * Página principal del dashboard protegida por autenticación.
- * Muestra un mensaje personalizado al usuario logueado.
+ * Main dashboard page protected by authentication.
+ * Displays a personalized message to the logged in user.
  *
- * @returns Página con saludo centrado y datos de sesión.
+ * @returns Page with centered greeting and session data.
  */
 export default async function DashboardPage() {
   const session = await auth();

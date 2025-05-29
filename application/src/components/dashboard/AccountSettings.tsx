@@ -20,10 +20,10 @@ const StyledFileInput = styled('div')(({ theme }) => ({
 }));
 
 /**
- * Página de configuración de cuenta del usuario.
- * Permite actualizar nombre y foto de perfil, con integración a la sesión activa.
+ * User account configuration page.
+ * Allows to update name and profile picture, with integration to the active session.
  *
- * Gestiona formularios, dropzone para imagen y estados de carga/success.
+ * Manages forms, dropzone for image and upload/success status.
  */
 export default function AccountSettings() {
   const [formData, setFormData] = useState({

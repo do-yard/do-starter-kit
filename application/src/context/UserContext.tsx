@@ -7,16 +7,16 @@ interface UserState {
 }
 
 /**
- * Contexto global de usuario.
- * Permite guardar información de usuario personalizada fuera de Auth.js.
+ * Global user context.
+ * Allows to save custom user information outside Auth.js.
  */
 export const UserContext = createContext<UserState | undefined>(undefined);
 
 /**
- * Proveedor de contexto de usuario.
- * Expone el nombre del usuario y una función para actualizarlo.
+ * User context provider.
+ * Exposes the user's name and a function to update it.
  *
- * @param children - Componentes envueltos que acceden al contexto.
+ * @param children - Wrapped components that access the context.
  */
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<string | null>(null);

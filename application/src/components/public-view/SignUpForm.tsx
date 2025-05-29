@@ -9,8 +9,8 @@ import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
 
 /**
- * Formulario de registro de usuario.
- * Incluye validación de contraseña, integración con Auth.js y manejo de errores.
+ * User registration form.
+ * Includes password validation, Auth.js integration and error handling.
  */
 const SignUpForm: React.FC = () => {
   const { navigate } = usePrefetchRouter();

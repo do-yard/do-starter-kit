@@ -3,8 +3,8 @@ import { Box, CircularProgress, Fade } from '@mui/material';
 import { useNavigating } from 'hooks/navigation';
 
 /**
- * Spinner de carga a pantalla completa.
- * Usado como overlay con fondo semitransparente.
+ * Full screen loading spinner.
+ * Used as overlay with semi-transparent background.
  */
 const LoadingSpinner = () => (
   <Box
@@ -27,10 +27,10 @@ const LoadingSpinner = () => (
 );
 
 /**
- * Wrapper que muestra un spinner mientras hay navegación activa.
- * Usa Fade para aplicar animación suave durante la carga.
+ * Wrapper showing a spinner while navigation is active.
+ * Use Fade to apply smooth animation during loading.
  *
- * @param children - Contenido de la aplicación que se renderiza mientras no hay carga.
+ * @param children - Application content that is rendered while there is no load.
  */
 const WithLoadingSpinner = ({ children }: { children: React.ReactNode }) => {
   const { navigating } = useNavigating();

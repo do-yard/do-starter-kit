@@ -9,10 +9,10 @@ import { Button, Card, CardContent, Typography, Box } from '@mui/material';
 import Link from 'next/link';
 
 /**
- * Página pública principal (landing page).
- * Presenta las principales funcionalidades del starter kit y CTA para comenzar.
+ * Public landing page.
+ * Present the main functionalities of the starter kit and CTA to get started.
  *
- * @returns Página de inicio con presentación visual y llamada a la acción.
+ * @returns Home page with visual presentation and call to action.
  */
 const Home = () => (
   <Box sx={{ flexGrow: 1 }}>
