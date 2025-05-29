@@ -9,10 +9,10 @@ export interface ServerConfig {
     endpoint?: string;
   };
   Stripe: {
-    stripeProProductId?: string;
-    stripeFreeProductId?: string;
-    stripeProPriceId?: string;
-    stripeFreePriceId?: string;
+    freeProductId?: string;
+    freePriceId?: string;
+    proProductId?: string;
+    proPriceId?: string;
   };
 }
 
@@ -27,9 +27,9 @@ export const serverConfig: ServerConfig = {
     endpoint: process.env.SPACES_ENDPOINT,
   },
   Stripe: {
-    stripeProProductId: process.env.BILLING_STRIPE_PRODUCTID_PRO,
-    stripeFreeProductId: process.env.BILLING_STRIPE_PRODUCTID_FREE,
-    stripeProPriceId: process.env.BILLING_STRIPE_PRICEID_PRO,
-    stripeFreePriceId: process.env.BILLING_STRIPE_PRICEID_FREE,
+    freeProductId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID,
+    freePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
+    proProductId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID,
+    proPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
   },
 };
