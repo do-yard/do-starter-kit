@@ -6,7 +6,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { StorageService } from './storage';
-import { serverConfig } from 'settings/settings';
+import { serverConfig } from '../../../settings';
 
 export class SpacesStorageService implements StorageService {
   private client: S3Client;

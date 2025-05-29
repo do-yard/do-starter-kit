@@ -37,6 +37,11 @@ services:
         value: "${APP_URL}"
       - key: "AUTH_TRUST_HOST"
         value: "true"
+      - key: "RESEND_API_KEY"
+        value: "${RESEND_API_KEY}"
+        type: "SECRET"
+      - key: RESEND_EMAIL_SENDER
+        value: "${RESEND_EMAIL_SENDER}"
 
 databases:
   - name: ${DB_NAME}
