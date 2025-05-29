@@ -58,7 +58,6 @@ const StripeCheckout = ({ priceId, buttonText, onSubscribed }: StripeCheckoutPro
       const { clientSecret } = res;
 
       if (clientSecret) {
-        console.log('Client secret received:', clientSecret);
         setClientSecret(clientSecret);
         setShowForm(true);
       } else {
