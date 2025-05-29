@@ -2,6 +2,10 @@
 import { Box, CircularProgress, Fade } from '@mui/material';
 import { useNavigating } from 'hooks/navigation';
 
+/**
+ * Full screen loading spinner.
+ * Used as overlay with semi-transparent background.
+ */
 const LoadingSpinner = () => (
   <Box
     sx={{
@@ -22,6 +26,12 @@ const LoadingSpinner = () => (
   </Box>
 );
 
+/**
+ * Wrapper showing a spinner while navigation is active.
+ * Use Fade to apply smooth animation during loading.
+ *
+ * @param children - Application content that is rendered while there is no load.
+ */
 const WithLoadingSpinner = ({ children }: { children: React.ReactNode }) => {
   const { navigating } = useNavigating();
 

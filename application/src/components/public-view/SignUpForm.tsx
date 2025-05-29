@@ -9,6 +9,10 @@ import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+/**
+ * User registration form.
+ * Includes password validation, Auth.js integration and error handling.
+ */
 const SignUpForm: React.FC = () => {
   const { navigate } = usePrefetchRouter();
   const { setNavigating } = useNavigating();

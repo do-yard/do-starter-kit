@@ -16,10 +16,11 @@ export interface StorageService {
   deleteFile(userId: string, fileName: string): Promise<void>;
 }
 
-// Factory function to create the appropriate storage service
+/**
+ * Factory function to create and return the appropriate storage service based on configuration.
+ */
 export function createStorageService(): StorageService {
   const storageProvider = serverConfig.storageProvider;
-
   switch (storageProvider) {
     // Add more providers here in the future
     // case 'AZURE':

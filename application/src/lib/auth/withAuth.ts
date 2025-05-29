@@ -9,6 +9,10 @@ export type WithAuthOptions = {
 
 type Handler = (req: NextRequest, user: { id: string; role: UserRole }) => Promise<Response>;
 
+/**
+ * Higher-order function to wrap API route handlers with authentication and optional role-based authorization.
+ * @param options Optional configuration for allowed user roles.
+ */
 export const withAuth =
   (handler: Handler, options: WithAuthOptions = {}) =>
   async (req: NextRequest): Promise<Response> => {

@@ -8,6 +8,10 @@ const ROLE_HOME_URL: Record<UserRole, string> = {
   [USER_ROLES.ADMIN]: '/dashboard',
 };
 
+/**
+ * Middleware to handle authentication and role-based redirects.
+ * @returns A NextResponse object for redirection or continuation.
+ */
 export async function middleware(request: NextRequest) {
   const session = await auth();
   const { pathname } = request.nextUrl;

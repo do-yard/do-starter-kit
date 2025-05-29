@@ -1,8 +1,17 @@
+/**
+ * API client for interacting with user-related endpoints.
+ */
 export class ApiClient {
   constructor(private baseURL = '/api') {}
 
   // Fetch all users (GET /api/users)
-  async getUsers(params?: { page?: number; pageSize?: number; searchName?: string; filterPlan?: string; filterStatus?: string }) {
+  async getUsers(params?: {
+    page?: number;
+    pageSize?: number;
+    searchName?: string;
+    filterPlan?: string;
+    filterStatus?: string;
+  }) {
     const url = new URL(this.baseURL + '/users', window.location.origin);
     if (params) {
       if (params.page) url.searchParams.set('page', String(params.page));

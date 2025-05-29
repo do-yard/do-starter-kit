@@ -9,6 +9,10 @@ import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
+/**
+ * Login form.
+ * Handles authentication by credentials and integrates with intelligent navigation.
+ */
 const LoginForm: React.FC = () => {
   const { navigate } = usePrefetchRouter();
 

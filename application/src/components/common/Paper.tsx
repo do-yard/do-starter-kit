@@ -12,10 +12,14 @@ const PaperRoot = styled(MuiPaper)(({ theme }) => ({
 interface PaperProps {
   children: React.ReactNode;
   sx?: SxProps<Theme>;
-  fullWidth?: boolean; // New prop to control if Paper should use 100% width
+  fullWidth?: boolean;
 }
 
-// Wrapper component that allows for additional sx props
+/**
+ * Paper component with dark theme styling and optional full width.
+ *
+ * @returns The styled Paper component.
+ */
 const Paper: React.FC<PaperProps> = ({ children, sx = {}, fullWidth = false }) => {
   return (
     <PaperRoot
