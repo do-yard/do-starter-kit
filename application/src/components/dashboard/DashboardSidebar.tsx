@@ -1,6 +1,6 @@
 'use client';
 import React, { useCallback } from 'react';
-import { Person, Receipt, Settings, CreditCard, Logout } from '@mui/icons-material';
+import { Person, Receipt, Settings, CreditCard, Logout, Assessment } from '@mui/icons-material';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -16,8 +16,7 @@ import {
   styled,
   Avatar,
 } from '@mui/material';
-import { signOut } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 interface SidebarLinkProps {
   href: string;
@@ -50,25 +49,19 @@ const SidebarLink = ({ href, icon, children, onClick }: SidebarLinkProps) => {
         sx={{
           borderRadius: 1,
           py: 1,
-          px: 1.5,
-          color: isActive ? 'grey.50' : 'grey.300',
-          bgcolor: isActive ? 'grey.800' : 'transparent',
-          '&:hover': {
-            bgcolor: 'grey.800',
-          },
+          px: 1.5
         }}
       >
         <ListItemIcon
           sx={{
-            minWidth: 36,
-            color: 'inherit',
+            minWidth: 36
           }}
         >
           {icon}
         </ListItemIcon>
         <ListItemText
           primary={children}
-          primaryTypographyProps={{
+          sx={{
             fontSize: 14,
             fontWeight: 500,
           }}
@@ -83,8 +76,7 @@ const SidebarHeader = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   height: '3.5rem',
   padding: theme.spacing(0, 2),
-  borderBottom: '1px solid',
-  borderColor: '#1f2937',
+  borderBottom: `1px solid ${theme.palette.divider}`
 }));
 
 /**
@@ -113,18 +105,18 @@ const DashboardSidebar = () => {
         '& .MuiDrawer-paper': {
           width: 256,
           boxSizing: 'border-box',
-          bgcolor: '#030712',
-          color: '#fff',
           borderRight: 1,
-          borderColor: '#1f2937',
+          borderColor: 'divider'
         },
       }}
     >
       <SidebarHeader justifyContent={'space-between'}>
-        <Typography variant="h5" fontWeight={600} color="grey.300">
+        <Typography variant="h5" fontWeight={600}>
           SaaS App
         </Typography>
-        {getProfileIcon()}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {getProfileIcon()}
+        </Box>
       </SidebarHeader>
 
       <Box sx={{ p: 2, flex: 1, overflowY: 'auto' }}>
@@ -138,10 +130,15 @@ const DashboardSidebar = () => {
         </List>
       </Box>
 
-      <Divider sx={{ borderColor: '#1f2937' }} />
+      <Divider/>
 
       <Box sx={{ p: 2 }}>
         <List sx={{ p: 0 }}>
+          {session.data?.user?.role === 'ADMIN' && (
+            <SidebarLink href="/admin/dashboard" icon={<Assessment fontSize="small" />}>
+              Admin Dashboard
+            </SidebarLink>
+          )}
           <SidebarLink href="/dashboard/account" icon={<Settings fontSize="small" />}>
             Account Settings
           </SidebarLink>

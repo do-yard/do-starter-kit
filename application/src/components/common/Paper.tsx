@@ -4,12 +4,9 @@ import { SxProps, Theme } from '@mui/material/styles';
 
 // Styled Paper component with dark theme styling
 const PaperRoot = styled(MuiPaper)(({ theme }) => ({
-  backgroundColor: '#030712',
-  color: '#fff',
   borderRadius: theme.shape.borderRadius,
-  border: '1px solid #374151',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-  overflow: 'hidden',
+  border: '1px solid rgb(155, 155, 155)',
+  overflow: 'hidden'
 }));
 
 interface PaperProps {

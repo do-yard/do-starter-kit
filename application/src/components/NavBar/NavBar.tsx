@@ -32,14 +32,16 @@ const NavBar = () => {
       position="static"
       color="default"
       elevation={0}
-      sx={{ borderBottom: 1, borderColor: 'divider' }}
+      sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: 'white' }}
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <Link href="/" style={{ textDecoration: 'none' }}>
-          <Typography variant="h5" color="primary" fontWeight={700} sx={{ cursor: 'pointer' }}>
+          <Typography variant="h5" color="#0061EB" fontWeight={700} sx={{ cursor: 'pointer' }}>
             DO Starter Kit
           </Typography>
         </Link>
+
+        <Box sx={{ flexGrow: 1 }} />
 
         <Box>
           {navLinks.map(({ href, label, onClick }) => (
@@ -53,8 +55,7 @@ const NavBar = () => {
                 color: 'text.secondary',
                 fontWeight: 500,
                 fontSize: 14,
-                ml: 2,
-                '&:hover': { color: 'text.primary' },
+                ml: 2
               }}
             >
               {label}

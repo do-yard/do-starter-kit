@@ -6,6 +6,8 @@ import Link from 'next/link';
 import FormButton from './FormButton';
 import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 /**
  * Login form.
@@ -39,93 +41,96 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexGrow={1}
-      minHeight="100vh"
-      justifyContent="center"
-      alignItems="center"
-      bgcolor="#f3f4f6"
-    >
-      <Card sx={{ width: '100%', maxWidth: 400, boxShadow: 2 }}>
-        <Box display="flex" flexDirection="column" gap={1.5} p={3}>
-          <Typography fontWeight="bold" variant="h5">
-            Log In
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Welcome back! Please log in to your account
-          </Typography>
-        </Box>
+    <ThemeProvider theme={createTheme({ palette: { mode: 'light' } })}>
+      <CssBaseline />
+      <Box
+        display="flex"
+        flexGrow={1}
+        minHeight="100vh"
+        justifyContent="center"
+        alignItems="center"
+        bgcolor="#f3f4f6"
+      >
+        <Card sx={{ width: '100%', maxWidth: 400, boxShadow: 0, border: '1px solid', borderColor: 'grey.300' }} >
+          <Box display="flex" flexDirection="column" gap={1.5} p={3}>
+            <Typography fontWeight="bold" variant="h5">
+              Log In
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Welcome back! Please log in to your account
+            </Typography>
+          </Box>
 
-        <CardContent sx={{ p: 3, pt: 0, pb: 1 }}>
-          <form onSubmit={handleSubmit}>
-            <Box display="grid" gap={2}>
-              <Box display="flex" flexDirection="column" gap={1}>
-                <label htmlFor="email" style={{ fontSize: 14, lineHeight: 1.5 }}>
-                  Email
-                </label>
-                <TextField
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  fullWidth
-                  size="small"
-                />
+          <CardContent sx={{ p: 3, pt: 0, pb: 1 }}>
+            <form onSubmit={handleSubmit}>
+              <Box display="grid" gap={2}>
+                <Box display="flex" flexDirection="column" gap={1}>
+                  <label htmlFor="email" style={{ fontSize: 14, lineHeight: 1.5 }}>
+                    Email
+                  </label>
+                  <TextField
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    fullWidth
+                    size="small"
+                  />
+                </Box>
+
+                <Box display="flex" flexDirection="column" gap={1}>
+                  <label htmlFor="password" style={{ fontSize: 14, lineHeight: 1.5 }}>
+                    Password
+                  </label>
+                  <TextField
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    fullWidth
+                    size="small"
+                  />
+                </Box>
               </Box>
 
-              <Box display="flex" flexDirection="column" gap={1}>
-                <label htmlFor="password" style={{ fontSize: 14, lineHeight: 1.5 }}>
-                  Password
-                </label>
-                <TextField
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  fullWidth
-                  size="small"
-                />
+              {error && (
+                <Typography color="error" fontSize={14} mt={2}>
+                  {error}
+                </Typography>
+              )}
+
+              <Box mt={3}>
+                <FormButton>Log In with Email</FormButton>
               </Box>
-            </Box>
+            </form>
 
-            {error && (
-              <Typography color="error" fontSize={14} mt={2}>
-                {error}
-              </Typography>
-            )}
+            <Divider sx={{ my: 2 }} />
+          </CardContent>
 
-            <Box mt={3}>
-              <FormButton>Log In with Email</FormButton>
-            </Box>
-          </form>
-
-          <Divider sx={{ my: 2 }} />
-        </CardContent>
-
-        <Box display="flex" justifyContent="space-between" alignItems="center" p={3} pt={0}>
-          <Link
-            href="/forgot-password"
-            style={{ fontSize: 14, color: '#6b7280', textDecoration: 'none' }}
-          >
-            Forgot password?
-          </Link>
-          <Typography variant="body2" color="text.secondary">
-            Don&apos;t have an account?
+          <Box display="flex" justifyContent="space-between" alignItems="center" p={3} pt={0}>
             <Link
-              href="/signup"
-              style={{ marginLeft: 4, color: 'black', textDecoration: 'none', fontWeight: 500 }}
+              href="/forgot-password"
+              style={{ fontSize: 14, color: '#6b7280', textDecoration: 'none' }}
             >
-              Sign up
+              Forgot password?
             </Link>
-          </Typography>
-        </Box>
-      </Card>
-    </Box>
+            <Typography variant="body2" color="text.secondary">
+              Don&apos;t have an account?
+              <Link
+                href="/signup"
+                style={{ marginLeft: 4, color: 'black', textDecoration: 'none', fontWeight: 500 }}
+              >
+                Sign up
+              </Link>
+            </Typography>
+          </Box>
+        </Card>
+      </Box>
+    </ThemeProvider>
   );
 };
 

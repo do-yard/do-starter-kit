@@ -13,6 +13,7 @@ The architecture diagram above shows the complete structure of the SaaS Starter 
 ## Get Started
 
 This guide describes how to use DigitalOcean App Platform to deploy a complete SaaS application with:
+
 - User authentication
 - Database integration
 - API endpoints
@@ -21,9 +22,9 @@ This guide describes how to use DigitalOcean App Platform to deploy a complete S
 
 ### Requirements
 
-* You need a DigitalOcean account. If you do not already have one, first [sign up](https://cloud.digitalocean.com/registrations/new).
-* You must create a DigitalOcean Space (object storage) manually for file uploads. See [Storage setup instructions](./docs/storage.md).
-* For local development, you need Docker installed (or access to a Postgres database).
+- You need a DigitalOcean account. If you do not already have one, first [sign up](https://cloud.digitalocean.com/registrations/new).
+- You must create a DigitalOcean Space (object storage) manually for file uploads. See [Storage setup instructions](./docs/storage.md).
+- For local development, you need Docker installed (or access to a Postgres database).
 
 ## Deploy the App
 
@@ -43,8 +44,8 @@ After clicking the Deploy button or setting up your fork, follow these steps:
 
 1. **Configure environment variables and database:**
    - Set up the required environment variables (see [Environment Variables](#environment-variables) below)
-   
 2. **Deploy your application:**
+
    - Provide a name for your app and select a region
    - Review settings and click **Launch Basic/Pro App**
 
@@ -54,7 +55,6 @@ After clicking the Deploy button or setting up your fork, follow these steps:
      npx prisma generate
      npx prisma migrate deploy
      ```
-   
 4. **Access your application:**
    - Click the **Live App** link in the header to see your running SaaS application
 
@@ -63,18 +63,21 @@ After clicking the Deploy button or setting up your fork, follow these steps:
 The following environment variables are required:
 
 1. **Database Environment Variables**:
+
    ```
    DATABASE_URL=postgres://username:password@host:port/database
    ```
+
    - This will be automatically configured if you create a DigitalOcean Managed Database
    - For details on setting up the database, see the [Database Guide](./docs/database.md).
 
-
 2. **NextAuth Environment Variables**:
+
    ```
    NEXTAUTH_URL=https://your-app-name.ondigitalocean.app
    NEXTAUTH_SECRET=your-secure-random-string
    ```
+
    - Generate a secure random string for `NEXTAUTH_SECRET` using a tool like [Password Generator](https://passwords-generator.org/)
    - `NEXTAUTH_URL` should be your app's full URL (will be available after first deployment)
 
@@ -92,33 +95,39 @@ The following environment variables are required:
 To run the application locally:
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/ajot/do-starter-kit
    cd application
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables:**
+
    ```bash
    cp env-example .env
    ```
 
 4. **Start the database:**
+
    ```bash
    docker-compose up -d
    ```
 
 5. **Run database migrations:**
+
    ```bash
    npx prisma generate
    npx prisma migrate deploy
    ```
 
 6. **Start the development server:**
+
    ```bash
    npm run dev
    ```
@@ -152,11 +161,16 @@ To learn more about App Platform and how to manage your applications, see [Digit
 ## Delete the App
 
 When you no longer need this application running live, you can delete it by following these steps:
+
 1. Visit the [Apps control panel](https://cloud.digitalocean.com/apps)
 2. Navigate to your SaaS application
 3. In the **Settings** tab, click **Destroy**
 
 **Note**: If you do not delete your app, charges for using DigitalOcean services will continue to accrue.
+
+## Continues Integration and Development environments
+
+Dedicated workflows to validate code quality and provision development deployments in DigitalOcean App Platform are available. Learn more in [Workflows Documentation](/docs/workflows.md)
 
 ## License
 
