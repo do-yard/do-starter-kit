@@ -158,13 +158,14 @@ const Sidebar = () => {
   if (isMobile) {
     return (
       <>
-        <IconButton
-          onClick={handleDrawerToggle}
-          sx={{ position: 'fixed', top: 16, left: 16, zIndex: 1300 }}
-        >
-          <MenuIcon />
-        </IconButton>
-
+        {!mobileOpen && (
+          <IconButton
+            onClick={handleDrawerToggle}
+            sx={{ position: 'fixed', top: 16, left: 16, zIndex: 1300 }}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
         <Drawer
           variant="temporary"
           open={mobileOpen}
