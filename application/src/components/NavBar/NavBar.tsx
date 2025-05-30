@@ -36,7 +36,7 @@ const NavBar = () => {
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <Link href="/" style={{ textDecoration: 'none' }}>
-          <Typography variant="h5" color="#0061EB" fontWeight={700} sx={{ cursor: 'pointer' }}>
+          <Typography variant="h5" color="primary" fontWeight={700} sx={{ cursor: 'pointer' }}>
             DO Starter Kit
           </Typography>
         </Link>
@@ -52,7 +52,7 @@ const NavBar = () => {
               prefetch={true}
               onClick={onClick}
               sx={{
-                color: 'text.secondary',
+                color: 'grey.800',
                 fontWeight: 500,
                 fontSize: 14,
                 ml: 2
