@@ -38,7 +38,6 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
     });
 
     if (updateData.subscription) {
-      const userSubscriptions = await dbClient.subscription.findByUserId(id);
       await dbClient.subscription.update(id, updateData.subscription);
     }
 
