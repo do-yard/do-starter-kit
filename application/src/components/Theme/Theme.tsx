@@ -133,8 +133,7 @@ export default function MaterialThemeProvider({ children }: { children: React.Re
             createTheme({
               palette,
               typography: typography as ThemeOptions['typography'],
-              components: components as ThemeOptions['components'],
-              //spacing: 8,
+              components: components as ThemeOptions['components']
             }),
           [palette]
         )}
