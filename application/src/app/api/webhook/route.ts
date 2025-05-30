@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { NextResponse } from 'next/server';
 import { handleSubscriptionCreated } from './handleSubscriptionCreated';
 import { handleSubscriptionUpdated } from './handleSubscriptionUpdated';
@@ -8,7 +9,6 @@ type WebhookAcceptedEvents =
   | 'customer.subscription.updated'
   | 'customer.subscription.deleted';
 
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 const handlers: { [key in WebhookAcceptedEvents]: (json: any) => Promise<void> } = {
   'customer.subscription.created': handleSubscriptionCreated,
   'customer.subscription.updated': handleSubscriptionUpdated,
