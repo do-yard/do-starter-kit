@@ -22,7 +22,7 @@ function Write-Error {
 }
 
 # Function to prompt for input and validate it's not empty
-function Prompt-For-Input {
+function Read-UserInput {
     param (
         [string]$promptText,
         [string]$errorMessage,
@@ -50,22 +50,6 @@ function Prompt-For-Input {
     return $value
 }
 
-# Function to make Stripe API calls
-function Invoke-StripeApi {
-    param (
-        [string]$endpoint,
-        [string]$method = "Get",
-        [hashtable]$body = @{},
-        [string]$description = "API call",
-        [string]$secretKey
-    )
-    $uri = "https://api.stripe.com/v1/$endpoint"
-    $headers = @{ Authorization = "Bearer $secretKey" }
-        
-    $response = Invoke-RestMethod -Uri $uri -Headers $headers -Method $method -Body $body
-    return $response
-}
-
 # Function to create a Stripe product
 function New-StripeProduct {
     param (
@@ -73,19 +57,22 @@ function New-StripeProduct {
         [string]$type = "service",
         [string]$secretKey
     )
+      Write-Info "  Creating product: $name..."
     
-    Write-Info "Creating product: $name"
-    
-    $response = Invoke-StripeApi -endpoint "products" -method "Post" -body @{ 
+    $uri = "https://api.stripe.com/v1/products"
+    $headers = @{ Authorization = "Bearer $secretKey" }
+    $body = @{ 
         name = $name
         type = $type
-    } -description "create $name product" -secretKey $secretKey
+    }
+    
+    $response = Invoke-RestMethod -Uri $uri -Headers $headers -Method Post -Body $body -ErrorAction Stop
     
     if (-not $response.id) {
         throw "Failed to create product (no ID returned)"
     }
     
-    Write-Success "$name Product created with ID: $($response.id)"
+    Write-Success "    ✓ $name Product created with ID: $($response.id)"
     return $response.id
 }
 
@@ -98,24 +85,27 @@ function New-StripePrice {
         [string]$interval = "month",
         [string]$productName,
         [string]$secretKey
-    )
-    # Make sure the product ID is valid before proceeding
+    )    # Make sure the product ID is valid before proceeding
     if ([string]::IsNullOrWhiteSpace($productId)) {
         throw "Cannot create price: Product ID is missing or invalid"
     }
-        
-    $response = Invoke-StripeApi -endpoint "prices" -method "Post" -body @{
+    
+    $uri = "https://api.stripe.com/v1/prices"
+    $headers = @{ Authorization = "Bearer $secretKey" }
+    $body = @{
         currency              = $currency
         unit_amount           = $unitAmount
         "recurring[interval]" = $interval
         product               = $productId
-    } -description "create price for $productName" -secretKey $secretKey
+    }
+      Write-Info "  Creating $productName price..."
+    $response = Invoke-RestMethod -Uri $uri -Headers $headers -Method Post -Body $body -ErrorAction Stop
         
     if (-not $response.id) {
         throw "Failed to create price (no ID returned)"
     }
         
-    Write-Success "$productName Price created with ID: $($response.id)"
+    Write-Success "    ✓ $productName Price created with ID: $($response.id)"
     return $response.id
 }
 
