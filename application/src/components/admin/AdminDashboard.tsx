@@ -29,7 +29,7 @@ import {
   CircularProgress,
   Pagination,
 } from '@mui/material';
-import { ApiClient } from '../../lib/api/users';
+import { UsersClient } from '../../lib/api/users';
 import { UserWithSubscriptions } from '../../types';
 import Toast from '../common/Toast';
 import { USER_ROLES } from '../../lib/auth/roles';
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
     if (!userId) return;
     try {
       setIsLoadingEdit(true);
-      const api = new ApiClient();
+      const api = new UsersClient();
       await api.updateUser(userId, fields);
       // Refresh users
       const data = await api.getUsers();
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
       setLoading(true);
       setError(null);
       try {
-        const api = new ApiClient();
+        const api = new UsersClient();
         const data = await api.getUsers({
           page,
           pageSize,

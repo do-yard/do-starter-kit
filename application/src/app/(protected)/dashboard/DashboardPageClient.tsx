@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Typography, Box } from "@mui/material";
-import { ApiClient } from "lib/api/email";
+import { EmailClient } from "lib/api/email";
 import Button from "@mui/material/Button";
 
 /**
@@ -19,7 +19,7 @@ export default function DashboardPageClient({ userEmail }: { userEmail: string }
     setSent(false);
     startTransition(async () => {
       try {
-        const api = new ApiClient();
+        const api = new EmailClient();
         await api.testEmail(userEmail);
         setSent(true);
       } catch (e) {

@@ -1,10 +1,10 @@
 /**
  * API client for sending emails via the backend email API.
  */
-export class ApiClient {
+export class EmailClient {
   constructor(private baseURL = '/api') {}
 
-  // Fetch all users (GET /api/users)
+  // Send test emails for testing email integration feature (POST /api/email)
   async testEmail(to: string) {
     const res = await fetch(this.baseURL + '/email', {
       method: 'POST',

@@ -1,7 +1,7 @@
 /**
  * API client for interacting with user-related endpoints.
  */
-export class ApiClient {
+export class UsersClient {
   constructor(private baseURL = '/api') {}
 
   // Fetch all users (GET /api/users)
