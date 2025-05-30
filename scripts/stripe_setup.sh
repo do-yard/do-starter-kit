@@ -22,19 +22,30 @@ trap 'error_handler' ERR
 set -e
 exec 2>/tmp/stripe_error.$$.txt
   # Create Free and Pro products and prices
-  print_info "Creating Products and Prices in Stripe..."
+  # Open a new file descriptor for logging
+  exec 3> >(tee /dev/stderr)
 
-  FREE_PRODUCT_ID=$(create_stripe_product "$FREE_PRODUCT_NAME" "service" "$STRIPE_SECRET_KEY")
-  FREE_PRICE_ID=$(create_stripe_price "$FREE_PRODUCT_ID" "0" "usd" "month" "$FREE_PRODUCT_NAME" "$STRIPE_SECRET_KEY")
-  PRO_PRODUCT_ID=$(create_stripe_product "$PRO_PRODUCT_NAME" "service" "$STRIPE_SECRET_KEY")
-  PRO_PRICE_ID=$(create_stripe_price "$PRO_PRODUCT_ID" "1000" "usd" "month" "$PRO_PRODUCT_NAME" "$STRIPE_SECRET_KEY")
+  # Use the updated print_ functions with FD 3 for logging
+  print_info "===============================================" 3
+  print_info "Creating Products and Prices in Stripe..." 3
+  print_info "===============================================" 3
+
+  FREE_PRODUCT_ID=$(create_stripe_product "$FREE_PRODUCT_NAME" "service" "$STRIPE_SECRET_KEY" 3)
+  FREE_PRICE_ID=$(create_stripe_price "$FREE_PRODUCT_ID" "0" "usd" "month" "$FREE_PRODUCT_NAME" "$STRIPE_SECRET_KEY" 3)
+  PRO_PRODUCT_ID=$(create_stripe_product "$PRO_PRODUCT_NAME" "service" "$STRIPE_SECRET_KEY" 3)
+  PRO_PRICE_ID=$(create_stripe_price "$PRO_PRODUCT_ID" "1000" "usd" "month" "$PRO_PRODUCT_NAME" "$STRIPE_SECRET_KEY" 3)
+
+  # Close the file descriptor
+  exec 3>&-
 
 # End of "try" block - the error trap is no longer needed
 exec 2>&1
 trap - ERR  # Remove the trap
 set +e  # Reset set -e
 
+print_info "==============================================="
 print_success "✅ Stripe was setup successfully!"
+print_info "==============================================="
 print_success "The following App Platform environment variables should be set:"
 print_warning "- NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID : $FREE_PRODUCT_ID (FREE Product ID)"
 print_warning "- NEXT_PUBLIC_STRIPE_FREE_PRICE_ID : $FREE_PRICE_ID (FREE price ID)"
