@@ -27,7 +27,7 @@ describe('createSubscription API', () => {
   const user = { id: 'u1', role: 'user', email: 'test@example.com' };
   const priceId = 'price_123';
 
-  /* tslint:disable-next-line */
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
   function mockRequest(body: any): NextRequest {
     return { json: jest.fn().mockResolvedValue(body) } as unknown as NextRequest;
   }

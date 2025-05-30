@@ -8,7 +8,7 @@ type WebhookAcceptedEvents =
   | 'customer.subscription.updated'
   | 'customer.subscription.deleted';
 
-/* tslint:disable-next-line */
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 const handlers: { [key in WebhookAcceptedEvents]: (json: any) => Promise<void> } = {
   'customer.subscription.created': handleSubscriptionCreated,
   'customer.subscription.updated': handleSubscriptionUpdated,
