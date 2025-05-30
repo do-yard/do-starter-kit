@@ -38,13 +38,13 @@ services:
       - key: "AUTH_TRUST_HOST"
         value: "true"
       - key: "NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID"
-        value: ""
+        value: "${STRIPE_FREE_PRODUCT_ID}"
       - key: "NEXT_PUBLIC_STRIPE_FREE_PRICE_ID"
-        value: ""
+        value: "${STRIPE_FREE_PRICE_ID}"
       - key: "NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID"
-        value: ""
+        value: "${STRIPE_PRO_PRODUCT_ID}"
       - key: "NEXT_PUBLIC_STRIPE_PRO_PRICE_ID"
-        value: ""
+        value: "${STRIPE_PRO_PRICE_ID}"
 
 databases:
   - name: ${DB_NAME}
