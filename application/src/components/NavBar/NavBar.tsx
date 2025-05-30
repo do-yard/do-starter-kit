@@ -1,7 +1,23 @@
 'use client';
 
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { Box, Typography, AppBar, Toolbar, Button } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Box,
+  Button,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useSession, signOut } from 'next-auth/react';
 
 /**
@@ -10,6 +26,14 @@ import { useSession, signOut } from 'next-auth/react';
  */
 const NavBar = () => {
   const { data: session } = useSession();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen((prev) => !prev);
+  };
+
   const handleLogout = () => {
     signOut({ callbackUrl: '/' });
   };
@@ -26,44 +50,95 @@ const NavBar = () => {
         { href: '/login', label: 'Log in' },
         { href: '/signup', label: 'Sign up' },
       ];
-
-  return (
-    <AppBar
-      position="static"
-      color="default"
-      elevation={0}
-      sx={{ borderBottom: 1, borderColor: 'divider', backgroundColor: 'white' }}
+  const drawer = (
+    <Box
+      sx={{
+        width: 240,
+        py: 2,
+        px: 1,
+      }}
+      role="presentation"
+      onClick={handleDrawerToggle}
     >
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Link href="/" style={{ textDecoration: 'none' }}>
-          <Typography variant="h5" color="#0061EB" fontWeight={700} sx={{ cursor: 'pointer' }}>
-            DO Starter Kit
-          </Typography>
-        </Link>
+      <List disablePadding>
+        {navLinks.map(({ href, label, onClick }) => (
+          <ListItem
+            key={label}
+            disablePadding
+            sx={{
+              borderBottom: '1px solid #E5E7EB',
+            }}
+          >
+            <ListItemButton component={Link} href={href} onClick={onClick}>
+              <ListItemText primary={label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+  return (
+    <>
+      <AppBar
+        position="static"
+        color="default"
+        elevation={0}
+        sx={{
+          borderBottom: 1,
+          borderColor: 'divider',
+          backgroundColor: 'white',
+        }}
+      >
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <Typography variant="h5" color="#0061EB" fontWeight={700} sx={{ cursor: 'pointer' }}>
+              DO Starter Kit
+            </Typography>
+          </Link>
 
-        <Box sx={{ flexGrow: 1 }} />
+          {isMobile ? (
+            <IconButton edge="end" color="inherit" onClick={handleDrawerToggle}>
+              <MenuIcon />
+            </IconButton>
+          ) : (
+            <Box>
+              {navLinks.map(({ href, label, onClick }) => (
+                <Button
+                  key={label}
+                  component={Link}
+                  href={href}
+                  prefetch={true}
+                  onClick={onClick}
+                  sx={{
+                    color: 'text.secondary',
+                    fontWeight: 500,
+                    fontSize: 14,
+                    ml: 2,
+                  }}
+                >
+                  {label}
+                </Button>
+              ))}
+            </Box>
+          )}
+        </Toolbar>
+      </AppBar>
 
-        <Box>
-          {navLinks.map(({ href, label, onClick }) => (
-            <Button
-              key={label}
-              component={Link}
-              href={href}
-              prefetch={true}
-              onClick={onClick}
-              sx={{
-                color: 'text.secondary',
-                fontWeight: 500,
-                fontSize: 14,
-                ml: 2
-              }}
-            >
-              {label}
-            </Button>
-          ))}
-        </Box>
-      </Toolbar>
-    </AppBar>
+      <Drawer
+        anchor="right"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: 240,
+          },
+        }}
+      >
+        {drawer}
+      </Drawer>
+    </>
   );
 };
 
