@@ -9,12 +9,6 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 
 // Define color palette
 const colors = {
-  primary: {
-    main: '#1976d2',
-    light: '#42a5f5',
-    dark: '#EFC3CA',
-    contrastText: '#fff',
-  },
   secondary: {
     main: '#9c27b0',
     light: '#ba68c8',
@@ -137,6 +131,38 @@ const components: ThemeOptions['components'] = {
   },
 };
 
+// Define light and dark palettes
+const lightPalette = {
+  mode: 'light',
+  primary: { main: '#0061EB' },
+  secondary: colors.secondary,
+  error: colors.error,
+  warning: colors.warning,
+  success: colors.success,
+  grey: colors.grey,
+  background: colors.background,
+  text: colors.text,
+};
+
+const darkPalette = {
+  mode: 'dark',
+  primary: { main: '#76A4E6' },
+  secondary: colors.secondary,
+  error: colors.error,
+  warning: colors.warning,
+  success: colors.success,
+  grey: colors.grey,
+  background: { default: colors.grey[900], paper: colors.grey[800] },
+  text: {
+    primary: '#fff',
+    secondary: colors.grey[700],
+    disabled: colors.grey[600],
+    dark: '#fff',
+    medium: colors.grey[400],
+    light: colors.grey[500],
+  },
+};
+
 // Theme context for mode switching
 interface ThemeModeContextProps {
   mode: 'light' | 'dark';
@@ -191,38 +217,7 @@ export default function MaterialThemeProvider({ children }: { children: React.Re
   }, [mode]);
 
   // Only spread palette-relevant keys
-  const palette = useMemo(
-    () => ({
-      mode,
-      primary:
-        mode === 'light'
-          ? {
-              main: '#0061EB',
-            }
-          : { main: '#76A4E6' }, // Example primary color
-      secondary: colors.secondary,
-      error: colors.error,
-      warning: colors.warning,
-      success: colors.success,
-      grey: colors.grey,
-      background:
-        mode === 'dark'
-          ? { default: colors.grey[900], paper: colors.grey[800] }
-          : colors.background,
-      text:
-        mode === 'dark'
-          ? {
-              primary: '#fff',
-              secondary: colors.grey[700],
-              disabled: colors.grey[600],
-              dark: '#fff',
-              medium: colors.grey[400],
-              light: colors.grey[500],
-            }
-          : colors.text,
-    }),
-    [mode]
-  );
+  const palette = useMemo(() => (mode === 'dark' ? darkPalette : lightPalette), [mode]);
 
   // Add a tooltip to the toggle button (optional, but recommended for accessibility)
   // This is handled in ThemeToggle, but you may want to use Tooltip from MUI if desired.
