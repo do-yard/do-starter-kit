@@ -21,7 +21,6 @@ PRO_PRICE_ID=""
 trap 'error_handler' ERR
 set -e
 exec 2>/tmp/stripe_error.$$.txt
-
   # Create Free and Pro products and prices
   print_info "Creating Products and Prices in Stripe..."
 

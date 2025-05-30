@@ -9,7 +9,6 @@ readonly YELLOW="\033[0;33m"
 readonly BLUE="\033[0;34m"
 readonly BOLD="\033[1m"
 
-# Function for colored output
 print_color() {
   local color="$1"
   local message="$2"
@@ -68,8 +67,6 @@ call_stripe_api() {
   # Check if response contains an error
   if [[ "$response" == *"error"* ]] && [[ "$response" != *"id"* ]]; then
     print_error "Failed to $description"
-    if [[ "$response" == *"error"* ]]; then
-      print_error "Error details:"
       
       # Extract and format the error JSON more thoroughly
       if command -v jq &>/dev/null; then
