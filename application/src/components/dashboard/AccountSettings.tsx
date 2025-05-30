@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, Typography, TextField, Button, styled, CircularProgress } from '@mui/material';
-import Paper from '../common/Paper';
+import { Box, Typography, TextField, Button, styled, CircularProgress, Card } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
 import DoneIcon from '@mui/icons-material/Done';
+import Image from 'next/image';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
   border: '2px dashed',
-  borderColor: theme.palette.primary.main,
+  borderColor: theme.palette.grey[400],
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(4),
   textAlign: 'center',
@@ -108,15 +108,29 @@ export default function AccountSettings() {
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!formData.profileImage) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(formData.profileImage);
+    setPreviewUrl(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [formData.profileImage]);
+
   return (
-    <Box sx={{ width: '100%', pt: 4 }}>
+    <Box sx={{ width: '800px', pt: 4, mx: 'auto' }}>
       <Box sx={{ maxWidth: '800px', mx: 'auto', mb: 4 }}>
         <Typography variant="h3" fontWeight="bold">
           Account Settings
         </Typography>
       </Box>
 
-      <Paper sx={{ border: '1px solid', borderColor: 'grey.300' }}>
+      <Card variant="outlined">
         <Box sx={{ p: 3, width: '100%' }}>
           <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
             Profile Information
@@ -127,12 +141,7 @@ export default function AccountSettings() {
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: 'grid', gap: 4 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography
-                  component="label"
-                  htmlFor="name"
-                  variant="body2"
-                  fontWeight={500}
-                >
+                <Typography component="label" htmlFor="name" variant="body2" fontWeight={500}>
                   Name
                 </Typography>
                 <TextField
@@ -148,12 +157,7 @@ export default function AccountSettings() {
               </Box>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography
-                  component="label"
-                  htmlFor="email"
-                  variant="body2"
-                  fontWeight={500}
-                >
+                <Typography component="label" htmlFor="email" variant="body2" fontWeight={500}>
                   Email
                 </Typography>
                 <TextField
@@ -179,15 +183,45 @@ export default function AccountSettings() {
                     Selected file: {formData.profileImage.name}
                   </Typography>
                 )}
-                <StyledFileInput
-                >
-                  <div {...getRootProps()}>
+
+                {previewUrl ? (
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Box
+                      sx={{
+                        width: 200,
+                        height: 200,
+                        position: 'relative',
+                        mx: 'auto',
+                        mb: 2,
+                        borderRadius: 2,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Image
+                        src={previewUrl}
+                        alt="Selected profile image preview"
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </Box>
+                    <Button
+                      variant="outlined"
+                      onClick={() => setFormData((prev) => ({ ...prev, profileImage: null }))}
+                      disabled={isLoading}
+                    >
+                      Change Image
+                    </Button>
+                  </Box>
+                ) : (
+                  <StyledFileInput
+                    {...getRootProps()}
+                  >
                     <input {...getInputProps()} disabled={isLoading} />
                     <Typography variant="body2">
                       Drag &apos;n&apos; drop a profile image here, or click to select one
                     </Typography>
-                  </div>
-                </StyledFileInput>
+                  </StyledFileInput>
+                )}
                 {uploadError && (
                   <Typography variant="caption" color="error" sx={{ mt: 1 }}>
                     {uploadError}
@@ -230,7 +264,7 @@ export default function AccountSettings() {
             </Box>
           </form>
         </Box>
-      </Paper>
+      </Card>
     </Box>
   );
 }
