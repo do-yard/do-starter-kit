@@ -30,19 +30,25 @@ export const createSubscription = async (
       customerId = customers[0].id;
     }
 
+    const db = createDatabaseClient();
+
     if (!customerId) {
       const customer = await billingService.createCustomer(user.email, {
         userId: user.email,
       });
       customerId = customer.id;
+      db.subscription.create({
+        customerId: customer.id,
+        plan: null,
+        status: null,
+        userId: user.id,
+      });
     }
 
     const { clientSecret } = await billingService.createSubscription(customerId, priceId);
 
-    const db = createDatabaseClient();
-    await db.subscription.create({
-      userId: user.id,
-      status: SubscriptionStatusEnum.ACTIVE,
+    await db.subscription.update(user.id, {
+      status: SubscriptionStatusEnum.PENDING,
       plan:
         priceId === serverConfig.Stripe.proPriceId
           ? SubscriptionPlanEnum.PRO

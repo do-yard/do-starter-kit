@@ -55,11 +55,13 @@ export class StripeBillingService implements BillingService {
       return {
         clientSecret:
           (result.latest_invoice.payment_intent as Stripe.PaymentIntent).client_secret ?? undefined,
+        id: result.id,
       };
     }
 
     return {
       clientSecret: undefined,
+      id: result.id,
     };
   }
 

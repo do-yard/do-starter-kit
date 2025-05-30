@@ -32,7 +32,11 @@ export interface DatabaseClient {
     findByUserId: (userId: string) => Promise<Subscription[]>;
     create: (subscription: Omit<Subscription, 'id' | 'createdAt'>) => Promise<Subscription>;
     update: (
-      id: string,
+      userId: string,
+      subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>
+    ) => Promise<Subscription>;
+    updateByCustomerId: (
+      customerId: string,
       subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>
     ) => Promise<Subscription>;
     delete: (id: string) => Promise<void>;

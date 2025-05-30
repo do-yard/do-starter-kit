@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
+import { createDatabaseClient } from 'services/database/database';
 
 /**
  * Creates a customer in the billing system.
@@ -21,6 +22,14 @@ export const createCustomer = async (
 
     const customer = await billingService.createCustomer(user.email, {
       userId: user.email,
+    });
+
+    const db = createDatabaseClient();
+    db.subscription.create({
+      customerId: customer.id,
+      plan: null,
+      status: null,
+      userId: user.id,
     });
 
     return NextResponse.json({ customerId: customer.id });

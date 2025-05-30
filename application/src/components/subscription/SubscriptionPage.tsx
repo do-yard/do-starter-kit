@@ -18,9 +18,9 @@ import CircularProgress from '@mui/material/CircularProgress';
  */
 const Subscription = () => {
   const [subscription, setSubscription] = useState<{
-    id: string;
-    status: string;
-    plan: SubscriptionPlan;
+    id: string | null;
+    status: string | null;
+    plan: SubscriptionPlan | null;
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +30,7 @@ const Subscription = () => {
   const fetchSubscription = async () => {
     try {
       const { subscription } = await stripeApi.getSubscription();
-      setSubscription(subscription);
+      setSubscription(subscription[0]);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setError('Error loading subscription');
@@ -55,6 +55,7 @@ const Subscription = () => {
     setUpgrading(true);
     try {
       await stripeApi.updateToProSubscription();
+      await fetchSubscription();
     } catch {
       setError('Upgrade failed');
     } finally {
@@ -88,11 +89,11 @@ const Subscription = () => {
         Subscription
       </Typography>
 
-      {subscription ? (
+      {subscription?.plan && subscription?.status && subscription.status !== 'CANCELED' ? (
         <Box display="flex" flexDirection="column" alignItems="flex-start">
           <Typography mb={2}>
             Subscription status: <strong>{subscription.status}</strong> (
-            {isProPlan ? 'Pro Plan' : isBasePlan ? 'Free Plan' : 'Unknown Plan'})
+            {isProPlan ? 'Pro Plan' : isBasePlan ? 'Free Plan' : 'No Plan'})
           </Typography>
 
           {isBasePlan && (

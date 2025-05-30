@@ -32,20 +32,9 @@ export const cancelSubscription = async (
     await billingService.cancelSubscription(sub.id);
 
     const db = createDatabaseClient();
-    const dbSubscription = await db.subscription.findByUserAndStatus(
-      user.id,
-      SubscriptionStatusEnum.ACTIVE
-    );
 
-    if (!dbSubscription) {
-      return NextResponse.json(
-        { error: 'Active subscription not found in database' },
-        { status: 404 }
-      );
-    }
-
-    await db.subscription.update(dbSubscription.id, {
-      status: SubscriptionStatusEnum.CANCELED,
+    await db.subscription.update(user.id, {
+      status: SubscriptionStatusEnum.PENDING,
     });
 
     return NextResponse.json({ canceled: true });

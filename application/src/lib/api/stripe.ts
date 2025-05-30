@@ -7,7 +7,7 @@ export class StripeClient {
   constructor(private baseURL = '/api/billing') {}
 
   async getSubscription(): Promise<{
-    subscription: { id: string; status: string; plan: SubscriptionPlan };
+    subscription: { id: string; status: string; plan: SubscriptionPlan }[];
   }> {
     const res = await fetch(`${this.baseURL}/get-subscription`, { credentials: 'include' });
     if (!res.ok) throw new Error('Failed to get subscription');

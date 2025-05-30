@@ -16,8 +16,9 @@ export interface User {
 export interface Subscription {
   id: string;
   userId: string;
-  status: SubscriptionStatus;
-  plan: SubscriptionPlan;
+  status: SubscriptionStatus | null;
+  plan: SubscriptionPlan | null;
+  customerId: string | null;
   createdAt: Date;
 }
 
@@ -37,7 +38,7 @@ export type SubscriptionStatus = 'ACTIVE' | 'CANCELED' | 'PENDING';
 export type SubscriptionPlan = 'FREE' | 'PRO';
 
 export interface UserWithSubscriptions extends User {
-  subscriptions: Subscription[];
+  subscription: Subscription | null;
 }
 
 export enum SubscriptionStatusEnum {

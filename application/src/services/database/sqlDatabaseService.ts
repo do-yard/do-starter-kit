@@ -43,7 +43,7 @@ export class SqlDatabaseService implements DatabaseClient {
       const [users, total] = await Promise.all([
         prisma.user.findMany({
           where,
-          include: { subscriptions: true },
+          include: { subscription: true },
           orderBy: { name: 'asc' },
           skip,
           take: pageSize,
@@ -54,13 +54,6 @@ export class SqlDatabaseService implements DatabaseClient {
     },
     create: async (user: Omit<User, 'id' | 'createdAt'>): Promise<User> => {
       const newUser = await prisma.user.create({ data: user });
-      await prisma.subscription.create({
-        data: {
-          userId: newUser.id,
-          plan: 'FREE',
-          status: 'ACTIVE',
-        },
-      });
       return newUser;
     },
     update: async (id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>): Promise<User> => {
@@ -92,10 +85,18 @@ export class SqlDatabaseService implements DatabaseClient {
       return prisma.subscription.create({ data: subscription });
     },
     update: async (
-      id: string,
+      userId: string,
       subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>
     ): Promise<Subscription> => {
-      return prisma.subscription.update({ where: { id }, data: subscription });
+      return prisma.subscription.update({ where: { userId }, data: subscription });
+    },
+    updateByCustomerId: async (
+      customerId: string,
+      subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>
+    ): Promise<Subscription> => {
+      const existing = await prisma.subscription.findFirst({ where: { customerId } });
+      if (!existing) throw new Error('Subscription not found for customerId');
+      return prisma.subscription.update({ where: { id: existing.id }, data: subscription });
     },
     delete: async (id: string): Promise<void> => {
       await prisma.subscription.delete({ where: { id } });

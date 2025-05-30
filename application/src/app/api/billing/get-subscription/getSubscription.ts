@@ -13,10 +13,7 @@ export const getSubscription = async (
 ): Promise<Response> => {
   try {
     const db = createDatabaseClient();
-    const subscription = await db.subscription.findByUserAndStatus(
-      user.id,
-      SubscriptionStatusEnum.ACTIVE
-    );
+    const subscription = await db.subscription.findByUserId(user.id);
 
     return NextResponse.json({ subscription: subscription });
   } catch (err: unknown) {

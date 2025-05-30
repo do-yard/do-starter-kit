@@ -43,10 +43,7 @@ export const upgradeToPro = async (
     );
 
     const db = createDatabaseClient();
-    const dbSubscription = await db.subscription.findByUserAndStatus(
-      user.id,
-      SubscriptionStatusEnum.ACTIVE
-    );
+    const dbSubscription = await db.subscription.findByUserId(user.id);
 
     if (!dbSubscription) {
       return NextResponse.json(
@@ -55,12 +52,8 @@ export const upgradeToPro = async (
       );
     }
 
-    await db.subscription.update(dbSubscription.id, {
-      status: SubscriptionStatusEnum.CANCELED,
-    });
-    await db.subscription.create({
-      userId: user.id,
-      status: SubscriptionStatusEnum.ACTIVE,
+    await db.subscription.update(user.id, {
+      status: SubscriptionStatusEnum.PENDING,
       plan: SubscriptionPlanEnum.PRO,
     });
 
