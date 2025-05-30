@@ -1,8 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, Typography, TextField, Button, styled, CircularProgress } from '@mui/material';
-import Paper from '../common/Paper';
+import { Box, Typography, TextField, Button, styled, CircularProgress, Card } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
 import DoneIcon from '@mui/icons-material/Done';
@@ -124,14 +123,14 @@ export default function AccountSettings() {
   }, [formData.profileImage]);
 
   return (
-    <Box sx={{ width: '100%', pt: 4 }}>
+    <Box sx={{ width: '800px', pt: 4, mx: 'auto' }}>
       <Box sx={{ maxWidth: '800px', mx: 'auto', mb: 4 }}>
         <Typography variant="h3" fontWeight="bold">
           Account Settings
         </Typography>
       </Box>
 
-      <Paper sx={{ border: '1px solid', borderColor: 'grey.300' }}>
+      <Card variant="outlined">
         <Box sx={{ p: 3, width: '100%' }}>
           <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
             Profile Information
@@ -265,7 +264,7 @@ export default function AccountSettings() {
             </Box>
           </form>
         </Box>
-      </Paper>
+      </Card>
     </Box>
   );
 }

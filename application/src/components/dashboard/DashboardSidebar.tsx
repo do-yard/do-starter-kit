@@ -103,10 +103,7 @@ const DashboardSidebar = () => {
         width: 256,
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: 256,
-          boxSizing: 'border-box',
-          borderRight: 1,
-          borderColor: 'divider'
+          width: 256
         },
       }}
     >
