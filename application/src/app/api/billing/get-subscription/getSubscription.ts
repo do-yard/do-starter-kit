@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
-import { SubscriptionStatusEnum } from 'types';
 
 /**
  * Fetches the active subscription for a user.

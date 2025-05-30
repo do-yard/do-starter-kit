@@ -21,9 +21,7 @@ jest.mock('services/database/database', () => ({
 
 describe('createCustomer API', () => {
   const user = { id: 'u1', role: 'user', email: 'test@example.com' };
-  function mockRequest(body: any): NextRequest {
-    return { json: jest.fn().mockResolvedValue(body) } as unknown as NextRequest;
-  }
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
