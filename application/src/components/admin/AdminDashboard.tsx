@@ -33,6 +33,7 @@ import { ApiClient } from '../../lib/api/users';
 import { UserWithSubscriptions } from '../../types';
 import Toast from '../common/Toast';
 import { USER_ROLES } from '../../lib/auth/roles';
+import { useSession } from 'next-auth/react';
 
 const statusColor = (status: string) => {
   switch (status) {
@@ -81,6 +82,8 @@ export default function AdminDashboard() {
     message: '',
     severity: 'info',
   });
+
+  const session = useSession();
 
   // Open modal and set form state
   const handleEditClick = (user: UserWithSubscriptions) => {
@@ -132,6 +135,9 @@ export default function AdminDashboard() {
       // Refresh users
       const data = await api.getUsers();
       setUsers(data.users || []);
+      if (session !== null && session?.data?.user?.id === userId) { 
+        session.update({ user: { name: fields.name } });
+      }
       handleEditClose();
       setToast({ open: true, message: 'User updated successfully!', severity: 'success' });
     } catch {
