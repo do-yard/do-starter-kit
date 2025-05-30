@@ -4,8 +4,7 @@ import { NextRequest } from 'next/server';
 const mockListCustomer = jest.fn();
 const mockListSubscription = jest.fn();
 const mockCancelSubscription = jest.fn();
-const mockUpdate = jest.fn();
-const mockFindByUserAndStatus = jest.fn();
+const mockDbUpdate = jest.fn();
 
 jest.mock('services/billing/billing', () => ({
   createBillingService: () => ({
@@ -17,8 +16,7 @@ jest.mock('services/billing/billing', () => ({
 jest.mock('services/database/database', () => ({
   createDatabaseClient: () => ({
     subscription: {
-      update: mockUpdate,
-      findByUserAndStatus: mockFindByUserAndStatus,
+      update: mockDbUpdate,
     },
   }),
 }));
@@ -36,7 +34,7 @@ describe('cancelSubscription API', () => {
     expect(await res.json()).toEqual({ error: 'Customer not found' });
   });
 
-  it('returns 400 if no active subscription', async () => {
+  it('returns 400 if no active subscription from billing', async () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([]);
     const res = await cancelSubscription({} as NextRequest, user);
@@ -48,38 +46,37 @@ describe('cancelSubscription API', () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1' }]);
     mockCancelSubscription.mockResolvedValue(undefined);
-    mockFindByUserAndStatus.mockResolvedValue({ id: 'test' });
+    mockDbUpdate.mockResolvedValue({});
     const res = await cancelSubscription({} as NextRequest, user);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ canceled: true });
     expect(mockCancelSubscription).toHaveBeenCalledWith('sub1');
-    expect(mockFindByUserAndStatus).toHaveBeenCalledWith('u1', 'ACTIVE');
+    expect(mockDbUpdate).toHaveBeenCalledWith('u1', expect.any(Object));
   });
 
   it('returns 500 if db update fails', async () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1' }]);
     mockCancelSubscription.mockResolvedValue(undefined);
-    mockFindByUserAndStatus.mockRejectedValue(new Error('fail'));
+    mockDbUpdate.mockRejectedValue(new Error('fail'));
     const res = await cancelSubscription({} as NextRequest, user);
     expect(res.status).toBe(500);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 
-  it('returns 500 on error', async () => {
+  it('returns 500 on error from billing service', async () => {
     mockListCustomer.mockRejectedValue(new Error('fail'));
     const res = await cancelSubscription({} as NextRequest, user);
     expect(res.status).toBe(500);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 
-  it('returns 400 if no subscription found in db', async () => {
+  it('returns 500 if cancelSubscription fails', async () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1' }]);
-    mockCancelSubscription.mockResolvedValue(undefined);
-    mockFindByUserAndStatus.mockResolvedValue(null); // Simulate no subscription in DB
+    mockCancelSubscription.mockRejectedValue(new Error('fail'));
     const res = await cancelSubscription({} as NextRequest, user);
-    expect(res.status).toBe(404);
-    expect(await res.json()).toEqual({ error: 'Active subscription not found in database' });
+    expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 });

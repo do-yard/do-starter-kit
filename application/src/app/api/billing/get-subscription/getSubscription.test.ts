@@ -1,11 +1,11 @@
 import { getSubscription } from './getSubscription';
 import { NextRequest } from 'next/server';
 
-const mockFindByUserAndStatus = jest.fn();
+const mockFindByUserId = jest.fn();
 
 jest.mock('services/database/database', () => ({
   createDatabaseClient: () => ({
-    subscription: { findByUserAndStatus: mockFindByUserAndStatus },
+    subscription: { findByUserId: mockFindByUserId },
   }),
 }));
 
@@ -16,7 +16,7 @@ describe('getSubscription API', () => {
   });
 
   it('returns null if no subscription found', async () => {
-    mockFindByUserAndStatus.mockResolvedValue(null);
+    mockFindByUserId.mockResolvedValue(null);
     const res = await getSubscription({} as NextRequest, user);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ subscription: null });
@@ -24,14 +24,14 @@ describe('getSubscription API', () => {
 
   it('returns first subscription if found', async () => {
     const sub = { id: 'sub1', status: 'active', plan: 'PRO' };
-    mockFindByUserAndStatus.mockResolvedValue(sub);
+    mockFindByUserId.mockResolvedValue(sub);
     const res = await getSubscription({} as NextRequest, user);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ subscription: sub });
   });
 
   it('returns 500 on error', async () => {
-    mockFindByUserAndStatus.mockRejectedValue(new Error('fail'));
+    mockFindByUserId.mockRejectedValue(new Error('fail'));
     const res = await getSubscription({} as NextRequest, user);
     expect(res.status).toBe(500);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });

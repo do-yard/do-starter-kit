@@ -4,9 +4,8 @@ import { NextRequest } from 'next/server';
 const mockListCustomer = jest.fn();
 const mockListSubscription = jest.fn();
 const mockUpdateSubscription = jest.fn();
-const mockFindByUserAndStatus = jest.fn();
+const mockFindByUser = jest.fn();
 const mockUpdate = jest.fn();
-const mockCreate = jest.fn();
 
 jest.mock('services/billing/billing', () => ({
   createBillingService: () => ({
@@ -18,9 +17,8 @@ jest.mock('services/billing/billing', () => ({
 jest.mock('services/database/database', () => ({
   createDatabaseClient: () => ({
     subscription: {
-      findByUserAndStatus: mockFindByUserAndStatus,
+      findByUserId: mockFindByUser,
       update: mockUpdate,
-      create: mockCreate,
     },
   }),
 }));
@@ -73,41 +71,22 @@ describe('upgradeToPro API', () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
     mockUpdateSubscription.mockResolvedValue('secret_abc');
-    mockFindByUserAndStatus.mockResolvedValue({ id: 'oldsub', status: 'ACTIVE' });
+    mockFindByUser.mockResolvedValue({ id: 'oldsub', status: 'ACTIVE' });
     mockUpdate.mockResolvedValue({});
-    mockCreate.mockResolvedValue({});
     const res = await upgradeToPro({} as NextRequest, user);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ clientSecret: 'secret_abc' });
     expect(mockUpdateSubscription).toHaveBeenCalledWith('sub1', 'item1', 'pro_123');
-    expect(mockFindByUserAndStatus).toHaveBeenCalledWith('u1', 'ACTIVE');
-    expect(mockUpdate).toHaveBeenCalledWith(
-      'oldsub',
-      expect.objectContaining({ status: 'CANCELED' })
-    );
-    expect(mockCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 'u1', status: 'ACTIVE', plan: 'PRO' })
-    );
+    expect(mockFindByUser).toHaveBeenCalledWith('u1');
+    expect(mockUpdate).toHaveBeenCalledWith('u1', expect.objectContaining({ status: 'PENDING' }));
   });
 
   it('returns 500 if db update fails', async () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
     mockUpdateSubscription.mockResolvedValue('secret_abc');
-    mockFindByUserAndStatus.mockResolvedValue({ id: 'oldsub', status: 'ACTIVE' });
+    mockFindByUser.mockResolvedValue({ id: 'oldsub', status: 'ACTIVE' });
     mockUpdate.mockRejectedValue(new Error('fail'));
-    const res = await upgradeToPro({} as NextRequest, user);
-    expect(res.status).toBe(500);
-    expect(await res.json()).toEqual({ error: 'Internal Server Error' });
-  });
-
-  it('returns 500 if db create fails', async () => {
-    mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
-    mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
-    mockUpdateSubscription.mockResolvedValue('secret_abc');
-    mockFindByUserAndStatus.mockResolvedValue({ id: 'oldsub', status: 'ACTIVE' });
-    mockUpdate.mockResolvedValue({});
-    mockCreate.mockRejectedValue(new Error('fail'));
     const res = await upgradeToPro({} as NextRequest, user);
     expect(res.status).toBe(500);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
@@ -124,7 +103,7 @@ describe('upgradeToPro API', () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
     mockUpdateSubscription.mockResolvedValue('secret_abc');
-    mockFindByUserAndStatus.mockResolvedValue(null); // Simulate no subscription in DB
+    mockFindByUser.mockResolvedValue(null); // Simulate no subscription in DB
     const res = await upgradeToPro({} as NextRequest, user);
     expect(res.status).toBe(404);
     expect(await res.json()).toEqual({ error: 'Active subscription not found in database' });
