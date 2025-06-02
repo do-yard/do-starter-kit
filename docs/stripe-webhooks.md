@@ -21,6 +21,8 @@ To configure the webhooks in a deployed app, follow this instructions:
 - `https://sample.ondigitalocean.com/api/webhook
 
 8. Click on **Create Destination**
+9. In the webhooks section, look up for the **Signing Secret** card, anc dopy the secret. Use this secret for the followin environment variable:
+   `STRIPE_WEBHOOK_SECRET`
 
 ## Running locally
 
