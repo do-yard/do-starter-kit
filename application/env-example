@@ -25,6 +25,10 @@ SPACES_ENDPOINT=https://nyc3.digitaloceanspaces.com # Spaces endpoint URL
 SPACES_REGION=nyc3 # Spaces region
 SPACES_BUCKET=my-app-bucket # Spaces bucket name
 
+# Email configuration (Resend)
+RESEND_API_KEY=your-resend-api-key # API key from Resend
+RESEND_EMAIL_SENDER=your-email-sender-address # Email sender address, your-address@your-domain.{com/net/etc}
+
 # (Optional) Additional configuration
 
 # LOG_LEVEL=info

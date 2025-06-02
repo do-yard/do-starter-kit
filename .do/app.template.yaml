@@ -51,6 +51,11 @@ services:
         value: "${STRIPE_PRO_PRODUCT_ID}"
       - key: "NEXT_PUBLIC_STRIPE_PRO_PRICE_ID"
         value: "${STRIPE_PRO_PRICE_ID}"
+      - key: "RESEND_API_KEY"
+        value: "${RESEND_API_KEY}"
+        type: "SECRET"
+      - key: RESEND_EMAIL_SENDER
+        value: "${RESEND_EMAIL_SENDER}"
 
 databases:
   - name: ${DB_NAME}
