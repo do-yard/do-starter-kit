@@ -13,35 +13,35 @@ const typography = {
     fontSize: '2.5rem',
     fontWeight: 700,
     marginBottom: '16px',
-    color: '#fff'
+    color: '#fff',
   },
   h2: {
     fontSize: '2rem',
     fontWeight: 700,
     marginBottom: '48px',
-    color: '#fff'
+    color: '#fff',
   },
   h3: {
     fontSize: '1.75rem',
-    fontWeight: 500
+    fontWeight: 500,
   },
   h4: {
     fontSize: '1.5rem',
-    fontWeight: 500
+    fontWeight: 500,
   },
   h5: {
     fontSize: '1.25rem',
-    fontWeight: 600
+    fontWeight: 600,
   },
   h6: {
     fontSize: '1rem',
-    fontWeight: 500
+    fontWeight: 500,
   },
   subtitle1: {
     fontSize: '1.25rem',
     marginBottom: '32px',
-    color: '#6b7280'
-  }
+    color: '#6b7280',
+  },
 };
 
 // Define component overrides
@@ -56,10 +56,10 @@ const components: ThemeOptions['components'] = {
         fontWeight: 600,
         height: 44,
         paddingLeft: 32,
-        paddingRight: 32
+        paddingRight: 32,
       },
-    }
-  }
+    },
+  },
 };
 
 // Theme context for mode switching
@@ -93,7 +93,7 @@ export function ThemeToggle() {
 /**
  * Provides the Material UI theme and color mode context to the application.
  */
-export default function MaterialThemeProvider({ children }: { children: React.ReactNode }) {
+export function MaterialThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<'light' | 'dark'>('light'); // Always start with 'light' for SSR
 
   // On mount, sync mode with localStorage (SSR-safe)
@@ -119,8 +119,8 @@ export default function MaterialThemeProvider({ children }: { children: React.Re
     () => ({
       mode: mode,
       primary: {
-        main: '#0061EB'
-      }
+        main: '#0061EB',
+      },
     }),
     [mode]
   );
@@ -133,7 +133,7 @@ export default function MaterialThemeProvider({ children }: { children: React.Re
             createTheme({
               palette,
               typography: typography as ThemeOptions['typography'],
-              components: components as ThemeOptions['components']
+              components: components as ThemeOptions['components'],
             }),
           [palette]
         )}
@@ -142,5 +142,30 @@ export default function MaterialThemeProvider({ children }: { children: React.Re
         {children}
       </ThemeProvider>
     </ThemeModeContext.Provider>
+  );
+}
+
+/**
+ * Provides Material UI with a static light theme (no dark mode support).
+ */
+export function MaterialLightProvider({ children }: { children: React.ReactNode }) {
+  const lightTheme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: 'light',
+          primary: { main: '#0061EB' },
+        },
+        typography: typography as ThemeOptions['typography'],
+        components: components as ThemeOptions['components'],
+      }),
+    []
+  );
+
+  return (
+    <ThemeProvider theme={lightTheme}>
+      <CssBaseline />
+      {children}
+    </ThemeProvider>
   );
 }

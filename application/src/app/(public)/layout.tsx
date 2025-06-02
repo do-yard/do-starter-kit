@@ -3,6 +3,7 @@
 import { Box } from '@mui/material';
 import NavBar from '../../components/NavBar/NavBar';
 import Footer from '../../components/Footer/Footer';
+import { MaterialLightProvider } from 'components/Theme/Theme';
 
 /**
  * Public layout used by pages such as login, signup or landing pages.
@@ -11,13 +12,15 @@ import Footer from '../../components/Footer/Footer';
  * @param children - Content displayed in the central area of the layout.
  */
 const PublicLayout = ({ children }: { children: React.ReactNode }) => (
-  <Box display="flex" flexDirection="column" minHeight="100vh">
-    <NavBar />
-    <Box component="main" flexGrow={1}>
-      {children}
+  <MaterialLightProvider>
+    <Box display="flex" flexDirection="column" minHeight="100vh">
+      <NavBar />
+      <Box component="main" flexGrow={1}>
+        {children}
+      </Box>
+      <Footer />
     </Box>
-    <Footer />
-  </Box>
+  </MaterialLightProvider>
 );
 
 export default PublicLayout;
