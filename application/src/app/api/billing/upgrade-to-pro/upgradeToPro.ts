@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
-import { serverConfig } from 'settings/settings';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
+import { serverConfig } from '../../../../../settings';
 
 /**
  * Upgrades the user's subscription to Pro.

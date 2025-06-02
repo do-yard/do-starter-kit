@@ -12,7 +12,7 @@ jest.mock('stripe', () => ({
 }));
 
 let secret: string | undefined = 'whsec_test';
-jest.mock('../../../settings/settings', () => ({
+jest.mock('../../../../settings', () => ({
   serverConfig: {
     Stripe: {
       get webhookSecret() {

@@ -24,7 +24,7 @@ jest.mock('services/database/database', () => ({
 }));
 
 let serverConfigStripeProPriceId: string | null = 'pro_123';
-jest.mock('../../../../settings/settings', () => ({
+jest.mock('../../../../../settings', () => ({
   serverConfig: {
     get Stripe() {
       return {

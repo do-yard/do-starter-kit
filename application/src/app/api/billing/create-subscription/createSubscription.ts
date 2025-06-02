@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
-import { serverConfig } from 'settings/settings';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
+import { serverConfig } from '../../../../../settings';
 
 /**
  * Creates a subscription for a user. Free or Pro plans are supported.

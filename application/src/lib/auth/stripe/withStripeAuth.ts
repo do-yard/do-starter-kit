@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
-import { serverConfig } from 'settings/settings';
 import Stripe from 'stripe';
+import { serverConfig } from '../../../../settings';
 
 type Handler = (event: any) => Promise<NextResponse>;
 

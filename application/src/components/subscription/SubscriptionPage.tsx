@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { serverConfig } from 'settings/settings';
 import StripeCheckout from './StripeCheckout';
 import { StripeClient } from 'lib/api/stripe';
 import { SubscriptionPlan } from 'types';
@@ -10,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
+import { serverConfig } from '../../../settings';
 
 /**
  * Main component for managing user subscriptions.
