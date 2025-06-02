@@ -1,4 +1,4 @@
-import { serverConfig } from 'settings/settings';
+import { serverConfig } from '../../../settings';
 import { StripeBillingService } from './stripeBillingService';
 
 // Billing provider types
