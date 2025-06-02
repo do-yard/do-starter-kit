@@ -8,6 +8,12 @@ export interface ServerConfig {
     region?: string;
     endpoint?: string;
   };
+  Stripe: {
+    freeProductId?: string;
+    freePriceId?: string;
+    proProductId?: string;
+    proPriceId?: string;
+  };
 }
 
 export const serverConfig: ServerConfig = {
@@ -19,5 +25,11 @@ export const serverConfig: ServerConfig = {
     bucketName: process.env.SPACES_BUCKETNAME,
     region: process.env.SPACES_REGION,
     endpoint: process.env.SPACES_ENDPOINT,
+  },
+  Stripe: {
+    freeProductId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID,
+    freePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
+    proProductId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID,
+    proPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
   },
 };
