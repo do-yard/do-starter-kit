@@ -53,6 +53,14 @@ spec:
         - key: "STRIPE_WEBHOOK_SECRET"
           value: ""
           type: "SECRET"
+        - key: "NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID"
+          value: ""
+        - key: "NEXT_PUBLIC_STRIPE_FREE_PRICE_ID"
+          value: ""
+        - key: "NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID"
+          value: ""
+        - key: "NEXT_PUBLIC_STRIPE_PRO_PRICE_ID"
+          value: ""
 
   # Configuration for databases
   databases:

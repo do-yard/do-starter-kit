@@ -2,6 +2,15 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AdminDashboard from './AdminDashboard';
 
+// Mock next-auth/react to avoid ESM import issues in tests
+jest.mock('next-auth/react', () => ({
+  useSession: () => ({
+    data: { user: { id: '1', name: 'Alice' } },
+    status: 'authenticated',
+    update: jest.fn(),
+  }),
+}));
+
 // Update mock to support total and pageSize
 jest.mock('../../lib/api/users', () => {
   return {

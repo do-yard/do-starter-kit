@@ -40,6 +40,14 @@ services:
       - key: "STRIPE_WEBHOOK_SECRET"
         value: "${STRIPE_WEBHOOK_SECRET}"
         type: "SECRET"
+      - key: "NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID"
+        value: "${STRIPE_FREE_PRODUCT_ID}"
+      - key: "NEXT_PUBLIC_STRIPE_FREE_PRICE_ID"
+        value: "${STRIPE_FREE_PRICE_ID}"
+      - key: "NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID"
+        value: "${STRIPE_PRO_PRODUCT_ID}"
+      - key: "NEXT_PUBLIC_STRIPE_PRO_PRICE_ID"
+        value: "${STRIPE_PRO_PRICE_ID}"
 
 databases:
   - name: ${DB_NAME}
