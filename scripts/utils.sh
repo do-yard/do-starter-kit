@@ -43,8 +43,8 @@ prompt_for_input() {
     if [[ -z "$value" ]]; then
       print_error "$error_message"
     else
-      # Use eval to assign the value to the variable name passed in
-      eval "$var_name='$value'"
+      # Use printf -v to safely assign the value to the variable name passed in
+      printf -v "$var_name" '%s' "$value"
       break
     fi
   done
