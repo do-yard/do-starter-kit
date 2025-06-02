@@ -2,7 +2,7 @@
 
 ## Deployed apps
 
-Stripe provides webhook envents that confirm the operation done in the application, creating a subscription, updating it and canceling it.
+Stripe provides webhook events that confirm the operation done in the application, creating a subscription, updating it and canceling it.
 To configure the webhooks in a deployed app, follow this instructions:
 
 1. Get the url of your deployed app in DO App service.
@@ -21,12 +21,12 @@ To configure the webhooks in a deployed app, follow this instructions:
 - `https://sample.ondigitalocean.com/api/webhook
 
 8. Click on **Create Destination**
-9. In the webhooks section, look up for the **Signing Secret** card, anc dopy the secret. Use this secret for the followin environment variable:
+9. In the webhooks section, look up for the **Signing Secret** card, and copy the secret. Use this secret for the following environment variable:
    `STRIPE_WEBHOOK_SECRET`
 
 ## Running locally
 
-If you plan to run the app locally you will need a tool called Ngrok to expose your localhost API to the internet
+If you plan to run the app locally you will need a tunneling tool like Ngrok to expose your localhost API to the internet. Here is a example using ngrok:
 
 1. Install [**ngrok**](https://ngrok.com/)
 2. In a terminal run `ngrok http 3000`
