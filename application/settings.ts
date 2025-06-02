@@ -2,6 +2,7 @@ export interface ServerConfig {
   databaseProvider: string;
   storageProvider: string;
   emailProvider: string;
+  billingProvider: string;
   Spaces: {
     accessKey?: string;
     secretKey?: string;
@@ -27,6 +28,7 @@ export const serverConfig: ServerConfig = {
   databaseProvider: process.env.DATABASE_PROVIDER || 'Postgres',
   storageProvider: process.env.STORAGE_PROVIDER || 'Spaces',
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
+  billingProvider: process.env.BILLING_PROVIDER || 'Stripe',
   Spaces: {
     accessKey: process.env.SPACES_KEY,
     secretKey: process.env.SPACES_SECRET,

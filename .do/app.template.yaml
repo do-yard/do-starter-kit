@@ -37,6 +37,8 @@ services:
         value: "${APP_URL}"
       - key: "AUTH_TRUST_HOST"
         value: "true"
+      - key: "BILLING_PROVIDER"
+        value: "Stripe"
       - key: "STRIPE_WEBHOOK_SECRET"
         value: "${STRIPE_WEBHOOK_SECRET}"
         type: "SECRET"
