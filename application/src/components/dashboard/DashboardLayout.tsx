@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { Box } from '@mui/material';
-import DashboardSidebar from './DashboardSidebar';
+import Sidebar from '../Sidebar/Sidebar';
 import { ThemeToggle } from '../Theme/Theme';
 
 interface DashboardLayoutProps {
@@ -20,11 +20,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       sx={{
         display: 'flex',
         minHeight: '100vh',
-        width: '100%'
+        width: '100%',
       }}
       className="dashboard"
     >
-      <DashboardSidebar />
+      <Sidebar />
       <Box
         sx={{
           flexGrow: 1,
