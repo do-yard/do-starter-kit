@@ -37,7 +37,7 @@ export const createSubscription = async (
         userId: user.email,
       });
       customerId = customer.id;
-      db.subscription.create({
+      await db.subscription.create({
         customerId: customer.id,
         plan: null,
         status: null,

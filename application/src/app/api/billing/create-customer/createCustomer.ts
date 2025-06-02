@@ -25,7 +25,7 @@ export const createCustomer = async (
     });
 
     const db = createDatabaseClient();
-    db.subscription.create({
+    await db.subscription.create({
       customerId: customer.id,
       plan: null,
       status: null,
