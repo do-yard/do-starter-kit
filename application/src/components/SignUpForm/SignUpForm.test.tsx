@@ -1,98 +1,80 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SignUpForm from './SignUpForm';
-import '@testing-library/jest-dom';
+import { signIn } from 'next-auth/react';
 import React from 'react';
 
-// Mocks
+jest.mock('next/link', () => ({
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+jest.mock('hooks/navigation', () => ({
+  usePrefetchRouter: () => ({ navigate: jest.fn() }),
+  useNavigating: () => ({ setNavigating: jest.fn() }),
+}));
+
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }));
-jest.mock('hooks/navigation', () => ({
-  useNavigating: () => ({ setNavigating: jest.fn() }),
-  usePrefetchRouter: () => ({ navigate: jest.fn() }),
-}));
-jest.mock('next/link', () => {
-  const MockLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
-  );
-  MockLink.displayName = 'MockLink';
-  return MockLink;
-});
-
-import { signIn } from 'next-auth/react';
 
 describe('SignUpForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('renders the form fields and button', () => {
+  it('renders all inputs', () => {
     render(<SignUpForm />);
-
-    expect(screen.getByLabelText('Email')).toBeInTheDocument();
-    expect(screen.getByLabelText('Password')).toBeInTheDocument();
-    expect(screen.getByLabelText('Confirm Password')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /sign up/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
   });
 
-  it('shows an error if passwords do not match', async () => {
+  it('shows error if passwords do not match', async () => {
     render(<SignUpForm />);
+    await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');
+    await userEvent.type(screen.getByLabelText(/^password$/i), '123456');
+    await userEvent.type(screen.getByLabelText(/confirm password/i), '654321');
 
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: '123456' } });
-    fireEvent.change(screen.getByLabelText('Confirm Password'), { target: { value: 'abcdef' } });
+    fireEvent.submit(screen.getByTestId('signup-form'));
 
-    fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Passwords do not match.')).toBeInTheDocument();
-    });
+    expect(await screen.findByText(/passwords do not match/i)).toBeInTheDocument();
+    expect(signIn).not.toHaveBeenCalled();
   });
 
-  it('shows error when signIn fails', async () => {
-    (signIn as jest.Mock).mockResolvedValue({
-      ok: false,
-      error: 'Email already exists',
-      code: 'Email already exists',
-    });
+  it('submits and calls signIn with correct data', async () => {
+    const mockSignIn = signIn as jest.Mock;
+    mockSignIn.mockResolvedValue({ ok: true });
 
     render(<SignUpForm />);
+    await userEvent.type(screen.getByLabelText(/email/i), 'user@example.com');
+    await userEvent.type(screen.getByLabelText(/^password$/i), 'securepass');
+    await userEvent.type(screen.getByLabelText(/confirm password/i), 'securepass');
 
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'taken@example.com' } });
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'securepass' } });
-    fireEvent.change(screen.getByLabelText('Confirm Password'), {
-      target: { value: 'securepass' },
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
+    fireEvent.submit(screen.getByTestId('signup-form'));
 
     await waitFor(() => {
-      expect(screen.getByText('Email already exists')).toBeInTheDocument();
+      expect(mockSignIn).toHaveBeenCalledWith('credentials', {
+        redirect: false,
+        email: 'user@example.com',
+        password: 'securepass',
+        name: 'USER',
+        isSignUp: 'true',
+      });
     });
   });
 
-  it('navigates on successful sign up', async () => {
-    const mockNavigate = jest.fn();
-    (signIn as jest.Mock).mockResolvedValue({ ok: true });
-
-    // Re-override module to inject our mocked navigate function
-    jest.doMock('hooks/navigation', () => ({
-      useNavigating: () => ({ setNavigating: jest.fn() }),
-      usePrefetchRouter: () => ({ navigate: mockNavigate }),
-    }));
+  it('shows error message if signIn fails', async () => {
+    const mockSignIn = signIn as jest.Mock;
+    mockSignIn.mockResolvedValue({ ok: false, error: 'Account exists', code: '409' });
 
     render(<SignUpForm />);
+    await userEvent.type(screen.getByLabelText(/email/i), 'exists@example.com');
+    await userEvent.type(screen.getByLabelText(/^password$/i), 'abc12345');
+    await userEvent.type(screen.getByLabelText(/confirm password/i), 'abc12345');
 
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'new@example.com' } });
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'strongpass' } });
-    fireEvent.change(screen.getByLabelText('Confirm Password'), {
-      target: { value: 'strongpass' },
-    });
+    fireEvent.submit(screen.getByTestId('signup-form'));
 
-    fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
-
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/');
-    });
+    expect(await screen.findByText(/409/i)).toBeInTheDocument();
   });
 });

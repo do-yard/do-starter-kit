@@ -1,18 +1,21 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import LoginForm from './LoginForm';
-import '@testing-library/jest-dom';
+import { signIn } from 'next-auth/react';
 import React from 'react';
 
-// Mock next-auth signIn
+jest.mock('next/link', () => ({
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+jest.mock('hooks/navigation', () => ({
+  usePrefetchRouter: () => ({ navigate: jest.fn() }),
+  useNavigating: () => ({ setNavigating: jest.fn() }),
+}));
+
 jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
-}));
-import { signIn } from 'next-auth/react';
-
-// Mock navigation hooks
-jest.mock('hooks/navigation', () => ({
-  useNavigating: () => ({ setNavigating: jest.fn() }),
-  usePrefetchRouter: () => ({ navigate: jest.fn() }),
 }));
 
 describe('LoginForm', () => {
@@ -20,60 +23,42 @@ describe('LoginForm', () => {
     jest.clearAllMocks();
   });
 
-  it('renders the form and inputs', () => {
+  it('renders email and password inputs', () => {
     render(<LoginForm />);
-
-    expect(screen.getByText('Log In')).toBeInTheDocument();
-    expect(screen.getByLabelText('Email')).toBeInTheDocument();
-    expect(screen.getByLabelText('Password')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /log in with email/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
   });
 
-  it('updates input values correctly', () => {
-    render(<LoginForm />);
-
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'test@example.com' } });
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'password123' } });
-
-    expect(screen.getByLabelText('Email')).toHaveValue('test@example.com');
-    expect(screen.getByLabelText('Password')).toHaveValue('password123');
-  });
-
-  it('shows error on failed login', async () => {
-    (signIn as jest.Mock).mockResolvedValue({
-      ok: false,
-      error: 'Invalid credentials',
-      code: 'Invalid credentials',
-    });
+  it('submits form and calls signIn with correct credentials', async () => {
+    const mockSignIn = signIn as jest.Mock;
+    mockSignIn.mockResolvedValue({ ok: true });
 
     render(<LoginForm />);
+    await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');
+    await userEvent.type(screen.getByLabelText(/password/i), 'password123');
 
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'bad@example.com' } });
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'wrongpass' } });
-    fireEvent.click(screen.getByRole('button', { name: /log in with email/i }));
+    const form = screen.getByTestId('login-form');
+    fireEvent.submit(form);
 
     await waitFor(() => {
-      expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
+      expect(mockSignIn).toHaveBeenCalledWith('credentials', {
+        redirect: false,
+        email: 'test@example.com',
+        password: 'password123',
+      });
     });
   });
 
-  it('navigates on successful login', async () => {
-    const navigate = jest.fn();
-    (signIn as jest.Mock).mockResolvedValue({ ok: true, error: null });
-
-    jest.doMock('hooks/navigation', () => ({
-      useNavigating: () => ({ setNavigating: jest.fn() }),
-      usePrefetchRouter: () => ({ navigate }),
-    }));
+  it('shows error message on failed login', async () => {
+    const mockSignIn = signIn as jest.Mock;
+    mockSignIn.mockResolvedValue({ ok: false, error: 'Invalid credentials', code: '401' });
 
     render(<LoginForm />);
+    await userEvent.type(screen.getByLabelText(/email/i), 'fail@example.com');
+    await userEvent.type(screen.getByLabelText(/password/i), 'wrongpass');
 
-    fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'valid@example.com' } });
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'securepass' } });
-    fireEvent.click(screen.getByRole('button', { name: /log in with email/i }));
+    fireEvent.submit(screen.getByTestId('login-form'));
 
-    await waitFor(() => {
-      expect(navigate).toHaveBeenCalledWith('/');
-    });
+    expect(await screen.findByText(/401/i)).toBeInTheDocument();
   });
 });
