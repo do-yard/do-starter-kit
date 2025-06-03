@@ -13,7 +13,7 @@ import { serverConfig, spacesEnvironmentVariablesNames } from '../../../settings
  */
 export class SpacesStorageService implements StorageService {
   private client: S3Client;
-  private bucketName: string | undefined;
+  private bucketName: string;
 
   constructor() {
     const accessKeyId = serverConfig.Spaces.accessKey as string;
