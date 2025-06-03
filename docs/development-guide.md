@@ -17,7 +17,7 @@ Before you begin development:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/ajot/do-starter-kit
+git clone https://github.com/do-yard/do-starter-kit
 cd do-starter-kit/application
 ```
 
@@ -40,10 +40,12 @@ cp env-example .env    # on Mac/Linux
 Edit the `.env` file with your specific configuration:
 
 1. **Database Configuration**:
+
    - See [database.md](./database.md) for detailed instructions
    - For local development, the Docker Compose setup will handle this for you
 
 2. **Authentication Settings**:
+
    - Generate a strong `NEXTAUTH_SECRET` (use [Password Generator](https://passwords-generator.org/))
    - Set `NEXTAUTH_URL` to your development URL (usually `http://localhost:3000`)
 
@@ -103,16 +105,19 @@ Follow the project structure outlined in [project-structure.md](./project-struct
 ### Adding New Features
 
 1. **Create a new branch**:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 2. **Adding a new API endpoint**:
+
    - Create a new folder under `src/app/api/`
    - Implement your route handler in a `route.ts` file
    - Add tests in a corresponding `route.test.ts` file
 
 3. **Adding a new page**:
+
    - Create a new folder under `src/app/(protected)/` or `src/app/(public)/` depending on authentication requirements
    - Implement your page in a `page.tsx` file
 
@@ -123,6 +128,7 @@ Follow the project structure outlined in [project-structure.md](./project-struct
 ### Working with the Database
 
 1. **Modifying the schema**:
+
    - Edit `prisma/schema.prisma` with your changes
    - Generate a migration:
      ```bash
@@ -136,6 +142,7 @@ Follow the project structure outlined in [project-structure.md](./project-struct
 ### File Storage
 
 For file uploads and storage:
+
 1. Make sure your DigitalOcean Spaces is configured (see [storage.md](./storage.md))
 2. Use the storage service from `src/services/storage/spacesStorageService.ts`
 
