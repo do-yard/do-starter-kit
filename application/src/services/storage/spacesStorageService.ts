@@ -6,24 +6,33 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { StorageService } from './storage';
-import { serverConfig } from '../../../settings';
+import { serverConfig, spacesEnvironmentVariablesNames } from '../../../settings';
 
 /**
  * Service for interacting with DigitalOcean Spaces storage using the AWS S3 API.
  */
 export class SpacesStorageService implements StorageService {
   private client: S3Client;
-  private bucketName: string;
+  private bucketName: string | undefined;
 
   constructor() {
-    const accessKeyId = serverConfig.Spaces.accessKey;
-    const secretAccessKey = serverConfig.Spaces.secretKey;
-    const endpoint = serverConfig.Spaces.endpoint;
-    const bucketName = serverConfig.Spaces.bucketName;
-    const region = serverConfig.Spaces.region;
+    const accessKeyId = serverConfig.Spaces.accessKey as string;
+    const secretAccessKey = serverConfig.Spaces.secretKey as string;
+    const endpoint = serverConfig.Spaces.endpoint as string;
+    const bucketName = serverConfig.Spaces.bucketName as string;
+    const region = serverConfig.Spaces.region as string;
 
-    if (!accessKeyId || !secretAccessKey || !bucketName || !endpoint || !region) {
-      throw new Error('Missing required environment variables for Spaces client configuration.');
+    const missingVars: string[] = [];
+    if (!accessKeyId) missingVars.push(spacesEnvironmentVariablesNames.SPACES_KEY);
+    if (!secretAccessKey) missingVars.push(spacesEnvironmentVariablesNames.SPACES_SECRET);
+    if (!bucketName) missingVars.push(spacesEnvironmentVariablesNames.SPACES_BUCKETNAME);
+    if (!endpoint) missingVars.push(spacesEnvironmentVariablesNames.SPACES_ENDPOINT);
+    if (!region) missingVars.push(spacesEnvironmentVariablesNames.SPACES_REGION);
+
+    if (missingVars.length > 0) {
+      throw new Error(
+        `Missing required environment variables for Spaces client configuration: ${missingVars.join(', ')}`
+      );
     }
 
     this.bucketName = bucketName;
