@@ -30,11 +30,11 @@ This guide describes how to use DigitalOcean App Platform to deploy a complete S
 
 Click the following button to deploy the app to App Platform. If you are not currently logged in with your DigitalOcean account, this button prompts you to log in.
 
-[![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/ajot/do-starter-kit/tree/main)
+[![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/do-yard/do-starter-kit/tree/main)
 
 To enable automatic redeployment or to modify the code, we recommend you fork this repository:
 
-1. Click the **Fork** button in the top-right of [this GitHub repository](https://github.com/ajot/do-starter-kit), then follow the on-screen instructions
+1. Click the **Fork** button in the top-right of [this GitHub repository](https://github.com/do-yard/do-starter-kit), then follow the on-screen instructions
 2. In your forked repo, the README will display as `https://github.com/<your-org>/do-starter-kit`
 3. To deploy your fork, visit the [App Platform control panel](https://cloud.digitalocean.com/apps) and click **Create App**
 4. Select **GitHub** as your service provider, select your forked repo, and ensure the main branch is selected with **Autodeploy** enabled
@@ -108,7 +108,7 @@ To run the application locally:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/ajot/do-starter-kit
+   git clone https://github.com/do-yard/do-starter-kit
    cd application
    ```
 
