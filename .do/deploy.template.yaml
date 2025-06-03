@@ -70,6 +70,8 @@ spec:
           type: "SECRET"
         - key: RESEND_EMAIL_SENDER
           value: ""
+        - key: "NEXT_PUBLIC_SELF_API_URL"
+          value: ""
 
   # Configuration for databases
   databases:
