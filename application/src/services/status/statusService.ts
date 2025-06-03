@@ -9,7 +9,6 @@ export interface ServiceStatus {
   configured: boolean;
   connected: boolean;
   error?: string;
-  warning?: string;
 }
 
 /**
@@ -27,77 +26,39 @@ export class StatusService {  /**
       name: `Storage (${storageType})`,
       configured: false,
       connected: false,
-    };    // Check if storage configuration is available
-    if (serverConfig.storageProvider === 'Spaces') {
-      // Map configuration values to environment variable names for clearer error messages
-      const configItems = {
-        'SPACES_KEY': serverConfig.Spaces.accessKey,
-        'SPACES_SECRET': serverConfig.Spaces.secretKey,
-        'SPACES_BUCKETNAME': serverConfig.Spaces.bucketName, // Note: This is SPACES_BUCKETNAME, not SPACES_BUCKET
-        'SPACES_ENDPOINT': serverConfig.Spaces.endpoint,
-        'SPACES_REGION': serverConfig.Spaces.region
-      };
-      
-      // Find missing configuration items
-      const missingItems = Object.entries(configItems)
-        .filter(([_, value]) => !value || value.trim() === '')
-        .map(([key, _]) => key);
-      
-      if (missingItems.length > 0) {
-        status.error = `Missing required Spaces configuration: ${missingItems.join(', ')}. Please check your .env file.`;
-        return status;
-      }
-      
-      // Check for potentially incorrect values (values that look like placeholders from env-example)
-      const suspiciousValues = Object.entries(configItems)
-        .filter(([key, value]) => {
-          if (!value) return false;
-          const strValue = String(value).trim();
-          
-          // Check if the value looks like a placeholder from env-example
-          return strValue.includes('your-') || 
-                 strValue === 'my-app-bucket' || 
-                 (key === 'SPACES_ENDPOINT' && !strValue.includes('digitaloceanspaces.com')) ||
-                 (key === 'SPACES_SECRET' && strValue.length < 20);
-        })
-        .map(([key, value]) => `${key} (value: "${typeof value === 'string' ? value.substring(0, 5) + '...' : value}")`);
-      
-      if (suspiciousValues.length > 0) {
-        status.warning = `Some values appear to be default placeholders or invalid: ${suspiciousValues.join(', ')}. Make sure these are set correctly.`;
-      }
-    }
-    // If a different storage provider is added in the future, add its config check here
-    
-    // All required configurations are present
-    status.configured = true;
+    };
 
-    status.configured = true;
-
-    // Try to connect to storage service through the interface
+    // Create storage service and check configuration status
     try {
-      let storageService: StorageService;
+      const storageService = createStorageService();
+      const providerName = storageService.getProviderName();
+      status.name = `Storage (${providerName})`;
       
-      try {
-        // Attempt to create storage service - this may fail if config is invalid
-        storageService = createStorageService();
-      } catch (error) {
-        status.error = error instanceof Error
-          ? `Failed to initialize storage service: ${error.message}`
-          : 'Failed to initialize storage service: Unknown error';
-        return status;
+      // Get configuration status from the service
+      const configStatus = storageService.checkConfiguration();
+      status.configured = configStatus.configured;
+        // Set any error messages
+      if (configStatus.error) {
+        status.error = configStatus.error;
       }
       
-      // Check connection to storage service
-      const connected = await storageService.checkConnection();
-      status.connected = connected;
+      if (configStatus.missingConfig && configStatus.missingConfig.length > 0) {
+        status.error = `Missing required configuration: ${configStatus.missingConfig.join(', ')}. Please check your .env file.`;
+      }
       
-      if (!connected) {
-        status.error = `Failed to connect to ${storageType} storage service.`;
+      // Only check connection if the service is properly configured
+      if (status.configured) {
+        const connected = await storageService.checkConnection();
+        status.connected = connected;
+        
+        if (!connected) {
+          status.error = `Failed to connect to ${providerName}. Service may be unavailable or credentials may be incorrect.`;
+        }
       }
     } catch (error) {
       status.error = error instanceof Error 
-        ? `Failed to connect to storage service: ${error.message}` 
-        : 'Failed to connect to storage service: Unknown error';
+        ? `Failed to initialize storage service: ${error.message}` 
+        : 'Failed to initialize storage service: Unknown error';
     }
 
     return status;

@@ -4,6 +4,7 @@ import { UserRole } from 'types';
 import { USER_ROLES } from 'lib/auth/roles';
 // Update the import path if your settings file is located elsewhere, for example:
 import { serverConfig } from '../settings';
+import { createStorageService } from './services/storage/storage';
 // Or, if the file does not exist, create 'settings.ts' in the same directory with the following content:
 // export const serverConfig = { storageProvider: '', Spaces: { accessKey: '', secretKey: '', bucketName: '', endpoint: '', region: '' } };
 
@@ -36,30 +37,20 @@ export async function middleware(request: NextRequest) {
   // Skip configuration check for public routes and API endpoints
   const isPublicPath = publicPaths.some(path => pathname === path || pathname.startsWith(path + '/'));
   const isApiPath = pathname.startsWith('/api/') && !pathname.startsWith('/api/system-status');
-  
-  // Check storage config only for protected routes that require storage
+    // Check storage config only for protected routes that require storage
   const isProtectedRoute = !isPublicPath && !isApiPath;
 
   if (isProtectedRoute) {
-    // Check if storage provider is properly configured
-    const storageProvider = serverConfig.storageProvider;
-    
-    // Check based on the storage provider type
-    let isStorageConfigured = false;
-    
-    if (storageProvider === 'Spaces') {
-      const spacesConfig = serverConfig.Spaces;
-      isStorageConfigured = !!(
-        spacesConfig.accessKey &&
-        spacesConfig.secretKey &&
-        spacesConfig.bucketName &&
-        spacesConfig.endpoint &&
-        spacesConfig.region
-      );
-    }
-    // Add logic for other storage providers here when implemented
-    
-    if (!isStorageConfigured) {
+    try {
+      // Use the storage service interface to check if configuration is valid
+      const storageService = createStorageService();
+      const configStatus = storageService.checkConfiguration();
+      
+      if (!configStatus.configured) {
+        return NextResponse.redirect(new URL('/system-status', request.url));
+      }
+    } catch (error) {
+      // If there's an error creating the service, redirect to status page
       return NextResponse.redirect(new URL('/system-status', request.url));
     }
   }

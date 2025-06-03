@@ -4,6 +4,15 @@ import { SpacesStorageService } from './spacesStorageService';
 // Storage provider types
 export type StorageProvider = 'Spaces';
 
+/**
+ * Interface for storage service configuration status
+ */
+export interface StorageConfigStatus {
+  configured: boolean;
+  missingConfig?: string[];
+  error?: string;
+}
+
 // Common interface for all storage providers
 export interface StorageService {
   uploadFile(
@@ -20,6 +29,18 @@ export interface StorageService {
    * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
    */
   checkConnection(): Promise<boolean>;
+  
+  /**
+   * Checks if the storage service configuration is valid.
+   * @returns {StorageConfigStatus} Configuration status object.
+   */
+  checkConfiguration(): StorageConfigStatus;
+  
+  /**
+   * Gets the storage provider name.
+   * @returns {string} The name of the storage provider.
+   */
+  getProviderName(): string;
 }
 
 /**

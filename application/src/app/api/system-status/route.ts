@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { StatusService } from '../../../services/status/statusService';
 import { serverConfig } from '../../../../settings';
+import { createStorageService } from '../../../services/storage/storage';
 
 /**
  * Handles GET requests for the system status endpoint.
@@ -8,17 +9,21 @@ import { serverConfig } from '../../../../settings';
  * 
  * @returns {Promise<NextResponse>} JSON response with the status of all services and system info.
  */
-export const GET = async () => {
-  try {
+export const GET = async () => {  try {
     const serviceStatus = await StatusService.checkAllServices();
-      // Add system information to provide more context
+    
+    // Add system information to provide more context
     const systemInfo = {
       storageProvider: serverConfig.storageProvider,
       environment: process.env.NODE_ENV || 'unknown',
       timestamp: new Date().toISOString()
     };
     
-    // Add configuration diagnostics for better troubleshooting
+    // Get configuration status from the storage service
+    const storageService = createStorageService();
+    const storageConfigStatus = storageService.checkConfiguration();
+    
+    // Enhanced configuration diagnostics for better troubleshooting
     const configDiagnostics = {
       envVarsPresent: {
         SPACES_KEY: !!process.env.SPACES_KEY,
@@ -34,7 +39,8 @@ export const GET = async () => {
         bucketName: !!serverConfig.Spaces.bucketName,
         endpoint: !!serverConfig.Spaces.endpoint,
         region: !!serverConfig.Spaces.region
-      }
+      },
+      storageConfigStatus
     };
     
     const hasIssues = serviceStatus.some(service => !service.configured || !service.connected);
