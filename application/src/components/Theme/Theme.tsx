@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 
-const typography = {
+export const typography = {
   fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
   h1: {
     fontSize: '2.5rem',
@@ -45,7 +45,7 @@ const typography = {
 };
 
 // Define component overrides
-const components: ThemeOptions['components'] = {
+export const components: ThemeOptions['components'] = {
   MuiButton: {
     defaultProps: {
       disableElevation: true,
@@ -142,30 +142,5 @@ export function MaterialThemeProvider({ children }: { children: React.ReactNode 
         {children}
       </ThemeProvider>
     </ThemeModeContext.Provider>
-  );
-}
-
-/**
- * Provides Material UI with a static light theme (no dark mode support).
- */
-export function MaterialLightProvider({ children }: { children: React.ReactNode }) {
-  const lightTheme = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: 'light',
-          primary: { main: '#0061EB' },
-        },
-        typography: typography as ThemeOptions['typography'],
-        components: components as ThemeOptions['components'],
-      }),
-    []
-  );
-
-  return (
-    <ThemeProvider theme={lightTheme}>
-      <CssBaseline />
-      {children}
-    </ThemeProvider>
   );
 }
