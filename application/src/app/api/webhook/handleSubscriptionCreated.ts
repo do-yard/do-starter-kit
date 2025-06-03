@@ -28,7 +28,7 @@ export const handleSubscriptionCreated = async (json: any) => {
     return;
   }
 
-  db.subscription.updateByCustomerId(customerId, {
+  await db.subscription.updateByCustomerId(customerId, {
     status: SubscriptionStatusEnum.ACTIVE,
   });
 };
