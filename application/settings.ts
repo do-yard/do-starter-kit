@@ -20,7 +20,7 @@ export const serverConfig: ServerConfig = {
   storageProvider: process.env.STORAGE_PROVIDER || 'Spaces',
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
   Spaces: {
-    accessKey: process.env.SPACES_ACCESS_KEY,
+    accessKey: process.env.SPACES_KEY_ID,
     secretKey: process.env.SPACES_KEY_SECRET,
     bucketName: process.env.SPACES_BUCKET_NAME,
     region: process.env.SPACES_REGION,
