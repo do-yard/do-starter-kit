@@ -45,7 +45,10 @@ export const checkout = async (
 
     return NextResponse.json({ url }, { status: 200 });
   } catch (error) {
-    console.error('Error creating checkout session:', error);
+    console.error(
+      'Error creating checkout session',
+      (error as { message?: string }).message ?? undefined
+    );
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 };
