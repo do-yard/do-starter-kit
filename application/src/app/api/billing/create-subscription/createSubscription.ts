@@ -22,15 +22,15 @@ export const createSubscription = async (
       return NextResponse.json({ error: 'Price ID is required' }, { status: 400 });
     }
 
-    const customers = await billingService.listCustomer(user.email);
-
     let customerId;
 
-    if (customers.length > 0) {
-      customerId = customers[0].id;
-    }
-
     const db = createDatabaseClient();
+
+    const subscription = await db.subscription.findByUserId(user.id);
+
+    if (subscription.length) {
+      customerId = subscription[0].customerId;
+    }
 
     if (!customerId) {
       const customer = await billingService.createCustomer(user.email, {

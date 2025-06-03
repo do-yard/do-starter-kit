@@ -1,15 +1,14 @@
 import { createSubscription } from './createSubscription';
 import { NextRequest } from 'next/server';
 
-const mockListCustomer = jest.fn();
 const mockCreateCustomer = jest.fn();
 const mockCreateSubscription = jest.fn();
 const mockDbCreate = jest.fn();
 const mockDbUpdate = jest.fn();
+const mockDbFindByUserId = jest.fn();
 
 jest.mock('services/billing/billing', () => ({
   createBillingService: () => ({
-    listCustomer: mockListCustomer,
     createCustomer: mockCreateCustomer,
     createSubscription: mockCreateSubscription,
   }),
@@ -19,6 +18,7 @@ jest.mock('services/database/database', () => ({
     subscription: {
       create: mockDbCreate,
       update: mockDbUpdate,
+      findByUserId: mockDbFindByUserId,
     },
   }),
 }));
@@ -42,13 +42,13 @@ describe('createSubscription API', () => {
   });
 
   it('uses existing customer and returns clientSecret, updates user in db', async () => {
-    mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
+    mockDbFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
     mockCreateSubscription.mockResolvedValue({ clientSecret: 'secret_abc' });
     mockDbUpdate.mockResolvedValue({});
     const res = await createSubscription(mockRequest({ priceId }), user);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ clientSecret: 'secret_abc' });
-    expect(mockListCustomer).toHaveBeenCalledWith(user.email);
+    expect(mockDbFindByUserId).toHaveBeenCalledWith(user.id);
     expect(mockCreateCustomer).not.toHaveBeenCalled();
     expect(mockCreateSubscription).toHaveBeenCalledWith('cust1', priceId);
     expect(mockDbCreate).not.toHaveBeenCalled();
@@ -56,7 +56,7 @@ describe('createSubscription API', () => {
   });
 
   it('creates customer if not found and returns clientSecret, creates user in db', async () => {
-    mockListCustomer.mockResolvedValue([]);
+    mockDbFindByUserId.mockResolvedValue([]);
     mockCreateCustomer.mockResolvedValue({ id: 'cust2' });
     mockCreateSubscription.mockResolvedValue({ clientSecret: 'secret_xyz' });
     mockDbCreate.mockResolvedValue({});
@@ -76,7 +76,7 @@ describe('createSubscription API', () => {
   });
 
   it('returns 500 if db update fails after subscription', async () => {
-    mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
+    mockDbFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
     mockCreateSubscription.mockResolvedValue({ clientSecret: 'secret_abc' });
     mockDbUpdate.mockRejectedValue(new Error('fail'));
     const res = await createSubscription(mockRequest({ priceId }), user);
@@ -85,14 +85,14 @@ describe('createSubscription API', () => {
   });
 
   it('returns 500 on error from billing service', async () => {
-    mockListCustomer.mockRejectedValue(new Error('fail'));
+    mockDbFindByUserId.mockRejectedValue(new Error('fail'));
     const res = await createSubscription(mockRequest({ priceId }), user);
     expect(res.status).toBe(500);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 
   it('returns 500 if createCustomer fails', async () => {
-    mockListCustomer.mockResolvedValue([]);
+    mockDbFindByUserId.mockResolvedValue([]);
     mockCreateCustomer.mockRejectedValue(new Error('fail'));
     const res = await createSubscription(mockRequest({ priceId }), user);
     expect(res.status).toBe(500);
@@ -100,7 +100,7 @@ describe('createSubscription API', () => {
   });
 
   it('returns 500 if createSubscription fails', async () => {
-    mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
+    mockDbFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
     mockCreateSubscription.mockRejectedValue(new Error('fail'));
     const res = await createSubscription(mockRequest({ priceId }), user);
     expect(res.status).toBe(500);
