@@ -1,15 +1,15 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, Typography, TextField, Button, styled, CircularProgress } from '@mui/material';
-import Paper from '../common/Paper';
+import { Box, Typography, TextField, Button, styled, CircularProgress, Card } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
 import DoneIcon from '@mui/icons-material/Done';
+import Image from 'next/image';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
   border: '2px dashed',
-  borderColor: theme.palette.grey[700],
+  borderColor: theme.palette.grey[400],
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(4),
   textAlign: 'center',
@@ -19,6 +19,12 @@ const StyledFileInput = styled('div')(({ theme }) => ({
   },
 }));
 
+/**
+ * User account configuration page.
+ * Allows to update name and profile picture, with integration to the active session.
+ *
+ * Manages forms, dropzone for image and upload/success status.
+ */
 export default function AccountSettings() {
   const [formData, setFormData] = useState({
     name: '',
@@ -28,24 +34,21 @@ export default function AccountSettings() {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const session = useSession();
+  const user = session.data?.user;
 
   useEffect(() => {
-    if (!session.data?.user) {
-      return;
-    }
-
-    if (formData.name !== '') {
-      return;
-    }
+    if (isInitialized || !user) return;
 
     setFormData({
-      name: session.data?.user?.name ?? '',
-      email: session.data?.user?.email ?? '',
+      name: user.name ?? '',
+      email: user.email ?? '',
       profileImage: null,
     });
-  }, [formData.name, session]);
+    setIsInitialized(true);
+  }, [isInitialized, user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -105,17 +108,31 @@ export default function AccountSettings() {
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!formData.profileImage) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(formData.profileImage);
+    setPreviewUrl(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [formData.profileImage]);
+
   return (
-    <Box sx={{ width: '100%', color: '#fff', pt: 4 }}>
+    <Box sx={{ width: '800px', pt: 4, mx: 'auto' }}>
       <Box sx={{ maxWidth: '800px', mx: 'auto', mb: 4 }}>
-        <Typography variant="h3" fontWeight="bold" sx={{ color: '#fff' }}>
+        <Typography variant="h3" fontWeight="bold">
           Account Settings
         </Typography>
       </Box>
 
-      <Paper>
+      <Card variant="outlined">
         <Box sx={{ p: 3, width: '100%' }}>
-          <Typography variant="h4" fontWeight={600} sx={{ mb: 2, color: '#fff' }}>
+          <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
             Profile Information
           </Typography>
           <Typography variant="body2" color="#9ca3af" sx={{ mb: 3 }}>
@@ -124,13 +141,7 @@ export default function AccountSettings() {
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: 'grid', gap: 4 }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography
-                  component="label"
-                  htmlFor="name"
-                  variant="body2"
-                  fontWeight={500}
-                  sx={{ color: '#fff' }}
-                >
+                <Typography component="label" htmlFor="name" variant="body2" fontWeight={500}>
                   Name
                 </Typography>
                 <TextField
@@ -142,45 +153,11 @@ export default function AccountSettings() {
                   fullWidth
                   variant="outlined"
                   disabled={isLoading}
-                  InputProps={{
-                    sx: {
-                      color: isLoading ? '#9ca3af' : '#fff',
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#374151',
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#4b5563',
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#6b7280',
-                      },
-                      '& .Mui-disabled': {
-                        WebkitTextFillColor: '#fff',
-                        color: '#fff',
-                        backgroundColor: 'rgba(55,65,81,0.2)',
-                      },
-                    },
-                  }}
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      color: '#9ca3af',
-                    },
-                    '& .MuiInputBase-input::placeholder': {
-                      color: '#6b7280',
-                      opacity: 1,
-                    },
-                  }}
                 />
               </Box>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography
-                  component="label"
-                  htmlFor="email"
-                  variant="body2"
-                  fontWeight={500}
-                  sx={{ color: '#fff' }}
-                >
+                <Typography component="label" htmlFor="email" variant="body2" fontWeight={500}>
                   Email
                 </Typography>
                 <TextField
@@ -193,66 +170,58 @@ export default function AccountSettings() {
                   fullWidth
                   variant="outlined"
                   disabled={true}
-                  InputProps={{
-                    sx: {
-                      color: isLoading ? '#9ca3af' : '#fff',
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#374151',
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#4b5563',
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#6b7280',
-                      },
-                      '& .Mui-disabled': {
-                        WebkitTextFillColor: '#fff',
-                        color: '#fff',
-                        backgroundColor: 'rgba(55,65,81,0.2)',
-                      },
-                      '&.MuiInputBase-input::placeholder': {
-                        color: '#6b7280',
-                        opacity: 1,
-                      },
-                    },
-                  }}
-                  sx={{
-                    '& .MuiInputLabel-root': {
-                      color: '#9ca3af',
-                    },
-                    '&.MuiInputBase-input::placeholder': {
-                      color: '#6b7280',
-                      opacity: 1,
-                    },
-                  }}
                 />
               </Box>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="body2" fontWeight={500} sx={{ color: '#fff' }}>
+                <Typography variant="body2" fontWeight={500}>
                   Profile Image
                 </Typography>
                 {/* Show selected file name if present */}
                 {formData.profileImage && (
-                  <Typography variant="caption" color="#9ca3af" sx={{ mb: 1 }}>
+                  <Typography variant="caption" sx={{ mb: 1 }}>
                     Selected file: {formData.profileImage.name}
                   </Typography>
                 )}
-                <StyledFileInput
-                  sx={{
-                    color: isLoading ? '#9ca3af' : '#fff',
-                    borderColor: isLoading ? '#6b7280' : '#374151',
-                    backgroundColor: isLoading ? 'rgba(55,65,81,0.2)' : 'transparent',
-                    cursor: isLoading ? 'not-allowed' : 'pointer',
-                  }}
-                >
-                  <div {...getRootProps()}>
+
+                {previewUrl ? (
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Box
+                      sx={{
+                        width: 200,
+                        height: 200,
+                        position: 'relative',
+                        mx: 'auto',
+                        mb: 2,
+                        borderRadius: 2,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Image
+                        src={previewUrl}
+                        alt="Selected profile image preview"
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </Box>
+                    <Button
+                      variant="outlined"
+                      onClick={() => setFormData((prev) => ({ ...prev, profileImage: null }))}
+                      disabled={isLoading}
+                    >
+                      Change Image
+                    </Button>
+                  </Box>
+                ) : (
+                  <StyledFileInput
+                    {...getRootProps()}
+                  >
                     <input {...getInputProps()} disabled={isLoading} />
-                    <Typography variant="body2" color="#9ca3af">
+                    <Typography variant="body2">
                       Drag &apos;n&apos; drop a profile image here, or click to select one
                     </Typography>
-                  </div>
-                </StyledFileInput>
+                  </StyledFileInput>
+                )}
                 {uploadError && (
                   <Typography variant="caption" color="error" sx={{ mt: 1 }}>
                     {uploadError}
@@ -268,11 +237,6 @@ export default function AccountSettings() {
                 type="submit"
                 variant="contained"
                 sx={{
-                  backgroundColor: '#fff',
-                  color: '#111827',
-                  '&:hover': {
-                    backgroundColor: '#f3f4f6',
-                  },
                   textTransform: 'none',
                   borderRadius: 1,
                   padding: '8px 16px',
@@ -283,7 +247,7 @@ export default function AccountSettings() {
               >
                 {isLoading ? (
                   <>
-                    <CircularProgress style={{ marginRight: 6 }} />
+                    <CircularProgress style={{ marginRight: 6, color: 'white' }} />
                     Saving...
                   </>
                 ) : (
@@ -300,7 +264,7 @@ export default function AccountSettings() {
             </Box>
           </form>
         </Box>
-      </Paper>
+      </Card>
     </Box>
   );
 }

@@ -6,7 +6,6 @@ on:
     paths:
       - "application/**"
   pull_request:
-    branches: ["main"]
     paths:
       - "application/**"
   workflow_dispatch:

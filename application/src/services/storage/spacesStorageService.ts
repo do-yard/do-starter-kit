@@ -6,8 +6,11 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { StorageService } from './storage';
-import { serverConfig } from 'settings/settings';
+import { serverConfig } from '../../../settings';
 
+/**
+ * Service for interacting with DigitalOcean Spaces storage using the AWS S3 API.
+ */
 export class SpacesStorageService implements StorageService {
   private client: S3Client;
   private bucketName: string;

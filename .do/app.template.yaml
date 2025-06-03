@@ -1,0 +1,51 @@
+name: ${APP_NAME}
+
+services:
+  - name: application
+    environment_slug: node-js
+    source_dir: ./application
+    github:
+      repo: do-yard/do-starter-kit
+      branch: ${GITHUB_BRANCH}
+      deploy_on_push: false
+    build_command: "npm install && npm run build"
+    run_command: "npm run start"
+    http_port: 3000
+    routes:
+      - path: /
+    envs:
+      - key: "DATABASE_URL"
+        value: "${${DB_NAME}.DATABASE_URL}"
+        type: "SECRET"
+      - key: "SPACES_KEY"
+        value: "${SPACES_KEY}"
+      - key: "SPACES_SECRET"
+        value: "${SPACES_SECRET}"
+        type: "SECRET"
+      - key: "SPACES_BUCKETNAME"
+        value: "${SPACES_BUCKETNAME}"
+      - key: "SPACES_REGION"
+        value: "${SPACES_REGION}"
+      - key: "SPACES_ENDPOINT"
+        value: "${SPACES_ENDPOINT}"
+      - key: "STORAGE_PROVIDER"
+        value: "Spaces"
+      - key: "NEXTAUTH_SECRET"
+        value: "${NEXTAUTH_SECRET}"
+        type: "SECRET"
+      - key: "NEXTAUTH_URL"
+        value: "${APP_URL}"
+      - key: "AUTH_TRUST_HOST"
+        value: "true"
+      - key: "RESEND_API_KEY"
+        value: "${RESEND_API_KEY}"
+        type: "SECRET"
+      - key: RESEND_EMAIL_SENDER
+        value: "${RESEND_EMAIL_SENDER}"
+
+databases:
+  - name: ${DB_NAME}
+    engine: PG
+    version: "15"
+    production: false
+    cluster_name: ${CLUSTER_NAME}
