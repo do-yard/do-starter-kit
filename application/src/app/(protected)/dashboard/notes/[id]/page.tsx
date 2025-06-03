@@ -4,6 +4,11 @@ import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import NoteDetail from 'components/notes/NoteDetails';
 
+/**
+ * NotePage component
+ * This component retrieves the note ID from the URL parameters and renders the NoteDetail component.
+ * @returns NotePage component
+ */
 const NotePage = () => {
   const params = useParams();
   const router = useRouter();

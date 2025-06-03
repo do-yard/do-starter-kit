@@ -22,7 +22,7 @@ describe('withAuth', () => {
   it('returns 401 if session is missing', async () => {
     mockAuth.mockResolvedValue(null);
     const wrapped = withAuth(handler);
-    const response = await wrapped(createMockRequest());
+    const response = await wrapped(createMockRequest(), { params: Promise.resolve({}) });
     const json = await response.json();
     expect(response.status).toBe(401);
     expect(json).toEqual({ error: 'Unauthorized' });
@@ -32,7 +32,7 @@ describe('withAuth', () => {
   it('returns 401 if session has no user id or role', async () => {
     mockAuth.mockResolvedValue({ user: { id: null, role: null } });
     const wrapped = withAuth(handler);
-    const response = await wrapped(createMockRequest());
+    const response = await wrapped(createMockRequest(), { params: Promise.resolve({}) });
     const json = await response.json();
     expect(response.status).toBe(401);
     expect(json).toEqual({ error: 'Unauthorized' });
@@ -42,7 +42,7 @@ describe('withAuth', () => {
   it('returns 403 if user role is not allowed', async () => {
     mockAuth.mockResolvedValue({ user: { id: '123', role: USER_ROLES.USER } });
     const wrapped = withAuth(handler, { allowedRoles: [USER_ROLES.ADMIN] });
-    const response = await wrapped(createMockRequest());
+    const response = await wrapped(createMockRequest(), { params: Promise.resolve({}) });
     const json = await response.json();
     expect(response.status).toBe(403);
     expect(json).toEqual({ error: 'Forbidden' });
@@ -55,13 +55,18 @@ describe('withAuth', () => {
     handler.mockResolvedValue(mockRes);
 
     const wrapped = withAuth(handler);
-    const response = await wrapped(createMockRequest());
+    const params = { foo: 'bar' };
+    const response = await wrapped(createMockRequest(), { params: Promise.resolve(params) });
 
     expect(response).toBe(mockRes);
-    expect(handler).toHaveBeenCalledWith(expect.any(Object), {
-      id: 'user-1',
-      role: USER_ROLES.ADMIN,
-    });
+    expect(handler).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: 'user-1',
+        role: USER_ROLES.ADMIN,
+      },
+      Promise.resolve(params)
+    );
   });
 
   it('calls handler when role is allowed', async () => {
@@ -70,13 +75,18 @@ describe('withAuth', () => {
     handler.mockResolvedValue(mockRes);
 
     const wrapped = withAuth(handler, { allowedRoles: [USER_ROLES.USER] });
-    const response = await wrapped(createMockRequest());
+    const params = { foo: 'bar' };
+    const response = await wrapped(createMockRequest(), { params: Promise.resolve(params) });
 
     expect(response).toBe(mockRes);
-    expect(handler).toHaveBeenCalledWith(expect.any(Object), {
-      id: 'user-2',
-      role: USER_ROLES.USER,
-    });
+    expect(handler).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: 'user-2',
+        role: USER_ROLES.USER,
+      },
+      Promise.resolve(params)
+    );
   });
 
   it('returns 500 if handler throws', async () => {
@@ -84,7 +94,7 @@ describe('withAuth', () => {
     handler.mockRejectedValue(new Error('Unexpected error'));
 
     const wrapped = withAuth(handler);
-    const response = await wrapped(createMockRequest());
+    const response = await wrapped(createMockRequest(), { params: Promise.resolve({}) });
     const json = await response.json();
 
     expect(response.status).toBe(500);

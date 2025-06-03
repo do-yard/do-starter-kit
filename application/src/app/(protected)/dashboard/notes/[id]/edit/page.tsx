@@ -5,6 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import NoteEdit from 'components/notes/NoteEdit';
 import { NotesApiClient } from 'lib/api/notes';
 
+/**
+ * EditNotePage component
+ * This component retrieves the note ID from the URL parameters and renders the NoteEdit component.
+ * @returns EditNotePage component
+ */
 const EditNotePage = () => {
   const params = useParams();
   const router = useRouter();

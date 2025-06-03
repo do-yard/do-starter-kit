@@ -21,9 +21,9 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { SxProps, Theme } from '@mui/material/styles';
-import Paper from '../common/Paper';
 import { Add, Search, List, GridView, Edit, Save } from '@mui/icons-material';
 import { Note, NotesApiClient } from 'lib/api/notes';
+import Paper from 'components/common/Paper';
 
 // Styled components
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -89,6 +89,9 @@ const StyledSelect = styled(Select)(({ theme }) => ({
 // Create an instance of the ApiClient
 const apiClient = new NotesApiClient();
 
+/**
+ *
+ */
 const MyNotes: React.FC = () => {
   const [viewMode, setViewMode] = useState('list');
   const [sortBy, setSortBy] = useState('newest');

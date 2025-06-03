@@ -5,6 +5,11 @@ import { useRouter } from 'next/navigation';
 import CreateNote from 'components/notes/CreateNote';
 import { NotesApiClient } from 'lib/api/notes';
 
+/**
+ * CreateNotePage component
+ * This component handles the creation of a new note.
+ * @returns CreateNotePage component
+ */
 const CreateNotePage = () => {
   const router = useRouter();
   const apiClient = new NotesApiClient();
