@@ -45,6 +45,11 @@ interface NoteDetailProps {
   onBack: () => void;
 }
 
+/**
+ * NoteDetail component
+ * This component fetches and displays the details of a specific note.
+ * It includes the note's title, content, creation date, and options to edit or delete the note.
+ */
 const NoteDetail: React.FC<NoteDetailProps> = ({ noteId, onBack }) => {
   const router = useRouter();
   const [note, setNote] = useState<{

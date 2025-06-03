@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, TextField, Button, styled } from '@mui/material';
-import Paper from '../common/Paper';
+import Paper from 'components/common/Paper';
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-root': {
@@ -35,6 +35,10 @@ interface CreateNoteProps {
   onCancel: () => void;
 }
 
+/**
+ * CreateNote component
+ * This component provides a form to create a new note with title and content fields.
+ */
 const CreateNote: React.FC<CreateNoteProps> = ({ onSave, onCancel }) => {
   // State for form fields
   const [title, setTitle] = useState('');

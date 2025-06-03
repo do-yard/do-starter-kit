@@ -90,7 +90,8 @@ const StyledSelect = styled(Select)(({ theme }) => ({
 const apiClient = new NotesApiClient();
 
 /**
- *
+ * MyNotes component
+ * This component displays a list of notes with options to view, edit, and create new notes.
  */
 const MyNotes: React.FC = () => {
   const [viewMode, setViewMode] = useState('list');

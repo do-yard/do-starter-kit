@@ -52,6 +52,12 @@ interface NoteEditProps {
   onCancel: () => void;
 }
 
+/**
+ * NoteEdit component
+ * This component allows users to edit an existing note.
+ * @param param0 - noteId: ID of the note to edit, onSave: callback function to save the edited note, onCancel: callback function to cancel editing
+ * @returns NoteEdit component
+ */
 const NoteEdit: React.FC<NoteEditProps> = ({ noteId, onSave, onCancel }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');

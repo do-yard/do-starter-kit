@@ -16,6 +16,10 @@ export interface UpdateNoteData {
   content?: string;
 }
 
+/**
+ * API client for managing notes
+ * This client provides methods to interact with the notes API, including fetching, creating, updating, and deleting notes.
+ */
 export class NotesApiClient {
   constructor(private baseURL = '/api/notes') {}
 

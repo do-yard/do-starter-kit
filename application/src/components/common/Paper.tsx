@@ -18,9 +18,8 @@ interface PaperProps {
   fullWidth?: boolean; // New prop to control if Paper should use 100% width
 }
 
-// Wrapper component that allows for additional sx props
 /**
- *
+ * Wrapper component that allows for additional sx props
  */
 const Paper: React.FC<PaperProps> = ({ children, sx = {}, fullWidth = false }) => {
   return (
