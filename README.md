@@ -21,6 +21,7 @@ The DigitalOcean SaaS Starter Kit can be run locally or in DigitalOcean platform
 1. Run `npm install`
 1. Copy .env file with `cp env-example .env`
 1. Complete at minimum 'Database configuration' and 'Auth.js configuration' settings sections. Postgres DB can be a local instance or hosted in DigitalOcean platform.
+1. Run Prisma generate: `npx prisma generate`
 1. Run Prisma migration: `npx prisma migrate deploy`
 1. Start the site: `npm run dev`
 
