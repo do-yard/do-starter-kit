@@ -20,14 +20,13 @@ export const serverConfig: ServerConfig = {
   storageProvider: process.env.STORAGE_PROVIDER || 'Spaces',
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
   Spaces: {
-    accessKey: process.env.SPACES_KEY,
-    secretKey: process.env.SPACES_SECRET,
-    bucketName: process.env.SPACES_BUCKETNAME,
+    accessKey: process.env.SPACES_ACCESS_KEY,
+    secretKey: process.env.SPACES_KEY_SECRET,
+    bucketName: process.env.SPACES_BUCKET_NAME,
     region: process.env.SPACES_REGION,
-    endpoint: process.env.SPACES_ENDPOINT,
   },
   Resend: {
     apiKey: process.env.RESEND_API_KEY,
-    fromEmail: process.env.RESEND_EMAIL_SENDER
-  }
+    fromEmail: process.env.RESEND_EMAIL_SENDER,
+  },
 };
