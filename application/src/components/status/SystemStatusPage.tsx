@@ -12,6 +12,7 @@ interface ServiceStatus {
   configured: boolean;
   connected: boolean;
   error?: string;
+  configToReview?: string[];
 }
 
 interface SystemInfo {
@@ -95,12 +96,16 @@ const SystemStatusPage: React.FC = () => {
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant="h6">
                 {hasIssues
-                  ? "Storage Configuration Issues Detected"
+                  ? services.some(s => !s.configured) 
+                    ? "Missing Storage Configuration"
+                    : "Storage Connection Failed"
                   : "Storage Service Operational"}
               </Typography>
               <Typography variant="body2">
                 {hasIssues
-                  ? "Please check your environment configuration below."
+                  ? services.some(s => !s.configured)
+                    ? "Please check your environment variables below."
+                    : "Configuration is valid but connection failed. Please verify credentials and network connectivity."
                   : "The storage service is properly configured and connected."}
               </Typography>
             </Box>
@@ -125,45 +130,35 @@ const SystemStatusPage: React.FC = () => {
                   </Box>
                   
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: service.error ? 1 : 0 }}>
-                    {service.connected ? 
-                      <CheckCircleIcon color="success" /> : 
-                      <ErrorIcon color="error" />}
+                    {service.configured === false ? (
+                      // Show gray for connection when not configured
+                      <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'grey.400', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Typography variant="caption" sx={{ color: 'white', fontSize: '12px' }}>?</Typography>
+                      </Box>
+                    ) : service.connected ? (
+                      <CheckCircleIcon color="success" />
+                    ) : (
+                      <ErrorIcon color="error" />
+                    )}
                     <Typography variant="body1" sx={{ ml: 1 }}>
-                      Connection: {service.connected ? 'Successful' : 'Failed'}
+                      Connection: {service.configured === false ? 'Not tested' : service.connected ? 'Successful' : 'Failed'}
                     </Typography>
                   </Box>
                   
                   {service.error && (
                     <Alert severity="error" sx={{ mt: 2 }}>
-                      {service.error}
+                      <Typography variant="body2" gutterBottom>
+                        {service.configured === false 
+                          ? `Missing settings: ${service.configToReview?.join(', ')}`
+                          : `${service.error}. Please review the following settings: ${service.configToReview?.join(', ')}`
+                        }
+                      </Typography>
                     </Alert>
                   )}
                 </CardContent>
               </Card>
             ))}
           </Box>
-
-          {/* Missing Environment Variables */}
-          {configDiagnostics && configDiagnostics.storageConfigStatus && 
-           configDiagnostics.storageConfigStatus.missingConfig && 
-           configDiagnostics.storageConfigStatus.missingConfig.length > 0 && (
-            <Card sx={{ mb: 4 }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Missing Environment Variables
-                </Typography>
-                <Box component="ul" sx={{ pl: 2 }}>
-                  {configDiagnostics.storageConfigStatus.missingConfig.map((variable: string) => (
-                    <li key={variable}>
-                      <Typography variant="body2">
-                        <code>{variable}</code>
-                      </Typography>
-                    </li>
-                  ))}
-                </Box>
-              </CardContent>
-            </Card>
-          )}
 
           <Box sx={{ textAlign: 'center' }}>
             <Button 

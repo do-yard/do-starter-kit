@@ -8,9 +8,10 @@ export type StorageProvider = 'Spaces';
  * Interface for storage service configuration status
  */
 export interface StorageConfigStatus {
-  configured: boolean;
-  missingConfig?: string[];
-  error?: string;
+  configured: boolean; // true if there are no missing settings
+  connected?: boolean; // true if connection to the service was successful
+  configToReview?: string[]; // if there was a missing setting, add it here, if the connection failed add all the required settings here
+  error?: string; // Configuration missing or Connection failed
 }
 
 // Common interface for all storage providers
@@ -29,12 +30,11 @@ export interface StorageService {
    * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
    */
   checkConnection(): Promise<boolean>;
-  
-  /**
-   * Checks if the storage service configuration is valid.
-   * @returns {StorageConfigStatus} Configuration status object.
+    /**
+   * Checks if the storage service configuration is valid and tests connection when configuration is complete.
+   * @returns {Promise<StorageConfigStatus>} Configuration and connection status object.
    */
-  checkConfiguration(): StorageConfigStatus;
+  checkConfiguration(): Promise<StorageConfigStatus>;
   
   /**
    * Gets the storage provider name.

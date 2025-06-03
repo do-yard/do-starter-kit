@@ -9,6 +9,7 @@ export interface ServiceStatus {
   configured: boolean;
   connected: boolean;
   error?: string;
+  configToReview?: string[];
 }
 
 /**
@@ -19,8 +20,7 @@ export class StatusService {  /**
    * Uses the StorageService interface to check the current storage provider.
    * 
    * @returns {Promise<ServiceStatus>} The status of the storage service.
-   */
-  static async checkStorageStatus(): Promise<ServiceStatus> {
+   */  static async checkStorageStatus(): Promise<ServiceStatus> {
     const storageType = serverConfig.storageProvider;
     const status: ServiceStatus = {
       name: `Storage (${storageType})`,
@@ -33,27 +33,18 @@ export class StatusService {  /**
       const storageService = createStorageService();
       const providerName = storageService.getProviderName();
       status.name = `Storage (${providerName})`;
-      
-      // Get configuration status from the service
-      const configStatus = storageService.checkConfiguration();
+
+      // Get configuration status from the service including connection check
+      const configStatus = await storageService.checkConfiguration();
       status.configured = configStatus.configured;
-        // Set any error messages
+      status.connected = configStatus.connected || false;
+      
+      // Set any error messages and config to review
       if (configStatus.error) {
         status.error = configStatus.error;
       }
-      
-      if (configStatus.missingConfig && configStatus.missingConfig.length > 0) {
-        status.error = `Missing required configuration: ${configStatus.missingConfig.join(', ')}. Please check your .env file.`;
-      }
-      
-      // Only check connection if the service is properly configured
-      if (status.configured) {
-        const connected = await storageService.checkConnection();
-        status.connected = connected;
-        
-        if (!connected) {
-          status.error = `Failed to connect to ${providerName}. Service may be unavailable or credentials may be incorrect.`;
-        }
+      if (configStatus.configToReview) {
+        status.configToReview = configStatus.configToReview;
       }
     } catch (error) {
       status.error = error instanceof Error 

@@ -17,31 +17,12 @@ export const GET = async () => {  try {
       storageProvider: serverConfig.storageProvider,
       environment: process.env.NODE_ENV || 'unknown',
       timestamp: new Date().toISOString()
-    };
-    
-    // Get configuration status from the storage service
+    };    // Get configuration status from the storage service
     const storageService = createStorageService();
-    const storageConfigStatus = storageService.checkConfiguration();
+    const storageConfigStatus = await storageService.checkConfiguration();
     
     // Enhanced configuration diagnostics for better troubleshooting
-    const configDiagnostics = {
-      envVarsPresent: {
-        SPACES_KEY: !!process.env.SPACES_KEY,
-        SPACES_SECRET: !!process.env.SPACES_SECRET,
-        SPACES_BUCKETNAME: !!process.env.SPACES_BUCKETNAME,
-        SPACES_ENDPOINT: !!process.env.SPACES_ENDPOINT,
-        SPACES_REGION: !!process.env.SPACES_REGION,
-        STORAGE_PROVIDER: !!process.env.STORAGE_PROVIDER
-      },
-      configValuesPresent: {
-        accessKey: !!serverConfig.Spaces.accessKey,
-        secretKey: !!serverConfig.Spaces.secretKey,
-        bucketName: !!serverConfig.Spaces.bucketName,
-        endpoint: !!serverConfig.Spaces.endpoint,
-        region: !!serverConfig.Spaces.region
-      },
-      storageConfigStatus
-    };
+    const configDiagnostics = { storageConfigStatus };
     
     const hasIssues = serviceStatus.some(service => !service.configured || !service.connected);
       return NextResponse.json({ 

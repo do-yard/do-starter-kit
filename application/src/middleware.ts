@@ -39,14 +39,13 @@ export async function middleware(request: NextRequest) {
   const isApiPath = pathname.startsWith('/api/') && !pathname.startsWith('/api/system-status');
     // Check storage config only for protected routes that require storage
   const isProtectedRoute = !isPublicPath && !isApiPath;
-
   if (isProtectedRoute) {
     try {
       // Use the storage service interface to check if configuration is valid
       const storageService = createStorageService();
-      const configStatus = storageService.checkConfiguration();
+      const configStatus = await storageService.checkConfiguration();
       
-      if (!configStatus.configured) {
+      if (!configStatus.configured || configStatus.connected === false) {
         return NextResponse.redirect(new URL('/system-status', request.url));
       }
     } catch (error) {

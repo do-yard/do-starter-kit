@@ -3,6 +3,8 @@ import {
   PutObjectCommand,
   GetObjectCommand,
   DeleteObjectCommand,
+  HeadBucketCommand,
+  ListObjectsV2Command
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { StorageService, StorageConfigStatus } from './storage';
@@ -17,13 +19,13 @@ export class SpacesStorageService implements StorageService {
   private isConfigured: boolean = false;
   private configError: string = '';
   
-  // Required config items with their corresponding env var names
+  // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
-    'accessKey': 'SPACES_KEY',
-    'secretKey': 'SPACES_SECRET',
-    'bucketName': 'SPACES_BUCKETNAME',
-    'endpoint': 'SPACES_ENDPOINT',
-    'region': 'SPACES_REGION'
+    'accessKey': { envVar: 'SPACES_KEY', description: 'DigitalOcean Spaces Access Key' },
+    'secretKey': { envVar: 'SPACES_SECRET', description: 'DigitalOcean Spaces Secret Key' },
+    'bucketName': { envVar: 'SPACES_BUCKETNAME', description: 'Name of the Spaces bucket' },
+    'endpoint': { envVar: 'SPACES_ENDPOINT', description: 'DigitalOcean Spaces endpoint URL' },
+    'region': { envVar: 'SPACES_REGION', description: 'DigitalOcean Spaces region' }
   };
 
   constructor() {
@@ -41,14 +43,17 @@ export class SpacesStorageService implements StorageService {
       const endpoint = serverConfig.Spaces.endpoint;
       const bucketName = serverConfig.Spaces.bucketName;
       const region = serverConfig.Spaces.region;
-      
-      if (!accessKeyId || !secretAccessKey || !bucketName || !endpoint || !region) {
+
+      // Check for missing configuration
+      const missingConfig = Object.entries(SpacesStorageService.requiredConfig)
+        .filter(([key]) => !serverConfig.Spaces[key as keyof typeof serverConfig.Spaces])
+        .map(([_, value]) => value.envVar);      if (missingConfig.length > 0) {
         this.isConfigured = false;
-        this.configError = 'Missing required environment variables for Spaces client configuration.';
+        this.configError = 'Missing required configuration';
         return;
       }
 
-      this.bucketName = bucketName;
+      this.bucketName = bucketName!; // Safe to use ! here since we checked for missing config above
       this.client = new S3Client({
         forcePathStyle: false, // Configures to use subdomain/virtual calling format.
         endpoint,
@@ -117,58 +122,81 @@ export class SpacesStorageService implements StorageService {
 
     await this.client.send(command);
   }
-  
   /**
    * Checks if the Spaces service is properly configured and accessible.
    * Uses HeadBucketCommand to verify bucket existence and access permissions.
+   * Falls back to ListObjectsV2Command if HeadBucket fails due to permissions.
    * 
    * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
    */
   async checkConnection(): Promise<boolean> {
-    if (!this.isConfigured || !this.client) {
+    if (!this.client) {
       return false;
     }
-    
+
     try {
-      const { HeadBucketCommand } = await import('@aws-sdk/client-s3');
-      const command = new HeadBucketCommand({
-        Bucket: this.bucketName,
+      // Primary test: Use HeadBucket to test connection to the specific bucket
+      const headCommand = new HeadBucketCommand({
+        Bucket: this.bucketName
       });
-      
-      await this.client.send(command);
+      await this.client.send(headCommand);
       return true;
-    } catch (error) {
-      console.error('Failed to connect to storage service:', error);
-      return false;
+    } catch (headError) {
+      try {
+        // Fallback test: Try to list objects (with limit 1) to verify access
+        const listCommand = new ListObjectsV2Command({
+          Bucket: this.bucketName,
+          MaxKeys: 1
+        });
+        await this.client.send(listCommand);
+        return true;
+      } catch (listError) {
+        console.error('Storage connection test failed:', {
+          headError: headError instanceof Error ? headError.message : headError,
+          listError: listError instanceof Error ? listError.message : listError
+        });
+        return false;
+      }
     }
   }
-  
   /**
-   * Checks if the Spaces storage service configuration is valid.
-   * Inspects environment variables and configuration values.
-   * 
-   * @returns {StorageConfigStatus} Configuration status object.
-   */  checkConfiguration(): StorageConfigStatus {
-    const configValues = {
-      accessKey: serverConfig.Spaces.accessKey,
-      secretKey: serverConfig.Spaces.secretKey,
-      bucketName: serverConfig.Spaces.bucketName,
-      endpoint: serverConfig.Spaces.endpoint,
-      region: serverConfig.Spaces.region
-    };
+   * Checks if the storage service configuration is valid and tests connection when configuration is complete.
+   */
+  async checkConfiguration(): Promise<StorageConfigStatus> {
+    // Check for missing configuration
+    const missingConfig = Object.entries(SpacesStorageService.requiredConfig)
+      .filter(([key]) => !serverConfig.Spaces[key as keyof typeof serverConfig.Spaces])
+      .map(([_, value]) => value.envVar);
+
+    if (missingConfig.length > 0) {
+      return {
+        configured: false,
+        connected: undefined, // Don't test connection when configuration is missing
+        configToReview: missingConfig,
+        error: 'Configuration missing'
+      };
+    }
+
+    // If configured, test the connection
+    const isConnected = await this.checkConnection();
     
-    // Find missing configuration items
-    const missingConfig = Object.entries(configValues)
-      .filter(([_, value]) => !value || value.trim() === '')
-      .map(([key, _]) => SpacesStorageService.requiredConfig[key as keyof typeof SpacesStorageService.requiredConfig]);
-    
+    if (!isConnected) {
+      return {
+        configured: true,
+        connected: false,
+        configToReview: Object.values(SpacesStorageService.requiredConfig).map(
+          config => config.envVar
+        ),
+        error: 'Connection failed'
+      };
+    }
+
     return {
-      configured: this.isConfigured && missingConfig.length === 0,
-      missingConfig: missingConfig.length > 0 ? missingConfig : undefined,
-      error: this.configError || undefined
+      configured: true,
+      connected: true
     };
   }
-  
+
   /**
    * Gets the storage provider name.
    * @returns {string} The name of the storage provider.
