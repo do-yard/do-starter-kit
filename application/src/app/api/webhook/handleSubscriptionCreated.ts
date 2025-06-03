@@ -1,6 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { createDatabaseClient } from 'services/database/database';
-import { SubscriptionStatusEnum } from 'types';
+import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
+import { serverConfig } from '../../../../settings';
 
 /**
  * Handles the creation of a subscription.
@@ -11,12 +12,21 @@ import { SubscriptionStatusEnum } from 'types';
  */
 export const handleSubscriptionCreated = async (json: any) => {
   const customerId = json.data.object.customer;
+  const priceId = json.data.object.items.data[0].price.id;
 
   if (!customerId) {
     throw new Error('Customer ID is required');
   }
 
   const db = createDatabaseClient();
+
+  if (priceId === serverConfig.Stripe.proPriceId) {
+    await db.subscription.updateByCustomerId(customerId, {
+      status: SubscriptionStatusEnum.ACTIVE,
+      plan: SubscriptionPlanEnum.PRO,
+    });
+    return;
+  }
 
   db.subscription.updateByCustomerId(customerId, {
     status: SubscriptionStatusEnum.ACTIVE,

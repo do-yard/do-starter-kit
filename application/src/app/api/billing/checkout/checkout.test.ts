@@ -2,14 +2,12 @@ import { checkout } from './checkout';
 import { NextRequest } from 'next/server';
 
 const mockFindByUserId = jest.fn();
-const mockUpdate = jest.fn();
 const mockCheckout = jest.fn();
 
 jest.mock('services/database/database', () => ({
   createDatabaseClient: () => ({
     subscription: {
       findByUserId: mockFindByUserId,
-      update: mockUpdate,
     },
   }),
 }));
@@ -74,17 +72,8 @@ describe('checkout', () => {
     expect(await res.json()).toEqual({ error: 'No subscription found' });
   });
 
-  it('returns 500 if db update fails', async () => {
-    mockFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
-    mockUpdate.mockRejectedValue(new Error('fail'));
-    const res = await checkout(mockNextRequest(), user);
-    expect(res.status).toBe(500);
-    expect(await res.json()).toEqual({ error: 'Internal Server Error' });
-  });
-
   it('returns 500 if billingService.checkout fails', async () => {
     mockFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
-    mockUpdate.mockResolvedValue({});
     mockCheckout.mockResolvedValue(undefined);
     const res = await checkout(mockNextRequest(), user);
     expect(res.status).toBe(500);
@@ -93,7 +82,6 @@ describe('checkout', () => {
 
   it('returns 200 and url on success', async () => {
     mockFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
-    mockUpdate.mockResolvedValue({});
     mockCheckout.mockResolvedValue('http://checkout-url');
     const res = await checkout(mockNextRequest(), user);
     expect(res.status).toBe(200);

@@ -137,17 +137,15 @@ const Subscription = () => {
           >
             Subscribe to Free Plan
           </Button>
-          <Box mt={2}>
-            <Button
-              onClick={handleUpgradeToPro}
-              disabled={loading}
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2, minWidth: 200 }}
-            >
-              Subscribe to Pro Plan
-            </Button>
-          </Box>
+          <Button
+            onClick={handleUpgradeToPro}
+            disabled={loading}
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2, minWidth: 214 }}
+          >
+            Subscribe to Pro Plan
+          </Button>
         </Box>
       )}
     </Box>

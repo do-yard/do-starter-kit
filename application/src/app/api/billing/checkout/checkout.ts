@@ -30,11 +30,6 @@ export const checkout = async (
   }
 
   try {
-    await db.subscription.update(user.id, {
-      status: SubscriptionStatusEnum.PENDING,
-      plan: SubscriptionPlanEnum.PRO,
-    });
-
     const billingService = createBillingService();
 
     const url = await billingService.checkout(
