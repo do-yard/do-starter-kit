@@ -1,5 +1,10 @@
 import { Box, Typography, Button } from '@mui/material';
 
+/**
+ * Subscription success page component.
+ * Displays a message indicating the subscription was successful and provides a button to return to the dashboard.
+ * @returns Page with subscription success UI
+ */
 export default function Success() {
   return (
     <Box

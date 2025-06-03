@@ -1,5 +1,10 @@
 import { Box, Button, Typography } from '@mui/material';
 
+/**
+ * Subscription cancellation page component.
+ * Displays a message indicating the subscription was cancelled and provides a button to return to the dashboard.
+ * @returns Page with subscription cancellation UI
+ */
 export default function Cancel() {
   return (
     <Box

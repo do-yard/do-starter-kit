@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { checkout } from './checkout';
 import { NextRequest } from 'next/server';
 

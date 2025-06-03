@@ -68,7 +68,7 @@ const Subscription = () => {
       await stripeApi.createSubscription(serverConfig.Stripe.freePriceId!);
       await fetchSubscription();
       setLoading(false);
-    } catch (error) {
+    } catch {
       setError('Failed to subscribe to free plan');
       setLoading(false);
     }
