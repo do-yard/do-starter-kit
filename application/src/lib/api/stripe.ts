@@ -43,12 +43,20 @@ export class StripeClient {
     return res.json();
   }
 
-  async updateToProSubscription(): Promise<{ clientSecret: string }> {
-    const res = await fetch(`${this.baseURL}/upgrade-to-pro`, {
+  async checkout(): Promise<{ url: string }> {
+    const res = await fetch(`${this.baseURL}/checkout`, {
       method: 'POST',
       credentials: 'include',
     });
     if (!res.ok) throw new Error('Failed to update to pro');
-    return res.json();
+    return await res.json();
+  }
+
+  async upgradeToPro(): Promise<void> {
+    const res = await fetch(`${this.baseURL}/upgrade-to-pro`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    if (!res.ok) throw new Error('Failed to upgrade to pro');
   }
 }

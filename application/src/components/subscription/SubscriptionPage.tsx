@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import StripeCheckout from './StripeCheckout';
 import { StripeClient } from 'lib/api/stripe';
 import { SubscriptionPlan } from 'types';
 import Button from '@mui/material/Button';
@@ -54,8 +53,8 @@ const Subscription = () => {
   const handleUpgradeToPro = async () => {
     setUpgrading(true);
     try {
-      await stripeApi.updateToProSubscription();
-      await fetchSubscription();
+      const result = await stripeApi.checkout();
+      window.location.href = result.url;
     } catch {
       setError('Upgrade failed');
     } finally {
@@ -63,12 +62,21 @@ const Subscription = () => {
     }
   };
 
+  const handleSubscribeToFreePlan = async () => {
+    setLoading(true);
+    try {
+      await stripeApi.createSubscription(serverConfig.Stripe.freePriceId!);
+      await fetchSubscription();
+      setLoading(false);
+    } catch (error) {
+      setError('Failed to subscribe to free plan');
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchSubscription();
   }, []);
-
-  const basePlanId = serverConfig.Stripe.freePriceId;
-  const proPlanId = serverConfig.Stripe.proPriceId;
 
   const currentPlan = subscription?.plan;
 
@@ -102,7 +110,7 @@ const Subscription = () => {
               disabled={upgrading}
               variant="contained"
               color="primary"
-              sx={{ mt: 2 }}
+              sx={{ mt: 2, minWidth: 200 }}
             >
               {upgrading ? 'Upgrading...' : 'Upgrade to PRO'}
             </Button>
@@ -113,24 +121,32 @@ const Subscription = () => {
             disabled={loading}
             variant="contained"
             color="error"
-            sx={{ mt: 2 }}
+            sx={{ mt: 2, minWidth: 200 }}
           >
             Cancel Subscription
           </Button>
         </Box>
       ) : (
         <Box display={'flex'} flexDirection="column" alignItems="flex-start" mt={2}>
-          <StripeCheckout
-            priceId={basePlanId!}
-            buttonText="Subscribe to Base Plan"
-            onSubscribed={fetchSubscription}
-          />
+          <Button
+            onClick={handleSubscribeToFreePlan}
+            disabled={loading}
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2, minWidth: 200 }}
+          >
+            Subscribe to Free Plan
+          </Button>
           <Box mt={2}>
-            <StripeCheckout
-              priceId={proPlanId!}
-              buttonText="Subscribe to Pro Plan"
-              onSubscribed={fetchSubscription}
-            />
+            <Button
+              onClick={handleUpgradeToPro}
+              disabled={loading}
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2, minWidth: 200 }}
+            >
+              Subscribe to Pro Plan
+            </Button>
           </Box>
         </Box>
       )}

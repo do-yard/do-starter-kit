@@ -3,6 +3,7 @@ export interface ServerConfig {
   storageProvider: string;
   emailProvider: string;
   billingProvider: string;
+  selfApiURL: string;
   Spaces: {
     accessKey?: string;
     secretKey?: string;
@@ -29,6 +30,7 @@ export const serverConfig: ServerConfig = {
   storageProvider: process.env.STORAGE_PROVIDER || 'Spaces',
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
   billingProvider: process.env.BILLING_PROVIDER || 'Stripe',
+  selfApiURL: process.env.NEXT_PUBLIC_SELF_API_URL || 'http://localhost:3000',
   Spaces: {
     accessKey: process.env.SPACES_KEY,
     secretKey: process.env.SPACES_SECRET,

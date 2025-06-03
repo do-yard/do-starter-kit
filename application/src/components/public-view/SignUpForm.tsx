@@ -9,6 +9,7 @@ import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { StripeClient } from 'lib/api/stripe';
+import { serverConfig } from '../../../settings';
 
 /**
  * User registration form.
@@ -42,7 +43,7 @@ const SignUpForm: React.FC = () => {
     });
 
     const billingApi = new StripeClient();
-    await billingApi.createCustomer();
+    await billingApi.createSubscription(serverConfig.Stripe.freePriceId!);
 
     setNavigating(false);
     if (!res || res.error) {
