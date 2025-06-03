@@ -58,7 +58,7 @@ services:
         type: "SECRET"
       - key: RESEND_EMAIL_SENDER
         value: "${RESEND_EMAIL_SENDER}"
-      - key: "NEXT_PUBLIC_SELF_API_URL"
+      - key: "SELF_API_URL"
         value: "${APP_URL}"
 
 databases:
