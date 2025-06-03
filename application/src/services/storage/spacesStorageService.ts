@@ -70,7 +70,6 @@ export class SpacesStorageService implements StorageService {
 
     return await getSignedUrl(this.client, command, { expiresIn });
   }
-
   async deleteFile(userId: string, fileName: string): Promise<void> {
     const command = new DeleteObjectCommand({
       Bucket: this.bucketName,
@@ -78,5 +77,26 @@ export class SpacesStorageService implements StorageService {
     });
 
     await this.client.send(command);
+  }
+  
+  /**
+   * Checks if the Spaces service is properly configured and accessible.
+   * Uses HeadBucketCommand to verify bucket existence and access permissions.
+   * 
+   * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
+   */
+  async checkConnection(): Promise<boolean> {
+    try {
+      const { HeadBucketCommand } = await import('@aws-sdk/client-s3');
+      const command = new HeadBucketCommand({
+        Bucket: this.bucketName,
+      });
+      
+      await this.client.send(command);
+      return true;
+    } catch (error) {
+      console.error('Failed to connect to storage service:', error);
+      return false;
+    }
   }
 }

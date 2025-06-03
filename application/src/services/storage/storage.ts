@@ -14,6 +14,12 @@ export interface StorageService {
   ): Promise<string>;
   getFileUrl(userId: string, fileName: string, expiresIn?: number): Promise<string>;
   deleteFile(userId: string, fileName: string): Promise<void>;
+  
+  /**
+   * Checks if the storage service is properly configured and accessible.
+   * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
+   */
+  checkConnection(): Promise<boolean>;
 }
 
 /**
