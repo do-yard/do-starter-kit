@@ -92,7 +92,7 @@ export default function AdminDashboard() {
       name: user.name,
       email: user.email,
       role: user.role,
-      subscriptions: user.subscriptions,
+      subscription: user.subscription,
     });
     setOpenEdit(true);
   };
@@ -104,12 +104,16 @@ export default function AdminDashboard() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEditSubscriptionChange = (e: React.ChangeEvent<HTMLInputElement> | any) => {
-    setEditForm((prev) => {
-      const updatedSubs = prev.subscriptions?.length
-        ? [{ ...prev.subscriptions[0], [e.target.name]: e.target.value as string }]
-        : [];
-      return { ...prev, subscriptions: updatedSubs };
-    });
+    setEditForm(
+      (prev) =>
+        ({
+          ...prev,
+          subscription: {
+            ...(prev.subscription ?? {}),
+            [e.target.name]: e.target.value as string,
+          },
+        }) as Partial<UserWithSubscriptions>
+    );
   };
 
   const handleEditClose = () => {
@@ -122,7 +126,7 @@ export default function AdminDashboard() {
     if (!selectedUser) return;
     await updateUser(selectedUser.id, {
       name: editForm.name,
-      subscriptions: editForm.subscriptions,
+      subscription: editForm.subscription,
     });
   };
 
@@ -183,7 +187,7 @@ export default function AdminDashboard() {
         Admin Dashboard
       </Typography>
 
-      <Card variant="outlined" sx={{ mb: 4 }}>
+      <Card variant="outlined" sx={{ mb: 4, border: '1px solid', borderColor: 'grey.300' }}>
         <CardHeader
           title={
             <Typography variant="h6" fontWeight="bold">
@@ -302,10 +306,8 @@ export default function AdminDashboard() {
                   </TableHead>
                   <TableBody>
                     {users.map((user) => {
-                      const plan = user.subscriptions.length ? user.subscriptions[0].plan : 'none';
-                      const status = user.subscriptions.length
-                        ? user.subscriptions[0].status
-                        : 'none';
+                      const plan = user.subscription?.plan ?? 'none';
+                      const status = user.subscription?.status ?? 'none';
                       return (
                         <TableRow key={user.id}>
                           <TableCell>{user.name}</TableCell>
@@ -409,7 +411,7 @@ export default function AdminDashboard() {
               <Select
                 margin="dense"
                 name="plan"
-                value={editForm.subscriptions?.[0]?.plan ?? ''}
+                value={editForm.subscription?.plan ?? ''}
                 onChange={handleEditSubscriptionChange}
                 fullWidth
               >
@@ -422,7 +424,7 @@ export default function AdminDashboard() {
               <Select
                 margin="dense"
                 name="status"
-                value={editForm.subscriptions?.[0]?.status ?? ''}
+                value={editForm.subscription?.status ?? ''}
                 onChange={handleEditSubscriptionChange}
                 fullWidth
               >

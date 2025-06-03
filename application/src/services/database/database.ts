@@ -1,5 +1,5 @@
 import { serverConfig } from '../../../settings';
-import { Note, Subscription, User, UserWithSubscriptions } from 'types';
+import { Note, Subscription, User, UserWithSubscriptions, SubscriptionStatus } from 'types';
 import { SqlDatabaseService } from './sqlDatabaseService';
 
 export type DatabaseProvider = 'Postgres';
@@ -22,13 +22,21 @@ export interface DatabaseClient {
     update: (id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>) => Promise<User>;
     delete: (id: string) => Promise<void>;
     count: () => Promise<number>;
-  }
+  };
   subscription: {
+    findByUserAndStatus: (
+      userId: string,
+      status: SubscriptionStatus
+    ) => Promise<Subscription | null>;
     findById: (id: string) => Promise<Subscription | null>;
     findByUserId: (userId: string) => Promise<Subscription[]>;
     create: (subscription: Omit<Subscription, 'id' | 'createdAt'>) => Promise<Subscription>;
     update: (
-      id: string,
+      userId: string,
+      subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>
+    ) => Promise<Subscription>;
+    updateByCustomerId: (
+      customerId: string,
       subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>
     ) => Promise<Subscription>;
     delete: (id: string) => Promise<void>;

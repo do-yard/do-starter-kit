@@ -2,6 +2,7 @@ export interface ServerConfig {
   databaseProvider: string;
   storageProvider: string;
   emailProvider: string;
+  billingProvider: string;
   Spaces: {
     accessKey?: string;
     secretKey?: string;
@@ -13,12 +14,21 @@ export interface ServerConfig {
     apiKey?: string;
     fromEmail?: string;
   };
+  Stripe: {
+    stripeSecretKey?: string;
+    freeProductId?: string;
+    freePriceId?: string;
+    proProductId?: string;
+    proPriceId?: string;
+    webhookSecret?: string;
+  };
 }
 
 export const serverConfig: ServerConfig = {
   databaseProvider: process.env.DATABASE_PROVIDER || 'Postgres',
   storageProvider: process.env.STORAGE_PROVIDER || 'Spaces',
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
+  billingProvider: process.env.BILLING_PROVIDER || 'Stripe',
   Spaces: {
     accessKey: process.env.SPACES_KEY,
     secretKey: process.env.SPACES_SECRET,
@@ -28,6 +38,14 @@ export const serverConfig: ServerConfig = {
   },
   Resend: {
     apiKey: process.env.RESEND_API_KEY,
-    fromEmail: process.env.RESEND_EMAIL_SENDER
-  }
+    fromEmail: process.env.RESEND_EMAIL_SENDER,
+  },
+  Stripe: {
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    freeProductId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID,
+    freePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
+    proProductId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID,
+    proPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+  },
 };

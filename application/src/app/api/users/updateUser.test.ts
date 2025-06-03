@@ -12,7 +12,6 @@ type MockDbClient = {
     update: jest.Mock;
   };
   subscription: {
-    findByUserId: jest.Mock;
     update: jest.Mock;
   };
 };
@@ -26,7 +25,6 @@ describe('updateUser', () => {
         update: jest.fn(),
       },
       subscription: {
-        findByUserId: jest.fn(),
         update: jest.fn(),
       },
     };
@@ -73,12 +71,10 @@ describe('updateUser', () => {
   it('updates subscriptions if provided', async () => {
     const updatedUser = { id: 1, name: 'A', role: 'USER' };
     mockDbClient.user.update.mockResolvedValue(updatedUser);
-    mockDbClient.subscription.findByUserId.mockResolvedValue([{ id: 10 }]);
     mockDbClient.subscription.update.mockResolvedValue({});
-    const req = makeRequest({ id: 1, subscriptions: [{ plan: 'pro' }] });
+    const req = makeRequest({ id: 1, subscription: { plan: 'pro' } });
     const res = await updateUser(req);
-    expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith(1);
-    expect(mockDbClient.subscription.update).toHaveBeenCalledWith(10, { plan: 'pro' });
+    expect(mockDbClient.subscription.update).toHaveBeenCalledWith(1, { plan: 'pro' });
     expect(res.status).toBe(200);
   });
 

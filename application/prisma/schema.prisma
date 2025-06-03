@@ -17,16 +17,17 @@ model User {
   role           Role           @default(USER)
   createdAt      DateTime       @default(now())
 
-  subscriptions  Subscription[]
+  subscription   Subscription?  @relation("UserSubscription")
   notes          Note[]
 }
 
 model Subscription {
   id         String   @id @default(uuid())
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String
-  status     SubscriptionStatus
-  plan       SubscriptionPlan
+  user       User     @relation("UserSubscription", fields: [userId], references: [id])
+  userId     String   @unique
+  status     SubscriptionStatus?
+  plan       SubscriptionPlan?
+  customerId String?
   createdAt  DateTime @default(now())
 }
 
@@ -54,4 +55,3 @@ enum SubscriptionPlan {
   FREE
   PRO
 }
- 

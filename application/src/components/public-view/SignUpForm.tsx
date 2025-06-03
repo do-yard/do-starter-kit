@@ -8,6 +8,7 @@ import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { StripeClient } from 'lib/api/stripe';
 
 /**
  * User registration form.
@@ -39,6 +40,9 @@ const SignUpForm: React.FC = () => {
       name: USER_ROLES.USER,
       isSignUp: 'true',
     });
+
+    const billingApi = new StripeClient();
+    await billingApi.createCustomer();
 
     setNavigating(false);
     if (!res || res.error) {

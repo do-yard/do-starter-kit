@@ -18,7 +18,7 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
     }
 
     // Only allow updating specific fields (e.g., name, email, role)
-    const allowedFields = ['name', 'role', 'subscriptions'];
+    const allowedFields = ['name', 'role', 'subscription'];
 
     // Remove fields from updateData that are not allowed
     Object.keys(updateData).forEach((key) => {
@@ -37,9 +37,8 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
       role: updateData.role,
     });
 
-    if (updateData.subscriptions) {
-      const userSubscriptions = await dbClient.subscription.findByUserId(id);
-      await dbClient.subscription.update(userSubscriptions[0].id, updateData.subscriptions[0]);
+    if (updateData.subscription) {
+      await dbClient.subscription.update(id, updateData.subscription);
     }
 
     return NextResponse.json({ user: updatedUser });
