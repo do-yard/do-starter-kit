@@ -36,6 +36,9 @@ jobs:
       - name: Run Lint
         run: npm run lint
 
+      - name: Check Prettier formatting
+        run: npm run format:check
+
       - name: Run Unit Tests (Client-side)
         run: npm run test
 
