@@ -1,6 +1,6 @@
 'use client';
 
-import DashboardLayout from 'components/AccountSettings/DashboardLayout';
+import MaterialThemeProvider from 'components/Theme/Theme';
 
 /**
  * Dashboard layout wrapper.
@@ -8,6 +8,6 @@ import DashboardLayout from 'components/AccountSettings/DashboardLayout';
  *
  * @param children - Content of the pages inside the dashboard layout.
  */
-export default function DashboardLayoutWrapper({ children }: { children: React.ReactNode }) {
-  return <DashboardLayout>{children}</DashboardLayout>;
+export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
+  return <MaterialThemeProvider>{children}</MaterialThemeProvider>;
 }

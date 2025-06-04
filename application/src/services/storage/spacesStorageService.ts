@@ -14,22 +14,24 @@ import { serverConfig } from '../../../settings';
 export class SpacesStorageService implements StorageService {
   private client: S3Client;
   private bucketName: string;
+  private endpoint: string;
 
   constructor() {
     const accessKeyId = serverConfig.Spaces.accessKey;
     const secretAccessKey = serverConfig.Spaces.secretKey;
-    const endpoint = serverConfig.Spaces.endpoint;
     const bucketName = serverConfig.Spaces.bucketName;
     const region = serverConfig.Spaces.region;
 
-    if (!accessKeyId || !secretAccessKey || !bucketName || !endpoint || !region) {
+    if (!accessKeyId || !secretAccessKey || !bucketName || !region) {
       throw new Error('Missing required environment variables for Spaces client configuration.');
     }
 
     this.bucketName = bucketName;
+    this.endpoint = `https://${region}.digitaloceanspaces.com`;
+
     this.client = new S3Client({
-      forcePathStyle: false, // Configures to use subdomain/virtual calling format.
-      endpoint,
+      forcePathStyle: false,
+      endpoint: this.endpoint,
       region,
       credentials: {
         accessKeyId,
