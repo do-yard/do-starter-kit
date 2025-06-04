@@ -1,9 +1,9 @@
 'use client';
 
 import { Box } from '@mui/material';
-import NavBar from '../../components/NavBar/NavBar';
-import Footer from '../../components/Footer/Footer';
-import { MaterialLightThemeProvider } from 'components/Theme/LightTheme';
+import NavBar from 'components/NavBar/NavBar';
+import Footer from 'components/Footer/Footer';
+import MaterialLightThemeProvider from 'components/Theme/LightTheme';
 
 /**
  * Public layout used by pages such as login, signup or landing pages.

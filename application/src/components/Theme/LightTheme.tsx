@@ -6,7 +6,7 @@ import { components, typography } from './Theme';
 /**
  * Provides Material UI with a static light theme (no dark mode support).
  */
-export function MaterialLightThemeProvider({ children }: { children: React.ReactNode }) {
+export default function MaterialLightThemeProvider({ children }: { children: React.ReactNode }) {
   const lightTheme = useMemo(
     () =>
       createTheme({

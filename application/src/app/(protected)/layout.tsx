@@ -1,6 +1,6 @@
 'use client';
 
-import { MaterialThemeProvider } from 'components/Theme/Theme';
+import MaterialThemeProvider from 'components/Theme/Theme';
 
 /**
  * Dashboard layout wrapper.

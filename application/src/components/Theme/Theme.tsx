@@ -93,7 +93,7 @@ export function ThemeToggle() {
 /**
  * Provides the Material UI theme and color mode context to the application.
  */
-export function MaterialThemeProvider({ children }: { children: React.ReactNode }) {
+export default function MaterialThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<'light' | 'dark'>('light'); // Always start with 'light' for SSR
 
   // On mount, sync mode with localStorage (SSR-safe)
