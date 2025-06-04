@@ -31,10 +31,10 @@ The DigitalOcean SaaS Starter Kit can be run locally or in DigitalOcean platform
 
 [![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/do-yard/do-starter-kit/tree/main)
 
-2. After deployment is complete, configure the environment variables under Settings -> application.
+2. After deployment is complete, configure the environment variables under Settings -> saas-application.
       - DATABASE_URL: is automatically populated, but if you want to use a DigitalOcean Managed DB, replace the connection string value.
       - NEXTAUTH_URL: URL of the site
-      - NEXTAUTH_SECRET: random string for authentication
+      - NEXTAUTH_SECRET: random string for authentication. After setting a value, check the encrypt box.
 3. Run Prisma migrations:
    - Go to Console, in the DigitalOcean dashboard
    - Run `npx prisma migrate deploy` command
