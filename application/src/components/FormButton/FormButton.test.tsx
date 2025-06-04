@@ -1,27 +1,36 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import FormButton from './FormButton';
-import '@testing-library/jest-dom';
-
-// Mock Next.js Link to render a passthrough
-jest.mock('next/link', () => {
-  const MockLink = ({ children, href }: { children: React.ReactNode; href?: string }) => (
-    <a href={href || '#'}>{children}</a>
-  );
-  MockLink.displayName = 'MockLink';
-  return MockLink;
-});
+import userEvent from '@testing-library/user-event';
 
 describe('FormButton', () => {
-  it('renders the button content', () => {
+  it('renders the button with given text', () => {
     render(<FormButton>Submit</FormButton>);
-    const link = screen.getByRole('link', { name: 'Submit' });
-    expect(link).toBeInTheDocument();
+    const button = screen.getByRole('button', { name: /submit/i });
+    expect(button).toBeInTheDocument();
   });
 
-  it('renders with expected styles applied via sx', () => {
-    render(<FormButton>Go</FormButton>);
-    const link = screen.getByRole('link', { name: 'Go' });
-    expect(link).toHaveTextContent('Go');
-    expect(link).toHaveAttribute('href'); // confirms it's a link
+  it('has type="submit"', () => {
+    render(<FormButton>Submit</FormButton>);
+    const button = screen.getByRole('button', { name: /submit/i });
+    expect(button).toHaveAttribute('type', 'submit');
+  });
+
+  it('has the expected styles and props', () => {
+    render(<FormButton>Send</FormButton>);
+    const button = screen.getByRole('button', { name: /send/i });
+    expect(button).toHaveClass('MuiButton-contained');
+    expect(button).toHaveStyle({ textTransform: 'none' });
+  });
+
+  it('calls onClick handler when provided and clicked', async () => {
+    const handleClick = jest.fn();
+    render(
+      <FormButton>
+        <span onClick={handleClick}>Click me</span>
+      </FormButton>
+    );
+    await userEvent.click(screen.getByText(/click me/i));
+    expect(handleClick).toHaveBeenCalled();
   });
 });

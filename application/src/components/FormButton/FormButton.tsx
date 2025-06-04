@@ -1,6 +1,5 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import Link from 'next/link';
 
 /**
  * Stylized form button for submit actions.
@@ -18,8 +17,6 @@ const FormButton: React.FC<{ children: React.ReactNode }> = ({ children }) => (
       '&:hover': { bgcolor: '#185EA5', boxShadow: 'none' },
       textTransform: 'none',
     }}
-    component={Link}
-    prefetch={true}
   >
     {children}
   </Button>
