@@ -20,7 +20,7 @@ jest.mock('services/billing/billing', () => ({
 }));
 
 let proPriceId: string | undefined = 'pro_123';
-let selfApiURL: string = 'http://localhost';
+let baseURL: string = 'http://localhost';
 jest.mock('../../../../../settings', () => ({
   serverConfig: {
     Stripe: {
@@ -28,8 +28,8 @@ jest.mock('../../../../../settings', () => ({
         return proPriceId;
       },
     },
-    get selfApiURL() {
-      return selfApiURL;
+    get baseURL() {
+      return baseURL;
     },
   },
 }));
@@ -42,7 +42,7 @@ describe('checkout', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     proPriceId = 'pro_123';
-    selfApiURL = 'http://localhost';
+    baseURL = 'http://localhost';
   });
 
   it('returns 500 if proPriceId is not configured', async () => {
