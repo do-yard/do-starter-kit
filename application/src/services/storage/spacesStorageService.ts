@@ -3,7 +3,6 @@ import {
   PutObjectCommand,
   GetObjectCommand,
   DeleteObjectCommand,
-  HeadBucketCommand,
   ListObjectsV2Command
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -19,6 +18,10 @@ export class SpacesStorageService implements StorageService {
   private bucketName: string = '';
   private isConfigured: boolean = false;
   private configError: string = '';
+  private lastConnectionError: string = '';
+  
+  // Service name for consistent display across all status responses
+  private static readonly serviceName = 'Storage (DigitalOcean Spaces)';
   
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
@@ -122,55 +125,48 @@ export class SpacesStorageService implements StorageService {
     });
 
     await this.client.send(command);
-  }
-  /**
+  }  /**
    * Checks if the Spaces service is properly configured and accessible.
-   * Uses HeadBucketCommand to verify bucket existence and access permissions.
-   * Falls back to ListObjectsV2Command if HeadBucket fails due to permissions.
+   * Uses ListObjectsV2Command to verify bucket access and connectivity.
    * 
    * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
    */
   async checkConnection(): Promise<boolean> {
     if (!this.client) {
+      this.lastConnectionError = 'Storage client not initialized';
       return false;
     }
 
     try {
-      // Primary test: Use HeadBucket to test connection to the specific bucket
-      const headCommand = new HeadBucketCommand({
-        Bucket: this.bucketName
+      // Test connection by listing objects (with limit 1) to verify access
+      const listCommand = new ListObjectsV2Command({
+        Bucket: this.bucketName,
+        MaxKeys: 1
       });
-      await this.client.send(headCommand);
+      await this.client.send(listCommand);
       return true;
-    } catch (headError) {
-      try {
-        // Fallback test: Try to list objects (with limit 1) to verify access
-        const listCommand = new ListObjectsV2Command({
-          Bucket: this.bucketName,
-          MaxKeys: 1
-        });
-        await this.client.send(listCommand);
-        return true;
-      } catch (listError) {
-        console.error('Storage connection test failed:', {
-          headError: headError instanceof Error ? headError.message : headError,
-          listError: listError instanceof Error ? listError.message : listError
-        });
-        return false;
-      }
+    } catch (listError) {
+      const listErrorMsg = listError instanceof Error ? listError.message : String(listError);
+      
+      console.error('Storage connection test failed:', {
+        listError: listErrorMsg
+      });
+      
+      // Store the last error details for use in checkConfiguration
+      this.lastConnectionError = `Connection error: ${listErrorMsg}`;
+      
+      return false;
     }
-  }
-  /**
+  }/**
    * Checks if the storage service configuration is valid and tests connection when configuration is complete.
    */
   async checkConfiguration(): Promise<ServiceConfigStatus> {
     // Check for missing configuration
     const missingConfig = Object.entries(SpacesStorageService.requiredConfig)
       .filter(([key]) => !serverConfig.Spaces[key as keyof typeof serverConfig.Spaces])
-      .map(([_, value]) => value.envVar);
-
-    if (missingConfig.length > 0) {
+      .map(([_, value]) => value.envVar);    if (missingConfig.length > 0) {
       return {
+        name: SpacesStorageService.serviceName,
         configured: false,
         connected: undefined, // Don't test connection when configuration is missing
         configToReview: missingConfig,
@@ -180,29 +176,20 @@ export class SpacesStorageService implements StorageService {
 
     // If configured, test the connection
     const isConnected = await this.checkConnection();
-    
-    if (!isConnected) {
+      if (!isConnected) {
       return {
+        name: SpacesStorageService.serviceName,
         configured: true,
         connected: false,
         configToReview: Object.values(SpacesStorageService.requiredConfig).map(
           config => config.envVar
         ),
-        error: 'Connection failed'
+        error: this.lastConnectionError || 'Connection failed'
       };
-    }
-
-    return {
+    }    return {
+      name: SpacesStorageService.serviceName,
       configured: true,
       connected: true
     };
-  }
-
-  /**
-   * Gets the storage provider name.
-   * @returns {string} The name of the storage provider.
-   */
-  getProviderName(): string {
-    return 'DigitalOcean Spaces';
   }
 }

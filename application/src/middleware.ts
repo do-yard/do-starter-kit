@@ -2,11 +2,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import { auth } from 'lib/auth/auth';
 import { UserRole } from 'types';
 import { USER_ROLES } from 'lib/auth/roles';
-// Update the import path if your settings file is located elsewhere, for example:
-import { serverConfig } from '../settings';
-import { createStorageService } from './services/storage/storage';
-// Or, if the file does not exist, create 'settings.ts' in the same directory with the following content:
-// export const serverConfig = { storageProvider: '', Spaces: { accessKey: '', secretKey: '', bucketName: '', endpoint: '', region: '' } };
+import { StatusService } from './services/status/statusService';
 
 const ROLE_HOME_URL: Record<UserRole, string> = {
   [USER_ROLES.USER]: '/dashboard',
@@ -32,24 +28,20 @@ export async function middleware(request: NextRequest) {
     '/signup',
     '/_next',
     '/favicon.ico'
-  ];
-
-  // Skip configuration check for public routes and API endpoints
+  ];  // Skip configuration check for public routes and API endpoints
   const isPublicPath = publicPaths.some(path => pathname === path || pathname.startsWith(path + '/'));
   const isApiPath = pathname.startsWith('/api/') && !pathname.startsWith('/api/system-status');
-    // Check storage config only for protected routes that require storage
+    // Check service health for protected routes
   const isProtectedRoute = !isPublicPath && !isApiPath;
   if (isProtectedRoute) {
-    try {
-      // Use the storage service interface to check if configuration is valid
-      const storageService = createStorageService();
-      const configStatus = await storageService.checkConfiguration();
-      
-      if (!configStatus.configured || configStatus.connected === false) {
-        return NextResponse.redirect(new URL('/system-status', request.url));
-      }
-    } catch (error) {
-      // If there's an error creating the service, redirect to status page
+    // Ensure StatusService is initialized
+    await StatusService.initialize();
+    
+    // Use cached health state for fast performance
+    const isHealthy = StatusService.isApplicationHealthy();
+    
+    if (!isHealthy) {
+      console.log(`Redirecting to system status due to unhealthy services for route: ${pathname}`);
       return NextResponse.redirect(new URL('/system-status', request.url));
     }
   }

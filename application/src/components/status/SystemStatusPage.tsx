@@ -19,6 +19,7 @@ interface ServiceStatus {
 interface SystemInfo {
   environment: string;
   timestamp: string;
+  lastHealthCheck: string;
 }
 
 /**
@@ -30,14 +31,14 @@ const SystemStatusPage: React.FC = () => {
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-
-  const fetchStatus = async () => {
+  
+  const fetchStatus = async (forceRefresh = false) => {
     setLoading(true);
     setError(null);
     
     try {
-      const response = await fetch('/api/system-status');
+      const url = forceRefresh ? '/api/system-status?refresh=true' : '/api/system-status';
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Failed to fetch status: ${response.statusText}`);
       }
@@ -45,7 +46,6 @@ const SystemStatusPage: React.FC = () => {
       const data = await response.json();
       setServices(data.services || []);
       setSystemInfo(data.systemInfo);
-      setLastUpdated(new Date());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
       console.error('Error fetching system status:', err);
@@ -96,13 +96,12 @@ const SystemStatusPage: React.FC = () => {
       <Box sx={{ textAlign: 'center', mb: 4 }}>
         <Typography variant="h3" component="h1" gutterBottom>
           System Status
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
+        </Typography>        <Typography variant="body1" color="text.secondary">
           Service Configuration and Connectivity Status
         </Typography>
-        {lastUpdated && (
+        {systemInfo?.lastHealthCheck && (
           <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 1 }}>
-            Last checked: {lastUpdated.toLocaleString()}
+            Last checked: {new Date(systemInfo.lastHealthCheck).toLocaleString()}
           </Typography>
         )}
       </Box>
@@ -143,26 +142,26 @@ const SystemStatusPage: React.FC = () => {
                 <ConfigurableServiceCard key={`${service.name}-${index}`} service={service} />
               ))
             )}
-          </Box>
-
-          <Box sx={{ textAlign: 'center' }}>
+          </Box>          <Box sx={{ textAlign: 'center' }}>
             <Button 
               variant="contained" 
               startIcon={<RefreshIcon />}
-              onClick={fetchStatus} 
-              sx={{ mr: 2 }}
+              onClick={() => fetchStatus(true)} 
+              sx={{ mr: hasIssues ? 0 : 2 }}
               disabled={loading}
             >
               Refresh Status
             </Button>
-            <Button 
-              variant="outlined"
-              startIcon={<HomeIcon />}
-              href="/"
-              disabled={loading}
-            >
-              Return Home
-            </Button>
+            {!hasIssues && (
+              <Button 
+                variant="outlined"
+                startIcon={<HomeIcon />}
+                href="/"
+                disabled={loading}
+              >
+                Return Home
+              </Button>
+            )}
           </Box>
         </>
       )}

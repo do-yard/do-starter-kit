@@ -9,6 +9,7 @@
  * Used to report the configuration and connection status of any service.
  */
 export interface ServiceConfigStatus {
+  name: string; // Display name of the service
   configured: boolean; // true if there are no missing settings
   connected?: boolean; // true if connection to the service was successful
   configToReview?: string[]; // if there was a missing setting, add it here, if the connection failed add all the required settings here
@@ -31,10 +32,4 @@ export interface ConfigurableService {
    * @returns {Promise<ServiceConfigStatus>} Configuration and connection status object.
    */
   checkConfiguration(): Promise<ServiceConfigStatus>;
-  
-  /**
-   * Gets the service provider/type name for display purposes.
-   * @returns {string} The name of the service provider.
-   */
-  getProviderName(): string;
 }

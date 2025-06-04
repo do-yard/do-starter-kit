@@ -3,34 +3,62 @@ import { StatusService } from '../../../services/status/statusService';
 
 /**
  * Handles GET requests for the system status endpoint.
- * Checks all configured services dynamically and returns their status.
+ * Uses cached health state for performance, with option to force fresh check.
  * This endpoint is completely service-agnostic and will work with any services
- * returned by the StatusService.checkAllServices() method.
+ * configured in the StatusService.
  * 
  * @returns {Promise<NextResponse>} JSON response with the status of all services and system info.
  */
-export const GET = async () => {
+export const GET = async (request: Request) => {
   try {
-    // Get status of all configured services
-    const serviceStatus = await StatusService.checkAllServices();
+    const url = new URL(request.url);
+    const forceRefresh = url.searchParams.get('refresh') === 'true';
     
-    // Add system information to provide more context
+    // Ensure StatusService is initialized
+    await StatusService.initialize();
+    
+    // Get health state (fresh check if requested, otherwise use cache)
+    const healthState = forceRefresh 
+      ? await StatusService.forceHealthCheck()
+      : StatusService.getHealthState();
+
+    if (!healthState) {
+      // This shouldn't happen after initialization, but handle gracefully
+      console.warn('Health state is null after initialization');
+      return NextResponse.json(
+        { 
+          error: 'Health system initialization failed',
+          services: [],
+          systemInfo: {
+            environment: process.env.NODE_ENV || 'unknown',
+            timestamp: new Date().toISOString()
+          },
+          status: 'error'
+        }, 
+        { status: 500 }
+      );
+    }    // Convert health state to the expected API format
+    const services = healthState.services.map(service => ({
+      name: service.name,
+      configured: service.configured,
+      connected: service.connected,
+      error: service.error,
+      configToReview: service.configToReview
+    }));    // Add system information
     const systemInfo = {
       environment: process.env.NODE_ENV || 'unknown',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      lastHealthCheck: healthState.lastChecked.toISOString()
     };
 
-    // Determine overall system status
-    const hasIssues = serviceStatus.some(service => !service.configured || !service.connected);
-    
     return NextResponse.json({ 
-      services: serviceStatus,
+      services,
       systemInfo,
-      status: hasIssues ? 'issues_detected' : 'ok'
+      status: healthState.isHealthy ? 'ok' : 'issues_detected'
     }, { 
       status: 200,
       headers: {
-        'Cache-Control': 'no-store, max-age=0'
+        'Cache-Control': forceRefresh ? 'no-store, max-age=0' : 'public, max-age=60'
       }
     });
   } catch (error) {

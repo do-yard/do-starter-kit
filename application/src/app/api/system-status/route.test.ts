@@ -7,40 +7,54 @@ jest.mock('../../../services/status/statusService');
 describe('System Status API Route', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it('should return status of all services', async () => {
+  });  it('should return status of all services', async () => {
     // Arrange
-    const mockServices = [
-      {
-        name: 'DigitalOcean Spaces',
-        configured: true,
-        connected: true,
-      },
-    ];
+    const mockHealthState = {
+      services: [
+        {
+          name: 'DigitalOcean Spaces',
+          configured: true,
+          connected: true,
+          error: null,
+          configToReview: undefined
+        },
+      ],
+      isHealthy: true,
+      lastChecked: new Date('2025-01-01T00:00:00.000Z')
+    };
 
-    (StatusService.checkAllServices as jest.Mock).mockResolvedValue(mockServices);
+    (StatusService.initialize as jest.Mock).mockResolvedValue(undefined);
+    (StatusService.getHealthState as jest.Mock).mockReturnValue(mockHealthState);
+
+    // Create a mock request
+    const request = new NextRequest('http://localhost:3000/api/system-status');
 
     // Act
-    const response = await GET();
+    const response = await GET(request);
     const data = await response.json();
 
     // Assert
     expect(response.status).toBe(200);
-    expect(data).toEqual({ services: mockServices });
-    expect(StatusService.checkAllServices).toHaveBeenCalledTimes(1);
+    expect(data.services).toEqual(mockHealthState.services);
+    expect(data.status).toBe('ok');
+    expect(data.systemInfo).toBeDefined();
+    expect(StatusService.initialize).toHaveBeenCalledTimes(1);
+    expect(StatusService.getHealthState).toHaveBeenCalledTimes(1);
   });
 
   it('should return error when service check fails', async () => {
     // Arrange
-    (StatusService.checkAllServices as jest.Mock).mockRejectedValue(new Error('Test error'));
+    (StatusService.initialize as jest.Mock).mockRejectedValue(new Error('Test error'));
+
+    // Create a mock request
+    const request = new NextRequest('http://localhost:3000/api/system-status');
 
     // Act
-    const response = await GET();
+    const response = await GET(request);
     const data = await response.json();
 
     // Assert
     expect(response.status).toBe(500);
-    expect(data).toEqual({ error: 'Failed to check system status' });
+    expect(data.error).toBe('Failed to check system status');
   });
 });
