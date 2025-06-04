@@ -51,24 +51,9 @@ describe('checkout', () => {
     expect(await res.json()).toEqual({ error: 'Missing Pro Price' });
   });
 
-  it('returns 404 if no subscription or customerId', async () => {
+  it('returns 404 if no subscription', async () => {
     mockFindByUserId.mockResolvedValue(undefined);
     let res = await checkout(mockNextRequest(), user);
-    expect(res.status).toBe(404);
-    expect(await res.json()).toEqual({ error: 'No subscription found' });
-
-    mockFindByUserId.mockResolvedValue([]);
-    res = await checkout(mockNextRequest(), user);
-    expect(res.status).toBe(404);
-    expect(await res.json()).toEqual({ error: 'No subscription found' });
-
-    mockFindByUserId.mockResolvedValue([{}]);
-    res = await checkout(mockNextRequest(), user);
-    expect(res.status).toBe(404);
-    expect(await res.json()).toEqual({ error: 'No subscription found' });
-
-    mockFindByUserId.mockResolvedValue([{ customerId: null }]);
-    res = await checkout(mockNextRequest(), user);
     expect(res.status).toBe(404);
     expect(await res.json()).toEqual({ error: 'No subscription found' });
   });

@@ -1,3 +1,4 @@
+import { SubscriptionStatus } from '@prisma/client';
 import { upgradeToPro } from './upgradeToPro';
 import { NextRequest } from 'next/server';
 
@@ -71,21 +72,24 @@ describe('upgradeToPro API', () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
     mockUpdateSubscription.mockResolvedValue('secret_abc');
-    mockFindByUser.mockResolvedValue({ id: 'oldsub', status: 'ACTIVE' });
+    mockFindByUser.mockResolvedValue({ id: 'oldsub', status: SubscriptionStatus.ACTIVE });
     mockUpdate.mockResolvedValue({});
     const res = await upgradeToPro({} as NextRequest, user);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ clientSecret: 'secret_abc' });
     expect(mockUpdateSubscription).toHaveBeenCalledWith('sub1', 'item1', 'pro_123');
     expect(mockFindByUser).toHaveBeenCalledWith('u1');
-    expect(mockUpdate).toHaveBeenCalledWith('u1', expect.objectContaining({ status: 'PENDING' }));
+    expect(mockUpdate).toHaveBeenCalledWith(
+      'u1',
+      expect.objectContaining({ status: SubscriptionStatus.PENDING })
+    );
   });
 
   it('returns 500 if db update fails', async () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
     mockUpdateSubscription.mockResolvedValue('secret_abc');
-    mockFindByUser.mockResolvedValue({ id: 'oldsub', status: 'ACTIVE' });
+    mockFindByUser.mockResolvedValue({ id: 'oldsub', status: SubscriptionStatus.ACTIVE });
     mockUpdate.mockRejectedValue(new Error('fail'));
     const res = await upgradeToPro({} as NextRequest, user);
     expect(res.status).toBe(500);

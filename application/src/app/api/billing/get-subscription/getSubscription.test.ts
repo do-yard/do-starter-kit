@@ -1,3 +1,4 @@
+import { SubscriptionPlanEnum } from 'types';
 import { getSubscription } from './getSubscription';
 import { NextRequest } from 'next/server';
 
@@ -23,7 +24,7 @@ describe('getSubscription API', () => {
   });
 
   it('returns first subscription if found', async () => {
-    const sub = { id: 'sub1', status: 'active', plan: 'PRO' };
+    const sub = { id: 'sub1', status: 'active', plan: SubscriptionPlanEnum.PRO };
     mockFindByUserId.mockResolvedValue(sub);
     const res = await getSubscription({} as NextRequest, user);
     expect(res.status).toBe(200);

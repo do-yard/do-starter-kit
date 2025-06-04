@@ -1,3 +1,4 @@
+import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { handleSubscriptionCreated } from './handleSubscriptionCreated';
 
 // Mocks
@@ -36,8 +37,8 @@ describe('handleSubscriptionCreated', () => {
     };
     await handleSubscriptionCreated(json);
     expect(mockUpdateByCustomerId).toHaveBeenCalledWith('cus_123', {
-      status: 'ACTIVE',
-      plan: 'PRO',
+      status: SubscriptionStatusEnum.ACTIVE,
+      plan: SubscriptionPlanEnum.PRO,
     });
   });
 
@@ -52,7 +53,7 @@ describe('handleSubscriptionCreated', () => {
     };
     await handleSubscriptionCreated(json);
     expect(mockUpdateByCustomerId).toHaveBeenCalledWith('cus_456', {
-      status: 'ACTIVE',
+      status: SubscriptionStatusEnum.ACTIVE,
     });
   });
 
