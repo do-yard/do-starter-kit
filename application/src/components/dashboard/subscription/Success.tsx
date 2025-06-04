@@ -1,4 +1,5 @@
 import { Box, Typography, Button } from '@mui/material';
+import { SubscriptionPlanEnum } from 'types';
 
 /**
  * Subscription success page component.
@@ -15,7 +16,7 @@ export default function Success() {
       minHeight="100vh"
     >
       <Typography variant="h3" fontWeight="bold" mb={4}>
-        Subscription To PRO Successful!
+        Welcome to {SubscriptionPlanEnum.PRO}!
       </Typography>
       <Typography variant="h6" color="text.secondary" mb={6}>
         Thank you for subscribing to our service.

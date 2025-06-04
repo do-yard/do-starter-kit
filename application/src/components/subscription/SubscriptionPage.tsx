@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { StripeClient } from 'lib/api/stripe';
-import { SubscriptionPlan } from 'types';
+import { SubscriptionPlan, SubscriptionPlanEnum } from 'types';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -69,7 +69,7 @@ const Subscription = () => {
       await fetchSubscription();
       setLoading(false);
     } catch {
-      setError('Failed to subscribe to free plan');
+      setError(`Failed to subscribe to ${SubscriptionPlanEnum.FREE} plan`);
       setLoading(false);
     }
   };
@@ -80,8 +80,8 @@ const Subscription = () => {
 
   const currentPlan = subscription?.plan;
 
-  const isBasePlan = currentPlan === 'FREE';
-  const isProPlan = currentPlan === 'PRO';
+  const isBasePlan = currentPlan === SubscriptionPlanEnum.FREE;
+  const isProPlan = currentPlan === SubscriptionPlanEnum.PRO;
 
   if (loading)
     return (
@@ -101,7 +101,12 @@ const Subscription = () => {
         <Box display="flex" flexDirection="column" alignItems="flex-start">
           <Typography mb={2}>
             Subscription status: <strong>{subscription.status}</strong> (
-            {isProPlan ? 'Pro Plan' : isBasePlan ? 'Free Plan' : 'No Plan'})
+            {isProPlan
+              ? `${SubscriptionPlanEnum.PRO} Plan`
+              : isBasePlan
+                ? `${SubscriptionPlanEnum.FREE} Plan`
+                : 'No Plan'}
+            )
           </Typography>
 
           {isBasePlan && (
@@ -112,7 +117,7 @@ const Subscription = () => {
               color="primary"
               sx={{ mt: 2, minWidth: 200 }}
             >
-              {upgrading ? 'Upgrading...' : 'Upgrade to PRO'}
+              {upgrading ? 'Upgrading...' : `Upgrade to ${SubscriptionPlanEnum.PRO}`}
             </Button>
           )}
 
@@ -135,7 +140,7 @@ const Subscription = () => {
             color="primary"
             sx={{ mt: 2, minWidth: 200 }}
           >
-            Subscribe to Free Plan
+            Subscribe to {SubscriptionPlanEnum.FREE} Plan
           </Button>
           <Button
             onClick={handleUpgradeToPro}
@@ -144,7 +149,7 @@ const Subscription = () => {
             color="primary"
             sx={{ mt: 2, minWidth: 214 }}
           >
-            Subscribe to Pro Plan
+            Subscribe to {SubscriptionPlanEnum.PRO} Plan
           </Button>
         </Box>
       )}
