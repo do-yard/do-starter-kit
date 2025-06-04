@@ -14,31 +14,24 @@ import { serverConfig, spacesEnvironmentVariablesNames } from '../../../settings
 export class SpacesStorageService implements StorageService {
   private client: S3Client;
   private bucketName: string;
+  private endpoint: string;
 
   constructor() {
-    const accessKeyId = serverConfig.Spaces.accessKey as string;
-    const secretAccessKey = serverConfig.Spaces.secretKey as string;
-    const endpoint = serverConfig.Spaces.endpoint as string;
-    const bucketName = serverConfig.Spaces.bucketName as string;
-    const region = serverConfig.Spaces.region as string;
+    const accessKeyId = serverConfig.Spaces.accessKey;
+    const secretAccessKey = serverConfig.Spaces.secretKey;
+    const bucketName = serverConfig.Spaces.bucketName;
+    const region = serverConfig.Spaces.region;
 
-    const missingVars: string[] = [];
-    if (!accessKeyId) missingVars.push(spacesEnvironmentVariablesNames.SPACES_KEY);
-    if (!secretAccessKey) missingVars.push(spacesEnvironmentVariablesNames.SPACES_SECRET);
-    if (!bucketName) missingVars.push(spacesEnvironmentVariablesNames.SPACES_BUCKETNAME);
-    if (!endpoint) missingVars.push(spacesEnvironmentVariablesNames.SPACES_ENDPOINT);
-    if (!region) missingVars.push(spacesEnvironmentVariablesNames.SPACES_REGION);
-
-    if (missingVars.length > 0) {
-      throw new Error(
-        `Missing required environment variables for Spaces client configuration: ${missingVars.join(', ')}`
-      );
+    if (!accessKeyId || !secretAccessKey || !bucketName || !region) {
+      throw new Error('Missing required environment variables for Spaces client configuration.');
     }
 
     this.bucketName = bucketName;
+    this.endpoint = `https://${region}.digitaloceanspaces.com`;
+
     this.client = new S3Client({
-      forcePathStyle: false, // Configures to use subdomain/virtual calling format.
-      endpoint,
+      forcePathStyle: false,
+      endpoint: this.endpoint,
       region,
       credentials: {
         accessKeyId,

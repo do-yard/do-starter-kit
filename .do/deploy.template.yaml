@@ -15,7 +15,7 @@ spec:
       environment_slug: node-js # Runtime environment
       git:
         branch: main # Git branch to deploy
-        repo_clone_url: https://github.com/ajot/do-starter-kit # Repository URL
+        repo_clone_url: https://github.com/do-yard/do-starter-kit # Repository URL
         deploy_on_push: true
       source_dir: ./application # Directory containing the service source code
       build_command: "npm install && npm run build" # Command to build the service
@@ -30,16 +30,14 @@ spec:
         - key: "DATABASE_URL"
           value: "${do-starter-kit-db.DATABASE_URL}"
           type: "SECRET"
-        - key: "SPACES_KEY"
+        - key: "SPACES_KEY_ID"
           value: ""
-        - key: "SPACES_SECRET"
+        - key: "SPACES_KEY_SECRET"
           value: ""
           type: "SECRET"
-        - key: "SPACES_BUCKETNAME"
+        - key: "SPACES_BUCKET_NAME"
           value: ""
         - key: "SPACES_REGION"
-          value: ""
-        - key: "SPACES_ENDPOINT"
           value: ""
         - key: "STORAGE_PROVIDER"
           value: "Spaces"
