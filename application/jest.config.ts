@@ -8,6 +8,7 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^hooks/(.*)$': '<rootDir>/src/hooks/$1',
+    '^components/(.*)$': '/src/components/$1',
   },
   testPathIgnorePatterns: [
     '<rootDir>/src/lib/',

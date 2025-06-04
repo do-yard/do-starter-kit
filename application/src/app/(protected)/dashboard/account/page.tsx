@@ -1,6 +1,6 @@
 'use client';
 
-import AccountSettings from '../../../../components/AccountSettings/AccountSettings';
+import AccountSettings from 'components/AccountSettings/AccountSettings';
 
 /**
  * User account settings page.
