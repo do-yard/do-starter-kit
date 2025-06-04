@@ -83,10 +83,10 @@ The following environment variables are required:
 
 3. **DigitalOcean Spaces Environment Variables**:
    ```
-   SPACES_KEY=your-spaces-access-key
-   SPACES_SECRET=your-spaces-secret-key
-   SPACES_ENDPOINT=your-region.digitaloceanspaces.com
-   SPACES_BUCKET=your-bucket-name
+   SPACES_KEY_ID=your-access-key-id-here # DigitalOcean Spaces Access Key Id
+   SPACES_KEY_SECRET=your-access-key-secret-here # DigitalOcean Spaces Access Key Secret
+   SPACES_REGION=spaces-bucket-region # Spaces Region
+   SPACES_BUCKET_NAME=spaces-bucket-name # Spaces Bucket Name
    ```
    - Get these values from your DigitalOcean Spaces setup (see [storage.md](./docs/storage.md))
 
