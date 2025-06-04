@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
 import { Box } from '@mui/material';
-import Sidebar from '../Sidebar/Sidebar';
-import { ThemeToggle } from '../Theme/Theme';
+import Sidebar from 'components/Sidebar/Sidebar';
+import { ThemeToggle } from 'components/Theme/Theme';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
