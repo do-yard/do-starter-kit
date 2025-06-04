@@ -1,4 +1,5 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
+import { HTTP_STATUS } from 'lib/api/http';
 import { checkout } from './checkout';
 import { NextRequest } from 'next/server';
 
@@ -47,14 +48,14 @@ describe('checkout', () => {
   it('returns 500 if proPriceId is not configured', async () => {
     proPriceId = undefined;
     const res = await checkout(mockNextRequest(), user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Missing Pro Price' });
   });
 
   it('returns 404 if no subscription', async () => {
     mockFindByUserId.mockResolvedValue(undefined);
     let res = await checkout(mockNextRequest(), user);
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
     expect(await res.json()).toEqual({ error: 'No subscription found' });
   });
 
@@ -62,7 +63,7 @@ describe('checkout', () => {
     mockFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
     mockCheckout.mockResolvedValue(undefined);
     const res = await checkout(mockNextRequest(), user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 
@@ -70,7 +71,7 @@ describe('checkout', () => {
     mockFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
     mockCheckout.mockResolvedValue('http://checkout-url');
     const res = await checkout(mockNextRequest(), user);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ url: 'http://checkout-url' });
   });
 });

@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { handleSubscriptionCreated } from './handleSubscriptionCreated';
 import { handleSubscriptionDeleted } from './handleSubscriptionDeleted';
 import { handleSubscriptionUpdated } from './handleSubscriptionUpdated';
+import { HTTP_STATUS } from 'lib/api/http';
 
 type WebhookAcceptedEvents =
   | 'customer.subscription.created'
@@ -27,13 +28,16 @@ export const webhookHandler = async (event: any) => {
     try {
       console.log('Handling webhook event: ', event?.type);
       await handler(event);
-      return NextResponse.json({ status: 200 });
+      return NextResponse.json({ status: HTTP_STATUS.OK });
     } catch (error) {
       console.error('Error handling webhook:', error);
-      return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Internal Server Error' },
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+      );
     }
   }
 
   console.warn('Unhandled webhook event type:', event?.type);
-  return NextResponse.json({ status: 200 });
+  return NextResponse.json({ status: HTTP_STATUS.OK });
 };

@@ -1,6 +1,7 @@
 import { SubscriptionPlanEnum } from 'types';
 import { getSubscription } from './getSubscription';
 import { NextRequest } from 'next/server';
+import { HTTP_STATUS } from 'lib/api/http';
 
 const mockFindByUserId = jest.fn();
 
@@ -19,7 +20,7 @@ describe('getSubscription API', () => {
   it('returns null if no subscription found', async () => {
     mockFindByUserId.mockResolvedValue(null);
     const res = await getSubscription({} as NextRequest, user);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ subscription: null });
   });
 
@@ -27,14 +28,14 @@ describe('getSubscription API', () => {
     const sub = { id: 'sub1', status: 'active', plan: SubscriptionPlanEnum.PRO };
     mockFindByUserId.mockResolvedValue(sub);
     const res = await getSubscription({} as NextRequest, user);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ subscription: sub });
   });
 
   it('returns 500 on error', async () => {
     mockFindByUserId.mockRejectedValue(new Error('fail'));
     const res = await getSubscription({} as NextRequest, user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 });

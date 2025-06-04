@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
 
@@ -17,6 +18,9 @@ export const getSubscription = async (
     return NextResponse.json({ subscription: subscription });
   } catch (err: unknown) {
     console.error('Internal Server Error', err);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

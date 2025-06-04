@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { serverConfig } from '../../../../../settings';
 import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
+import { HTTP_STATUS } from 'lib/api/http';
 
 /**
  * Initiates a checkout session for upgrading to Pro.
@@ -16,7 +17,10 @@ export const checkout = async (
 ): Promise<NextResponse> => {
   if (!serverConfig.Stripe.proPriceId) {
     console.error('Stripe Pro Price ID is not configured');
-    return NextResponse.json({ error: 'Missing Pro Price' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Missing Pro Price' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 
   const db = createDatabaseClient();
@@ -25,7 +29,7 @@ export const checkout = async (
 
   if (!subscription || !subscription[0] || !subscription[0].customerId) {
     console.error('No active subscription found for user:', user.id);
-    return NextResponse.json({ error: 'No subscription found' }, { status: 404 });
+    return NextResponse.json({ error: 'No subscription found' }, { status: HTTP_STATUS.NOT_FOUND });
   }
 
   try {
@@ -40,15 +44,21 @@ export const checkout = async (
 
     if (!url) {
       console.error('Failed to create checkout session');
-      return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Internal Server Error' },
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+      );
     }
 
-    return NextResponse.json({ url }, { status: 200 });
+    return NextResponse.json({ url }, { status: HTTP_STATUS.OK });
   } catch (error) {
     console.error(
       'Error creating checkout session',
       (error as { message?: string }).message ?? undefined
     );
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

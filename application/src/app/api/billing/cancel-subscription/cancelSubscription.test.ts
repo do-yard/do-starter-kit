@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from 'lib/api/http';
 import { cancelSubscription } from './cancelSubscription';
 import { NextRequest } from 'next/server';
 
@@ -39,15 +40,15 @@ describe('cancelSubscription API', () => {
   it('returns 404 if customer not found', async () => {
     mockListCustomer.mockResolvedValue([]);
     const res = await cancelSubscription({} as NextRequest, user);
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
     expect(await res.json()).toEqual({ error: 'Customer not found' });
   });
 
-  it('returns 400 if no active subscription from billing', async () => {
+  it('returns 404 if no active subscription from billing', async () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([]);
     const res = await cancelSubscription({} as NextRequest, user);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
     expect(await res.json()).toEqual({ error: 'No active subscription' });
   });
 
@@ -56,7 +57,7 @@ describe('cancelSubscription API', () => {
     mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
     mockFindByUserId.mockResolvedValue([]);
     const res = await cancelSubscription({} as NextRequest, user);
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
     expect(await res.json()).toEqual({ error: 'No active subscription found' });
   });
 
@@ -67,7 +68,7 @@ describe('cancelSubscription API', () => {
     mockStripeUpdateSubscription.mockResolvedValue(undefined);
     mockUpdateSubscription.mockResolvedValue({});
     const res = await cancelSubscription({} as NextRequest, user);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ canceled: true });
     expect(mockStripeUpdateSubscription).toHaveBeenCalledWith('sub1', 'item1', 'free_price_id');
     expect(mockUpdateSubscription).toHaveBeenCalledWith('u1', { plan: 'FREE', status: 'PENDING' });
@@ -80,7 +81,7 @@ describe('cancelSubscription API', () => {
     mockCancelSubscription.mockResolvedValue(undefined);
     mockUpdateSubscription.mockResolvedValue({});
     const res = await cancelSubscription({} as NextRequest, user);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ canceled: true });
     expect(mockCancelSubscription).toHaveBeenCalledWith('sub1');
     expect(mockUpdateSubscription).toHaveBeenCalledWith('u1', { status: 'PENDING' });
@@ -93,14 +94,14 @@ describe('cancelSubscription API', () => {
     mockCancelSubscription.mockResolvedValue(undefined);
     mockUpdateSubscription.mockRejectedValue(new Error('fail'));
     const res = await cancelSubscription({} as NextRequest, user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 
   it('returns 500 on error from billing service', async () => {
     mockListCustomer.mockRejectedValue(new Error('fail'));
     const res = await cancelSubscription({} as NextRequest, user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 
@@ -110,7 +111,7 @@ describe('cancelSubscription API', () => {
     mockFindByUserId.mockResolvedValue([{ plan: 'FREE' }]);
     mockCancelSubscription.mockRejectedValue(new Error('fail'));
     const res = await cancelSubscription({} as NextRequest, user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 });

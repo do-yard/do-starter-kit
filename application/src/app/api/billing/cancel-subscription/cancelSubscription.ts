@@ -3,6 +3,7 @@ import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { serverConfig } from '../../../../../settings';
+import { HTTP_STATUS } from 'lib/api/http';
 
 /**
  * Cancel an active subscription for a user.
@@ -20,7 +21,7 @@ export const cancelSubscription = async (
     const customer = await billingService.listCustomer(user.email);
 
     if (!customer || !customer[0]) {
-      return NextResponse.json({ error: 'Customer not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Customer not found' }, { status: HTTP_STATUS.NOT_FOUND });
     }
 
     const customerId = customer[0].id;
@@ -28,13 +29,19 @@ export const cancelSubscription = async (
 
     const stripeSub = stripeSubscriptions[0];
     if (!stripeSub) {
-      return NextResponse.json({ error: 'No active subscription' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'No active subscription' },
+        { status: HTTP_STATUS.NOT_FOUND }
+      );
     }
 
     const dbSubscription = await db.subscription.findByUserId(user.id);
 
     if (!dbSubscription || !dbSubscription[0]) {
-      return NextResponse.json({ error: 'No active subscription found' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'No active subscription found' },
+        { status: HTTP_STATUS.NOT_FOUND }
+      );
     }
 
     if (dbSubscription[0].plan === SubscriptionPlanEnum.PRO) {
@@ -59,6 +66,9 @@ export const cancelSubscription = async (
     return NextResponse.json({ canceled: true });
   } catch (err: unknown) {
     console.error('Internal Server Error', err);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

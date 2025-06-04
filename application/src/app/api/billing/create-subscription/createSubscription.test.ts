@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from 'lib/api/http';
 import { createSubscription } from './createSubscription';
 import { NextRequest } from 'next/server';
 
@@ -37,7 +38,7 @@ describe('createSubscription API', () => {
 
   it('returns 400 if priceId is missing', async () => {
     const res = await createSubscription(mockRequest({}), user);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
     expect(await res.json()).toEqual({ error: 'Price ID is required' });
   });
 
@@ -46,7 +47,7 @@ describe('createSubscription API', () => {
     mockCreateSubscription.mockResolvedValue({ clientSecret: 'secret_abc' });
     mockDbUpdate.mockResolvedValue({});
     const res = await createSubscription(mockRequest({ priceId }), user);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ clientSecret: 'secret_abc' });
     expect(mockDbFindByUserId).toHaveBeenCalledWith(user.id);
     expect(mockCreateCustomer).not.toHaveBeenCalled();
@@ -62,7 +63,7 @@ describe('createSubscription API', () => {
     mockDbCreate.mockResolvedValue({});
     mockDbUpdate.mockResolvedValue({});
     const res = await createSubscription(mockRequest({ priceId }), user);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ clientSecret: 'secret_xyz' });
     expect(mockCreateCustomer).toHaveBeenCalledWith(user.email, { userId: user.email });
     expect(mockCreateSubscription).toHaveBeenCalledWith('cust2', priceId);
@@ -80,14 +81,14 @@ describe('createSubscription API', () => {
     mockCreateSubscription.mockResolvedValue({ clientSecret: 'secret_abc' });
     mockDbUpdate.mockRejectedValue(new Error('fail'));
     const res = await createSubscription(mockRequest({ priceId }), user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 
   it('returns 500 on error from billing service', async () => {
     mockDbFindByUserId.mockRejectedValue(new Error('fail'));
     const res = await createSubscription(mockRequest({ priceId }), user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 
@@ -95,7 +96,7 @@ describe('createSubscription API', () => {
     mockDbFindByUserId.mockResolvedValue([]);
     mockCreateCustomer.mockRejectedValue(new Error('fail'));
     const res = await createSubscription(mockRequest({ priceId }), user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 
@@ -103,7 +104,7 @@ describe('createSubscription API', () => {
     mockDbFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
     mockCreateSubscription.mockRejectedValue(new Error('fail'));
     const res = await createSubscription(mockRequest({ priceId }), user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 });
