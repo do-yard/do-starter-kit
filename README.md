@@ -12,7 +12,7 @@ The architecture diagram above shows the complete structure of the SaaS Starter 
 
 ## Get Started
 
-The DigitalOcean SaaS Starter Kit can be run locally or in DigitalOcean platform. Follow the steps for each case below.
+The DigitalOcean SaaS Starter Kit can be run [locally](#running-locally) or in [DigitalOcean platform](#deploy-to-digitalocean-platform). Follow the steps for each case below.
 
 ## Running locally
 
@@ -20,10 +20,12 @@ The DigitalOcean SaaS Starter Kit can be run locally or in DigitalOcean platform
 1. Navigate to \application folder
 1. Run `npm install`
 1. Copy .env file with `cp env-example .env`
-1. Complete at minimum 'Database configuration' and 'Auth.js configuration' settings sections. Postgres DB can be a local instance or hosted in DigitalOcean platform.
+1. Complete at minimum 'Database configuration' and 'Auth.js configuration' settings sections. Postgres DB can be a local instance or a Managed Database in DigitalOcean platform. Either way, the Postgres connection string is used in for connection.
 1. Run Prisma generate: `npx prisma generate`
 1. Run Prisma migration: `npx prisma migrate deploy`
 1. Start the site: `npm run dev`
+
+If you made changes to the repo and want to deploy them to DigitalOcean, navigate to the [Deploy from local environment](#deploy-from-local-environment) section.
 
 ## Deploy to DigitalOcean platform
 
@@ -142,6 +144,16 @@ If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
 1. From the root directory of the repo, deploy the app using `doctl apps create --spec .do\app.yaml`
 1. Once the app is deployed. Configure the `NEXTAUTH_URL` with the app URL.
 1. Run Prisma migrations from the DigitalOcean console `npx prisma migrate deploy`
+
+## Delete the App
+
+When you no longer need this application running live, you can delete it by following these steps:
+
+1. Visit the [Apps control panel](https://cloud.digitalocean.com/apps)
+2. Navigate to your SaaS application
+3. In the **Settings** tab, click **Destroy**
+
+**Note**: If you do not delete your app, charges for using DigitalOcean services will continue to accrue.
 
 ## Continues Integration and Development environments
 
