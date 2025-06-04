@@ -8,13 +8,13 @@ const apiClient = new NotesApiClient();
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: '#030712',
-  color: '#fff',
+  backgroundColor: theme.palette.background.paper,
+  color: theme.palette.text.primary,
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
-  border: '1px solid #1f2937',
-  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+  border: `1px solid ${theme.palette.divider}`,
+  boxShadow: theme.shadows[4],
   width: '100%',
   maxWidth: '800px',
   margin: '0 auto',
@@ -149,19 +149,22 @@ const NoteDetail: React.FC<NoteDetailProps> = ({ noteId, onBack }) => {
           <Button
             component="a"
             href={`/dashboard/notes/${noteId}/edit`}
-            sx={{
-              border: '1px solid #374151',
-              color: '#d1d5db',
+            sx={(theme) => ({
+              border: `1px solid ${theme.palette.mode === 'dark' ? '#374151' : theme.palette.grey[300]}`,
+              color: theme.palette.mode === 'dark' ? '#d1d5db' : theme.palette.grey[900],
               backgroundColor: 'transparent',
               '&:hover': {
-                backgroundColor: 'rgba(55, 65, 81, 0.1)',
+                backgroundColor:
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(55, 65, 81, 0.1)'
+                    : theme.palette.action.hover,
               },
               textTransform: 'none',
               borderRadius: 1,
               padding: '8px 16px',
               fontWeight: 500,
               fontSize: '0.875rem',
-            }}
+            })}
           >
             Edit
           </Button>

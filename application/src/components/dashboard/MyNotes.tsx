@@ -27,21 +27,24 @@ import Paper from 'components/common/Paper';
 
 // Styled components
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  color: '#d1d5db',
-  borderBottom: '1px solid #1f2937',
+  color: theme.palette.text.primary,
+  backgroundColor: theme.palette.background.paper,
+  borderBottom: `1px solid ${theme.palette.divider}`,
   padding: theme.spacing(2),
 }));
 
 const StyledTableHeaderCell = styled(TableCell)(({ theme }) => ({
-  color: '#9ca3af',
-  borderBottom: '1px solid #1f2937',
+  color: theme.palette.text.secondary,
+  backgroundColor: theme.palette.background.default,
+  borderBottom: `1px solid ${theme.palette.divider}`,
   padding: theme.spacing(2),
   fontWeight: 500,
 }));
 
-const StyledTableRow = styled(TableRow)(() => ({
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
   '&:hover': {
-    backgroundColor: 'rgba(31, 41, 55, 0.5)',
+    backgroundColor: theme.palette.action.hover,
   },
   '&:last-child td, &:last-child th': {
     borderBottom: 0,
@@ -50,39 +53,39 @@ const StyledTableRow = styled(TableRow)(() => ({
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-root': {
-    backgroundColor: '#111827',
+    backgroundColor: theme.palette.background.paper,
     borderRadius: theme.shape.borderRadius,
-    border: '1px solid #374151',
-    color: '#e5e7eb',
+    border: `1px solid ${theme.palette.divider}`,
+    color: theme.palette.text.primary,
     '&:hover': {
-      borderColor: '#4b5563',
+      borderColor: theme.palette.primary.main,
     },
     '&.Mui-focused': {
-      borderColor: '#6b7280',
-      boxShadow: '0 0 0 2px rgba(107, 114, 128, 0.25)',
+      borderColor: theme.palette.primary.dark,
+      boxShadow: `0 0 0 2px ${theme.palette.primary.light}33`,
     },
   },
   '& .MuiInputBase-input': {
     padding: theme.spacing(1.5),
   },
   '& .MuiInputAdornment-root': {
-    color: '#6b7280',
+    color: theme.palette.text.disabled,
   },
 }));
 
 const StyledSelect = styled(Select)(({ theme }) => ({
-  backgroundColor: '#111827',
+  backgroundColor: theme.palette.background.paper,
   borderRadius: theme.shape.borderRadius,
-  border: '1px solid #374151',
-  color: '#e5e7eb',
+  border: `1px solid ${theme.palette.divider}`,
+  color: theme.palette.text.primary,
   '&:hover': {
-    borderColor: '#4b5563',
+    borderColor: theme.palette.primary.main,
   },
   '& .MuiSelect-select': {
     padding: theme.spacing(1.5),
   },
   '& .MuiSvgIcon-root': {
-    color: '#6b7280',
+    color: theme.palette.text.disabled,
   },
 }));
 
@@ -209,6 +212,7 @@ const MyNotes: React.FC = () => {
         flexDirection: 'column',
         margin: 0,
         width: '100%',
+        backgroundColor: (theme) => theme.palette.background.paper,
         ...(props.sx || {}),
       }}
     >
@@ -293,7 +297,7 @@ const MyNotes: React.FC = () => {
                       sx={{
                         flexGrow: 1,
                         '& .MuiInputBase-root': {
-                          color: '#fff',
+                          color: (theme) => theme.palette.text.primary,
                         },
                         '& .MuiInput-underline:before': {
                           borderBottomColor: '#4b5563',
@@ -311,7 +315,7 @@ const MyNotes: React.FC = () => {
                       variant="text"
                       sx={{
                         ml: 1,
-                        color: '#10b981',
+                        color: (theme) => theme.palette.text.primary,
                         minWidth: 'auto',
                         padding: '4px',
                         backgroundColor: 'transparent',
@@ -319,19 +323,28 @@ const MyNotes: React.FC = () => {
                       }}
                       onClick={() => handleEditSave(note.id)}
                     >
-                      <Save fontSize="small" />
+                      <Save
+                        fontSize="small"
+                        sx={{ color: (theme) => theme.palette.text.primary }}
+                      />
                     </Button>
                   </Box>
                 ) : (
                   <>
-                    <Typography variant="h5" fontWeight="bold" sx={{ color: '#fff' }}>
+                    <Typography variant="h5" fontWeight="bold" sx={{ color: 'text.primary' }}>
                       {note.title}
                     </Typography>
                     <IconButton
-                      sx={{ color: '#d1d5db', height: 40, width: 40 }}
+                      sx={{
+                        height: 40,
+                        width: 40,
+                      }}
                       onClick={() => handleEditStart(note.id, note.title)}
                     >
-                      <Edit fontSize="small" />
+                      <Edit
+                        fontSize="small"
+                        sx={{ color: (theme) => theme.palette.text.primary }}
+                      />
                     </IconButton>
                   </>
                 )}
@@ -355,8 +368,14 @@ const MyNotes: React.FC = () => {
                   href={`/dashboard/notes/${note.id}`}
                   sx={{
                     mr: 1,
-                    color: '#d1d5db',
-                    '&:hover': { backgroundColor: 'rgba(209, 213, 219, 0.1)' },
+                    color: (theme) =>
+                      theme.palette.mode === 'light' ? theme.palette.grey[800] : '#d1d5db',
+                    '&:hover': {
+                      backgroundColor: (theme) =>
+                        theme.palette.mode === 'light'
+                          ? theme.palette.grey[200]
+                          : 'rgba(209, 213, 219, 0.1)',
+                    },
                     textTransform: 'none',
                     borderRadius: 1,
                     padding: '8px 12px',
@@ -370,8 +389,14 @@ const MyNotes: React.FC = () => {
                   component="a"
                   href={`/dashboard/notes/${note.id}/edit`}
                   sx={{
-                    color: '#d1d5db',
-                    '&:hover': { backgroundColor: 'rgba(209, 213, 219, 0.1)' },
+                    color: (theme) =>
+                      theme.palette.mode === 'light' ? theme.palette.grey[800] : '#d1d5db',
+                    '&:hover': {
+                      backgroundColor: (theme) =>
+                        theme.palette.mode === 'light'
+                          ? theme.palette.grey[200]
+                          : 'rgba(209, 213, 219, 0.1)',
+                    },
                     textTransform: 'none',
                     borderRadius: 1,
                     padding: '8px 12px',
@@ -451,7 +476,7 @@ const MyNotes: React.FC = () => {
                           sx={{
                             flexGrow: 1,
                             '& .MuiInputBase-root': {
-                              color: '#fff',
+                              color: (theme) => theme.palette.text.primary,
                             },
                             '& .MuiInput-underline:before': {
                               borderBottomColor: '#4b5563',
@@ -507,8 +532,14 @@ const MyNotes: React.FC = () => {
                     component="a"
                     href={`/dashboard/notes/${note.id}`}
                     sx={{
-                      color: '#d1d5db',
-                      '&:hover': { backgroundColor: 'rgba(209, 213, 219, 0.1)' },
+                      color: (theme) =>
+                        theme.palette.mode === 'light' ? theme.palette.grey[800] : '#d1d5db',
+                      '&:hover': {
+                        backgroundColor: (theme) =>
+                          theme.palette.mode === 'light'
+                            ? theme.palette.grey[200]
+                            : 'rgba(209, 213, 219, 0.1)',
+                      },
                       textTransform: 'none',
                       borderRadius: 1,
                       padding: '8px 12px',
@@ -523,8 +554,14 @@ const MyNotes: React.FC = () => {
                     component="a"
                     href={`/dashboard/notes/${note.id}/edit`}
                     sx={{
-                      color: '#d1d5db',
-                      '&:hover': { backgroundColor: 'rgba(209, 213, 219, 0.1)' },
+                      color: (theme) =>
+                        theme.palette.mode === 'light' ? theme.palette.grey[800] : '#d1d5db',
+                      '&:hover': {
+                        backgroundColor: (theme) =>
+                          theme.palette.mode === 'light'
+                            ? theme.palette.grey[200]
+                            : 'rgba(209, 213, 219, 0.1)',
+                      },
                       textTransform: 'none',
                       borderRadius: 1,
                       padding: '8px 12px',
@@ -555,10 +592,13 @@ const MyNotes: React.FC = () => {
           href="/dashboard/notes/new"
           startIcon={<Add fontSize="small" />}
           sx={{
-            backgroundColor: '#fff',
-            color: '#111827',
+            backgroundColor: (theme) =>
+              theme.palette.mode === 'light' ? theme.palette.primary.main : '#fff',
+            color: (theme) =>
+              theme.palette.mode === 'light' ? theme.palette.primary.contrastText : '#111827',
             '&:hover': {
-              backgroundColor: '#f3f4f6',
+              backgroundColor: (theme) =>
+                theme.palette.mode === 'light' ? theme.palette.primary.dark : '#f3f4f6',
             },
             textTransform: 'none',
             borderRadius: 1,
