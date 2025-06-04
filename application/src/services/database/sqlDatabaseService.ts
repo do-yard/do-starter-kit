@@ -36,7 +36,8 @@ export class SqlDatabaseService implements DatabaseClient {
           (where.subscriptions as { some: Record<string, unknown> }).some.plan = options.filterPlan;
         }
         if (options.filterStatus) {
-          (where.subscriptions as { some: Record<string, unknown> }).some.status = options.filterStatus;
+          (where.subscriptions as { some: Record<string, unknown> }).some.status =
+            options.filterStatus;
         }
       }
       const [users, total] = await Promise.all([
@@ -70,7 +71,7 @@ export class SqlDatabaseService implements DatabaseClient {
     },
     count: async (): Promise<number> => {
       return prisma.user.count();
-    }
+    },
   };
   subscription = {
     findById: async (id: string): Promise<Subscription | null> => {
@@ -82,7 +83,10 @@ export class SqlDatabaseService implements DatabaseClient {
     create: async (subscription: Omit<Subscription, 'id' | 'createdAt'>): Promise<Subscription> => {
       return prisma.subscription.create({ data: subscription });
     },
-    update: async (id: string, subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>): Promise<Subscription> => {
+    update: async (
+      id: string,
+      subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>
+    ): Promise<Subscription> => {
       return prisma.subscription.update({ where: { id }, data: subscription });
     },
     delete: async (id: string): Promise<void> => {
