@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Typography, Card, CardContent, Alert, CircularProgress, Button } from '@mui/material';
+import { Box, Container, Typography, Alert, CircularProgress, Button } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import HomeIcon from '@mui/icons-material/Home';
+import ConfigurableServiceCard from './ConfigurableServiceCard';
 
 interface ServiceStatus {
   name: string;
@@ -16,19 +17,17 @@ interface ServiceStatus {
 }
 
 interface SystemInfo {
-  storageProvider: string;
   environment: string;
   timestamp: string;
 }
 
 /**
- * SystemStatusPage component for displaying the status of system services.
- * Simplified version that only shows if storage is configured and any missing environment variables.
+ * Generic SystemStatusPage component for displaying the status of all configured services.
+ * This component is service-agnostic and renders any services returned by the API.
  */
 const SystemStatusPage: React.FC = () => {
   const [services, setServices] = useState<ServiceStatus[]>([]);
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
-  const [configDiagnostics, setConfigDiagnostics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -44,9 +43,8 @@ const SystemStatusPage: React.FC = () => {
       }
       
       const data = await response.json();
-      setServices(data.services);
+      setServices(data.services || []);
       setSystemInfo(data.systemInfo);
-      setConfigDiagnostics(data.configDiagnostics);
       setLastUpdated(new Date());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
@@ -61,6 +59,37 @@ const SystemStatusPage: React.FC = () => {
   }, []);
 
   const hasIssues = services.some(service => !service.configured || !service.connected);
+  const unconfiguredServices = services.filter(service => !service.configured);
+  const configuredButDisconnectedServices = services.filter(service => service.configured && !service.connected);
+
+  const getOverallStatusMessage = () => {
+    if (!hasIssues) {
+      return {
+        title: "All Services Operational",
+        description: "All configured services are properly configured and connected."
+      };
+    }
+    
+    if (unconfiguredServices.length > 0) {
+      return {
+        title: "Missing Service Configuration",
+        description: "Some services are missing required configuration. Please check the details below."
+      };
+    }
+    
+    if (configuredButDisconnectedServices.length > 0) {
+      return {
+        title: "Service Connection Issues",
+        description: "Services are configured but connection failed. Please verify credentials and network connectivity."
+      };
+    }
+    
+    return {
+      title: "Service Issues Detected",
+      description: "Please review the service status details below."
+    };
+  };
+  const statusMessage = getOverallStatusMessage();
 
   return (
     <Container maxWidth="md" sx={{ py: 8 }}>
@@ -69,7 +98,7 @@ const SystemStatusPage: React.FC = () => {
           System Status
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Storage Service Configuration Status
+          Service Configuration and Connectivity Status
         </Typography>
         {lastUpdated && (
           <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 1 }}>
@@ -95,69 +124,25 @@ const SystemStatusPage: React.FC = () => {
           >
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant="h6">
-                {hasIssues
-                  ? services.some(s => !s.configured) 
-                    ? "Missing Storage Configuration"
-                    : "Storage Connection Failed"
-                  : "Storage Service Operational"}
+                {statusMessage.title}
               </Typography>
               <Typography variant="body2">
-                {hasIssues
-                  ? services.some(s => !s.configured)
-                    ? "Please check your environment variables below."
-                    : "Configuration is valid but connection failed. Please verify credentials and network connectivity."
-                  : "The storage service is properly configured and connected."}
+                {statusMessage.description}
               </Typography>
             </Box>
           </Alert>
 
           {/* Service Status Cards */}
           <Box sx={{ mb: 4 }}>
-            {services.map((service) => (
-              <Card key={service.name} sx={{ mb: 2 }}>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {service.name}
-                  </Typography>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    {service.configured ? 
-                      <CheckCircleIcon color="success" /> : 
-                      <ErrorIcon color="error" />}
-                    <Typography variant="body1" sx={{ ml: 1 }}>
-                      Configuration: {service.configured ? 'Valid' : 'Invalid'}
-                    </Typography>
-                  </Box>
-                  
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: service.error ? 1 : 0 }}>
-                    {service.configured === false ? (
-                      // Show gray for connection when not configured
-                      <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'grey.400', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Typography variant="caption" sx={{ color: 'white', fontSize: '12px' }}>?</Typography>
-                      </Box>
-                    ) : service.connected ? (
-                      <CheckCircleIcon color="success" />
-                    ) : (
-                      <ErrorIcon color="error" />
-                    )}
-                    <Typography variant="body1" sx={{ ml: 1 }}>
-                      Connection: {service.configured === false ? 'Not tested' : service.connected ? 'Successful' : 'Failed'}
-                    </Typography>
-                  </Box>
-                  
-                  {service.error && (
-                    <Alert severity="error" sx={{ mt: 2 }}>
-                      <Typography variant="body2" gutterBottom>
-                        {service.configured === false 
-                          ? `Missing settings: ${service.configToReview?.join(', ')}`
-                          : `${service.error}. Please review the following settings: ${service.configToReview?.join(', ')}`
-                        }
-                      </Typography>
-                    </Alert>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+            {services.length === 0 ? (
+              <Alert severity="info">
+                No services configured for status checking.
+              </Alert>
+            ) : (
+              services.map((service, index) => (
+                <ConfigurableServiceCard key={`${service.name}-${index}`} service={service} />
+              ))
+            )}
           </Box>
 
           <Box sx={{ textAlign: 'center' }}>

@@ -1,4 +1,3 @@
-import { serverConfig } from '../../../settings';
 import { createStorageService, StorageService } from '../storage/storage';
 import { ServiceConfigStatus } from './serviceConfigStatus';
 
@@ -21,10 +20,10 @@ export class StatusService {  /**
    * Uses the StorageService interface to check the current storage provider.
    * 
    * @returns {Promise<ServiceStatus>} The status of the storage service.
-   */  static async checkStorageStatus(): Promise<ServiceStatus> {
-    const storageType = serverConfig.storageProvider;
+   */
+  static async checkStorageStatus(): Promise<ServiceStatus> {
     const status: ServiceStatus = {
-      name: `Storage (${storageType})`,
+      name: 'Storage Service',
       configured: false,
       connected: false,
     };
@@ -48,21 +47,99 @@ export class StatusService {  /**
         status.configToReview = configStatus.configToReview;
       }
     } catch (error) {
-      status.error = error instanceof Error 
+      status.error = error instanceof Error
         ? `Failed to initialize storage service: ${error.message}` 
         : 'Failed to initialize storage service: Unknown error';
+    }    return status;
+  }
+
+  /**
+   * Example: Checks the status of email service configuration and connectivity.
+   * This is a mock implementation to demonstrate how easily new services can be added.
+   * 
+   * @returns {Promise<ServiceStatus>} The status of the email service.
+   */
+  static async checkEmailStatus(): Promise<ServiceStatus> {
+    const status: ServiceStatus = {
+      name: 'Email Service',
+      configured: false,
+      connected: false,
+    };
+
+    try {
+      // Mock check - in a real implementation, this would check actual email service configuration
+      const hasEmailConfig = process.env.RESEND_API_KEY || process.env.SMTP_HOST;
+      
+      if (hasEmailConfig) {
+        status.configured = true;
+        status.connected = true; // In real implementation, would test connection
+      } else {
+        status.error = 'Email service not configured';
+        status.configToReview = ['RESEND_API_KEY', 'SMTP_HOST'];
+      }
+    } catch (error) {
+      status.error = error instanceof Error 
+        ? `Failed to check email service: ${error.message}` 
+        : 'Failed to check email service: Unknown error';
     }
 
     return status;
   }
+
   /**
    * Checks the status of all configured services.
+   * This method will automatically check all available services.
    * 
    * @returns {Promise<ServiceStatus[]>} The status of all services.
    */
   static async checkAllServices(): Promise<ServiceStatus[]> {
-    // Currently only checking Storage, but we can add more services later
-    const storage = await this.checkStorageStatus();
-    return [storage];
+    const services: ServiceStatus[] = [];
+    
+    // Check storage service
+    try {
+      const storageStatus = await this.checkStorageStatus();
+      services.push(storageStatus);
+    } catch (error) {
+      // Add a fallback service status if storage check completely fails
+      services.push({
+        name: 'Storage Service',
+        configured: false,
+        connected: false,
+        error: 'Failed to check storage service status',
+        configToReview: ['Check storage configuration']
+      });
+    }
+    
+    // Check email service (demonstrates extensibility)
+    try {
+      const emailStatus = await this.checkEmailStatus();
+      services.push(emailStatus);
+    } catch (error) {
+      services.push({
+        name: 'Email Service',
+        configured: false,
+        connected: false,
+        error: 'Failed to check email service status'
+      });
+    }
+    
+    // TODO: Add other service checks here as they become available
+    // Example:
+    // try {
+    //   const databaseStatus = await this.checkDatabaseStatus();
+    //   services.push(databaseStatus);
+    // } catch (error) {
+    //   services.push({
+    //     name: 'Database Service',
+    //     configured: false,
+    //     connected: false,
+    //     error: 'Failed to check database service status'
+    //   });
+    // }
+    
+    return services;
   }
+  
+  // TODO: Add additional service check methods here
+  // static async checkDatabaseStatus(): Promise<ServiceStatus> { ... }
 }
