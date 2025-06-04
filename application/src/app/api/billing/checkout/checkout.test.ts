@@ -54,7 +54,7 @@ describe('checkout', () => {
 
   it('returns 404 if no subscription', async () => {
     mockFindByUserId.mockResolvedValue(undefined);
-    let res = await checkout(mockNextRequest(), user);
+    const res = await checkout(mockNextRequest(), user);
     expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
     expect(await res.json()).toEqual({ error: 'No subscription found' });
   });
