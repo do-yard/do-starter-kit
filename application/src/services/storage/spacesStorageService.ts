@@ -7,7 +7,8 @@ import {
   ListObjectsV2Command
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { StorageService, StorageConfigStatus } from './storage';
+import { StorageService } from './storage';
+import { ServiceConfigStatus } from '../status/serviceConfigStatus';
 import { serverConfig } from '../../../settings';
 
 /**
@@ -162,7 +163,7 @@ export class SpacesStorageService implements StorageService {
   /**
    * Checks if the storage service configuration is valid and tests connection when configuration is complete.
    */
-  async checkConfiguration(): Promise<StorageConfigStatus> {
+  async checkConfiguration(): Promise<ServiceConfigStatus> {
     // Check for missing configuration
     const missingConfig = Object.entries(SpacesStorageService.requiredConfig)
       .filter(([key]) => !serverConfig.Spaces[key as keyof typeof serverConfig.Spaces])

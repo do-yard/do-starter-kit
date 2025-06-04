@@ -1,5 +1,6 @@
 import { serverConfig } from '../../../settings';
 import { createStorageService, StorageService } from '../storage/storage';
+import { ServiceConfigStatus } from './serviceConfigStatus';
 
 /**
  * Interface for service status information.
