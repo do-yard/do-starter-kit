@@ -34,6 +34,7 @@ exec 2>/tmp/stripe_error.$$.txt
   FREE_PRICE_ID=$(create_stripe_price "$FREE_PRODUCT_ID" "0" "usd" "month" "$FREE_PRODUCT_NAME" "$STRIPE_SECRET_KEY" 3)
   PRO_PRODUCT_ID=$(create_stripe_product "$PRO_PRODUCT_NAME" "service" "$STRIPE_SECRET_KEY" 3)
   PRO_PRICE_ID=$(create_stripe_price "$PRO_PRODUCT_ID" "1000" "usd" "month" "$PRO_PRODUCT_NAME" "$STRIPE_SECRET_KEY" 3)
+  PRO_GIFT_PRICE_ID=$(create_stripe_price "$PRO_PRODUCT_ID" "0" "usd" "month" "$PRO_PRODUCT_NAME" "$STRIPE_SECRET_KEY" 3)
 
   # Close the file descriptor
   exec 3>&-
@@ -51,3 +52,4 @@ print_warning "- NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID : $FREE_PRODUCT_ID (FREE Pro
 print_warning "- NEXT_PUBLIC_STRIPE_FREE_PRICE_ID : $FREE_PRICE_ID (FREE price ID)"
 print_warning "- NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID : $PRO_PRODUCT_ID (PRO Product ID)" 
 print_warning "- NEXT_PUBLIC_STRIPE_PRO_PRICE_ID : $PRO_PRICE_ID (PRO price ID)"
+print_warning "- NEXT_PUBLIC_STRIPE_PRO_GIFT_PRICE_ID : $PRO_GIFT_PRICE_ID (PRO gift price ID)"

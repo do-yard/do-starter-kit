@@ -1,38 +1,43 @@
 import { updateUser } from './updateUser';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: jest.fn(),
-}));
-
-import { createDatabaseClient } from 'services/database/database';
-
-type MockDbClient = {
-  user: {
-    update: jest.Mock;
-  };
-  subscription: {
-    update: jest.Mock;
-  };
+const mockDbClient = {
+  user: { update: jest.fn() },
+  subscription: { update: jest.fn(), findByUserId: jest.fn() },
+};
+const mockBilling = {
+  listSubscription: jest.fn(),
+  updateSubscription: jest.fn(),
 };
 
+jest.mock('services/database/database', () => ({
+  createDatabaseClient: jest.fn(() => mockDbClient),
+}));
+jest.mock('services/billing/billing', () => ({
+  createBillingService: jest.fn(() => mockBilling),
+}));
+
+let mockGiftPriceId: string | undefined = 'pro_gift';
+let mockFreePriceId: string | undefined = 'free';
+
+jest.mock('../../../../settings', () => ({
+  serverConfig: {
+    Stripe: {
+      get proGiftPriceId() {
+        return mockGiftPriceId;
+      },
+      get freePriceId() {
+        return mockFreePriceId;
+      },
+    },
+  },
+}));
+
 describe('updateUser', () => {
-  let mockDbClient: MockDbClient;
-
   beforeEach(() => {
-    mockDbClient = {
-      user: {
-        update: jest.fn(),
-      },
-      subscription: {
-        update: jest.fn(),
-      },
-    };
-    (createDatabaseClient as jest.Mock).mockReturnValue(mockDbClient);
-  });
-
-  afterEach(() => {
     jest.clearAllMocks();
+    mockGiftPriceId = 'pro_gift';
+    mockFreePriceId = 'free';
   });
 
   function makeRequest(body: Record<string, unknown>) {
@@ -45,16 +50,14 @@ describe('updateUser', () => {
     const req = makeRequest({ name: 'Test' });
     const res = await updateUser(req);
     expect(res.status).toBe(400);
-    const json = await res.json();
-    expect(json).toEqual({ error: 'User ID is required' });
+    expect(await res.json()).toEqual({ error: 'User ID is required' });
   });
 
   it('returns 400 if no valid fields to update', async () => {
     const req = makeRequest({ id: 1, notAllowed: 'foo' });
     const res = await updateUser(req);
     expect(res.status).toBe(400);
-    const json = await res.json();
-    expect(json).toEqual({ error: 'No valid fields to update' });
+    expect(await res.json()).toEqual({ error: 'No valid fields to update' });
   });
 
   it('updates allowed fields and returns updated user', async () => {
@@ -64,18 +67,60 @@ describe('updateUser', () => {
     const res = await updateUser(req);
     expect(mockDbClient.user.update).toHaveBeenCalledWith(1, { name: 'New', role: 'ADMIN' });
     expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json).toEqual({ user: updatedUser });
+    expect(await res.json()).toEqual({ user: updatedUser });
   });
 
-  it('updates subscriptions if provided', async () => {
-    const updatedUser = { id: 1, name: 'A', role: 'USER' };
-    mockDbClient.user.update.mockResolvedValue(updatedUser);
-    mockDbClient.subscription.update.mockResolvedValue({});
-    const req = makeRequest({ id: 1, subscription: { plan: 'pro' } });
+  it('updates subscription to PRO (gift) if provided', async () => {
+    mockDbClient.user.update.mockResolvedValue({ id: 1 });
+    mockDbClient.subscription.findByUserId.mockResolvedValue([{ customerId: 'cus_1' }]);
+    mockBilling.listSubscription.mockResolvedValue([{ id: 'sub_1', items: [{ id: 'item_1' }] }]);
+    mockBilling.updateSubscription.mockResolvedValue({});
+    const req = makeRequest({ id: 1, subscription: { plan: 'PRO' } });
     const res = await updateUser(req);
-    expect(mockDbClient.subscription.update).toHaveBeenCalledWith(1, { plan: 'pro' });
+    expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith(1);
+    expect(mockBilling.listSubscription).toHaveBeenCalledWith('cus_1');
+    expect(mockBilling.updateSubscription).toHaveBeenCalledWith('sub_1', 'item_1', 'pro_gift');
     expect(res.status).toBe(200);
+  });
+
+  it('updates subscription to FREE if provided', async () => {
+    mockDbClient.user.update.mockResolvedValue({ id: 1 });
+    mockDbClient.subscription.findByUserId.mockResolvedValue([{ customerId: 'cus_1' }]);
+    mockBilling.listSubscription.mockResolvedValue([{ id: 'sub_1', items: [{ id: 'item_1' }] }]);
+    mockBilling.updateSubscription.mockResolvedValue({});
+    const req = makeRequest({ id: 1, subscription: { plan: 'FREE' } });
+    const res = await updateUser(req);
+    expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith(1);
+    expect(mockBilling.listSubscription).toHaveBeenCalledWith('cus_1');
+    expect(mockBilling.updateSubscription).toHaveBeenCalledWith('sub_1', 'item_1', 'free');
+    expect(res.status).toBe(200);
+  });
+
+  it('returns 404 if no existing subscription for PRO/FREE update', async () => {
+    mockDbClient.user.update.mockResolvedValue({ id: 1 });
+    mockDbClient.subscription.findByUserId.mockResolvedValue([]);
+    const req = makeRequest({ id: 1, subscription: { plan: 'PRO' } });
+    const res = await updateUser(req);
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: 'No existing subscription found for user' });
+  });
+
+  it('returns 500 if proGiftPriceId is not configured', async () => {
+    mockGiftPriceId = undefined;
+    mockDbClient.user.update.mockResolvedValue({ id: 1 });
+    const req = makeRequest({ id: 1, subscription: { plan: 'PRO' } });
+    const res = await updateUser(req);
+    expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: 'Pro gift price ID is not configured' });
+  });
+
+  it('returns 500 if freePriceId is not configured', async () => {
+    mockFreePriceId = undefined;
+    mockDbClient.user.update.mockResolvedValue({ id: 1 });
+    const req = makeRequest({ id: 1, subscription: { plan: 'FREE' } });
+    const res = await updateUser(req);
+    expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: 'Free price ID is not configured' });
   });
 
   it('returns 500 on server error', async () => {
@@ -83,7 +128,6 @@ describe('updateUser', () => {
     const req = makeRequest({ id: 1, name: 'X' });
     const res = await updateUser(req);
     expect(res.status).toBe(500);
-    const json = await res.json();
-    expect(json).toEqual({ error: 'Internal server error' });
+    expect(await res.json()).toEqual({ error: 'Internal server error' });
   });
 });
