@@ -70,7 +70,7 @@ spec:
           type: "SECRET"
         - key: RESEND_EMAIL_SENDER
           value: ""
-        - key: "SELF_API_URL"
+        - key: "BASE_URL"
           value: ""
 
   # Configuration for databases

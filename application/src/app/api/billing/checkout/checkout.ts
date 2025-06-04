@@ -38,8 +38,8 @@ export const checkout = async (
     const url = await billingService.checkout(
       serverConfig.Stripe.proPriceId,
       subscription[0].customerId,
-      `${serverConfig.selfApiURL}/dashboard/subscription/success`,
-      `${serverConfig.selfApiURL}/dashboard/subscription/cancel`
+      `${serverConfig.baseURL}/dashboard/subscription/success`,
+      `${serverConfig.baseURL}/dashboard/subscription/cancel`
     );
 
     if (!url) {
