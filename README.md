@@ -166,9 +166,6 @@ If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
 - Ensure secrets are encrypted wherever they are stored and when transmitted.
 - Check `Encrypt` checkbox for sensitive values in DigitalOcean environment variables configuration.
 
-**Use different secrets for each environment**
-- Use separate `.env.development`, `.env.production`, etc., and never reuse secrets between environments.
-
 **Do secret maintenance**
 - Expire or revoke unused access tokens.
 - Remove whitelisted IPs when no longer needed.
