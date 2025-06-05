@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Handles the retrieval of all users with optional pagination and filtering.
@@ -9,7 +9,7 @@ import { createDatabaseClient } from 'services/database/database';
  */
 export const getAllUsers = async (request: NextRequest): Promise<NextResponse> => {
   try {
-    const dbClient = createDatabaseClient();
+    const dbClient = await createDatabaseService();
 
     const { searchParams } = new URL(request.url);
 

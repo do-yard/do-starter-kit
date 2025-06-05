@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Updates a user with the provided data in the request body.
@@ -27,11 +27,10 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
       }
     });
 
-    if (Object.keys(updateData).length === 0) {
-      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
+    if (Object.keys(updateData).length === 0) {    return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
     }
 
-    const dbClient = createDatabaseClient();
+    const dbClient = await createDatabaseService();
     const updatedUser = await dbClient.user.update(id, {
       name: updateData.name,
       role: updateData.role,

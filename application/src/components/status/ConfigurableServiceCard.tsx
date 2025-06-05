@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography, Alert } from '@mui/material';
+import { Box, Card, CardContent, Typography, Alert, Chip } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 
@@ -7,6 +7,7 @@ interface ServiceStatus {
   name: string;
   configured: boolean;
   connected: boolean;
+  required: boolean;
   error?: string;
   configToReview?: string[];
 }
@@ -65,13 +66,24 @@ const ConfigurableServiceCard: React.FC<ConfigurableServiceCardProps> = ({ servi
       return `${service.error}. Please review the following settings: ${service.configToReview.join(', ')}`;
     }
   };
+  const getErrorSeverity = () => {
+    // For non-required services, show warnings instead of errors
+    return service.required ? 'error' : 'warning';
+  };
 
   return (
     <Card sx={{ mb: 2 }}>
       <CardContent>
-        <Typography variant="h6" gutterBottom>
-          {service.name}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Typography variant="h6">
+            {service.name}
+          </Typography>
+          <Chip 
+            label={service.required ? 'Required' : 'Optional'} 
+            color={service.required ? 'primary' : 'default'}
+            size="small"
+          />
+        </Box>
         
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           {service.configured ? 
@@ -88,9 +100,8 @@ const ConfigurableServiceCard: React.FC<ConfigurableServiceCardProps> = ({ servi
             Connection: {getConnectionStatus()}
           </Typography>
         </Box>
-        
-        {service.error && (
-          <Alert severity="error" sx={{ mt: 2 }}>
+          {service.error && (
+          <Alert severity={getErrorSeverity()} sx={{ mt: 2 }}>
             <Typography variant="body2">
               {getErrorMessage()}
             </Typography>

@@ -17,6 +17,14 @@ export interface ServiceConfigStatus {
 }
 
 /**
+ * Extended interface that includes criticality information for status service.
+ * Used by StatusService to determine overall application health.
+ */
+export interface ServiceStatus extends ServiceConfigStatus {
+  required: boolean; // true if this service is critical for app functionality
+}
+
+/**
  * Generic interface for services that can be checked for configuration and connectivity.
  * Services implementing this interface should provide consistent status reporting.
  */
@@ -32,4 +40,10 @@ export interface ConfigurableService {
    * @returns {Promise<ServiceConfigStatus>} Configuration and connection status object.
    */
   checkConfiguration(): Promise<ServiceConfigStatus>;
+  
+  /**
+   * Indicates whether this service is required for the application to function properly.
+   * @returns {boolean} True if the service is critical, false if it's optional.
+   */
+  isRequired(): boolean;
 }

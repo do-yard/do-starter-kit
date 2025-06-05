@@ -30,8 +30,8 @@ jest.mock('../../../helpers/fileName', () => ({
 // Mock database client
 const mockFindById = jest.fn();
 const mockUpdate = jest.fn();
-jest.mock('../../../services/database/database', () => ({
-  createDatabaseClient: () => ({
+jest.mock('../../../services/database/databaseFactory', () => ({
+  createDatabaseService: () => Promise.resolve({
     user: {
       findById: mockFindById,
       update: mockUpdate,

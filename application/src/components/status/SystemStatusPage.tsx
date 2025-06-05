@@ -12,6 +12,7 @@ interface ServiceStatus {
   name: string;
   configured: boolean;
   connected: boolean;
+  required: boolean;
   error?: string;
   configToReview?: string[];
 }
@@ -42,8 +43,8 @@ const SystemStatusPage: React.FC = () => {
       if (!response.ok) {
         throw new Error(`Failed to fetch status: ${response.statusText}`);
       }
-      
-      const data = await response.json();
+        const data = await response.json();
+      console.log('Status page received data:', data);
       setServices(data.services || []);
       setSystemInfo(data.systemInfo);
     } catch (err) {
@@ -57,36 +58,53 @@ const SystemStatusPage: React.FC = () => {
   useEffect(() => {
     fetchStatus();
   }, []);
-
-  const hasIssues = services.some(service => !service.configured || !service.connected);
-  const unconfiguredServices = services.filter(service => !service.configured);
-  const configuredButDisconnectedServices = services.filter(service => service.configured && !service.connected);
-
+  const requiredServices = services.filter(service => service.required);
+  const optionalServices = services.filter(service => !service.required);
+  
+  const hasRequiredIssues = requiredServices.some(service => !service.configured || !service.connected);
+  const hasOptionalIssues = optionalServices.some(service => !service.configured || !service.connected);
+  
+  const unconfiguredRequiredServices = requiredServices.filter(service => !service.configured);
+  const configuredButDisconnectedRequiredServices = requiredServices.filter(service => service.configured && !service.connected);
   const getOverallStatusMessage = () => {
-    if (!hasIssues) {
+    if (!hasRequiredIssues && !hasOptionalIssues) {
       return {
         title: "All Services Operational",
-        description: "All configured services are properly configured and connected."
+        description: "All configured services are properly configured and connected.",
+        severity: "success" as const
       };
     }
     
-    if (unconfiguredServices.length > 0) {
-      return {
-        title: "Missing Service Configuration",
-        description: "Some services are missing required configuration. Please check the details below."
-      };
+    if (hasRequiredIssues) {
+      if (unconfiguredRequiredServices.length > 0) {
+        return {
+          title: "Critical Services Missing Configuration",
+          description: "Required services are missing configuration. The application cannot function properly until these are resolved.",
+          severity: "error" as const
+        };
+      }
+      
+      if (configuredButDisconnectedRequiredServices.length > 0) {
+        return {
+          title: "Critical Service Connection Issues",
+          description: "Required services are configured but connection failed. Please verify credentials and network connectivity.",
+          severity: "error" as const
+        };
+      }
     }
     
-    if (configuredButDisconnectedServices.length > 0) {
+    if (hasOptionalIssues && !hasRequiredIssues) {
       return {
-        title: "Service Connection Issues",
-        description: "Services are configured but connection failed. Please verify credentials and network connectivity."
+        title: "Optional Services Have Issues",
+        description: "Some optional services have configuration or connection issues, but the application can still function.",
+        severity: "warning" as const
       };
     }
     
     return {
       title: "Service Issues Detected",
-      description: "Please review the service status details below."
+      description: "Please review the service status details below.",
+      severity: "warning" as const
     };
   };
   const statusMessage = getOverallStatusMessage();
@@ -115,11 +133,10 @@ const SystemStatusPage: React.FC = () => {
           {error}
         </Alert>
       ) : (
-        <>
-          <Alert 
-            severity={hasIssues ? "warning" : "success"} 
+        <>          <Alert 
+            severity={statusMessage.severity} 
             sx={{ mb: 3 }}
-            icon={hasIssues ? <ErrorIcon /> : <CheckCircleIcon />}
+            icon={statusMessage.severity === "success" ? <CheckCircleIcon /> : <ErrorIcon />}
           >
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant="h6">
@@ -142,17 +159,16 @@ const SystemStatusPage: React.FC = () => {
                 <ConfigurableServiceCard key={`${service.name}-${index}`} service={service} />
               ))
             )}
-          </Box>          <Box sx={{ textAlign: 'center' }}>
-            <Button 
+          </Box>          <Box sx={{ textAlign: 'center' }}>            <Button 
               variant="contained" 
               startIcon={<RefreshIcon />}
               onClick={() => fetchStatus(true)} 
-              sx={{ mr: hasIssues ? 0 : 2 }}
+              sx={{ mr: hasRequiredIssues ? 0 : 2 }}
               disabled={loading}
             >
               Refresh Status
             </Button>
-            {!hasIssues && (
+            {!hasRequiredIssues && (
               <Button 
                 variant="outlined"
                 startIcon={<HomeIcon />}

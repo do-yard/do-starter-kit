@@ -13,7 +13,7 @@ import { serverConfig } from '../../../settings';
 /**
  * Service for interacting with DigitalOcean Spaces storage using the AWS S3 API.
  */
-export class SpacesStorageService implements StorageService {
+export class SpacesStorageService extends StorageService {
   private client: S3Client | null = null;
   private bucketName: string = '';
   private isConfigured: boolean = false;
@@ -29,8 +29,8 @@ export class SpacesStorageService implements StorageService {
     'bucketName': { envVar: 'SPACES_BUCKET_NAME', description: 'Name of the Spaces bucket' },
     'region': { envVar: 'SPACES_REGION', description: 'DigitalOcean Spaces region' }
   };
-
   constructor() {
+    super();
     this.initializeClient();
   }
   
@@ -42,14 +42,13 @@ export class SpacesStorageService implements StorageService {
     try {      
       const accessKeyId = serverConfig.Spaces.accessKey;
       const secretAccessKey = serverConfig.Spaces.secretKey;
-      const bucketName = serverConfig.Spaces.bucketName;
-      const region = serverConfig.Spaces.region;
+      const bucketName = serverConfig.Spaces.bucketName;      const region = serverConfig.Spaces.region;
       const endpoint = `https://${region}.digitaloceanspaces.com`;
 
       // Check for missing configuration
       const missingConfig = Object.entries(SpacesStorageService.requiredConfig)
         .filter(([key]) => !serverConfig.Spaces[key as keyof typeof serverConfig.Spaces])
-        .map(([_, value]) => value.envVar);
+        .map(([, value]) => value.envVar);
 
       if (missingConfig.length > 0) {
         this.isConfigured = false;
@@ -57,14 +56,13 @@ export class SpacesStorageService implements StorageService {
         return;
       }      
       this.bucketName = bucketName!; // Safe to use ! here since we checked for missing config above
-      
-      this.client = new S3Client({
+        this.client = new S3Client({
         forcePathStyle: false, // Configures to use subdomain/virtual calling format.
         endpoint,
         region,
         credentials: {
-          accessKeyId,
-          secretAccessKey,
+          accessKeyId: accessKeyId!, // Safe to use ! here since we checked for missing config above
+          secretAccessKey: secretAccessKey!, // Safe to use ! here since we checked for missing config above
         },
       });
       this.isConfigured = true;
@@ -122,10 +120,10 @@ export class SpacesStorageService implements StorageService {
     const command = new DeleteObjectCommand({
       Bucket: this.bucketName,
       Key: this.getFilePath(userId, fileName),
-    });
-
-    await this.client.send(command);
-  }  /**
+    });    await this.client.send(command);
+  }
+  
+  /**
    * Checks if the Spaces service is properly configured and accessible.
    * Uses ListObjectsV2Command to verify bucket access and connectivity.
    * 
@@ -154,17 +152,20 @@ export class SpacesStorageService implements StorageService {
       
       // Store the last error details for use in checkConfiguration
       this.lastConnectionError = `Connection error: ${listErrorMsg}`;
-      
-      return false;
+          return false;
     }
-  }/**
+  }
+  
+  /**
    * Checks if the storage service configuration is valid and tests connection when configuration is complete.
    */
   async checkConfiguration(): Promise<ServiceConfigStatus> {
     // Check for missing configuration
     const missingConfig = Object.entries(SpacesStorageService.requiredConfig)
       .filter(([key]) => !serverConfig.Spaces[key as keyof typeof serverConfig.Spaces])
-      .map(([_, value]) => value.envVar);    if (missingConfig.length > 0) {
+      .map(([, value]) => value.envVar);
+
+    if (missingConfig.length > 0) {
       return {
         name: SpacesStorageService.serviceName,
         configured: false,
@@ -176,7 +177,7 @@ export class SpacesStorageService implements StorageService {
 
     // If configured, test the connection
     const isConnected = await this.checkConnection();
-      if (!isConnected) {
+    if (!isConnected) {
       return {
         name: SpacesStorageService.serviceName,
         configured: true,
@@ -186,7 +187,9 @@ export class SpacesStorageService implements StorageService {
         ),
         error: this.lastConnectionError || 'Connection failed'
       };
-    }    return {
+    }
+    
+    return {
       name: SpacesStorageService.serviceName,
       configured: true,
       connected: true

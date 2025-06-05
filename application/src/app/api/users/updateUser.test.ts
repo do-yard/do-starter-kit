@@ -1,11 +1,11 @@
 import { updateUser } from './updateUser';
 import { NextRequest } from 'next/server';
 
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: jest.fn(),
+jest.mock('services/database/databaseFactory', () => ({
+  createDatabaseService: jest.fn(),
 }));
 
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 type MockDbClient = {
   user: {
@@ -27,10 +27,9 @@ describe('updateUser', () => {
       },
       subscription: {
         findByUserId: jest.fn(),
-        update: jest.fn(),
-      },
+        update: jest.fn(),      },
     };
-    (createDatabaseClient as jest.Mock).mockReturnValue(mockDbClient);
+    (createDatabaseService as jest.Mock).mockResolvedValue(mockDbClient);
   });
 
   afterEach(() => {

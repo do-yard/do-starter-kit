@@ -3,6 +3,7 @@ import React from 'react';
 import { Box } from '@mui/material';
 import Sidebar from 'components/Sidebar/Sidebar';
 import { ThemeToggle } from 'components/Theme/Theme';
+import ServiceWarningIndicator from 'components/status/ServiceWarningIndicator';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -32,8 +33,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           overflowY: 'auto',
           position: 'relative',
         }}
-      >
-        <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
+      >        <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 10, display: 'flex', gap: 1 }}>
+          <ServiceWarningIndicator />
           <ThemeToggle />
         </Box>
         {children}

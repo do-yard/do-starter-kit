@@ -1,16 +1,7 @@
-import { createStorageService, StorageService } from '../storage/storage';
-import { ServiceConfigStatus } from './serviceConfigStatus';
-
-/**
- * Interface for service status information.
- */
-export interface ServiceStatus {
-  name: string;
-  configured: boolean;
-  connected: boolean;
-  error?: string;
-  configToReview?: string[];
-}
+import { createStorageService } from '../storage/storageFactory';
+import { createEmailService } from '../email/emailFactory';
+import { createDatabaseService } from '../database/databaseFactory';
+import { ServiceStatus } from './serviceConfigStatus';
 
 /**
  * Interface for application health state.
@@ -82,19 +73,21 @@ export class StatusService {
   /**
    * Force a fresh health check (bypasses cache).
    * Use this for the system status page refresh button.
-   */
-  static async forceHealthCheck(): Promise<HealthState> {
+   */  static async forceHealthCheck(): Promise<HealthState> {
     await this.performHealthCheck();
     return this.cachedHealthState!;
-  }  /**
+  }
+  
+  /**
    * Performs the actual health check and updates the cached state.
    */
   private static async performHealthCheck(): Promise<void> {
     try {
       const serviceStatuses = await this.checkAllServices();
       
-      // Determine if the application is healthy (all services are working)
-      const isHealthy = serviceStatuses.every(service => 
+      // Determine if the application is healthy - only required services matter for overall health
+      const requiredServices = serviceStatuses.filter(service => service.required);
+      const isHealthy = requiredServices.every(service => 
         service.configured && service.connected
       );
 
@@ -114,64 +107,98 @@ export class StatusService {
           name: 'Health Check System',
           configured: false,
           connected: false,
+          required: true, // Health check system itself is required
           error: `Health check failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-        }]
-      };
+        }]      };
     }
-  }/**
+  }
+  
+  /**
    * Checks the status of storage service configuration and connectivity.
    * Uses the StorageService interface to check the current storage provider.
    * 
    * @returns {Promise<ServiceStatus>} The status of the storage service.
-   */  static async checkStorageStatus(): Promise<ServiceStatus> {
+   */
+  static async checkStorageStatus(): Promise<ServiceStatus> {
     try {
-      const storageService = createStorageService();
+      const storageService = await createStorageService();
       
-      // Get configuration status from the service (now includes the service name)
-      return await storageService.checkConfiguration();
+      // Get configuration status from the service and add required classification
+      const configStatus = await storageService.checkConfiguration();
+      return {
+        ...configStatus,
+        required: storageService.isRequired()
+      };
     } catch (error) {
       return {
         name: 'Storage Service',
         configured: false,
         connected: false,
+        required: false, // Default to false if service can't be initialized
         error: error instanceof Error
           ? `Failed to initialize storage service: ${error.message}` 
-          : 'Failed to initialize storage service: Unknown error'
+          : 'Failed to initialize storage service: Unknown error'      };
+    }
+  }
+  
+  /**
+   * Checks the configuration and connectivity status of the email service.
+   * Uses the EmailService interface to check the current email provider.
+   * 
+   * @returns {Promise<ServiceStatus>} The status of the email service.
+   */
+  static async checkEmailStatus(): Promise<ServiceStatus> {
+    try {
+      const emailService = await createEmailService();
+      
+      // Get configuration status from the service and add required classification
+      const configStatus = await emailService.checkConfiguration();
+      return {
+        ...configStatus,
+        required: emailService.isRequired()
+      };
+    } catch (error) {
+      return {
+        name: 'Email Service',
+        configured: false,
+        connected: false,
+        required: true, // Default to true since email is critical
+        error: error instanceof Error
+          ? `Failed to initialize email service: ${error.message}` 
+          : 'Failed to initialize email service: Unknown error'
       };
     }
   }
 
   /**
-   * Example: Checks the status of email service configuration and connectivity.
-   * This is a mock implementation to demonstrate how easily new services can be added.
+   * Checks the configuration and connectivity status of the database service.
+   * Uses the DatabaseClient interface to check the current database provider.
    * 
-   * @returns {Promise<ServiceStatus>} The status of the email service.
+   * @returns {Promise<ServiceStatus>} The status of the database service.
    */
-  static async checkEmailStatus(): Promise<ServiceStatus> {
-    const status: ServiceStatus = {
-      name: 'Email Service',
-      configured: false,
-      connected: false,
-    };
-
+  static async checkDatabaseStatus(): Promise<ServiceStatus> {
     try {
-      // Mock check - in a real implementation, this would check actual email service configuration
-      const hasEmailConfig = process.env.RESEND_API_KEY || process.env.SMTP_HOST;
+      const databaseService = await createDatabaseService();
       
-      if (hasEmailConfig) {
-        status.configured = true;
-        status.connected = true; // In real implementation, would test connection
-      } else {        status.error = 'Email service not configured';
-        status.configToReview = ['RESEND_API_KEY', 'SMTP_HOST'];
-      }
+      // Get configuration status from the service and add required classification
+      const configStatus = await databaseService.checkConfiguration();
+      return {
+        ...configStatus,
+        required: databaseService.isRequired()
+      };
     } catch (error) {
-      status.error = error instanceof Error 
-        ? `Failed to check email service: ${error.message}` 
-        : 'Failed to check email service: Unknown error';
+      return {
+        name: 'Database Service',
+        configured: false,
+        connected: false,
+        required: true, // Default to true since database is critical
+        error: error instanceof Error
+          ? `Failed to initialize database service: ${error.message}` 
+          : 'Failed to initialize database service: Unknown error'
+      };
     }
-
-    return status;
   }
+
   /**
    * Checks the status of all configured services.
    * This method will automatically check all available services.
@@ -189,10 +216,9 @@ export class StatusService {
     const emailStatus = await this.checkEmailStatus();
     services.push(emailStatus);
     
-    // TODO: Add other service checks here as they become available
-    // Example:
-    // const databaseStatus = await this.checkDatabaseStatus();
-    // services.push(databaseStatus);
+    // Check database service (demonstrates extensibility)
+    const databaseStatus = await this.checkDatabaseStatus();
+    services.push(databaseStatus);
     
     return services;
   }

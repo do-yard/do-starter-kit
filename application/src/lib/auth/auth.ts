@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import type { Provider } from 'next-auth/providers';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '../prisma';
 import { hashPassword, verifyPassword } from 'helpers/hash';
@@ -20,13 +20,12 @@ const providers: Provider[] = [
       email: {},
       password: {},
       isSignUp: {},
-    },
-    authorize: async (credentials) => {
+    },    authorize: async (credentials) => {
       if (!credentials.email || !credentials.password) {
         throw new MissingCredentialsError();
       }
 
-      const dbClient = createDatabaseClient();
+      const dbClient = await createDatabaseService();
 
       if (credentials?.isSignUp === 'true') {
         if (!credentials.name) {

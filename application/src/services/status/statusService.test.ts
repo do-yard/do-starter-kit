@@ -42,15 +42,15 @@ describe('StatusService', () => {
     region: serverConfig.Spaces.region
   };
   
-  const mockStorageService = (storageModule as any).__mockStorageService;
-  const mockEmailService = (emailModule as any).__mockEmailService;
+  const mockStorageService = (storageModule as { __mockStorageService: unknown }).__mockStorageService;
+  const mockEmailService = (emailModule as { __mockEmailService: unknown }).__mockEmailService;
 
   beforeEach(() => {
     jest.clearAllMocks();
     
     // Reset static state
-    (StatusService as any).cachedHealthState = null;
-    (StatusService as any).isInitialized = false;
+    (StatusService as { cachedHealthState: unknown; isInitialized: boolean }).cachedHealthState = null;
+    (StatusService as { isInitialized: boolean }).isInitialized = false;
     
     // Set default mock values for testing
     serverConfig.storageProvider = 'Spaces';
@@ -196,8 +196,8 @@ describe('StatusService', () => {
   describe('Health State Management', () => {
     beforeEach(() => {
       // Reset static state
-      (StatusService as any).cachedHealthState = null;
-      (StatusService as any).isInitialized = false;
+      (StatusService as { cachedHealthState: unknown; isInitialized: boolean }).cachedHealthState = null;
+      (StatusService as { isInitialized: boolean }).isInitialized = false;
     });
 
     it('should initialize and cache health state', async () => {
