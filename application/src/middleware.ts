@@ -31,9 +31,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(ROLE_HOME_URL[role] ?? '/', request.url));
   }
 
+  if (pathname.startsWith('/admin') && role !== USER_ROLES.ADMIN) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/', '/login', '/signup', '/dashboard', '/dashboard/:path*'],
+  matcher: ['/', '/login', '/signup', '/admin/:path*', '/dashboard/:path*'],
 };
