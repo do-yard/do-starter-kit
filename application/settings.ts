@@ -3,11 +3,10 @@ export interface ServerConfig {
   storageProvider: string;
   emailProvider: string;
   Spaces: {
-    accessKey?: string;
-    secretKey?: string;
-    bucketName?: string;
-    region?: string;
-    endpoint?: string;
+    SPACES_KEY_ID?: string;
+    SPACES_KEY_SECRET?: string;
+    SPACES_BUCKET_NAME?: string;
+    SPACES_REGION?: string;
   };
   Resend: {
     apiKey?: string;
@@ -20,10 +19,10 @@ export const serverConfig: ServerConfig = {
   storageProvider: process.env.STORAGE_PROVIDER || 'Spaces',
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
   Spaces: {
-    accessKey: process.env.SPACES_KEY_ID,
-    secretKey: process.env.SPACES_KEY_SECRET,
-    bucketName: process.env.SPACES_BUCKET_NAME,
-    region: process.env.SPACES_REGION,
+    SPACES_KEY_ID: process.env.SPACES_KEY_ID,
+    SPACES_KEY_SECRET: process.env.SPACES_KEY_SECRET,
+    SPACES_BUCKET_NAME: process.env.SPACES_BUCKET_NAME,
+    SPACES_REGION: process.env.SPACES_REGION,
   },
   Resend: {
     apiKey: process.env.RESEND_API_KEY,
