@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useTransition } from "react";
-import { Typography, Box } from "@mui/material";
-import { EmailClient } from "lib/api/email";
-import Button from "@mui/material/Button";
+import { useState, useTransition } from 'react';
+import { Typography, Box } from '@mui/material';
+import { EmailClient } from 'lib/api/email';
+import Button from '@mui/material/Button';
 
 /**
  * DashboardPageClient renders the dashboard UI and allows the user to send a test email to themselves.
@@ -23,7 +23,7 @@ export default function DashboardPageClient({ userEmail }: { userEmail: string }
         await api.testEmail(userEmail);
         setSent(true);
       } catch (e) {
-        setError((e as Error).message || "Failed to send email");
+        setError((e as Error).message || 'Failed to send email');
       }
     });
   };
@@ -43,7 +43,7 @@ export default function DashboardPageClient({ userEmail }: { userEmail: string }
         disabled={sending}
         onClick={handleSendEmail}
       >
-        {sending ? "Sending..." : "Send Test Email"}
+        {sending ? 'Sending...' : 'Send Test Email'}
       </Button>
       {sent && (
         <Typography color="success.main" sx={{ mt: 2 }}>

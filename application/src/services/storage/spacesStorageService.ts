@@ -28,7 +28,6 @@ export class SpacesStorageService implements StorageService {
     'accessKey': { envVar: 'SPACES_KEY', description: 'DigitalOcean Spaces Access Key' },
     'secretKey': { envVar: 'SPACES_SECRET', description: 'DigitalOcean Spaces Secret Key' },
     'bucketName': { envVar: 'SPACES_BUCKETNAME', description: 'Name of the Spaces bucket' },
-    'endpoint': { envVar: 'SPACES_ENDPOINT', description: 'DigitalOcean Spaces endpoint URL' },
     'region': { envVar: 'SPACES_REGION', description: 'DigitalOcean Spaces region' }
   };
 
@@ -44,9 +43,10 @@ export class SpacesStorageService implements StorageService {
     try {
       const accessKeyId = serverConfig.Spaces.accessKey;
       const secretAccessKey = serverConfig.Spaces.secretKey;
-      const endpoint = serverConfig.Spaces.endpoint;
       const bucketName = serverConfig.Spaces.bucketName;
       const region = serverConfig.Spaces.region;
+
+      this.endpoint = `https://${serverConfig.Spaces.SPACES_REGION}.digitaloceanspaces.com`;
 
       // Check for missing configuration
       const missingConfig = Object.entries(SpacesStorageService.requiredConfig)

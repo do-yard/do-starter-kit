@@ -23,7 +23,7 @@ jest.mock('../../lib/api/users', () => {
             email: 'alice@example.com',
             role: 'USER',
             createdAt: new Date().toISOString(),
-            subscriptions: [{ plan: 'FREE', status: 'ACTIVE' }]
+            subscriptions: [{ plan: 'FREE', status: 'ACTIVE' }],
           },
           {
             id: '2',
@@ -31,7 +31,7 @@ jest.mock('../../lib/api/users', () => {
             email: 'bob@example.com',
             role: 'ADMIN',
             createdAt: new Date().toISOString(),
-            subscriptions: [{ plan: 'PRO', status: 'CANCELED' }]
+            subscriptions: [{ plan: 'PRO', status: 'CANCELED' }],
           },
           {
             id: '3',
@@ -39,17 +39,17 @@ jest.mock('../../lib/api/users', () => {
             email: 'charlie@example.com',
             role: 'USER',
             createdAt: new Date().toISOString(),
-            subscriptions: [{ plan: 'FREE', status: 'ACTIVE' }]
-          }
+            subscriptions: [{ plan: 'FREE', status: 'ACTIVE' }],
+          },
         ];
         // Simulate pagination
-        const page = args?.page as number || 1;
-        const pageSize = args?.pageSize as number || 10;
+        const page = (args?.page as number) || 1;
+        const pageSize = (args?.pageSize as number) || 10;
         const start = (page - 1) * pageSize;
         const end = start + pageSize;
         return Promise.resolve({
           users: allUsers.slice(start, end),
-          total: allUsers.length
+          total: allUsers.length,
         });
       }),
       updateUser: jest.fn().mockResolvedValue({}),

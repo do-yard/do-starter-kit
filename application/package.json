@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "jest",
     "test:server": "jest --config jest.server.config.ts",
     "test:all": "npm run test && npm run test:server"
