@@ -36,6 +36,7 @@ jest.mock('@mui/material/useMediaQuery', () => jest.fn());
 
 import { useSession, signOut } from 'next-auth/react';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { USER_ROLES } from 'lib/auth/roles';
 
 describe('Sidebar', () => {
   beforeEach(() => {
@@ -44,7 +45,7 @@ describe('Sidebar', () => {
 
   it('renders desktop sidebar with standard links', () => {
     (useSession as jest.Mock).mockReturnValue({
-      data: { user: { name: 'User', role: 'USER' } },
+      data: { user: { name: 'User', role: USER_ROLES.USER } },
     });
     (useMediaQuery as jest.Mock).mockReturnValue(false);
 
@@ -60,7 +61,7 @@ describe('Sidebar', () => {
 
   it('renders admin link for ADMIN role', () => {
     (useSession as jest.Mock).mockReturnValue({
-      data: { user: { name: 'Admin', role: 'ADMIN' } },
+      data: { user: { name: 'Admin', role: USER_ROLES.ADMIN } },
     });
     (useMediaQuery as jest.Mock).mockReturnValue(false);
 
@@ -70,7 +71,7 @@ describe('Sidebar', () => {
 
   it('calls signOut on logout click', () => {
     (useSession as jest.Mock).mockReturnValue({
-      data: { user: { name: 'User', role: 'USER' } },
+      data: { user: { name: 'User', role: USER_ROLES.USER } },
     });
     (useMediaQuery as jest.Mock).mockReturnValue(false);
 
@@ -82,7 +83,7 @@ describe('Sidebar', () => {
 
   it('renders mobile drawer toggle', () => {
     (useSession as jest.Mock).mockReturnValue({
-      data: { user: { name: 'User', role: 'USER' } },
+      data: { user: { name: 'User', role: USER_ROLES.USER } },
     });
     (useMediaQuery as jest.Mock).mockReturnValue(true);
 

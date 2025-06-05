@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import SignUpForm from './SignUpForm';
 import { signIn } from 'next-auth/react';
 import React from 'react';
+import { UserAlreadyExistsError } from 'lib/auth/errors';
 
 jest.mock('next/link', () => ({
   __esModule: true,
@@ -66,7 +67,13 @@ describe('SignUpForm', () => {
 
   it('shows error message if signIn fails', async () => {
     const mockSignIn = signIn as jest.Mock;
-    mockSignIn.mockResolvedValue({ ok: false, error: 'Account exists', code: '409' });
+    const errorInstance = new UserAlreadyExistsError();
+
+    mockSignIn.mockResolvedValue({
+      ok: false,
+      error: true,
+      code: errorInstance.code,
+    });
 
     render(<SignUpForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'exists@example.com');
@@ -75,6 +82,6 @@ describe('SignUpForm', () => {
 
     fireEvent.submit(screen.getByTestId('signup-form'));
 
-    expect(await screen.findByText(/409/i)).toBeInTheDocument();
+    expect(await screen.findByText(/user already exists/i)).toBeInTheDocument();
   });
 });

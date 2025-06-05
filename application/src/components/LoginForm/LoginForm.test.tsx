@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import LoginForm from './LoginForm';
 import { signIn } from 'next-auth/react';
 import React from 'react';
+import { InvalidCredentialsError } from 'lib/auth/errors';
 
 jest.mock('next/link', () => ({
   __esModule: true,
@@ -51,14 +52,21 @@ describe('LoginForm', () => {
 
   it('shows error message on failed login', async () => {
     const mockSignIn = signIn as jest.Mock;
-    mockSignIn.mockResolvedValue({ ok: false, error: 'Invalid credentials', code: '401' });
+
+    const errorInstance = new InvalidCredentialsError();
+
+    mockSignIn.mockResolvedValue({
+      ok: false,
+      error: true,
+      code: errorInstance.code, // Important: match what LoginForm is looking for
+    });
 
     render(<LoginForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'fail@example.com');
-    await userEvent.type(screen.getByLabelText(/password/i), 'wrongpass');
+    await userEvent.type(screen.getByLabelText(/password/i), 'wrong-pass');
 
     fireEvent.submit(screen.getByTestId('login-form'));
 
-    expect(await screen.findByText(/401/i)).toBeInTheDocument();
+    expect(await screen.findByText(/invalid credentials/i)).toBeInTheDocument();
   });
 });
