@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Box, CircularProgress } from '@mui/material';
-import { USER_ROLES } from '../../../lib/auth/roles';
+import { USER_ROLES } from 'lib/auth/roles';
 
 interface AdminLayout {
   children: ReactNode;
