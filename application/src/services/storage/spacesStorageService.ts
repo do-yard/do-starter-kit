@@ -22,7 +22,9 @@ export class SpacesStorageService implements StorageService {
       .map(([key]) => key);
 
     if (missingVars.length > 0) {
-      throw new Error(`Missing required environment variables for Spaces. Make sure you set these in your .env file: ${missingVars.join(', ')}`);
+      throw new Error(
+        `Missing required environment variables for Spaces. Make sure you set these in your .env file: ${missingVars.join(', ')}`
+      );
     }
 
     this.endpoint = `https://${serverConfig.Spaces.SPACES_REGION}.digitaloceanspaces.com`;

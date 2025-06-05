@@ -68,7 +68,10 @@ export const updateUserProfile = async (
 
     return NextResponse.json({ name: dbUser.name, image: dbUser.image }, { status: 200 });
   } catch (error) {
-    console.error('Profile update error:', error instanceof Error ? `${error.name}: ${error.message}` : error);
+    console.error(
+      'Profile update error:',
+      error instanceof Error ? `${error.name}: ${error.message}` : error
+    );
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 };
