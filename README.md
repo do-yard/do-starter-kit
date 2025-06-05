@@ -135,15 +135,40 @@ If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
 
 1. Upload the repo to GitHub or push the changes if created a fork of the original DigitalOcean repo.
 1. Create an **app.yaml** file by copying **app.template.yaml**.
-1. Replace the environment variables placeholders with the values of your **.env** file. `APP_NAME`, `DB_NAME` and `CLUSTER_NAME` are arbitrary. `${APP_URL}` value can be obtained once the app is deployed.
-1. Replace `do-yard/do-starter-kit` with your GitHub username and repo name.
-1. Replace `${GITHUB_BRANCH}` with the branch you want to deploy.
+1. **Important**: settings from .env file do not transfer automatically to the **app.yaml**, they have to be copied manually. Also, there are a few other values to complete in the YAML. The following is a checklist with all placeholders:
+   - [ ] **APP_NAME**: arbitrary name for your app.
+   - [ ] **repo**: replace _do-yard/do-starter-kit_ with your GitHub username and repo name. 
+   - [ ] **GITHUB_BRANCH**: the branch you want to deploy.
+   - [ ] **DB_NAME**: arbitrary name for your database.
+   - [ ] **SPACES_KEY_ID**: id of an existing Spaces storage key.
+   - [ ] **SPACES_KEY_SECRET**: secret of an existing Spaces storage key.
+   - [ ] **SPACES_BUCKET_NAME**: name of an existing bucket.
+   - [ ] **SPACES_REGION**: bucket region.
+   - [ ] **NEXTAUTH_SECRET**: arbitrary string for Auth.js.
+   - [ ] **APP_URL**: URL of the site, can be obtained after the site is deployed. You can leave it blank before deployment.
+   - [ ] **RESEND_API_KEY**: Your Resend API key. This feature is WIP.
+   - [ ] **RESEND_EMAIL_SENDER**: Sender address for the emails that the app will send. This feature is WIP.
+   - [ ] **CLUSTER_NAME**: arbitrary name for the DB cluster.
 1. Download and install [DigitalOcean doctl](https://docs.digitalocean.com/reference/doctl/how-to/install/).
 1. Create and API key in [DigitalOcean](https://cloud.digitalocean.com/account/api/tokens) and store it securely.
 1. Authenticate locally using `doctl auth init`
 1. From the root directory of the repo, deploy the app using `doctl apps create --spec .do\app.yaml`
 1. Once the app is deployed. Configure the `NEXTAUTH_URL` with the app URL.
 1. Run Prisma migrations from the DigitalOcean console `npx prisma migrate deploy`
+
+### Best practices when working with secrets and environment variables
+
+**Never commit secrets to version control**
+- Add `.env`, `.env.*`, and any secret files to your .gitignore.
+- Use example files (like env-example) to show required variables without real values.
+
+**Encrypt secrets at rest and in transit**
+- Ensure secrets are encrypted wherever they are stored and when transmitted.
+- Check `Encrypt` checkbox for sensitive values in DigitalOcean environment variables configuration.
+
+**Do secret maintenance**
+- Expire or revoke unused access tokens.
+- Remove whitelisted IPs when no longer needed.
 
 ## Delete the App
 
