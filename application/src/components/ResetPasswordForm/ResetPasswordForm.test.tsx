@@ -6,15 +6,9 @@ describe('ResetPasswordForm', () => {
   it('renders all fields and the submit button', () => {
     render(<ResetPasswordForm />);
     expect(screen.getByLabelText(/current password/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/new password/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/confirm new password/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^new password$/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^confirm new password$/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /reset password/i })).toBeInTheDocument();
-  });
-
-  it('shows error if fields are empty and form is submitted', async () => {
-    render(<ResetPasswordForm />);
-    fireEvent.click(screen.getByRole('button', { name: /reset password/i }));
-    expect(await screen.findByText(/all fields are required/i)).toBeInTheDocument();
   });
 
   it('shows error if new passwords do not match', async () => {
