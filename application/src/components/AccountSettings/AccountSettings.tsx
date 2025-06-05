@@ -6,7 +6,7 @@ import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
 import DoneIcon from '@mui/icons-material/Done';
 import Image from 'next/image';
-import ResetPasswordForm from '../ResetPasswordForm/ResetPasswordForm';
+import UpdatePasswordForm from '../UpdatePasswordForm/UpdatePasswordForm';
 import CustomTextField from '../CustomTextField/CustomTextField';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
@@ -253,7 +253,7 @@ export default function AccountSettings() {
         </Box>
       </Card>
       <Box sx={{ mt: 4 }}>
-        <ResetPasswordForm />
+        <UpdatePasswordForm />
       </Box>
     </Box>
   );

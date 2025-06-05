@@ -2,20 +2,12 @@ import React, { useState } from 'react';
 import { Button, Card, Typography, Box } from '@mui/material';
 import CustomTextField from '../CustomTextField/CustomTextField';
 
-interface ResetPasswordFormProps {
-  onSubmit?: (data: {
-    currentPassword: string;
-    newPassword: string;
-    confirmNewPassword: string;
-  }) => void;
-}
-
 /**
- * Form for resetting user password.
+ * Form for updating user password.
  *
  * Has three fields, current password, new password and confirm new password.
  */
-export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit }) => {
+export const UpdatePasswordForm: React.FC = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -37,13 +29,20 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit }
     }
     setLoading(true);
     try {
-      if (onSubmit) {
-        await onSubmit({ currentPassword, newPassword, confirmNewPassword });
-        setSuccess('Password updated successfully.');
-      } else {
-        // Placeholder for actual API call
-        setTimeout(() => setSuccess('Password updated successfully.'), 1000);
+      const formData = new FormData();
+      formData.append('currentPassword', currentPassword);
+      formData.append('newPassword', newPassword);
+      formData.append('confirmNewPassword', confirmNewPassword);
+
+      const response = await fetch('/api/password', {
+        method: 'PATCH',
+        body: formData,
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to update password.');
       }
+      setSuccess('Password updated successfully.');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmNewPassword('');
@@ -118,7 +117,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit }
             disabled={loading}
             sx={{ mt: 2 }}
           >
-            {loading ? 'Updating...' : 'Reset Password'}
+            {loading ? 'Updating...' : 'Update Password'}
           </Button>
         </Box>
       </Card>
@@ -126,4 +125,4 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit }
   );
 };
 
-export default ResetPasswordForm;
+export default UpdatePasswordForm;
