@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
 import Link from 'next/link';
-import FormButton from './FormButton';
+import FormButton from 'components/FormButton/FormButton';
 import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -51,7 +51,7 @@ const LoginForm: React.FC = () => {
         alignItems="center"
         bgcolor="#f3f4f6"
       >
-        <Card variant="outlined" sx={{ width: '100%', maxWidth: 400 }} >
+        <Card variant="outlined" sx={{ width: '100%', maxWidth: 400 }}>
           <Box display="flex" flexDirection="column" gap={1.5} p={3}>
             <Typography fontWeight="bold" variant="h5">
               Log In
@@ -62,7 +62,7 @@ const LoginForm: React.FC = () => {
           </Box>
 
           <CardContent sx={{ p: 3, pt: 0, pb: 1 }}>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} data-testid="login-form">
               <Box display="grid" gap={2}>
                 <Box display="flex" flexDirection="column" gap={1}>
                   <label htmlFor="email" style={{ fontSize: 14, lineHeight: 1.5 }}>

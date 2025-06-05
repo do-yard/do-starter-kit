@@ -1,4 +1,4 @@
-import LoginForm from 'components/public-view/LoginForm';
+import LoginForm from 'components/LoginForm/LoginForm';
 import React from 'react';
 
 /**
