@@ -13,7 +13,6 @@ type MockDbClient = {
   };
 };
 
-
 describe('getAllUsers', () => {
   let mockDbClient: MockDbClient;
 
@@ -35,7 +34,10 @@ describe('getAllUsers', () => {
   }
 
   it('returns users and total count (no filters)', async () => {
-    const users = [{ id: 1, name: 'A' }, { id: 2, name: 'B' }];
+    const users = [
+      { id: 1, name: 'A' },
+      { id: 2, name: 'B' },
+    ];
     mockDbClient.user.findAll.mockResolvedValue({ users, total: 2 });
     const req = makeRequest('http://localhost/api/users');
     const res = await getAllUsers(req);
@@ -53,7 +55,9 @@ describe('getAllUsers', () => {
 
   it('applies pagination and filters', async () => {
     mockDbClient.user.findAll.mockResolvedValue({ users: [], total: 0 });
-    const req = makeRequest('http://localhost/api/users?page=2&pageSize=5&searchName=foo&filterPlan=pro&filterStatus=active');
+    const req = makeRequest(
+      'http://localhost/api/users?page=2&pageSize=5&searchName=foo&filterPlan=pro&filterStatus=active'
+    );
     await getAllUsers(req);
     expect(mockDbClient.user.findAll).toHaveBeenCalledWith({
       page: 2,

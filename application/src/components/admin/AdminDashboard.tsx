@@ -135,7 +135,7 @@ export default function AdminDashboard() {
       // Refresh users
       const data = await api.getUsers();
       setUsers(data.users || []);
-      if (session.data?.user?.id === userId) { 
+      if (session.data?.user?.id === userId) {
         session.update({ user: { name: fields.name } });
       }
       handleEditClose();
