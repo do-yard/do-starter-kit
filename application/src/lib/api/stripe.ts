@@ -51,4 +51,19 @@ export class StripeClient {
     if (!res.ok) throw new Error('Failed to update to pro');
     return await res.json();
   }
+
+  async getProducts(): Promise<
+    {
+      priceId: string;
+      amount: number;
+      interval: string;
+      name: string;
+      description: string;
+      features: string[];
+    }[]
+  > {
+    const res = await fetch(`${this.baseURL}/pricing`);
+    if (!res.ok) throw new Error('Failed to fetch product pricing');
+    return res.json();
+  }
 }

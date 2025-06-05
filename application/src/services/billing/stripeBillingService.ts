@@ -128,4 +128,41 @@ export class StripeBillingService implements BillingService {
 
     return session.url;
   }
+
+  async getProducts(): Promise<
+    {
+      priceId: string;
+      amount: number;
+      interval: string | null;
+      name: string;
+      description: string;
+      features: string[];
+    }[]
+  > {
+    const priceIds = [serverConfig.Stripe.freePriceId!, serverConfig.Stripe.proPriceId!];
+
+    const plans = await Promise.all(
+      priceIds.map(async (priceId) => {
+        const price = await this.stripe.prices.retrieve(priceId, {
+          expand: ['product'],
+        });
+
+        const product = price.product as Stripe.Product;
+
+        const featuresResponse = await this.stripe.products.listFeatures(product.id);
+        const features = featuresResponse.data.map((pf) => pf.entitlement_feature.name);
+
+        return {
+          priceId: price.id,
+          amount: (price.unit_amount || 0) / 100,
+          interval: price.recurring?.interval || null,
+          name: product.name,
+          description: product.description || '',
+          features,
+        };
+      })
+    );
+
+    return plans;
+  }
 }
