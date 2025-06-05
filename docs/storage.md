@@ -43,10 +43,10 @@ For DigitalOcean Apps and local environments, the environment variables for Spac
 
 ```
 STORAGE_PROVIDER=Spaces
-SPACES_ACCESS_KEY=your-spaces-access-key
-SPACES_KEY_SECRET=your-spaces-secret-key
-SPACES_ENDPOINT=your-region.digitaloceanspaces.com
-SPACES_BUCKET_NAME=your-bucket-name
+SPACES_KEY_ID=your-access-key-id-here # DigitalOcean Spaces Access Key Id
+SPACES_KEY_SECRET=your-access-key-secret-here # DigitalOcean Spaces Access Key Secret
+SPACES_REGION=spaces-bucket-region # Spaces Region
+SPACES_BUCKET_NAME=spaces-bucket-name # Spaces Bucket Name
 ```
 
 - Replace `your-access-key-here` and `your-secret-key-here` with the values you generated.
