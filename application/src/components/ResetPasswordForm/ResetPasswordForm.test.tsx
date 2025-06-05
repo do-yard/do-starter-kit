@@ -21,7 +21,9 @@ describe('ResetPasswordForm', () => {
     render(<ResetPasswordForm />);
     fireEvent.change(screen.getByLabelText(/current password/i), { target: { value: 'oldpass' } });
     fireEvent.change(screen.getByLabelText(/^new password$/i), { target: { value: 'newpass1' } });
-    fireEvent.change(screen.getByLabelText(/confirm new password/i), { target: { value: 'newpass2' } });
+    fireEvent.change(screen.getByLabelText(/confirm new password/i), {
+      target: { value: 'newpass2' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /reset password/i }));
     expect(await screen.findByText(/new passwords do not match/i)).toBeInTheDocument();
   });
@@ -31,13 +33,17 @@ describe('ResetPasswordForm', () => {
     render(<ResetPasswordForm onSubmit={onSubmit} />);
     fireEvent.change(screen.getByLabelText(/current password/i), { target: { value: 'oldpass' } });
     fireEvent.change(screen.getByLabelText(/^new password$/i), { target: { value: 'newpass' } });
-    fireEvent.change(screen.getByLabelText(/confirm new password/i), { target: { value: 'newpass' } });
+    fireEvent.change(screen.getByLabelText(/confirm new password/i), {
+      target: { value: 'newpass' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /reset password/i }));
-    await waitFor(() => expect(onSubmit).toHaveBeenCalledWith({
-      currentPassword: 'oldpass',
-      newPassword: 'newpass',
-      confirmNewPassword: 'newpass',
-    }));
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith({
+        currentPassword: 'oldpass',
+        newPassword: 'newpass',
+        confirmNewPassword: 'newpass',
+      })
+    );
     expect(await screen.findByText(/password updated successfully/i)).toBeInTheDocument();
   });
 
@@ -46,7 +52,9 @@ describe('ResetPasswordForm', () => {
     render(<ResetPasswordForm onSubmit={onSubmit} />);
     fireEvent.change(screen.getByLabelText(/current password/i), { target: { value: 'oldpass' } });
     fireEvent.change(screen.getByLabelText(/^new password$/i), { target: { value: 'newpass' } });
-    fireEvent.change(screen.getByLabelText(/confirm new password/i), { target: { value: 'newpass' } });
+    fireEvent.change(screen.getByLabelText(/confirm new password/i), {
+      target: { value: 'newpass' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /reset password/i }));
     expect(await screen.findByText(/server error/i)).toBeInTheDocument();
   });
