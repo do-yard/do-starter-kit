@@ -22,12 +22,11 @@ export class SpacesStorageService implements StorageService {
   
   // Service name for consistent display across all status responses
   private static readonly serviceName = 'Storage (DigitalOcean Spaces)';
-  
-  // Required config items with their corresponding env var names and descriptions
+    // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
-    'accessKey': { envVar: 'SPACES_KEY', description: 'DigitalOcean Spaces Access Key' },
-    'secretKey': { envVar: 'SPACES_SECRET', description: 'DigitalOcean Spaces Secret Key' },
-    'bucketName': { envVar: 'SPACES_BUCKETNAME', description: 'Name of the Spaces bucket' },
+    'accessKey': { envVar: 'SPACES_KEY_ID', description: 'DigitalOcean Spaces Access Key' },
+    'secretKey': { envVar: 'SPACES_KEY_SECRET', description: 'DigitalOcean Spaces Secret Key' },
+    'bucketName': { envVar: 'SPACES_BUCKET_NAME', description: 'Name of the Spaces bucket' },
     'region': { envVar: 'SPACES_REGION', description: 'DigitalOcean Spaces region' }
   };
 
@@ -40,24 +39,25 @@ export class SpacesStorageService implements StorageService {
    * Sets isConfigured flag and configError message if applicable.
    */
   private initializeClient(): void {
-    try {
+    try {      
       const accessKeyId = serverConfig.Spaces.accessKey;
       const secretAccessKey = serverConfig.Spaces.secretKey;
       const bucketName = serverConfig.Spaces.bucketName;
       const region = serverConfig.Spaces.region;
-
-      this.endpoint = `https://${serverConfig.Spaces.SPACES_REGION}.digitaloceanspaces.com`;
+      const endpoint = `https://${region}.digitaloceanspaces.com`;
 
       // Check for missing configuration
       const missingConfig = Object.entries(SpacesStorageService.requiredConfig)
         .filter(([key]) => !serverConfig.Spaces[key as keyof typeof serverConfig.Spaces])
-        .map(([_, value]) => value.envVar);      if (missingConfig.length > 0) {
+        .map(([_, value]) => value.envVar);
+
+      if (missingConfig.length > 0) {
         this.isConfigured = false;
         this.configError = 'Missing required configuration';
         return;
-      }
-
+      }      
       this.bucketName = bucketName!; // Safe to use ! here since we checked for missing config above
+      
       this.client = new S3Client({
         forcePathStyle: false, // Configures to use subdomain/virtual calling format.
         endpoint,
