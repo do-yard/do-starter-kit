@@ -3,7 +3,11 @@ import { Button, Card, Typography, Box } from '@mui/material';
 import CustomTextField from '../CustomTextField/CustomTextField';
 
 interface ResetPasswordFormProps {
-  onSubmit?: (data: { currentPassword: string; newPassword: string; confirmNewPassword: string }) => void;
+  onSubmit?: (data: {
+    currentPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+  }) => void;
 }
 
 /**
@@ -52,53 +56,72 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onSubmit }
 
   return (
     <Box>
-        <Card variant="outlined" component="form" onSubmit={handleSubmit} sx={{ p: 3, mx: 'auto', display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
-                Change Password
-            </Typography>
-            <Typography variant="body2" color="#9ca3af" sx={{ mb: 3 }}>
-                Ensure your account is secure
-            </Typography>
-            <Box sx={{ display: 'grid', gap: 4 }}>
-                <CustomTextField
-                    value={currentPassword}
-                    onChange={e => setCurrentPassword(e.target.value)}
-                    label='Current Password'
-                    id="currentPassword"
-                    name="currentPassword"
-                    type="password"
-                    placeholder="Current password"
-                    required={true}
-                />
-                <CustomTextField
-                    value={newPassword}
-                    onChange={e => setNewPassword(e.target.value)}
-                    label='New Password'
-                    id="newPassword"
-                    name="newPassword"
-                    type="password"
-                    placeholder="New password"
-                    required={true}
-                />
-                <CustomTextField
-                    value={confirmNewPassword}
-                    onChange={e => setConfirmNewPassword(e.target.value)}
-                    label='Confirm New Password'
-                    id="confirmNewPassword"
-                    name="confirmNewPassword"
-                    type="password"
-                    placeholder="Confirm new password"
-                    required={true}
-                />
-            </Box>
-            {error && <Typography color="error" sx={{ mt: 1 }}>{error}</Typography>}
-            {success && <Typography color="success.main" sx={{ mt: 1 }}>{success}</Typography>}
-            <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-            <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }}>
-                {loading ? 'Updating...' : 'Reset Password'}
-            </Button>
-            </Box>
-        </Card>
+      <Card
+        variant="outlined"
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{ p: 3, mx: 'auto', display: 'flex', flexDirection: 'column' }}
+      >
+        <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
+          Change Password
+        </Typography>
+        <Typography variant="body2" color="#9ca3af" sx={{ mb: 3 }}>
+          Ensure your account is secure
+        </Typography>
+        <Box sx={{ display: 'grid', gap: 4 }}>
+          <CustomTextField
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            label="Current Password"
+            id="currentPassword"
+            name="currentPassword"
+            type="password"
+            placeholder="Current password"
+            required={true}
+          />
+          <CustomTextField
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            label="New Password"
+            id="newPassword"
+            name="newPassword"
+            type="password"
+            placeholder="New password"
+            required={true}
+          />
+          <CustomTextField
+            value={confirmNewPassword}
+            onChange={(e) => setConfirmNewPassword(e.target.value)}
+            label="Confirm New Password"
+            id="confirmNewPassword"
+            name="confirmNewPassword"
+            type="password"
+            placeholder="Confirm new password"
+            required={true}
+          />
+        </Box>
+        {error && (
+          <Typography color="error" sx={{ mt: 1 }}>
+            {error}
+          </Typography>
+        )}
+        {success && (
+          <Typography color="success.main" sx={{ mt: 1 }}>
+            {success}
+          </Typography>
+        )}
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={loading}
+            sx={{ mt: 2 }}
+          >
+            {loading ? 'Updating...' : 'Reset Password'}
+          </Button>
+        </Box>
+      </Card>
     </Box>
   );
 };

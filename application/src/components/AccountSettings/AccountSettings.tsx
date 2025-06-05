@@ -146,16 +146,16 @@ export default function AccountSettings() {
                 value={formData.name}
                 onChange={handleInputChange}
                 disabled={isLoading}
-                label='Name'
-                id = 'name'
-                name='name'
-                placeholder='Your name'
+                label="Name"
+                id="name"
+                name="name"
+                placeholder="Your name"
               />
               <CustomTextField
                 value={formData.email}
                 onChange={handleInputChange}
                 disabled={true}
-                label='Email'
+                label="Email"
                 id="email"
                 name="email"
                 type="email"
