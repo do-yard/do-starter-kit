@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, Typography, TextField, Button, styled, CircularProgress, Card } from '@mui/material';
+import { Box, Typography, Button, styled, CircularProgress, Card } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
 import DoneIcon from '@mui/icons-material/Done';
 import Image from 'next/image';
+import ResetPasswordForm from '../ResetPasswordForm/ResetPasswordForm';
+import CustomTextField from '../CustomTextField/CustomTextField';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
   border: '2px dashed',
@@ -140,38 +142,25 @@ export default function AccountSettings() {
           </Typography>
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: 'grid', gap: 4 }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography component="label" htmlFor="name" variant="body2" fontWeight={500}>
-                  Name
-                </Typography>
-                <TextField
-                  id="name"
-                  name="name"
-                  placeholder="Your name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  fullWidth
-                  variant="outlined"
-                  disabled={isLoading}
-                />
-              </Box>
-
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography component="label" htmlFor="email" variant="body2" fontWeight={500}>
-                  Email
-                </Typography>
-                <TextField
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Your email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  fullWidth
-                  variant="outlined"
-                  disabled={true}
-                />
-              </Box>
+              <CustomTextField
+                value={formData.name}
+                onChange={handleInputChange}
+                disabled={isLoading}
+                label='Name'
+                id = 'name'
+                name='name'
+                placeholder='Your name'
+              />
+              <CustomTextField
+                value={formData.email}
+                onChange={handleInputChange}
+                disabled={true}
+                label='Email'
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Your email"
+              />
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 <Typography variant="body2" fontWeight={500}>
@@ -263,6 +252,9 @@ export default function AccountSettings() {
           </form>
         </Box>
       </Card>
+      <Box sx={{ mt: 4 }}>
+        <ResetPasswordForm />
+      </Box>
     </Box>
   );
 }
