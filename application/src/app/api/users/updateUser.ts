@@ -3,6 +3,8 @@ import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum } from 'types';
 import { serverConfig } from '../../../../settings';
+import { HTTP_STATUS } from 'lib/api/http';
+
 /**
  * Function to update subscriptions
  * @param sub subscription data
@@ -16,19 +18,16 @@ const updateSubscription = async (sub: any, id: string) => {
   if (sub.plan === SubscriptionPlanEnum.PRO) {
     console.log('PRO');
     if (!serverConfig.Stripe.proGiftPriceId) {
-      return NextResponse.json({ error: 'Pro gift price ID is not configured' }, { status: 500 });
+      throw new Error('Pro gift price ID is not configured');
     }
     const existingSubscription = await dbClient.subscription.findByUserId(id);
-
     if (
       !existingSubscription ||
       !existingSubscription.length ||
       !existingSubscription[0].customerId
     ) {
-      return NextResponse.json(
-        { error: 'No existing subscription found for user' },
-        { status: 404 }
-      );
+      console.error('No existing subscription found for user');
+      throw new Error('No existing subscription found for user');
     }
 
     const existingStripeSubscription = await billing.listSubscription(
@@ -43,9 +42,9 @@ const updateSubscription = async (sub: any, id: string) => {
   }
 
   if (sub.plan === SubscriptionPlanEnum.FREE) {
-    console.log('FREE');
     if (!serverConfig.Stripe.freePriceId) {
-      return NextResponse.json({ error: 'Free price ID is not configured' }, { status: 500 });
+      console.error('Free price ID is not configured');
+      throw new Error('Free price ID is not configured');
     }
     const existingSubscription = await dbClient.subscription.findByUserId(id);
 
@@ -54,10 +53,8 @@ const updateSubscription = async (sub: any, id: string) => {
       !existingSubscription.length ||
       !existingSubscription[0].customerId
     ) {
-      return NextResponse.json(
-        { error: 'No existing subscription found for user' },
-        { status: 404 }
-      );
+      console.error('No existing subscription found for user');
+      throw new Error('No existing subscription found for user');
     }
 
     const existingStripeSubscription = await billing.listSubscription(
@@ -87,7 +84,10 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
     const { id, ...updateData } = body;
 
     if (!id) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'User ID is required' },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
 
     // Only allow updating specific fields (e.g., name, email, role)
@@ -101,7 +101,10 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
     });
 
     if (Object.keys(updateData).length === 0) {
-      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'No valid fields to update' },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
 
     const dbClient = createDatabaseClient();
@@ -111,13 +114,21 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
     });
 
     if (updateData.subscription) {
-      console.log('EXIST SUBSCRIPTION DATA', updateData.subscription);
-      await updateSubscription(updateData.subscription, id);
+      try {
+        await updateSubscription(updateData.subscription, id);
+      } catch (error) {
+        return NextResponse.json(
+          { error: (error as Error).message },
+          { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+        );
+      }
     }
 
     return NextResponse.json({ user: updatedUser });
   } catch (error) {
-    console.error('Server error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };
