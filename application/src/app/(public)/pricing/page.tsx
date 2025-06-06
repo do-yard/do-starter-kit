@@ -1,87 +1,81 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  List,
-  ListItem,
-  CircularProgress,
-} from '@mui/material';
-import { useRouter } from 'next/navigation';
-import { StripeClient } from 'lib/api/stripe';
-
-interface Plan {
-  priceId: string;
-  amount: number;
-  interval: string;
-  name: string;
-  description: string;
-  features: string[];
-}
-
-const client = new StripeClient();
+import { Box, Button, Card, CardContent, Typography, List, ListItem } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
+import { createBillingService } from 'services/billing/billing';
+import Link from 'next/link';
 
 /**
- * PricingPage displays available subscription plans and allows users to select one.
+ * Renders the pricing page with available subscription plans.
  */
-export default function PricingPage() {
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    client
-      .getProducts()
-      .then((data) => setPlans(data))
-      .catch((err) => console.error('Failed to load pricing data:', err))
-      .finally(() => setLoading(false));
-  }, []);
+export default async function PricingPage() {
+  const billingService = createBillingService();
+  const plans = await billingService.getProducts();
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', px: 2, py: 6 }}>
-      <Typography variant="h1" gutterBottom>
+    <Box
+      sx={{
+        maxWidth: 1200,
+        mx: 'auto',
+        px: 2,
+        py: 6,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Typography variant="h1" gutterBottom align="center" sx={{ mb: 4 }}>
         Choose your Plan
       </Typography>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-            gap: 4,
-            mt: 4,
-          }}
-        >
-          {plans.map((plan) => (
-            <Card key={plan.priceId} elevation={3} sx={{ p: 2 }}>
-              <CardContent>
+
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+          gap: 4,
+          mt: 4,
+        }}
+      >
+        {plans.map((plan) => (
+          <Card key={plan.priceId} elevation={3} sx={{ p: 2 }}>
+            <CardContent>
+              <Typography variant="h2" gutterBottom>
+                {plan.name}
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ mb: 2, mr: 1, fontSize: '3rem', fontWeight: 700 }} gutterBottom>
+                  ${plan.amount}
+                </Typography>
                 <Typography variant="h4" gutterBottom>
-                  {plan.name}
+                  /{plan.interval}
                 </Typography>
-                <Typography variant="h6" gutterBottom>
-                  ${plan.amount} / {plan.interval}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  {plan.description}
-                </Typography>
-                <List>
-                  {plan.features.map((feature, index) => (
-                    <ListItem key={index}>{feature}</ListItem>
-                  ))}
-                </List>
-                <Button variant="contained" sx={{ mt: 2 }} onClick={() => router.push('/login')}>
-                  Get Started
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-      )}
+              </Box>
+              <Typography variant="subtitle1" gutterBottom>
+                {plan.description}
+              </Typography>
+              <List>
+                {plan.features.map((feature, index) => (
+                  <ListItem key={index} sx={{ py: 0.5, px: 0 }}>
+                    <CheckIcon sx={{ color: 'success.main', mr: 1 }} />
+                    <Typography variant="subtitle1">{feature}</Typography>
+                  </ListItem>
+                ))}
+              </List>
+              <Button
+                variant="contained"
+                fullWidth
+                component={Link}
+                href="/login"
+                sx={{
+                  mt: 2,
+                  bgcolor: 'black',
+                  color: 'white',
+                  '&:hover': { bgcolor: '#333' },
+                }}
+              >
+                Get Started
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
     </Box>
   );
 }

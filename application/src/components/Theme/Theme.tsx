@@ -13,13 +13,11 @@ export const typography = {
     fontSize: '2.5rem',
     fontWeight: 700,
     marginBottom: '16px',
-    color: '#fff',
   },
   h2: {
     fontSize: '2rem',
     fontWeight: 700,
     marginBottom: '48px',
-    color: '#fff',
   },
   h3: {
     fontSize: '1.75rem',
@@ -39,8 +37,8 @@ export const typography = {
   },
   subtitle1: {
     fontSize: '1.25rem',
-    marginBottom: '32px',
     color: '#6b7280',
+    lineHeight: 1.5,
   },
 };
 
