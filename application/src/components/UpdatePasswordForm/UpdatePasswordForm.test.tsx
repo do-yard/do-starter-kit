@@ -24,7 +24,7 @@ describe('UpdatePasswordForm', () => {
 
   it('calls onSubmit with correct values and shows success', async () => {
     const onSubmit = jest.fn().mockResolvedValue(undefined);
-    render(<UpdatePasswordForm/>);
+    render(<UpdatePasswordForm />);
     fireEvent.change(screen.getByLabelText(/current password/i), { target: { value: 'oldpass' } });
     fireEvent.change(screen.getByLabelText(/^new password$/i), { target: { value: 'newpass' } });
     fireEvent.change(screen.getByLabelText(/confirm new password/i), {
@@ -42,7 +42,7 @@ describe('UpdatePasswordForm', () => {
   });
 
   it('shows error if onSubmit throws', async () => {
-    render(<UpdatePasswordForm/>);
+    render(<UpdatePasswordForm />);
     fireEvent.change(screen.getByLabelText(/current password/i), { target: { value: 'oldpass' } });
     fireEvent.change(screen.getByLabelText(/^new password$/i), { target: { value: 'newpass' } });
     fireEvent.change(screen.getByLabelText(/confirm new password/i), {

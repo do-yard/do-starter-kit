@@ -47,7 +47,11 @@ describe('updatePassword', () => {
   });
 
   it('returns error if current password is empty', async () => {
-    const req = createRequestWithFormData({ currentPassword: '', newPassword: 'a', confirmNewPassword: 'a' });
+    const req = createRequestWithFormData({
+      currentPassword: '',
+      newPassword: 'a',
+      confirmNewPassword: 'a',
+    });
     const res = await updatePassword(req, mockUser);
     const json = await res.json();
     expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -55,7 +59,11 @@ describe('updatePassword', () => {
   });
 
   it('returns error if new password is empty', async () => {
-    const req = createRequestWithFormData({ currentPassword: 'a', newPassword: '', confirmNewPassword: 'a' });
+    const req = createRequestWithFormData({
+      currentPassword: 'a',
+      newPassword: '',
+      confirmNewPassword: 'a',
+    });
     const res = await updatePassword(req, mockUser);
     const json = await res.json();
     expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -63,7 +71,11 @@ describe('updatePassword', () => {
   });
 
   it('returns error if confirm new password is empty', async () => {
-    const req = createRequestWithFormData({ currentPassword: 'a', newPassword: 'a', confirmNewPassword: '' });
+    const req = createRequestWithFormData({
+      currentPassword: 'a',
+      newPassword: 'a',
+      confirmNewPassword: '',
+    });
     const res = await updatePassword(req, mockUser);
     const json = await res.json();
     expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -71,7 +83,11 @@ describe('updatePassword', () => {
   });
 
   it('returns error if new passwords do not match', async () => {
-    const req = createRequestWithFormData({ currentPassword: 'a', newPassword: 'b', confirmNewPassword: 'c' });
+    const req = createRequestWithFormData({
+      currentPassword: 'a',
+      newPassword: 'b',
+      confirmNewPassword: 'c',
+    });
     const res = await updatePassword(req, mockUser);
     const json = await res.json();
     expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
@@ -80,7 +96,11 @@ describe('updatePassword', () => {
 
   it('returns error if user does not exist', async () => {
     mockDb.user.findById.mockResolvedValue(null);
-    const req = createRequestWithFormData({ currentPassword: 'a', newPassword: 'b', confirmNewPassword: 'b' });
+    const req = createRequestWithFormData({
+      currentPassword: 'a',
+      newPassword: 'b',
+      confirmNewPassword: 'b',
+    });
     const res = await updatePassword(req, mockUser);
     const json = await res.json();
     expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
@@ -89,7 +109,11 @@ describe('updatePassword', () => {
 
   it('returns error if current password is incorrect', async () => {
     mockDb.user.findById.mockResolvedValue({ passwordHash: 'hash' });
-    const req = createRequestWithFormData({ currentPassword: 'wrong', newPassword: 'b', confirmNewPassword: 'b' });
+    const req = createRequestWithFormData({
+      currentPassword: 'wrong',
+      newPassword: 'b',
+      confirmNewPassword: 'b',
+    });
     const res = await updatePassword(req, mockUser);
     const json = await res.json();
     expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
@@ -97,9 +121,18 @@ describe('updatePassword', () => {
   });
 
   it('updates password and returns success', async () => {
-    mockDb.user.findById.mockResolvedValue({ id: 'user1', name: 'Test', image: 'img', passwordHash: '$2b$12$iyGm98HPjDxoD74cIbEHz.QVTvoPu5kPhiIuB6chsL6agm1x.KgF.' });
+    mockDb.user.findById.mockResolvedValue({
+      id: 'user1',
+      name: 'Test',
+      image: 'img',
+      passwordHash: '$2b$12$iyGm98HPjDxoD74cIbEHz.QVTvoPu5kPhiIuB6chsL6agm1x.KgF.',
+    });
     mockDb.user.update.mockResolvedValue(undefined);
-    const req = createRequestWithFormData({ currentPassword: '1234', newPassword: 'new', confirmNewPassword: 'new' });
+    const req = createRequestWithFormData({
+      currentPassword: '1234',
+      newPassword: 'new',
+      confirmNewPassword: 'new',
+    });
     const res = await updatePassword(req, mockUser);
     const json = await res.json();
     expect(res.status).toBe(HTTP_STATUS.OK);
@@ -109,7 +142,11 @@ describe('updatePassword', () => {
 
   it('returns 500 on unexpected error', async () => {
     mockDb.user.findById.mockRejectedValue(new Error('db error'));
-    const req = createRequestWithFormData({ currentPassword: 'a', newPassword: 'b', confirmNewPassword: 'b' });
+    const req = createRequestWithFormData({
+      currentPassword: 'a',
+      newPassword: 'b',
+      confirmNewPassword: 'b',
+    });
     const res = await updatePassword(req, mockUser);
     const json = await res.json();
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);

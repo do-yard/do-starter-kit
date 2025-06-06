@@ -19,19 +19,31 @@ export const updatePassword = async (
     const confirmNewPassword = formData.get('confirmNewPassword') as string | null;
 
     if (currentPassword === '') {
-      return NextResponse.json({ error: 'Current password cannot be empty' }, { status: HTTP_STATUS.BAD_REQUEST });
+      return NextResponse.json(
+        { error: 'Current password cannot be empty' },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
 
     if (newPassword === '') {
-      return NextResponse.json({ error: 'New password cannot be empty' }, { status: HTTP_STATUS.BAD_REQUEST });
+      return NextResponse.json(
+        { error: 'New password cannot be empty' },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
 
     if (confirmNewPassword === '') {
-      return NextResponse.json({ error: 'Confirm new password cannot be empty' }, { status: HTTP_STATUS.BAD_REQUEST });
+      return NextResponse.json(
+        { error: 'Confirm new password cannot be empty' },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
 
     if (newPassword !== confirmNewPassword) {
-      return NextResponse.json({ error: 'New passwords do not match' }, { status: HTTP_STATUS.BAD_REQUEST });
+      return NextResponse.json(
+        { error: 'New passwords do not match' },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
 
     const db = createDatabaseClient();
@@ -43,7 +55,10 @@ export const updatePassword = async (
 
     const isValid = await verifyPassword(currentPassword as string, dbUser.passwordHash);
     if (!isValid) {
-      return NextResponse.json({ error: "Current password is incorrect" }, { status: HTTP_STATUS.UNAUTHORIZED });
+      return NextResponse.json(
+        { error: 'Current password is incorrect' },
+        { status: HTTP_STATUS.UNAUTHORIZED }
+      );
     }
 
     const hashedPassword = await hashPassword(newPassword as string);
@@ -51,12 +66,18 @@ export const updatePassword = async (
 
     await db.user.update(dbUser.id, dbUser);
 
-    return NextResponse.json({ name: dbUser.name, image: dbUser.image }, { status: HTTP_STATUS.OK });
+    return NextResponse.json(
+      { name: dbUser.name, image: dbUser.image },
+      { status: HTTP_STATUS.OK }
+    );
   } catch (error) {
     console.error(
       'Error updating password:',
       error instanceof Error ? `${error.name}: ${error.message}` : error
     );
-    return NextResponse.json({ error: 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };
