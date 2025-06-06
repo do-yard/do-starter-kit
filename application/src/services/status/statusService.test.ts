@@ -1,49 +1,71 @@
 import { StatusService } from './statusService';
 import { serverConfig } from '../../../settings';
-import * as storageModule from '../storage/storage';
-import * as emailModule from '../email/email';
+import * as storageModule from '../storage/storageFactory';
+import * as emailModule from '../email/emailFactory';
+import * as databaseModule from '../database/databaseFactory';
 
 // Mock the storage module
-jest.mock('../storage/storage', () => {
+jest.mock('../storage/storageFactory', () => {
   const mockStorageService = {
     checkConnection: jest.fn(),
     checkConfiguration: jest.fn(),
     uploadFile: jest.fn(),
     getFileUrl: jest.fn(),
     deleteFile: jest.fn(),
+    isRequired: jest.fn().mockReturnValue(true),
   };
   
   return {
-    createStorageService: jest.fn(() => mockStorageService),
+    createStorageService: jest.fn(() => Promise.resolve(mockStorageService)),
     __mockStorageService: mockStorageService
   };
 });
 
 // Mock the email service
-jest.mock('../email/email', () => {
+jest.mock('../email/emailFactory', () => {
   const mockEmailService = {
     checkConfiguration: jest.fn(),
     sendEmail: jest.fn(),
+    isRequired: jest.fn().mockReturnValue(true),
   };
   
   return {
-    createEmailService: jest.fn(() => mockEmailService),
+    createEmailService: jest.fn(() => Promise.resolve(mockEmailService)),
     __mockEmailService: mockEmailService
   };
 });
 
-describe('StatusService', () => {
-  const originalConfig = {
-    storageProvider: serverConfig.storageProvider,
-    accessKey: serverConfig.Spaces.accessKey,
-    secretKey: serverConfig.Spaces.secretKey,
-    bucketName: serverConfig.Spaces.bucketName,
-    endpoint: serverConfig.Spaces.endpoint,
-    region: serverConfig.Spaces.region
+// Mock the database service
+jest.mock('../database/databaseFactory', () => {
+  const mockDatabaseService = {
+    checkConnection: jest.fn().mockResolvedValue(true),
+    checkConfiguration: jest.fn().mockResolvedValue({
+      name: 'Database Service',
+      configured: true,
+      connected: true,
+      error: null,
+      configToReview: undefined
+    }),
+    isRequired: jest.fn().mockReturnValue(true),
   };
   
-  const mockStorageService = (storageModule as { __mockStorageService: unknown }).__mockStorageService;
+  return {
+    createDatabaseService: jest.fn(() => Promise.resolve(mockDatabaseService)),
+    __mockDatabaseService: mockDatabaseService
+  };
+});
+
+describe('StatusService', () => {  const originalConfig = {
+    storageProvider: serverConfig.storageProvider,
+    accessKey: serverConfig.Spaces.SPACES_KEY_ID,
+    secretKey: serverConfig.Spaces.SPACES_KEY_SECRET,
+    bucketName: serverConfig.Spaces.SPACES_BUCKET_NAME,
+    endpoint: undefined, // This may not exist in the new structure
+    region: serverConfig.Spaces.SPACES_REGION
+  };
+    const mockStorageService = (storageModule as { __mockStorageService: unknown }).__mockStorageService;
   const mockEmailService = (emailModule as { __mockEmailService: unknown }).__mockEmailService;
+  const mockDatabaseService = (databaseModule as { __mockDatabaseService: unknown }).__mockDatabaseService;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -51,14 +73,12 @@ describe('StatusService', () => {
     // Reset static state
     (StatusService as { cachedHealthState: unknown; isInitialized: boolean }).cachedHealthState = null;
     (StatusService as { isInitialized: boolean }).isInitialized = false;
-    
-    // Set default mock values for testing
+      // Set default mock values for testing
     serverConfig.storageProvider = 'Spaces';
-    serverConfig.Spaces.accessKey = 'test-access-key';
-    serverConfig.Spaces.secretKey = 'test-secret-key';
-    serverConfig.Spaces.bucketName = 'test-bucket';
-    serverConfig.Spaces.endpoint = 'https://test.endpoint.com';
-    serverConfig.Spaces.region = 'test-region';
+    serverConfig.Spaces.SPACES_KEY_ID = 'test-access-key';
+    serverConfig.Spaces.SPACES_KEY_SECRET = 'test-secret-key';
+    serverConfig.Spaces.SPACES_BUCKET_NAME = 'test-bucket';
+    serverConfig.Spaces.SPACES_REGION = 'test-region';
     
     // Setup default mock responses
     mockStorageService.checkConfiguration.mockResolvedValue({
@@ -81,11 +101,10 @@ describe('StatusService', () => {
   afterAll(() => {
     // Restore original config
     serverConfig.storageProvider = originalConfig.storageProvider;
-    serverConfig.Spaces.accessKey = originalConfig.accessKey;
-    serverConfig.Spaces.secretKey = originalConfig.secretKey;
-    serverConfig.Spaces.bucketName = originalConfig.bucketName;
-    serverConfig.Spaces.endpoint = originalConfig.endpoint;
-    serverConfig.Spaces.region = originalConfig.region;
+    serverConfig.Spaces.SPACES_KEY_ID = originalConfig.accessKey;
+    serverConfig.Spaces.SPACES_KEY_SECRET = originalConfig.secretKey;
+    serverConfig.Spaces.SPACES_BUCKET_NAME = originalConfig.bucketName;
+    serverConfig.Spaces.SPACES_REGION = originalConfig.region;
   });
 
   describe('checkStorageStatus', () => {
@@ -176,9 +195,8 @@ describe('StatusService', () => {
       expect(result.error).toContain('Failed to initialize storage service');
     });
   });
-
   describe('checkAllServices', () => {
-    it('should return an array with storage and email service status', async () => {
+    it('should return an array with storage, email, and database service status', async () => {
       // Arrange
       mockStorageService.checkConnection.mockResolvedValue(true);
 
@@ -187,9 +205,10 @@ describe('StatusService', () => {
 
       // Assert
       expect(Array.isArray(results)).toBe(true);
-      expect(results.length).toBe(2); // Storage + Email
+      expect(results.length).toBe(3); // Storage + Email + Database
       expect(results.some(r => r.name.includes('Storage'))).toBe(true);
       expect(results.some(r => r.name.includes('Email'))).toBe(true);
+      expect(results.some(r => r.name.includes('Database'))).toBe(true);
     });
   });
 
@@ -221,11 +240,9 @@ describe('StatusService', () => {
       try {
         // Act
         await StatusService.initialize();
-        const healthState = StatusService.getHealthState();
-
-        // Assert
+        const healthState = StatusService.getHealthState();        // Assert
         expect(healthState).toBeDefined();
-        expect(healthState?.services).toHaveLength(2); // Storage + Email
+        expect(healthState?.services).toHaveLength(3); // Storage + Email + Database
         expect(healthState?.isHealthy).toBe(true);
         expect(StatusService.isApplicationHealthy()).toBe(true);
       } finally {

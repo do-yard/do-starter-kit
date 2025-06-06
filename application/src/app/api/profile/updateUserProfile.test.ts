@@ -7,8 +7,8 @@ jest.mock('uuid', () => ({
 const mockUploadFile = jest.fn();
 const mockGetFileUrl = jest.fn();
 const mockDeleteFile = jest.fn();
-jest.mock('../../../services/storage/storage', () => ({
-  createStorageService: () => ({
+jest.mock('../../../services/storage/storageFactory', () => ({
+  createStorageService: () => Promise.resolve({
     uploadFile: mockUploadFile,
     getFileUrl: mockGetFileUrl,
     deleteFile: mockDeleteFile,

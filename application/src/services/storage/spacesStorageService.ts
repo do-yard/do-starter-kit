@@ -22,12 +22,12 @@ export class SpacesStorageService extends StorageService {
   
   // Service name for consistent display across all status responses
   private static readonly serviceName = 'Storage (DigitalOcean Spaces)';
-    // Required config items with their corresponding env var names and descriptions
+  // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
-    'accessKey': { envVar: 'SPACES_KEY_ID', description: 'DigitalOcean Spaces Access Key' },
-    'secretKey': { envVar: 'SPACES_KEY_SECRET', description: 'DigitalOcean Spaces Secret Key' },
-    'bucketName': { envVar: 'SPACES_BUCKET_NAME', description: 'Name of the Spaces bucket' },
-    'region': { envVar: 'SPACES_REGION', description: 'DigitalOcean Spaces region' }
+    'SPACES_KEY_ID': { envVar: 'SPACES_KEY_ID', description: 'DigitalOcean Spaces Access Key' },
+    'SPACES_KEY_SECRET': { envVar: 'SPACES_KEY_SECRET', description: 'DigitalOcean Spaces Secret Key' },
+    'SPACES_BUCKET_NAME': { envVar: 'SPACES_BUCKET_NAME', description: 'Name of the Spaces bucket' },
+    'SPACES_REGION': { envVar: 'SPACES_REGION', description: 'DigitalOcean Spaces region' }
   };
   constructor() {
     super();
@@ -37,12 +37,11 @@ export class SpacesStorageService extends StorageService {
   /**
    * Initializes the S3 client based on the configuration.
    * Sets isConfigured flag and configError message if applicable.
-   */
-  private initializeClient(): void {
+   */  private initializeClient(): void {
     try {      
-      const accessKeyId = serverConfig.Spaces.accessKey;
-      const secretAccessKey = serverConfig.Spaces.secretKey;
-      const bucketName = serverConfig.Spaces.bucketName;      const region = serverConfig.Spaces.region;
+      const accessKeyId = serverConfig.Spaces.SPACES_KEY_ID;
+      const secretAccessKey = serverConfig.Spaces.SPACES_KEY_SECRET;
+      const bucketName = serverConfig.Spaces.SPACES_BUCKET_NAME;      const region = serverConfig.Spaces.SPACES_REGION;
       const endpoint = `https://${region}.digitaloceanspaces.com`;
 
       // Check for missing configuration
