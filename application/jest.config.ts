@@ -14,7 +14,6 @@ const customJestConfig = {
     '<rootDir>/src/lib/',
     '<rootDir>/src/services/',
     '<rootDir>/src/app/api/',
-    '<rootDir>/src/helpers/',
     '/node_modules/',
   ],
 };

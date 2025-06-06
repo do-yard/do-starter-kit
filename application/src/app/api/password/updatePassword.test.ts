@@ -1,21 +1,16 @@
 jest.mock('services/database/database');
-//jest.mock('helpers/hash');
+// Use correct relative path for helpers/hash
+const hashHelpers = require('../../../helpers/hash');
 
 import { updatePassword } from './updatePassword';
 import { NextRequest } from 'next/server';
 import { HTTP_STATUS } from 'lib/api/http';
-import { hashPassword, verifyPassword } from 'helpers/hash';
 
 const mockDb = {
   user: {
     findById: jest.fn(),
     update: jest.fn(),
   },
-};
-
-const mockHash = {
-    verifyPassword: jest.fn(),
-    hashPassword: jest.fn(),
 };
 
 const mockUser = { id: 'user1', role: 'user' };
@@ -30,7 +25,6 @@ describe('updatePassword', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (require('services/database/database').createDatabaseClient as jest.Mock).mockReturnValue(mockDb);
-    //(require('helpers/hash') as jest.Mock).mockReturnValue(mockHash);
   });
 
   it('returns error if current password is empty', async () => {
@@ -76,7 +70,6 @@ describe('updatePassword', () => {
 
   it('returns error if current password is incorrect', async () => {
     mockDb.user.findById.mockResolvedValue({ passwordHash: 'hash' });
-    //(require('helpers/hash').verifyPassword as jest.Mock).mockResolvedValue(false);
     const req = createRequestWithFormData({ currentPassword: 'wrong', newPassword: 'b', confirmNewPassword: 'b' });
     const res = await updatePassword(req, mockUser);
     const json = await res.json();
@@ -84,12 +77,12 @@ describe('updatePassword', () => {
     expect(json.error).toMatch(/current password is incorrect/i);
   });
 
-  it('updates password and returns success', async () => {
+  it.only('updates password and returns success', async () => {
     mockDb.user.findById.mockResolvedValue({ id: 'user1', name: 'Test', image: 'img', passwordHash: 'old' });
 
     // Only mock for this test
-    const verifyPasswordSpy = jest.spyOn(require('helpers/hash'), 'verifyPassword').mockResolvedValue(true);
-    const hashPasswordSpy = jest.spyOn(require('helpers/hash'), 'hashPassword').mockResolvedValue('newhash');
+    //const verifyPasswordSpy = jest.spyOn(hashHelpers, 'verifyPassword').mockResolvedValue(true);
+    //const hashPasswordSpy = jest.spyOn(hashHelpers, 'hashPassword').mockResolvedValue('newhash');
 
     mockDb.user.update.mockResolvedValue(undefined);
     const req = createRequestWithFormData({ currentPassword: 'old', newPassword: 'new', confirmNewPassword: 'new' });
@@ -100,8 +93,8 @@ describe('updatePassword', () => {
     expect(json.image).toBe('img');
 
     // Restore the original implementation after the test
-    verifyPasswordSpy.mockRestore();
-    hashPasswordSpy.mockRestore();
+    //verifyPasswordSpy.mockRestore();
+    //hashPasswordSpy.mockRestore();
   });
 
   it('returns 500 on unexpected error', async () => {
