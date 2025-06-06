@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AdminDashboard from './AdminDashboard';
+import { USER_ROLES } from 'lib/auth/roles';
 
 // Mock next-auth/react to avoid ESM import issues in tests
 jest.mock('next-auth/react', () => ({
@@ -21,7 +22,7 @@ jest.mock('../../lib/api/users', () => {
             id: '1',
             name: 'Alice',
             email: 'alice@example.com',
-            role: 'USER',
+            role: USER_ROLES.USER,
             createdAt: new Date().toISOString(),
             subscriptions: [{ plan: 'FREE', status: 'ACTIVE' }],
           },
@@ -29,7 +30,7 @@ jest.mock('../../lib/api/users', () => {
             id: '2',
             name: 'Bob',
             email: 'bob@example.com',
-            role: 'ADMIN',
+            role: USER_ROLES.ADMIN,
             createdAt: new Date().toISOString(),
             subscriptions: [{ plan: 'PRO', status: 'CANCELED' }],
           },
@@ -37,7 +38,7 @@ jest.mock('../../lib/api/users', () => {
             id: '3',
             name: 'Charlie',
             email: 'charlie@example.com',
-            role: 'USER',
+            role: USER_ROLES.USER,
             createdAt: new Date().toISOString(),
             subscriptions: [{ plan: 'FREE', status: 'ACTIVE' }],
           },

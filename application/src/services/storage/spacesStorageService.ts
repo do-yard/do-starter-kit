@@ -40,7 +40,8 @@ export class SpacesStorageService extends StorageService {
   /**
    * Initializes the S3 client based on the configuration.
    * Sets isConfigured flag and configError message if applicable.
-   */ private initializeClient(): void {
+   */
+  private initializeClient(): void {
     try {
       const accessKeyId = serverConfig.Spaces.SPACES_KEY_ID;
       const secretAccessKey = serverConfig.Spaces.SPACES_KEY_SECRET;

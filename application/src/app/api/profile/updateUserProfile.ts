@@ -17,7 +17,8 @@ export const updateUserProfile = async (
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
-    const newName = formData.get('name') as string | null; if (newName === '') {
+    const newName = formData.get('name') as string | null;
+    if (newName === '') {
       return NextResponse.json({ error: 'Name invalid' }, { status: HTTP_STATUS.BAD_REQUEST });
     }
 
@@ -25,23 +26,33 @@ export const updateUserProfile = async (
     const dbUser = await db.user.findById(user.id);
 
     if (!dbUser) {
-      return NextResponse.json({ error: "User doesn't exist" }, { status: HTTP_STATUS.BAD_REQUEST });
+      return NextResponse.json(
+        { error: "User doesn't exist" },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
 
     if (file) {
       const allowedTypes = ['image/jpeg', 'image/png'];
       if (!allowedTypes.includes(file.type)) {
-        return NextResponse.json({ error: 'Only JPG or PNG files are allowed' }, { status: HTTP_STATUS.BAD_REQUEST });
+        return NextResponse.json(
+          { error: 'Only JPG or PNG files are allowed' },
+          { status: HTTP_STATUS.BAD_REQUEST }
+        );
       }
 
       const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
-        return NextResponse.json({ error: 'File size must be 5MB or less' }, { status: HTTP_STATUS.BAD_REQUEST });
+        return NextResponse.json(
+          { error: 'File size must be 5MB or less' },
+          { status: HTTP_STATUS.BAD_REQUEST }
+        );
       }
 
       const extension = file.name.includes('.')
         ? file.name.substring(file.name.lastIndexOf('.'))
-        : ''; const fileName = `${uuidv4()}${extension}`;
+        : '';
+      const fileName = `${uuidv4()}${extension}`;
 
       const storageService = await createStorageService();
       const uploadedFileName = await storageService.uploadFile(user.id, fileName, file, {
@@ -64,9 +75,15 @@ export const updateUserProfile = async (
 
     await db.user.update(dbUser.id, dbUser);
 
-    return NextResponse.json({ name: dbUser.name, image: dbUser.image }, { status: HTTP_STATUS.OK });
+    return NextResponse.json(
+      { name: dbUser.name, image: dbUser.image },
+      { status: HTTP_STATUS.OK }
+    );
   } catch (error) {
-    console.error('Profile update error:', error instanceof Error ? `${error.name}: ${error.message}` : error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
+    console.error(
+      'Profile update error:',
+      error instanceof Error ? `${error.name}: ${error.message}` : error
+    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 };
