@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
@@ -124,7 +125,7 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
     }
 
     return NextResponse.json({ user: updatedUser });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
