@@ -19,11 +19,10 @@ NEXTAUTH_SECRET=your-nextauth-secret # Generate with `openssl rand -base64 32`
 # Storage configuration (DigitalOcean Spaces)
 
 STORAGE_PROVIDER=Spaces # Supported: Spaces
-SPACES_KEY=your-access-key-id-here # DigitalOcean Spaces Access Key
-SPACES_SECRET=your-secret-key-here # DigitalOcean Spaces Secret Key
-SPACES_ENDPOINT=https://nyc3.digitaloceanspaces.com # Spaces endpoint URL
+SPACES_KEY_ID=your-access-key-id-here # DigitalOcean Spaces Access Key Id
+SPACES_KEY_SECRET=your-access-key-secret-here # DigitalOcean Spaces Access Key Secret
 SPACES_REGION=nyc3 # Spaces region
-SPACES_BUCKET=my-app-bucket # Spaces bucket name
+SPACES_BUCKET_NAME=my-app-bucket # Spaces bucket name
 
 # Email configuration (Resend)
 

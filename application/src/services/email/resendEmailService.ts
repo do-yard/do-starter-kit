@@ -11,7 +11,7 @@ export class ResendEmailService implements EmailService {
 
   constructor() {
     if (!serverConfig.Resend.apiKey || !serverConfig.Resend.fromEmail) {
-        throw new Error('Missing Resend API key or from email configuration.');
+      throw new Error('Missing Resend API key or from email configuration.');
     }
 
     this.fromEmail = serverConfig.Resend.fromEmail;
@@ -27,8 +27,10 @@ export class ResendEmailService implements EmailService {
         html: body,
       });
     } catch (error) {
-        console.error('Error sending email:', error);
-        throw new Error(`Failed to send email: ${error instanceof Error ? error.message : String(error)}`);
-        }
+      console.error('Error sending email:', error);
+      throw new Error(
+        `Failed to send email: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
+  }
 }

@@ -13,27 +13,30 @@ import { serverConfig } from '../../../settings';
  */
 export class SpacesStorageService implements StorageService {
   private client: S3Client;
-  private bucketName: string;
+  private bucketName: string | undefined;
+  private endpoint: string;
 
   constructor() {
-    const accessKeyId = serverConfig.Spaces.accessKey;
-    const secretAccessKey = serverConfig.Spaces.secretKey;
-    const endpoint = serverConfig.Spaces.endpoint;
-    const bucketName = serverConfig.Spaces.bucketName;
-    const region = serverConfig.Spaces.region;
+    const missingVars = Object.entries(serverConfig.Spaces)
+      .filter(([, value]) => !value)
+      .map(([key]) => key);
 
-    if (!accessKeyId || !secretAccessKey || !bucketName || !endpoint || !region) {
-      throw new Error('Missing required environment variables for Spaces client configuration.');
+    if (missingVars.length > 0) {
+      throw new Error(
+        `Missing required environment variables for Spaces. Make sure you set these in your .env file: ${missingVars.join(', ')}`
+      );
     }
 
-    this.bucketName = bucketName;
+    this.endpoint = `https://${serverConfig.Spaces.SPACES_REGION}.digitaloceanspaces.com`;
+    this.bucketName = serverConfig.Spaces.SPACES_BUCKET_NAME;
+
     this.client = new S3Client({
-      forcePathStyle: false, // Configures to use subdomain/virtual calling format.
-      endpoint,
-      region,
+      forcePathStyle: false,
+      endpoint: this.endpoint,
+      region: serverConfig.Spaces.SPACES_REGION || '',
       credentials: {
-        accessKeyId,
-        secretAccessKey,
+        accessKeyId: serverConfig.Spaces.SPACES_KEY_ID || '',
+        secretAccessKey: serverConfig.Spaces.SPACES_KEY_SECRET || '',
       },
     });
   }

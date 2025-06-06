@@ -1,4 +1,4 @@
-import SignUpForm from 'components/public-view/SignUpForm';
+import SignUpForm from 'components/SignUpForm/SignUpForm';
 import React from 'react';
 
 /**
