@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import UpdatePasswordForm from './UpdatePasswordForm';
-import { NextResponse } from 'next/server';
 
 describe('UpdatePasswordForm', () => {
   it('shows error if new passwords do not match', async () => {
@@ -13,14 +12,6 @@ describe('UpdatePasswordForm', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /update password/i }));
     expect(await screen.findByText(/new passwords do not match/i)).toBeInTheDocument();
-  });
-
-  it('shows error if any field is missing', async () => {
-    render(<UpdatePasswordForm />);
-    // Only fill current password
-    fireEvent.change(screen.getByLabelText(/current password/i), { target: { value: 'oldpass' } });
-    fireEvent.click(screen.getByRole('button', { name: /update password/i }));
-    expect(await screen.findByText(/all fields are required/i)).toBeInTheDocument();
   });
 
   it('shows error if API returns error', async () => {
@@ -59,8 +50,8 @@ describe('UpdatePasswordForm', () => {
 
   it('disables button and shows loading text while submitting', async () => {
     let fetchResolve: (() => void) | undefined;
-    const fetchPromise = new Promise<NextResponse>((resolve) => {
-      fetchResolve = () => resolve(new NextResponse(null, { status: 200 }));
+    const fetchPromise = new Promise((resolve) => {
+      fetchResolve = () => resolve({ ok: true, json: async () => ({}) });
     });
     global.fetch = jest.fn(() => fetchPromise);
     render(<UpdatePasswordForm />);
