@@ -17,7 +17,6 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
         sx={{
           display: 'flex',
           minHeight: '100vh',
-          minHeight: '100vh',
           width: '100%',
         }}
       >
