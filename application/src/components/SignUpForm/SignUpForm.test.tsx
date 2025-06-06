@@ -19,6 +19,12 @@ jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }));
 
+jest.mock('../../lib/api/stripe', () => ({
+  StripeClient: jest.fn().mockImplementation(() => ({
+    createCustomer: jest.fn(),
+  })),
+}));
+
 describe('SignUpForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
