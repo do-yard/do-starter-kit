@@ -42,7 +42,6 @@ describe('UpdatePasswordForm', () => {
   });
 
   it('shows error if onSubmit throws', async () => {
-    const onSubmit = jest.fn().mockRejectedValue(new Error('Server error'));
     render(<UpdatePasswordForm/>);
     fireEvent.change(screen.getByLabelText(/current password/i), { target: { value: 'oldpass' } });
     fireEvent.change(screen.getByLabelText(/^new password$/i), { target: { value: 'newpass' } });

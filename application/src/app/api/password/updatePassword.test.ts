@@ -3,11 +3,32 @@ jest.mock('services/database/database');
 import { updatePassword } from './updatePassword';
 import { NextRequest } from 'next/server';
 import { HTTP_STATUS } from 'lib/api/http';
+import { createDatabaseClient } from 'services/database/database';
 
 const mockDb = {
   user: {
     findById: jest.fn(),
     update: jest.fn(),
+    findByEmail: jest.fn(),
+    findByEmailAndPassword: jest.fn(),
+    findAll: jest.fn(),
+    create: jest.fn(),
+    delete: jest.fn(),
+    count: jest.fn(),
+  },
+  subscription: {
+    findById: jest.fn(),
+    findByUserId: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  },
+  note: {
+    findById: jest.fn(),
+    findByUserId: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
   },
 };
 
@@ -22,7 +43,7 @@ function createRequestWithFormData(fields: Record<string, string>) {
 describe('updatePassword', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (require('services/database/database').createDatabaseClient as jest.Mock).mockReturnValue(mockDb);
+    jest.mocked(createDatabaseClient).mockReturnValue(mockDb);
   });
 
   it('returns error if current password is empty', async () => {
