@@ -1,4 +1,3 @@
-// General email template generator
 export function emailTemplate({ title, content }: { title: string; content: string }): string {
   return `
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, Helvetica, sans-serif; margin:0; padding:0;">

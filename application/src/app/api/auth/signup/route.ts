@@ -5,12 +5,13 @@ import { USER_ROLES } from 'lib/auth/roles';
 import { v4 as uuidv4 } from 'uuid';
 import { createEmailClient } from 'services/email/email';
 import { emailTemplate } from 'services/email/emailTemplate';
+import { HTTP_STATUS } from 'lib/api/http';
 
 export async function POST(req: NextRequest) {
   try {
     const { name, email, password } = await req.json();
     if (!email || !password || !name) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+      return NextResponse.json({ error: 'Missing required fields' }, { status: HTTP_STATUS.BAD_REQUEST });
     }
 
     const dbClient = createDatabaseClient();
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
 
     const userExists = await dbClient.user.findByEmail(email);
     if (userExists) {
-      return NextResponse.json({ error: 'User already exists' }, { status: 409 });
+      return NextResponse.json({ error: 'User already exists' }, { status: HTTP_STATUS.CONFLICT });
     }
 
     const hashedPassword = await hashPassword(password);
@@ -60,6 +61,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true, message: 'Verification email sent.' });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
   }
 }
