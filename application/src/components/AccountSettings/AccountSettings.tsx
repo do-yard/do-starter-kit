@@ -213,9 +213,7 @@ export default function AccountSettings() {
                     </Button>
                   </Box>
                 ) : (
-                  <StyledFileInput
-                    {...getRootProps()}
-                  >
+                  <StyledFileInput {...getRootProps()}>
                     <input {...getInputProps()} disabled={isLoading} />
                     <Typography variant="body2">
                       Drag &apos;n&apos; drop a profile image here, or click to select one
