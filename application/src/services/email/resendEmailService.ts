@@ -16,8 +16,8 @@ export class ResendEmailService extends EmailService {
   private static readonly serviceName = 'Email Service (Resend)';
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
-    'apiKey': { envVar: 'RESEND_API_KEY', description: 'Resend API Key' },
-    'fromEmail': { envVar: 'RESEND_EMAIL_SENDER', description: 'From email address' }
+    apiKey: { envVar: 'RESEND_API_KEY', description: 'Resend API Key' },
+    fromEmail: { envVar: 'RESEND_EMAIL_SENDER', description: 'From email address' },
   };
   constructor() {
     super();
@@ -74,7 +74,7 @@ export class ResendEmailService extends EmailService {
   /**
    * Checks if the email service is properly configured and accessible.
    * Sends a test email to verify the connection.
-   * 
+   *
    * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
    */
   async checkConnection(): Promise<boolean> {
@@ -94,10 +94,11 @@ export class ResendEmailService extends EmailService {
       });
       return true;
     } catch (connectionError) {
-      const errorMsg = connectionError instanceof Error ? connectionError.message : String(connectionError);
+      const errorMsg =
+        connectionError instanceof Error ? connectionError.message : String(connectionError);
 
       console.error('Email connection test failed:', {
-        error: errorMsg
+        error: errorMsg,
       });
 
       this.lastConnectionError = `Connection error: ${errorMsg}`;
@@ -108,7 +109,8 @@ export class ResendEmailService extends EmailService {
   /**
    * Checks if the email service configuration is valid and tests connection when configuration is complete.
    */
-  async checkConfiguration(): Promise<ServiceConfigStatus> {    // Check for missing configuration
+  async checkConfiguration(): Promise<ServiceConfigStatus> {
+    // Check for missing configuration
     const missingConfig = Object.entries(ResendEmailService.requiredConfig)
       .filter(([key]) => !serverConfig.Resend[key as keyof typeof serverConfig.Resend])
       .map(([, value]) => value.envVar);
@@ -119,7 +121,7 @@ export class ResendEmailService extends EmailService {
         configured: false,
         connected: undefined, // Don't test connection when configuration is missing
         configToReview: missingConfig,
-        error: 'Configuration missing'
+        error: 'Configuration missing',
       };
     }
 
@@ -131,15 +133,15 @@ export class ResendEmailService extends EmailService {
         configured: true,
         connected: false,
         configToReview: Object.values(ResendEmailService.requiredConfig).map(
-          config => config.envVar
+          (config) => config.envVar
         ),
-        error: this.lastConnectionError || 'Connection failed'
+        error: this.lastConnectionError || 'Connection failed',
       };
     }
     return {
       name: ResendEmailService.serviceName,
       configured: true,
-      connected: true
+      connected: true,
     };
   }
 }

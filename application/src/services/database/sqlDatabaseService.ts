@@ -13,7 +13,7 @@ export class SqlDatabaseService extends DatabaseClient {
 
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
-    'databaseUrl': { envVar: 'DATABASE_URL', description: 'PostgreSQL connection string' }
+    databaseUrl: { envVar: 'DATABASE_URL', description: 'PostgreSQL connection string' },
   };
   private lastConnectionError: string = '';
 
@@ -129,7 +129,7 @@ export class SqlDatabaseService extends DatabaseClient {
    * Checks if the database service is properly configured and accessible.
    * Tests the connection by performing a simple query.
    * Creates a fresh Prisma client to test the current DATABASE_URL.
-   * 
+   *
    * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
    */
   async checkConnection(): Promise<boolean> {
@@ -141,20 +141,21 @@ export class SqlDatabaseService extends DatabaseClient {
       testClient = new PrismaClient({
         datasources: {
           db: {
-            url: process.env.DATABASE_URL
-          }
-        }
+            url: process.env.DATABASE_URL,
+          },
+        },
       });
 
       // Test connection by performing a simple query
       await testClient.$queryRaw`SELECT 1`;
       return true;
     } catch (connectionError) {
-      const errorMsg = connectionError instanceof Error ? connectionError.message : String(connectionError);
+      const errorMsg =
+        connectionError instanceof Error ? connectionError.message : String(connectionError);
 
       console.error('Database connection test failed:', {
         error: errorMsg,
-        databaseUrl: process.env.DATABASE_URL ? 'SET' : 'NOT SET'
+        databaseUrl: process.env.DATABASE_URL ? 'SET' : 'NOT SET',
       });
 
       this.lastConnectionError = `Connection error: ${errorMsg}`;
@@ -179,7 +180,7 @@ export class SqlDatabaseService extends DatabaseClient {
         configured: false,
         connected: undefined, // Don't test connection when configuration is missing
         configToReview: ['DATABASE_URL'],
-        error: 'Configuration missing'
+        error: 'Configuration missing',
       };
     }
 
@@ -191,13 +192,13 @@ export class SqlDatabaseService extends DatabaseClient {
         configured: true,
         connected: false,
         configToReview: ['DATABASE_URL'],
-        error: this.lastConnectionError || 'Connection failed'
+        error: this.lastConnectionError || 'Connection failed',
       };
     }
     return {
       name: SqlDatabaseService.serviceName,
       configured: true,
-      connected: true
+      connected: true,
     };
   }
 }

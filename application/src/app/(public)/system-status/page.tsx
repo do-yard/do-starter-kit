@@ -12,5 +12,5 @@ export default function StatusPage() {
  */
 export const metadata = {
   title: 'System Status',
-  description: 'Check the status of all system services and their connectivity.'
+  description: 'Check the status of all system services and their connectivity.',
 };

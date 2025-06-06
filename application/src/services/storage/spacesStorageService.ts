@@ -3,7 +3,7 @@ import {
   PutObjectCommand,
   GetObjectCommand,
   DeleteObjectCommand,
-  ListObjectsV2Command
+  ListObjectsV2Command,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { StorageService } from './storage';
@@ -24,10 +24,13 @@ export class SpacesStorageService extends StorageService {
   private static readonly serviceName = 'Storage (DigitalOcean Spaces)';
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
-    'SPACES_KEY_ID': { envVar: 'SPACES_KEY_ID', description: 'DigitalOcean Spaces Access Key' },
-    'SPACES_KEY_SECRET': { envVar: 'SPACES_KEY_SECRET', description: 'DigitalOcean Spaces Secret Key' },
-    'SPACES_BUCKET_NAME': { envVar: 'SPACES_BUCKET_NAME', description: 'Name of the Spaces bucket' },
-    'SPACES_REGION': { envVar: 'SPACES_REGION', description: 'DigitalOcean Spaces region' }
+    SPACES_KEY_ID: { envVar: 'SPACES_KEY_ID', description: 'DigitalOcean Spaces Access Key' },
+    SPACES_KEY_SECRET: {
+      envVar: 'SPACES_KEY_SECRET',
+      description: 'DigitalOcean Spaces Secret Key',
+    },
+    SPACES_BUCKET_NAME: { envVar: 'SPACES_BUCKET_NAME', description: 'Name of the Spaces bucket' },
+    SPACES_REGION: { envVar: 'SPACES_REGION', description: 'DigitalOcean Spaces region' },
   };
   constructor() {
     super();
@@ -37,11 +40,12 @@ export class SpacesStorageService extends StorageService {
   /**
    * Initializes the S3 client based on the configuration.
    * Sets isConfigured flag and configError message if applicable.
-   */  private initializeClient(): void {
+   */ private initializeClient(): void {
     try {
       const accessKeyId = serverConfig.Spaces.SPACES_KEY_ID;
       const secretAccessKey = serverConfig.Spaces.SPACES_KEY_SECRET;
-      const bucketName = serverConfig.Spaces.SPACES_BUCKET_NAME; const region = serverConfig.Spaces.SPACES_REGION;
+      const bucketName = serverConfig.Spaces.SPACES_BUCKET_NAME;
+      const region = serverConfig.Spaces.SPACES_REGION;
       const endpoint = `https://${region}.digitaloceanspaces.com`;
 
       // Check for missing configuration
@@ -67,7 +71,8 @@ export class SpacesStorageService extends StorageService {
       this.isConfigured = true;
     } catch (error) {
       this.isConfigured = false;
-      this.configError = error instanceof Error ? error.message : 'Unknown error initializing Spaces client';
+      this.configError =
+        error instanceof Error ? error.message : 'Unknown error initializing Spaces client';
     }
   }
 
@@ -119,13 +124,14 @@ export class SpacesStorageService extends StorageService {
     const command = new DeleteObjectCommand({
       Bucket: this.bucketName,
       Key: this.getFilePath(userId, fileName),
-    }); await this.client.send(command);
+    });
+    await this.client.send(command);
   }
 
   /**
    * Checks if the Spaces service is properly configured and accessible.
    * Uses ListObjectsV2Command to verify bucket access and connectivity.
-   * 
+   *
    * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
    */
   async checkConnection(): Promise<boolean> {
@@ -138,7 +144,7 @@ export class SpacesStorageService extends StorageService {
       // Test connection by listing objects (with limit 1) to verify access
       const listCommand = new ListObjectsV2Command({
         Bucket: this.bucketName,
-        MaxKeys: 1
+        MaxKeys: 1,
       });
       await this.client.send(listCommand);
       return true;
@@ -146,7 +152,7 @@ export class SpacesStorageService extends StorageService {
       const listErrorMsg = listError instanceof Error ? listError.message : String(listError);
 
       console.error('Storage connection test failed:', {
-        listError: listErrorMsg
+        listError: listErrorMsg,
       });
 
       // Store the last error details for use in checkConfiguration
@@ -170,7 +176,7 @@ export class SpacesStorageService extends StorageService {
         configured: false,
         connected: undefined, // Don't test connection when configuration is missing
         configToReview: missingConfig,
-        error: 'Configuration missing'
+        error: 'Configuration missing',
       };
     }
 
@@ -182,16 +188,16 @@ export class SpacesStorageService extends StorageService {
         configured: true,
         connected: false,
         configToReview: Object.values(SpacesStorageService.requiredConfig).map(
-          config => config.envVar
+          (config) => config.envVar
         ),
-        error: this.lastConnectionError || 'Connection failed'
+        error: this.lastConnectionError || 'Connection failed',
       };
     }
 
     return {
       name: SpacesStorageService.serviceName,
       configured: true,
-      connected: true
+      connected: true,
     };
   }
 }

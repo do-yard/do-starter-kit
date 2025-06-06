@@ -1,9 +1,9 @@
 /**
  * Next.js Instrumentation Hook
- * 
+ *
  * This file is automatically called by Next.js during application startup.
  * It's the proper place for one-time initialization tasks.
- * 
+ *
  * @see https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
  */
 

@@ -46,7 +46,7 @@ export class StatusService {
       this.cachedHealthState = {
         isHealthy: false,
         lastChecked: new Date(),
-        services: []
+        services: [],
       };
       this.isInitialized = true;
     }
@@ -74,7 +74,7 @@ export class StatusService {
   /**
    * Force a fresh health check (bypasses cache).
    * Use this for the system status page refresh button.
-   */  static async forceHealthCheck(): Promise<HealthState> {
+   */ static async forceHealthCheck(): Promise<HealthState> {
     await this.performHealthCheck();
     return this.cachedHealthState!;
   }
@@ -87,15 +87,15 @@ export class StatusService {
       const serviceStatuses = await this.checkAllServices();
 
       // Determine if the application is healthy - only required services matter for overall health
-      const requiredServices = serviceStatuses.filter(service => service.required);
-      const isHealthy = requiredServices.every(service =>
-        service.configured && service.connected
+      const requiredServices = serviceStatuses.filter((service) => service.required);
+      const isHealthy = requiredServices.every(
+        (service) => service.configured && service.connected
       );
 
       this.cachedHealthState = {
         isHealthy,
         lastChecked: new Date(),
-        services: serviceStatuses
+        services: serviceStatuses,
       };
     } catch (error) {
       console.error('Failed to perform health check:', error);
@@ -104,13 +104,15 @@ export class StatusService {
       this.cachedHealthState = {
         isHealthy: false,
         lastChecked: new Date(),
-        services: [{
-          name: 'Health Check System',
-          configured: false,
-          connected: false,
-          required: true, // Health check system itself is required
-          error: `Health check failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-        }]
+        services: [
+          {
+            name: 'Health Check System',
+            configured: false,
+            connected: false,
+            required: true, // Health check system itself is required
+            error: `Health check failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          },
+        ],
       };
     }
   }
@@ -118,7 +120,7 @@ export class StatusService {
   /**
    * Checks the status of storage service configuration and connectivity.
    * Uses the StorageService interface to check the current storage provider.
-   * 
+   *
    * @returns {Promise<ServiceStatus>} The status of the storage service.
    */
   static async checkStorageStatus(): Promise<ServiceStatus> {
@@ -129,7 +131,7 @@ export class StatusService {
       const configStatus = await storageService.checkConfiguration();
       return {
         ...configStatus,
-        required: storageService.isRequired()
+        required: storageService.isRequired(),
       };
     } catch (error) {
       return {
@@ -137,9 +139,10 @@ export class StatusService {
         configured: false,
         connected: false,
         required: false, // Default to false if service can't be initialized
-        error: error instanceof Error
-          ? `Failed to initialize storage service: ${error.message}`
-          : 'Failed to initialize storage service: Unknown error'
+        error:
+          error instanceof Error
+            ? `Failed to initialize storage service: ${error.message}`
+            : 'Failed to initialize storage service: Unknown error',
       };
     }
   }
@@ -147,7 +150,7 @@ export class StatusService {
   /**
    * Checks the configuration and connectivity status of the email service.
    * Uses the EmailService interface to check the current email provider.
-   * 
+   *
    * @returns {Promise<ServiceStatus>} The status of the email service.
    */
   static async checkEmailStatus(): Promise<ServiceStatus> {
@@ -158,7 +161,7 @@ export class StatusService {
       const configStatus = await emailService.checkConfiguration();
       return {
         ...configStatus,
-        required: emailService.isRequired()
+        required: emailService.isRequired(),
       };
     } catch (error) {
       return {
@@ -166,9 +169,10 @@ export class StatusService {
         configured: false,
         connected: false,
         required: true, // Default to true since email is critical
-        error: error instanceof Error
-          ? `Failed to initialize email service: ${error.message}`
-          : 'Failed to initialize email service: Unknown error'
+        error:
+          error instanceof Error
+            ? `Failed to initialize email service: ${error.message}`
+            : 'Failed to initialize email service: Unknown error',
       };
     }
   }
@@ -176,7 +180,7 @@ export class StatusService {
   /**
    * Checks the configuration and connectivity status of the database service.
    * Uses the DatabaseClient interface to check the current database provider.
-   * 
+   *
    * @returns {Promise<ServiceStatus>} The status of the database service.
    */
   static async checkDatabaseStatus(): Promise<ServiceStatus> {
@@ -187,7 +191,7 @@ export class StatusService {
       const configStatus = await databaseService.checkConfiguration();
       return {
         ...configStatus,
-        required: databaseService.isRequired()
+        required: databaseService.isRequired(),
       };
     } catch (error) {
       return {
@@ -195,9 +199,10 @@ export class StatusService {
         configured: false,
         connected: false,
         required: true, // Default to true since database is critical
-        error: error instanceof Error
-          ? `Failed to initialize database service: ${error.message}`
-          : 'Failed to initialize database service: Unknown error'
+        error:
+          error instanceof Error
+            ? `Failed to initialize database service: ${error.message}`
+            : 'Failed to initialize database service: Unknown error',
       };
     }
   }
@@ -205,7 +210,7 @@ export class StatusService {
   /**
    * Checks the status of all configured services.
    * This method will automatically check all available services.
-   * 
+   *
    * @returns {Promise<ServiceStatus[]>} The status of all services.
    */
   static async checkAllServices(): Promise<ServiceStatus[]> {

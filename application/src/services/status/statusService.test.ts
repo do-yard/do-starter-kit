@@ -44,9 +44,13 @@ import { createEmailService } from '../email/emailFactory';
 import { createDatabaseService } from '../database/databaseFactory';
 
 // Cast to jest mocks
-const mockCreateStorageService = createStorageService as jest.MockedFunction<typeof createStorageService>;
+const mockCreateStorageService = createStorageService as jest.MockedFunction<
+  typeof createStorageService
+>;
 const mockCreateEmailService = createEmailService as jest.MockedFunction<typeof createEmailService>;
-const mockCreateDatabaseService = createDatabaseService as jest.MockedFunction<typeof createDatabaseService>;
+const mockCreateDatabaseService = createDatabaseService as jest.MockedFunction<
+  typeof createDatabaseService
+>;
 
 describe('StatusService', () => {
   const originalConfig = {
@@ -54,7 +58,7 @@ describe('StatusService', () => {
     accessKey: serverConfig.Spaces.SPACES_KEY_ID,
     secretKey: serverConfig.Spaces.SPACES_KEY_SECRET,
     bucketName: serverConfig.Spaces.SPACES_BUCKET_NAME,
-    region: serverConfig.Spaces.SPACES_REGION
+    region: serverConfig.Spaces.SPACES_REGION,
   };
 
   beforeEach(() => {
@@ -69,7 +73,7 @@ describe('StatusService', () => {
     (StatusService as any).cachedHealthState = null;
     (StatusService as any).isInitialized = false;
     (StatusService as unknown as { isInitialized: boolean }).isInitialized = false;
-    
+
     // Set default mock values for testing
     serverConfig.storageProvider = 'Spaces';
     serverConfig.Spaces.SPACES_KEY_ID = 'test-access-key';
@@ -83,7 +87,7 @@ describe('StatusService', () => {
       configured: true,
       connected: true,
       error: undefined,
-      configToReview: undefined
+      configToReview: undefined,
     });
 
     mockEmailService.checkConfiguration.mockResolvedValue({
@@ -91,7 +95,7 @@ describe('StatusService', () => {
       configured: true,
       connected: true,
       error: undefined,
-      configToReview: undefined
+      configToReview: undefined,
     });
 
     mockDatabaseService.checkConfiguration.mockResolvedValue({
@@ -99,7 +103,7 @@ describe('StatusService', () => {
       configured: true,
       connected: true,
       error: undefined,
-      configToReview: undefined
+      configToReview: undefined,
     });
   });
 
@@ -113,13 +117,14 @@ describe('StatusService', () => {
   });
 
   describe('checkStorageStatus', () => {
-    it('should report configured=true and connected=true when all is well', async () => {      // Arrange
+    it('should report configured=true and connected=true when all is well', async () => {
+      // Arrange
       mockStorageService.checkConfiguration.mockResolvedValue({
         name: 'Storage Service',
         configured: true,
         connected: true,
         error: undefined,
-        configToReview: undefined
+        configToReview: undefined,
       });
 
       // Act
@@ -130,14 +135,15 @@ describe('StatusService', () => {
       expect(result.connected).toBe(true);
       expect(result.error).toBeUndefined();
       expect(createStorageService).toHaveBeenCalled();
-    });    it('should report configured=false when configuration is missing', async () => {
+    });
+    it('should report configured=false when configuration is missing', async () => {
       // Arrange
       mockStorageService.checkConfiguration.mockResolvedValue({
         name: 'Storage Service',
         configured: false,
         connected: false,
         error: 'Missing configuration',
-        configToReview: ['SPACES_KEY']
+        configToReview: ['SPACES_KEY'],
       });
 
       // Act
@@ -157,17 +163,18 @@ describe('StatusService', () => {
         configured: true,
         connected: false,
         error: 'Connection failed',
-        configToReview: ['SPACES_KEY']
+        configToReview: ['SPACES_KEY'],
       });
 
-      // Act  
+      // Act
       const result = await StatusService.checkStorageStatus();
 
       // Assert
       expect(result.configured).toBe(true);
       expect(result.connected).toBe(false);
       expect(result.error).toBe('Connection failed');
-    });    it('should handle exceptions during storage service creation', async () => {
+    });
+    it('should handle exceptions during storage service creation', async () => {
       // Arrange
       (createStorageService as jest.Mock).mockImplementationOnce(() => {
         throw new Error('Failed to initialize');
@@ -206,14 +213,17 @@ describe('StatusService', () => {
       // Assert
       expect(Array.isArray(results)).toBe(true);
       expect(results.length).toBe(3); // Storage + Email + Database
-      expect(results.some(r => r.name.includes('Storage'))).toBe(true);
-      expect(results.some(r => r.name.includes('Email'))).toBe(true);
-      expect(results.some(r => r.name.includes('Database'))).toBe(true);
+      expect(results.some((r) => r.name.includes('Storage'))).toBe(true);
+      expect(results.some((r) => r.name.includes('Email'))).toBe(true);
+      expect(results.some((r) => r.name.includes('Database'))).toBe(true);
     });
-  });  describe('Health State Management', () => {
+  });
+  describe('Health State Management', () => {
     beforeEach(() => {
       // Reset static state
-      (StatusService as unknown as { cachedHealthState: unknown; isInitialized: boolean }).cachedHealthState = null;
+      (
+        StatusService as unknown as { cachedHealthState: unknown; isInitialized: boolean }
+      ).cachedHealthState = null;
       (StatusService as unknown as { isInitialized: boolean }).isInitialized = false;
     });
 
@@ -232,13 +242,13 @@ describe('StatusService', () => {
         configured: true,
         connected: true,
         configToReview: undefined,
-        error: undefined
+        error: undefined,
       });
 
       try {
         // Act
         await StatusService.initialize();
-        const healthState = StatusService.getHealthState();        // Assert
+        const healthState = StatusService.getHealthState(); // Assert
         expect(healthState).toBeDefined();
         expect(healthState?.services).toHaveLength(3); // Storage + Email + Database
         expect(healthState?.isHealthy).toBe(true);
@@ -273,7 +283,7 @@ describe('StatusService', () => {
         configured: true,
         connected: true,
         configToReview: undefined,
-        error: undefined
+        error: undefined,
       });
 
       try {
@@ -281,7 +291,7 @@ describe('StatusService', () => {
 
         // Act
         const firstCall = StatusService.getHealthState();
-        const secondCall = StatusService.getHealthState();        // Assert
+        const secondCall = StatusService.getHealthState(); // Assert
         expect(firstCall).toBe(secondCall); // Same object reference
         expect(createStorageService).toHaveBeenCalledTimes(1);
       } finally {
@@ -314,7 +324,7 @@ describe('StatusService', () => {
         configured: true,
         connected: true,
         configToReview: undefined,
-        error: undefined
+        error: undefined,
       });
 
       try {
@@ -322,7 +332,7 @@ describe('StatusService', () => {
 
         // Act
         const cachedState = StatusService.getHealthState();
-        const freshState = await StatusService.forceHealthCheck();        // Assert
+        const freshState = await StatusService.forceHealthCheck(); // Assert
         expect(freshState).not.toBe(cachedState); // Different object reference
         expect(createStorageService).toHaveBeenCalledTimes(2);
       } finally {
@@ -338,14 +348,15 @@ describe('StatusService', () => {
           delete process.env.SMTP_HOST;
         }
       }
-    });    it('should report unhealthy when services have issues', async () => {
+    });
+    it('should report unhealthy when services have issues', async () => {
       // Arrange - make a required service (email) unhealthy
       mockEmailService.checkConfiguration.mockResolvedValue({
         name: 'Email Service',
         configured: false,
         connected: false,
         error: 'SMTP configuration missing',
-        configToReview: ['SMTP_HOST', 'SMTP_PORT']
+        configToReview: ['SMTP_HOST', 'SMTP_PORT'],
       });
 
       // Act

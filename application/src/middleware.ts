@@ -27,9 +27,11 @@ export async function middleware(request: NextRequest) {
     '/login',
     '/signup',
     '/_next',
-    '/favicon.ico'
-  ];  // Skip configuration check for public routes and API endpoints
-  const isPublicPath = publicPaths.some(path => pathname === path || pathname.startsWith(path + '/'));
+    '/favicon.ico',
+  ]; // Skip configuration check for public routes and API endpoints
+  const isPublicPath = publicPaths.some(
+    (path) => pathname === path || pathname.startsWith(path + '/')
+  );
   const isApiPath = pathname.startsWith('/api/') && !pathname.startsWith('/api/system-status');
   // Check service health for protected routes
   const isProtectedRoute = !isPublicPath && !isApiPath;
@@ -46,7 +48,9 @@ export async function middleware(request: NextRequest) {
       const isHealthy = StatusService.isApplicationHealthy();
 
       if (!isHealthy) {
-        console.log(`Redirecting to system status due to unhealthy services for route: ${pathname}`);
+        console.log(
+          `Redirecting to system status due to unhealthy services for route: ${pathname}`
+        );
         return NextResponse.redirect(new URL('/system-status', request.url));
       }
     } else {
@@ -78,6 +82,6 @@ export const config = {
     '/dashboard/:path*',
     '/system-status',
     '/api/system-status',
-    '/api/health'
+    '/api/health',
   ],
 };
