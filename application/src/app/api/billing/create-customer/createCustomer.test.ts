@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from 'lib/api/http';
 import { createCustomer } from './createCustomer';
 import { NextRequest } from 'next/server';
 
@@ -29,7 +30,7 @@ describe('createCustomer API', () => {
   it('returns existing customerId if customer exists', async () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     const res = await createCustomer({} as NextRequest, user);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ customerId: 'cust1' });
     expect(mockListCustomer).toHaveBeenCalledWith(user.email);
     expect(mockCreateCustomer).not.toHaveBeenCalled();
@@ -40,7 +41,7 @@ describe('createCustomer API', () => {
     mockCreateCustomer.mockResolvedValue({ id: 'cust2' });
     mockDbCreate.mockResolvedValue({});
     const res = await createCustomer({} as NextRequest, user);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ customerId: 'cust2' });
     expect(mockListCustomer).toHaveBeenCalledWith(user.email);
     expect(mockCreateCustomer).toHaveBeenCalledWith(user.email, { userId: user.email });
@@ -55,7 +56,7 @@ describe('createCustomer API', () => {
   it('returns 500 on error from listCustomer', async () => {
     mockListCustomer.mockRejectedValue(new Error('fail'));
     const res = await createCustomer({} as NextRequest, user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 
@@ -63,7 +64,7 @@ describe('createCustomer API', () => {
     mockListCustomer.mockResolvedValue([]);
     mockCreateCustomer.mockRejectedValue(new Error('fail'));
     const res = await createCustomer({} as NextRequest, user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
   });
 });

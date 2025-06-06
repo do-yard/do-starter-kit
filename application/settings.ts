@@ -3,6 +3,7 @@ export interface ServerConfig {
   storageProvider: string;
   emailProvider: string;
   billingProvider: string;
+  baseURL: string;
   Spaces: {
     SPACES_KEY_ID?: string;
     SPACES_KEY_SECRET?: string;
@@ -28,6 +29,7 @@ export const serverConfig: ServerConfig = {
   storageProvider: process.env.STORAGE_PROVIDER || 'Spaces',
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
   billingProvider: process.env.BILLING_PROVIDER || 'Stripe',
+  baseURL: process.env.BASE_URL || 'http://localhost:3000',
   Spaces: {
     SPACES_KEY_ID: process.env.SPACES_KEY_ID,
     SPACES_KEY_SECRET: process.env.SPACES_KEY_SECRET,
@@ -40,9 +42,9 @@ export const serverConfig: ServerConfig = {
   },
   Stripe: {
     stripeSecretKey: process.env.STRIPE_SECRET_KEY,
-    freeProductId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID,
+    freeProductId: process.env.STRIPE_FREE_PRODUCT_ID,
     freePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
-    proProductId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID,
+    proProductId: process.env.STRIPE_PRO_PRODUCT_ID,
     proPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
   },

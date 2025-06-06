@@ -66,6 +66,8 @@ spec:
           type: "SECRET"
         - key: RESEND_EMAIL_SENDER
           value: ""
+        - key: "BASE_URL"
+          value: ""
 
   # Configuration for databases
   databases:

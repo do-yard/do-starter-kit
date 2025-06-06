@@ -1,9 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import StripeCheckout from './StripeCheckout';
 import { StripeClient } from 'lib/api/stripe';
-import { SubscriptionPlan } from 'types';
+import { SubscriptionPlan, SubscriptionPlanEnum } from 'types';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -54,8 +53,8 @@ const Subscription = () => {
   const handleUpgradeToPro = async () => {
     setUpgrading(true);
     try {
-      await stripeApi.updateToProSubscription();
-      await fetchSubscription();
+      const result = await stripeApi.checkout();
+      window.location.href = result.url;
     } catch {
       setError('Upgrade failed');
     } finally {
@@ -63,17 +62,26 @@ const Subscription = () => {
     }
   };
 
+  const handleSubscribeToFreePlan = async () => {
+    setLoading(true);
+    try {
+      await stripeApi.createSubscription(serverConfig.Stripe.freePriceId!);
+      await fetchSubscription();
+      setLoading(false);
+    } catch {
+      setError(`Failed to subscribe to ${SubscriptionPlanEnum.FREE} plan`);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchSubscription();
   }, []);
 
-  const basePlanId = serverConfig.Stripe.freePriceId;
-  const proPlanId = serverConfig.Stripe.proPriceId;
-
   const currentPlan = subscription?.plan;
 
-  const isBasePlan = currentPlan === 'FREE';
-  const isProPlan = currentPlan === 'PRO';
+  const isBasePlan = currentPlan === SubscriptionPlanEnum.FREE;
+  const isProPlan = currentPlan === SubscriptionPlanEnum.PRO;
 
   if (loading)
     return (
@@ -93,7 +101,12 @@ const Subscription = () => {
         <Box display="flex" flexDirection="column" alignItems="flex-start">
           <Typography mb={2}>
             Subscription status: <strong>{subscription.status}</strong> (
-            {isProPlan ? 'Pro Plan' : isBasePlan ? 'Free Plan' : 'No Plan'})
+            {isProPlan
+              ? `${SubscriptionPlanEnum.PRO} Plan`
+              : isBasePlan
+                ? `${SubscriptionPlanEnum.FREE} Plan`
+                : 'No Plan'}
+            )
           </Typography>
 
           {isBasePlan && (
@@ -102,9 +115,9 @@ const Subscription = () => {
               disabled={upgrading}
               variant="contained"
               color="primary"
-              sx={{ mt: 2 }}
+              sx={{ mt: 2, minWidth: 200 }}
             >
-              {upgrading ? 'Upgrading...' : 'Upgrade to PRO'}
+              {upgrading ? 'Upgrading...' : `Upgrade to ${SubscriptionPlanEnum.PRO}`}
             </Button>
           )}
 
@@ -113,25 +126,31 @@ const Subscription = () => {
             disabled={loading}
             variant="contained"
             color="error"
-            sx={{ mt: 2 }}
+            sx={{ mt: 2, minWidth: 200 }}
           >
             Cancel Subscription
           </Button>
         </Box>
       ) : (
         <Box display={'flex'} flexDirection="column" alignItems="flex-start" mt={2}>
-          <StripeCheckout
-            priceId={basePlanId!}
-            buttonText="Subscribe to Base Plan"
-            onSubscribed={fetchSubscription}
-          />
-          <Box mt={2}>
-            <StripeCheckout
-              priceId={proPlanId!}
-              buttonText="Subscribe to Pro Plan"
-              onSubscribed={fetchSubscription}
-            />
-          </Box>
+          <Button
+            onClick={handleSubscribeToFreePlan}
+            disabled={loading}
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2, minWidth: 200 }}
+          >
+            Subscribe to {SubscriptionPlanEnum.FREE} Plan
+          </Button>
+          <Button
+            onClick={handleUpgradeToPro}
+            disabled={loading}
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2, minWidth: 214 }}
+          >
+            Subscribe to {SubscriptionPlanEnum.PRO} Plan
+          </Button>
         </Box>
       )}
     </Box>

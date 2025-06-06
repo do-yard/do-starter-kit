@@ -3,6 +3,7 @@ import { createBillingService } from 'services/billing/billing';
 import { createDatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { serverConfig } from '../../../../../settings';
+import { HTTP_STATUS } from 'lib/api/http';
 
 /**
  * Creates a subscription for a user. Free or Pro plans are supported.
@@ -19,18 +20,21 @@ export const createSubscription = async (
     const { priceId }: { priceId: string } = await request.json();
 
     if (!priceId) {
-      return NextResponse.json({ error: 'Price ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Price ID is required' },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
-
-    const customers = await billingService.listCustomer(user.email);
 
     let customerId;
 
-    if (customers.length > 0) {
-      customerId = customers[0].id;
-    }
-
     const db = createDatabaseClient();
+
+    const subscription = await db.subscription.findByUserId(user.id);
+
+    if (subscription.length) {
+      customerId = subscription[0].customerId;
+    }
 
     if (!customerId) {
       const customer = await billingService.createCustomer(user.email, {
@@ -58,6 +62,9 @@ export const createSubscription = async (
     return NextResponse.json({ clientSecret });
   } catch (err: unknown) {
     console.error('Internal Server Error', err);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

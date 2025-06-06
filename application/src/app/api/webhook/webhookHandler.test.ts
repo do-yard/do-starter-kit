@@ -1,4 +1,5 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
+import { HTTP_STATUS } from 'lib/api/http';
 import { webhookHandler } from './webhookHandler';
 
 const mockHandleSubscriptionCreated = jest.fn();
@@ -50,6 +51,6 @@ describe('webhookHandler', () => {
     const event = { type: 'customer.subscription.created', data: { object: {} } };
     mockHandleSubscriptionCreated.mockRejectedValueOnce(new Error('fail'));
     const res = await webhookHandler(event);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
 });
