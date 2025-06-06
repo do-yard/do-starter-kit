@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Card, CardContent, CardActions, CircularProgress } from '@mui/material';
+import { Box, Typography, TextField, Button, Card, CardContent, CircularProgress } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { NotesApiClient } from 'lib/api/notes';
@@ -102,64 +102,51 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
     );
   }
 
-  const getTitle = () => {
-    switch (mode) {
-      case 'create': return 'Create New Note';
-      case 'edit': return 'Edit Note';
-      case 'view': return title;
-      default: return 'Note';
-    }
-  };
-
   const isReadOnly = mode === 'view';
-
   return (
     <Box>
-      <Typography variant="h4" component="h1" gutterBottom>
-        {getTitle()}
-      </Typography>
-
-      {mode === 'view' && createdAt && (
+      {createdAt && (
         <Typography variant="body2" color="text.secondary" gutterBottom>
           Created: {new Date(createdAt).toLocaleDateString()}
         </Typography>
-      )}
-
-      <Card>
+      )}      <Card>
         <CardContent>
-          {mode !== 'view' ? (
-            <form onSubmit={handleSubmit}>
-              <TextField
-                id="title"
-                label="Title"
-                fullWidth
-                margin="normal"
-                placeholder="Enter note title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                InputProps={{ readOnly: isReadOnly }}
-              />
+          <Typography variant="h6" gutterBottom>
+            {mode === 'create' ? 'Create New Note' : 
+             mode === 'edit' ? 'Edit Note' : 'View Note'}
+          </Typography>
+          <form onSubmit={mode !== 'view' ? handleSubmit : (e) => e.preventDefault()}>
+            <TextField
+              id="title"
+              label="Title"
+              fullWidth
+              margin="normal"
+              placeholder="Enter note title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              InputProps={{ readOnly: isReadOnly }}
+            />
 
-              <TextField
-                id="content"
-                label="Content"
-                fullWidth
-                margin="normal"
-                multiline
-                rows={6}
-                placeholder="Enter note content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                required
-                InputProps={{ readOnly: isReadOnly }}
-              />
+            <TextField
+              id="content"
+              label="Content"
+              fullWidth
+              margin="normal"
+              multiline
+              rows={6}
+              placeholder="Enter note content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+              InputProps={{ readOnly: isReadOnly }}
+            />
 
-              <Box display="flex" justifyContent="flex-end" gap={1} mt={2}>
-                <Button onClick={onCancel}>
-                  Cancel
-                </Button>
-
+            <Box display="flex" justifyContent="flex-end" gap={1} mt={2}>
+              <Button onClick={onCancel}>
+                Cancel
+              </Button>
+              {mode !== 'view' && (
                 <Button
                   type="submit"
                   variant="contained"
@@ -167,27 +154,10 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
                 >
                   {mode === 'edit' ? 'Update Note' : 'Save Note'}
                 </Button>
-              </Box>
-            </form>
-          ) : (
-            <Box>
-              <Typography variant="body1" paragraph>
-                {content}
-              </Typography>
+              )}
             </Box>
-          )}
-        </CardContent>        {mode === 'view' && (
-          <CardActions sx={{ justifyContent: 'space-between', px: 2, pb: 2 }}>
-            <Button
-              onClick={handleDelete}
-              startIcon={<Delete fontSize="small" />}
-              variant="contained"
-              color="error"
-            >
-              Delete
-            </Button>
-          </CardActions>
-        )}
+          </form>
+        </CardContent>
       </Card>
     </Box>
   );

@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
-  Card,
   CardContent,
   CardHeader,
   TextField,
@@ -29,6 +28,8 @@ import {
   CircularProgress,
   Pagination,
 } from '@mui/material';
+import { Edit as EditIcon, Close as CloseIcon } from '@mui/icons-material';
+import PageContainer from '../common/PageContainer';
 import { UsersClient } from '../../lib/api/users';
 import { UserWithSubscriptions } from '../../types';
 import Toast from '../common/Toast';
@@ -135,7 +136,7 @@ export default function AdminDashboard() {
       // Refresh users
       const data = await api.getUsers();
       setUsers(data.users || []);
-      if (session.data?.user?.id === userId) { 
+      if (session.data?.user?.id === userId) {
         session.update({ user: { name: fields.name } });
       }
       handleEditClose();
@@ -175,196 +176,191 @@ export default function AdminDashboard() {
       }
     };
     fetchUsers();
-  }, [page, pageSize, searchName, filterPlan, filterStatus]);
+  }, [page, pageSize, searchName, filterPlan, filterStatus]); return (
+    <PageContainer title="Admin Dashboard">
 
-  return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', px: 2, py: 4 }}>
-      <Typography variant="h4" fontWeight="bold" mb={4}>
-        Admin Dashboard
-      </Typography>
-
-      <Card sx={{ mb: 4 }}>
-        <CardHeader
-          title={
-            <Typography variant="h6" fontWeight="bold">
-              User Management
-            </Typography>
-          }
-        />
-        <CardContent sx={{ pt: 0 }}>
-          <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={3} alignItems="center">
-            <TextField
-              label="Search by name"
-              size="small"
-              fullWidth
-              sx={{
-                color: 'grey.500',
-                maxWidth: { md: 300 },
-                '& .MuiFormLabel-root': {
-                  color: 'text.medium',
-                },
-              }}
-              value={searchName}
-              onChange={(e) => {
-                setSearchName(e.target.value);
-                setPage(1);
-              }}
-            />
-            <TextField
-              select
-              label="Filter by plan"
-              size="small"
-              fullWidth
-              sx={{
-                maxWidth: { md: 200 },
-                '& .MuiFormLabel-root': {
-                  color: 'text.medium',
-                },
-              }}
-              value={filterPlan}
-              onChange={(e) => {
-                setFilterPlan(e.target.value);
-                setPage(1);
-              }}
-            >
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="FREE">Free</MenuItem>
-              <MenuItem value="PRO">Pro</MenuItem>
-            </TextField>
-            <TextField
-              select
-              label="Filter by status"
-              size="small"
-              fullWidth
-              sx={{
-                maxWidth: { md: 200 },
-                '& .MuiFormLabel-root': {
-                  color: 'text.medium',
-                },
-              }}
-              value={filterStatus}
-              onChange={(e) => {
-                setFilterStatus(e.target.value);
-                setPage(1);
-              }}
-            >
-              <MenuItem value="">All</MenuItem>
-              <MenuItem value="ACTIVE">Active</MenuItem>
-              <MenuItem value="CANCELED">Canceled</MenuItem>
-              <MenuItem value="PENDING">Pending</MenuItem>
-            </TextField>
-            <TextField
-              select
-              label="Rows per page"
-              size="small"
-              sx={{
-                maxWidth: 120,
-                '& .MuiFormLabel-root': {
-                  color: 'text.medium',
-                },
-              }}
-              value={pageSize}
-              onChange={(e) => {
-                setPageSize(Number(e.target.value));
-                setPage(1);
-              }}
-            >
-              <MenuItem value={5}>5</MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={50}>50</MenuItem>
-            </TextField>
-          </Stack>
-          {loading ? (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight={100}>
-              <CircularProgress />
-            </Box>
-          ) : error ? (
-            <Typography color="error">{error}</Typography>
-          ) : (
-            <>
-              <TableContainer component={Paper} variant="outlined">
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Email</TableCell>
-                      <TableCell>Plan</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Joined</TableCell>
-                      <TableCell>Admin</TableCell>
-                      <TableCell>Actions</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {users.map((user) => {
-                      const plan = user.subscriptions.length ? user.subscriptions[0].plan : 'none';
-                      const status = user.subscriptions.length
-                        ? user.subscriptions[0].status
-                        : 'none';
-                      return (
-                        <TableRow key={user.id}>
-                          <TableCell>{user.name}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>{plan}</TableCell>
-                          <TableCell>
-                            <Chip
-                              label={status}
-                              color={statusColor(status)}
-                              size="small"
-                              sx={{
-                                textTransform: 'capitalize',
-                              }}
+      <CardHeader
+        title={
+          <Typography variant="h6" fontWeight="bold">
+            User Management
+          </Typography>
+        }
+      />
+      <CardContent sx={{ pt: 0 }}>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={3} alignItems="center">
+          <TextField
+            label="Search by name"
+            size="small"
+            fullWidth
+            sx={{
+              color: 'grey.500',
+              maxWidth: { md: 300 },
+              '& .MuiFormLabel-root': {
+                color: 'text.medium',
+              },
+            }}
+            value={searchName}
+            onChange={(e) => {
+              setSearchName(e.target.value);
+              setPage(1);
+            }}
+          />
+          <TextField
+            select
+            label="Filter by plan"
+            size="small"
+            fullWidth
+            sx={{
+              maxWidth: { md: 200 },
+              '& .MuiFormLabel-root': {
+                color: 'text.medium',
+              },
+            }}
+            value={filterPlan}
+            onChange={(e) => {
+              setFilterPlan(e.target.value);
+              setPage(1);
+            }}
+          >
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="FREE">Free</MenuItem>
+            <MenuItem value="PRO">Pro</MenuItem>
+          </TextField>
+          <TextField
+            select
+            label="Filter by status"
+            size="small"
+            fullWidth
+            sx={{
+              maxWidth: { md: 200 },
+              '& .MuiFormLabel-root': {
+                color: 'text.medium',
+              },
+            }}
+            value={filterStatus}
+            onChange={(e) => {
+              setFilterStatus(e.target.value);
+              setPage(1);
+            }}
+          >
+            <MenuItem value="">All</MenuItem>
+            <MenuItem value="ACTIVE">Active</MenuItem>
+            <MenuItem value="CANCELED">Canceled</MenuItem>
+            <MenuItem value="PENDING">Pending</MenuItem>
+          </TextField>
+          <TextField
+            select
+            label="Rows per page"
+            size="small"
+            sx={{
+              maxWidth: 120,
+              '& .MuiFormLabel-root': {
+                color: 'text.medium',
+              },
+            }}
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPage(1);
+            }}
+          >
+            <MenuItem value={5}>5</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={20}>20</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+          </TextField>
+        </Stack>
+        {loading ? (
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight={100}>
+            <CircularProgress />
+          </Box>
+        ) : error ? (
+          <Typography color="error">{error}</Typography>
+        ) : (
+          <>
+            <TableContainer component={Paper} variant="outlined">
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Plan</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Joined</TableCell>
+                    <TableCell>Admin</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {users.map((user) => {
+                    const plan = user.subscriptions.length ? user.subscriptions[0].plan : 'none';
+                    const status = user.subscriptions.length
+                      ? user.subscriptions[0].status
+                      : 'none';
+                    return (
+                      <TableRow key={user.id}>
+                        <TableCell>{user.name}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{plan}</TableCell>
+                        <TableCell>
+                          <Chip
+                            label={status}
+                            color={statusColor(status)}
+                            size="small"
+                            sx={{
+                              textTransform: 'capitalize',
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          {new Date(user.createdAt).toISOString().slice(0, 10)}
+                        </TableCell>
+                        <TableCell>
+                          {isLoadingEdit && user.id === selectedUser?.id ? (
+                            <CircularProgress size={20} />
+                          ) : (
+                            <Switch
+                              checked={user.role === 'ADMIN'}
+                              onChange={(_, checked) => handleAdminSwitchChange(user, checked)}
                             />
-                          </TableCell>
-                          <TableCell>
-                            {new Date(user.createdAt).toISOString().slice(0, 10)}
-                          </TableCell>
-                          <TableCell>
-                            {isLoadingEdit && user.id === selectedUser?.id ? (
-                              <CircularProgress size={20} />
-                            ) : (
-                              <Switch
-                                checked={user.role === 'ADMIN'}
-                                onChange={(_, checked) => handleAdminSwitchChange(user, checked)}
-                              />
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Stack direction="row" spacing={1}>
-                              <Button
-                                size="small"
-                                onClick={() => handleEditClick(user)}
-                              >
-                                Edit
-                              </Button>
-                            </Stack>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Box display="flex" justifyContent="flex-end" alignItems="center" mt={2}>
-                <Pagination
-                  count={Math.ceil(totalUsers / pageSize) || 1}
-                  page={page}
-                  onChange={(_, value) => setPage(value)}
-                  color="primary"
-                  shape="rounded"
-                  showFirstButton
-                  showLastButton
-                />
-              </Box>
-            </>
-          )}
-        </CardContent>
-      </Card>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Stack direction="row" spacing={1}>
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={() => handleEditClick(user)}
+                              title="Edit user"
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <Box display="flex" justifyContent="flex-end" alignItems="center" mt={2}>
+              <Pagination
+                count={Math.ceil(totalUsers / pageSize) || 1}
+                page={page}
+                onChange={(_, value) => setPage(value)}
+                color="primary"
+                shape="rounded"
+                showFirstButton
+                showLastButton
+              />
+            </Box>
+          </>
+        )}
+      </CardContent>
+
 
       {/* Edit User Modal */}
-      <Dialog open={openEdit} onClose={handleEditClose} maxWidth="xs" fullWidth>
-        <DialogTitle>Edit User</DialogTitle>
+      <Dialog open={openEdit} onClose={handleEditClose} maxWidth="xs" fullWidth>        <DialogTitle>Edit User</DialogTitle>
         <IconButton
           aria-label="close"
           onClick={handleEditClose}
@@ -374,7 +370,7 @@ export default function AdminDashboard() {
             top: 8,
           })}
         >
-          x
+          <CloseIcon fontSize="small" />
         </IconButton>
         <DialogContent>
           <Stack spacing={2}>
@@ -438,14 +434,12 @@ export default function AdminDashboard() {
             Save Changes
           </Button>
         </DialogActions>
-      </Dialog>
-
-      <Toast
+      </Dialog>      <Toast
         open={toast.open}
         message={toast.message}
         severity={toast.severity}
         onClose={() => setToast((prev) => ({ ...prev, open: false }))}
       />
-    </Box>
+    </PageContainer>
   );
 }
