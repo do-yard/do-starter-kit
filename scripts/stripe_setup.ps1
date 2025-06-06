@@ -33,9 +33,9 @@ try {
     Write-Success "✅ Stripe was setup successfully!"
     Write-Info "==============================================="
     Write-Success "The following App Platform environment variables should be set:"
-    Write-Warning "- NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID : $FREE_PRODUCT_ID (FREE Product ID)"
+    Write-Warning "- STRIPE_FREE_PRODUCT_ID : $FREE_PRODUCT_ID (FREE Product ID)"
     Write-Warning "- NEXT_PUBLIC_STRIPE_FREE_PRICE_ID : $FREE_PRICE_ID (FREE price ID)"
-    Write-Warning "- NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID : $PRO_PRODUCT_ID (PRO Product ID)"
+    Write-Warning "- STRIPE_PRO_PRODUCT_ID : $PRO_PRODUCT_ID (PRO Product ID)"
     Write-Warning "- NEXT_PUBLIC_STRIPE_PRO_PRICE_ID : $PRO_PRICE_ID (PRO price ID)"
     Write-Warning "- NEXT_PUBLIC_STRIPE_PRO_GIFT_PRICE_ID : $PRO_GIFT_PRICE_ID (PRO gift price ID)"
 }

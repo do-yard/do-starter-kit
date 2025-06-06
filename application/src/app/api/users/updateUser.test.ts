@@ -1,4 +1,5 @@
 import { HTTP_STATUS } from 'lib/api/http';
+import { USER_ROLES } from 'lib/auth/roles';
 import { updateUser } from './updateUser';
 import { NextRequest } from 'next/server';
 
@@ -61,21 +62,24 @@ describe('updateUser', () => {
   });
 
   it('updates allowed fields and returns updated user', async () => {
-    const updatedUser = { id: 1, name: 'New', role: 'ADMIN' };
+    const updatedUser = { id: 1, name: 'New', role: USER_ROLES.ADMIN };
     mockDbClient.user.update.mockResolvedValue(updatedUser);
-    const req = makeRequest({ id: 1, name: 'New', role: 'ADMIN' });
+    const req = makeRequest({ id: 1, name: 'New', role: USER_ROLES.ADMIN });
     const res = await updateUser(req);
-    expect(mockDbClient.user.update).toHaveBeenCalledWith(1, { name: 'New', role: 'ADMIN' });
-    expect(res.status).toBe(HTTP_STATUS.OK);
-    expect(await res.json()).toEqual({ user: updatedUser });
+    expect(mockDbClient.user.update).toHaveBeenCalledWith(1, {
+      name: 'New',
+      role: USER_ROLES.ADMIN,
+    });
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json).toEqual({ user: updatedUser });
   });
 
-  it('updates subscription to PRO (gift) if provided', async () => {
-    mockDbClient.user.update.mockResolvedValue({ id: 1 });
-    mockDbClient.subscription.findByUserId.mockResolvedValue([{ customerId: 'cus_1' }]);
-    mockBilling.listSubscription.mockResolvedValue([{ id: 'sub_1', items: [{ id: 'item_1' }] }]);
-    mockBilling.updateSubscription.mockResolvedValue({});
-    const req = makeRequest({ id: 1, subscription: { plan: 'PRO' } });
+  it('updates subscriptions if provided', async () => {
+    const updatedUser = { id: 1, name: 'A', role: USER_ROLES.USER };
+    mockDbClient.user.update.mockResolvedValue(updatedUser);
+    mockDbClient.subscription.update.mockResolvedValue({});
+    const req = makeRequest({ id: 1, subscription: { plan: 'pro' } });
     const res = await updateUser(req);
     expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith(1);
     expect(mockBilling.listSubscription).toHaveBeenCalledWith('cus_1');

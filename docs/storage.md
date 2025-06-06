@@ -15,9 +15,9 @@ This guide explains how to set up and configure DigitalOcean Spaces storage for 
 
 1. In the Spaces dashboard, click **Access Keys** tab.
 2. Click **Create Access Key**.
-3. Under **Select access scope**, choose 'Limited Access'. Select your previously created bucket and select "Read/Write/Delete" permissions in the dropdown. 
-3. Give your key a name and click **Create Access Key**.
-4. Copy the **Access Key ID** and **Secret Key**. You will not be able to see the secret again!
+3. Under **Select access scope**, choose 'Limited Access'. Select your previously created bucket and select "Read/Write/Delete" permissions in the dropdown.
+4. Give your key a name and click **Create Access Key**.
+5. Copy the **Access Key ID** and **Secret Key**. You will not be able to see the secret again!
 
 ## 3. Configure your DigitalOcean App
 
@@ -43,10 +43,10 @@ For DigitalOcean Apps and local environments, the environment variables for Spac
 
 ```
 STORAGE_PROVIDER=Spaces
-SPACES_KEY=your-spaces-access-key
-SPACES_SECRET=your-spaces-secret-key
-SPACES_ENDPOINT=your-region.digitaloceanspaces.com
-SPACES_BUCKET=your-bucket-name
+SPACES_KEY_ID=your-access-key-id-here # DigitalOcean Spaces Access Key Id
+SPACES_KEY_SECRET=your-access-key-secret-here # DigitalOcean Spaces Access Key Secret
+SPACES_REGION=spaces-bucket-region # Spaces Region
+SPACES_BUCKET_NAME=spaces-bucket-name # Spaces Bucket Name
 ```
 
 - Replace `your-access-key-here` and `your-secret-key-here` with the values you generated.

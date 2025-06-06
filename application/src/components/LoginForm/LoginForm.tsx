@@ -3,47 +3,34 @@
 import React, { useState } from 'react';
 import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
 import Link from 'next/link';
-import FormButton from './FormButton';
+import FormButton from 'components/FormButton/FormButton';
 import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
-import { USER_ROLES } from 'lib/auth/roles';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { StripeClient } from 'lib/api/stripe';
-import { serverConfig } from '../../../settings';
+import CssBaseline from '@mui/material/CssBaseline';
 
 /**
- * User registration form.
- * Includes password validation, Auth.js integration and error handling.
+ * Login form.
+ * Handles authentication by credentials and integrates with intelligent navigation.
  */
-const SignUpForm: React.FC = () => {
+const LoginForm: React.FC = () => {
   const { navigate } = usePrefetchRouter();
-  const { setNavigating } = useNavigating();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const { setNavigating } = useNavigating();
 
   const handleSubmit = async (e: React.FormEvent) => {
+    setNavigating(true);
     e.preventDefault();
     setError(null);
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.');
-      return;
-    }
-
-    setNavigating(true);
     const res = await signIn('credentials', {
       redirect: false,
       email,
       password,
-      name: USER_ROLES.USER,
-      isSignUp: 'true',
     });
-
-    const billingApi = new StripeClient();
-    await billingApi.createSubscription(serverConfig.Stripe.freePriceId!);
 
     setNavigating(false);
     if (!res || res.error) {
@@ -55,6 +42,7 @@ const SignUpForm: React.FC = () => {
 
   return (
     <ThemeProvider theme={createTheme({ palette: { mode: 'light' } })}>
+      <CssBaseline />
       <Box
         display="flex"
         flexGrow={1}
@@ -66,15 +54,15 @@ const SignUpForm: React.FC = () => {
         <Card variant="outlined" sx={{ width: '100%', maxWidth: 400 }}>
           <Box display="flex" flexDirection="column" gap={1.5} p={3}>
             <Typography fontWeight="bold" variant="h5">
-              Sign Up
+              Log In
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Create an account to get started
+              Welcome back! Please log in to your account
             </Typography>
           </Box>
 
           <CardContent sx={{ p: 3, pt: 0, pb: 1 }}>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} data-testid="login-form">
               <Box display="grid" gap={2}>
                 <Box display="flex" flexDirection="column" gap={1}>
                   <label htmlFor="email" style={{ fontSize: 14, lineHeight: 1.5 }}>
@@ -93,32 +81,16 @@ const SignUpForm: React.FC = () => {
                 </Box>
 
                 <Box display="flex" flexDirection="column" gap={1}>
-                  <label htmlFor="password" style={{ fontSize: 14 }}>
+                  <label htmlFor="password" style={{ fontSize: 14, lineHeight: 1.5 }}>
                     Password
                   </label>
                   <TextField
                     id="password"
                     type="password"
-                    required
                     placeholder="Enter your password"
+                    required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    size="small"
-                  />
-                </Box>
-
-                <Box display="flex" flexDirection="column" gap={1}>
-                  <label htmlFor="confirm-password" style={{ fontSize: 14 }}>
-                    Confirm Password
-                  </label>
-                  <TextField
-                    id="confirm-password"
-                    type="password"
-                    placeholder="Confirm your password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
                     fullWidth
                     size="small"
                   />
@@ -132,20 +104,27 @@ const SignUpForm: React.FC = () => {
               )}
 
               <Box mt={3}>
-                <FormButton>Sign Up</FormButton>
+                <FormButton>Log In with Email</FormButton>
               </Box>
             </form>
+
             <Divider sx={{ my: 2 }} />
           </CardContent>
 
-          <Box display="flex" justifyContent="center" alignItems="center" p={3} pt={0}>
+          <Box display="flex" justifyContent="space-between" alignItems="center" p={3} pt={0}>
+            <Link
+              href="/forgot-password"
+              style={{ fontSize: 14, color: '#6b7280', textDecoration: 'none' }}
+            >
+              Forgot password?
+            </Link>
             <Typography variant="body2" color="text.secondary">
-              Already have an account?
+              Don&apos;t have an account?
               <Link
-                href="/login"
+                href="/signup"
                 style={{ marginLeft: 4, color: 'black', textDecoration: 'none', fontWeight: 500 }}
               >
-                Log in
+                Sign up
               </Link>
             </Typography>
           </Box>
@@ -155,4 +134,4 @@ const SignUpForm: React.FC = () => {
   );
 };
 
-export default SignUpForm;
+export default LoginForm;

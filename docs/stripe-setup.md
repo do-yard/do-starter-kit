@@ -11,10 +11,9 @@ This sample application uses Stripe to manage user subscriptions. The subscripti
 This sample provides scripts to automatically create the required resources in Stripe. Follow these steps:
 
 1. Open a terminal and navigate to the `./scripts` directory:
+
    - **Windows**: Open a `powershell` terminal
    - **Linux/Mac**: Open a `bash` terminal
-
-   
 
 2. Run the setup script:
    - **Windows**: `./stripe_setup.ps1`
@@ -29,7 +28,11 @@ The script will ask you for the Stripe key you created before:
 After this, the script will create two products with your specified names and two prices (one free and one paid), linked to those products.
 In the script outputs, you will see the respective IDs for the products and the prices. _Use these IDs in the deployment templates as the required environment variables_:
 
-- NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID
+- STRIPE_FREE_PRODUCT_ID
 - NEXT_PUBLIC_STRIPE_FREE_PRICE_ID
-- NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID
+- STRIPE_PRO_PRODUCT_ID
 - NEXT_PUBLIC_STRIPE_PRO_PRICE_ID
+
+Also add the following environment variable, using the secret you obtained in step **3** of [Setting up Stripe](#setting-up-stripe).
+
+- STRIPE_SECRET_KEY

@@ -5,11 +5,10 @@ export interface ServerConfig {
   billingProvider: string;
   baseURL: string;
   Spaces: {
-    accessKey?: string;
-    secretKey?: string;
-    bucketName?: string;
-    region?: string;
-    endpoint?: string;
+    SPACES_KEY_ID?: string;
+    SPACES_KEY_SECRET?: string;
+    SPACES_BUCKET_NAME?: string;
+    SPACES_REGION?: string;
   };
   Resend: {
     apiKey?: string;
@@ -33,11 +32,10 @@ export const serverConfig: ServerConfig = {
   billingProvider: process.env.BILLING_PROVIDER || 'Stripe',
   baseURL: process.env.BASE_URL || 'http://localhost:3000',
   Spaces: {
-    accessKey: process.env.SPACES_KEY,
-    secretKey: process.env.SPACES_SECRET,
-    bucketName: process.env.SPACES_BUCKETNAME,
-    region: process.env.SPACES_REGION,
-    endpoint: process.env.SPACES_ENDPOINT,
+    SPACES_KEY_ID: process.env.SPACES_KEY_ID,
+    SPACES_KEY_SECRET: process.env.SPACES_KEY_SECRET,
+    SPACES_BUCKET_NAME: process.env.SPACES_BUCKET_NAME,
+    SPACES_REGION: process.env.SPACES_REGION,
   },
   Resend: {
     apiKey: process.env.RESEND_API_KEY,
@@ -45,9 +43,9 @@ export const serverConfig: ServerConfig = {
   },
   Stripe: {
     stripeSecretKey: process.env.STRIPE_SECRET_KEY,
-    freeProductId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRODUCT_ID,
+    freeProductId: process.env.STRIPE_FREE_PRODUCT_ID,
     freePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
-    proProductId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRODUCT_ID,
+    proProductId: process.env.STRIPE_PRO_PRODUCT_ID,
     proPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
     proGiftPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_GIFT_PRICE_ID,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
