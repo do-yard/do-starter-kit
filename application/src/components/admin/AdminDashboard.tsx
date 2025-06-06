@@ -360,7 +360,8 @@ export default function AdminDashboard() {
 
 
       {/* Edit User Modal */}
-      <Dialog open={openEdit} onClose={handleEditClose} maxWidth="xs" fullWidth>        <DialogTitle>Edit User</DialogTitle>
+      <Dialog open={openEdit} onClose={handleEditClose} maxWidth="xs" fullWidth>
+        <DialogTitle>Edit User</DialogTitle>
         <IconButton
           aria-label="close"
           onClick={handleEditClose}

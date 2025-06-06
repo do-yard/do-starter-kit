@@ -24,14 +24,13 @@ const MyNotes: React.FC = () => {
   const [viewMode, setViewMode] = useState('list');
   const [sortBy, setSortBy] = useState('newest');
   const [searchQuery, setSearchQuery] = useState('');
-  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-  const [editedTitle, setEditedTitle] = useState('');
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
@@ -80,50 +79,6 @@ const MyNotes: React.FC = () => {
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
-  };
-
-  const handleEditStart = (noteId: string, title: string) => {
-    setEditingNoteId(noteId);
-    setEditedTitle(title);
-  };
-
-  const handleEditCancel = () => {
-    setEditingNoteId(null);
-    setEditedTitle('');
-  };
-
-  const handleEditChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedTitle(event.target.value);
-  };
-
-  const handleEditSave = async (noteId: string) => {
-    try {
-      const currentNote = notes.find((note) => note.id === noteId);
-
-      if (!currentNote) {
-        console.error('Note not found');
-        return;
-      }
-
-      const updatedNote = await apiClient.updateNote(noteId, {
-        title: editedTitle,
-        content: currentNote.content,
-      });
-
-      const updatedNotes = notes.map((note) => {
-        if (note.id === noteId) {
-          return updatedNote;
-        }
-        return note;
-      });
-
-      setNotes(updatedNotes);
-    } catch (err) {
-      console.error('Error updating note:', err);
-    } finally {
-      setEditingNoteId(null);
-      setEditedTitle('');
-    }
   };
 
   const handleCreateNote = async (noteData: { title: string; content: string }) => {
@@ -196,11 +151,15 @@ const MyNotes: React.FC = () => {
   const handleCloseViewModal = () => {
     setIsViewModalOpen(false);
     setSelectedNoteId(null);
-  }; const handleCloseEditModal = () => {
+  };
+
+  const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
     setSelectedNoteId(null);
     // Don't fetch notes here - only refresh when actual updates are made
-  }; return (
+  };
+
+  return (
     <PageContainer title="My Notes">
       {/* Header and Controls */}
       <NotesHeader
@@ -219,12 +178,6 @@ const MyNotes: React.FC = () => {
           notes={filteredNotes}
           isLoading={isLoading}
           error={error}
-          editingNoteId={editingNoteId}
-          editedTitle={editedTitle}
-          onEditStart={handleEditStart}
-          onEditCancel={handleEditCancel}
-          onEditChange={handleEditChange}
-          onEditSave={handleEditSave}
           onViewNote={handleViewNote}
           onEditNote={handleEditNote}
           onDeleteNote={handleDeleteNote}
@@ -234,12 +187,6 @@ const MyNotes: React.FC = () => {
           notes={filteredNotes}
           isLoading={isLoading}
           error={error}
-          editingNoteId={editingNoteId}
-          editedTitle={editedTitle}
-          onEditStart={handleEditStart}
-          onEditCancel={handleEditCancel}
-          onEditChange={handleEditChange}
-          onEditSave={handleEditSave}
           onViewNote={handleViewNote}
           onEditNote={handleEditNote}
           onDeleteNote={handleDeleteNote}

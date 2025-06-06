@@ -2,8 +2,6 @@ import React from 'react';
 import {
   Box,
   Typography,
-  Button,
-  TextField,
   Table,
   TableBody,
   TableCell,
@@ -15,19 +13,13 @@ import {
   Stack,
   Paper,
 } from '@mui/material';
-import { Edit, Save, Visibility, Delete } from '@mui/icons-material';
+import { Edit, Visibility, Delete } from '@mui/icons-material';
 import { Note } from 'lib/api/notes';
 
 interface NotesListViewProps {
   notes: Note[];
   isLoading: boolean;
   error: string | null;
-  editingNoteId: string | null;
-  editedTitle: string;
-  onEditStart: (noteId: string, title: string) => void;
-  onEditCancel: () => void;
-  onEditChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onEditSave: (noteId: string) => void;
   onViewNote: (noteId: string) => void;
   onEditNote: (noteId: string) => void;
   onDeleteNote: (noteId: string) => void;
@@ -37,12 +29,6 @@ const NotesListView: React.FC<NotesListViewProps> = ({
   notes,
   isLoading,
   error,
-  editingNoteId,
-  editedTitle,
-  onEditStart,
-  onEditCancel,
-  onEditChange,
-  onEditSave,
   onViewNote,
   onEditNote,
   onDeleteNote,
@@ -86,40 +72,9 @@ const NotesListView: React.FC<NotesListViewProps> = ({
           {notes.map((note) => (
             <TableRow key={note.id} hover>
               <TableCell>
-                {editingNoteId === note.id ? (
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <TextField
-                      value={editedTitle}
-                      onChange={onEditChange}
-                      variant="standard"
-                      autoFocus
-                      fullWidth
-                      onKeyDown={(e) => {
-                        if (e.key === 'Escape') {
-                          onEditCancel();
-                        }
-                      }}
-                    />
-                    <IconButton
-                      size="small"
-                      onClick={() => onEditSave(note.id)}
-                    >
-                      <Save />
-                    </IconButton>
-                  </Stack>
-                ) : (
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
-                    <Typography variant="body1">
-                      {note.title}
-                    </Typography>
-                    <IconButton
-                      size="small"
-                      onClick={() => onEditStart(note.id, note.title)}
-                    >
-                      <Edit />
-                    </IconButton>
-                  </Stack>
-                )}
+                <Typography variant="body1">
+                  {note.title}
+                </Typography>
               </TableCell>              
               <TableCell>
                 <Typography 
