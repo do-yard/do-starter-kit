@@ -29,9 +29,13 @@ describe('UpdatePasswordForm', () => {
       json: async () => ({ error: 'Invalid current password.' }),
     });
     render(<UpdatePasswordForm />);
-    fireEvent.change(screen.getByLabelText(/current password/i), { target: { value: 'wrongpass' } });
+    fireEvent.change(screen.getByLabelText(/current password/i), {
+      target: { value: 'wrongpass' },
+    });
     fireEvent.change(screen.getByLabelText(/^new password$/i), { target: { value: 'newpass' } });
-    fireEvent.change(screen.getByLabelText(/confirm new password/i), { target: { value: 'newpass' } });
+    fireEvent.change(screen.getByLabelText(/confirm new password/i), {
+      target: { value: 'newpass' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /update password/i }));
     expect(await screen.findByText(/invalid current password/i)).toBeInTheDocument();
     (global.fetch as jest.Mock).mockRestore?.();
@@ -42,7 +46,9 @@ describe('UpdatePasswordForm', () => {
     render(<UpdatePasswordForm />);
     fireEvent.change(screen.getByLabelText(/current password/i), { target: { value: 'oldpass' } });
     fireEvent.change(screen.getByLabelText(/^new password$/i), { target: { value: 'newpass' } });
-    fireEvent.change(screen.getByLabelText(/confirm new password/i), { target: { value: 'newpass' } });
+    fireEvent.change(screen.getByLabelText(/confirm new password/i), {
+      target: { value: 'newpass' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /update password/i }));
     expect(await screen.findByText(/password updated successfully/i)).toBeInTheDocument();
     expect((screen.getByLabelText(/current password/i) as HTMLInputElement).value).toBe('');
@@ -60,12 +66,16 @@ describe('UpdatePasswordForm', () => {
     render(<UpdatePasswordForm />);
     fireEvent.change(screen.getByLabelText(/current password/i), { target: { value: 'oldpass' } });
     fireEvent.change(screen.getByLabelText(/^new password$/i), { target: { value: 'newpass' } });
-    fireEvent.change(screen.getByLabelText(/confirm new password/i), { target: { value: 'newpass' } });
+    fireEvent.change(screen.getByLabelText(/confirm new password/i), {
+      target: { value: 'newpass' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /update password/i }));
     expect(screen.getByRole('button', { name: /updating/i })).toBeDisabled();
     // Finish fetch
     if (fetchResolve) fetchResolve();
-    await waitFor(() => expect(screen.getByRole('button', { name: /update password/i })).not.toBeDisabled());
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /update password/i })).not.toBeDisabled()
+    );
     (global.fetch as jest.Mock).mockRestore?.();
   });
 });
