@@ -10,12 +10,12 @@ export interface EmailService {
  */
 // Factory function to create the appropriate email service
 export function createEmailClient(): EmailService {
-      const emailProvider = serverConfig.emailProvider;
-    
-      switch (emailProvider) {
-        // Add more providers here in the future
-        case 'Resend':
-        default:
-          return new ResendEmailService();
-      }
+  const emailProvider = serverConfig.emailProvider;
+
+  switch (emailProvider) {
+    // Add more providers here in the future
+    case 'Resend':
+    default:
+      return new ResendEmailService();
+  }
 }

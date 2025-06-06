@@ -4,11 +4,10 @@ export interface ServerConfig {
   emailProvider: string;
   billingProvider: string;
   Spaces: {
-    accessKey?: string;
-    secretKey?: string;
-    bucketName?: string;
-    region?: string;
-    endpoint?: string;
+    SPACES_KEY_ID?: string;
+    SPACES_KEY_SECRET?: string;
+    SPACES_BUCKET_NAME?: string;
+    SPACES_REGION?: string;
   };
   Resend: {
     apiKey?: string;
@@ -30,11 +29,10 @@ export const serverConfig: ServerConfig = {
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
   billingProvider: process.env.BILLING_PROVIDER || 'Stripe',
   Spaces: {
-    accessKey: process.env.SPACES_KEY,
-    secretKey: process.env.SPACES_SECRET,
-    bucketName: process.env.SPACES_BUCKETNAME,
-    region: process.env.SPACES_REGION,
-    endpoint: process.env.SPACES_ENDPOINT,
+    SPACES_KEY_ID: process.env.SPACES_KEY_ID,
+    SPACES_KEY_SECRET: process.env.SPACES_KEY_SECRET,
+    SPACES_BUCKET_NAME: process.env.SPACES_BUCKET_NAME,
+    SPACES_REGION: process.env.SPACES_REGION,
   },
   Resend: {
     apiKey: process.env.RESEND_API_KEY,
