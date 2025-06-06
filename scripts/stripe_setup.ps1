@@ -37,7 +37,7 @@ try {
     Write-Warning "- NEXT_PUBLIC_STRIPE_FREE_PRICE_ID : $FREE_PRICE_ID (FREE price ID)"
     Write-Warning "- STRIPE_PRO_PRODUCT_ID : $PRO_PRODUCT_ID (PRO Product ID)"
     Write-Warning "- NEXT_PUBLIC_STRIPE_PRO_PRICE_ID : $PRO_PRICE_ID (PRO price ID)"
-    Write-Warning "- NEXT_PUBLIC_STRIPE_PRO_GIFT_PRICE_ID : $PRO_GIFT_PRICE_ID (PRO gift price ID)"
+    Write-Warning "- PRO_GIFT_PRICE_ID : $PRO_GIFT_PRICE_ID (PRO gift price ID)"
 }
 catch {
     $exitCode = Format-StripeError -ErrorRecord $_
