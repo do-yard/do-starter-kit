@@ -1,0 +1,59 @@
+import React, { useEffect, useState } from 'react';
+import { Box, Card, CardContent, Typography, CircularProgress, Alert, Button } from '@mui/material';
+import { useSearchParams, useRouter } from 'next/navigation';
+
+export default function VerifyEmailPage() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = searchParams.get('token');
+    if (!token) {
+      setStatus('error');
+      setError('Missing verification token.');
+      return;
+    }
+    fetch(`/api/verify-email?token=${encodeURIComponent(token)}`)
+      .then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || 'Verification failed.');
+        }
+        setStatus('success');
+      })
+      .catch((e) => {
+        setStatus('error');
+        setError(e.message || 'Verification failed.');
+      });
+  }, [searchParams]);
+
+  return (
+    <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh" bgcolor="#f3f4f6">
+      <Card sx={{ maxWidth: 480, width: '100%', borderRadius: 2, boxShadow: 2 }}>
+        <CardContent>
+          <Typography variant="h4" fontWeight={700} mb={2} align="center">
+            Email Verification
+          </Typography>
+          {status === 'verifying' && (
+            <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+              <CircularProgress />
+              <Typography variant="body1">Verifying your email...</Typography>
+            </Box>
+          )}
+          {status === 'success' && (
+            <Alert severity="success" sx={{ mb: 2 }}>
+              Your email has been verified! You can now <Button color="success" onClick={() => router.push('/login')}>log in</Button>.
+            </Alert>
+          )}
+          {status === 'error' && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error || 'Verification failed.'}
+            </Alert>
+          )}
+        </CardContent>
+      </Card>
+    </Box>
+  );
+}

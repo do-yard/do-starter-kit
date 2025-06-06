@@ -10,6 +10,9 @@ export interface User {
 
   role: UserRole;
   createdAt: Date;
+
+  verificationToken?: string | null;
+  emailVerified: boolean;
 }
 
 // Subscription type

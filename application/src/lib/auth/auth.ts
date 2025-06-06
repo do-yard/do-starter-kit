@@ -8,6 +8,8 @@ import { hashPassword, verifyPassword } from 'helpers/hash';
 import { User, UserRole } from 'types';
 import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
 import { USER_ROLES } from './roles';
+import { v4 as uuidv4 } from 'uuid';
+import { createEmailClient } from 'services/email/email';
 
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
@@ -42,14 +44,28 @@ const providers: Provider[] = [
         }
 
         const hashedPassword = await hashPassword(credentials.password as string);
+        // Generate verification token
+        const verificationToken = uuidv4();
 
+        // Create user with verification fields
         const user = await dbClient.user.create({
           name: credentials.name as string,
           email: credentials.email as string,
           image: null,
           passwordHash: hashedPassword,
           role: isFirstUser ? USER_ROLES.ADMIN : USER_ROLES.USER,
+          verificationToken,
+          emailVerified: false,
         });
+
+        // Send verification email
+        const emailClient = createEmailClient();
+        const verifyUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
+        await emailClient.sendEmail(
+          user.email,
+          'Verify your email address',
+          `<p>Thank you for signing up! Please verify your email by clicking the link below:</p><p><a href="${verifyUrl}">${verifyUrl}</a></p>`
+        );
 
         return user;
       }
