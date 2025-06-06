@@ -10,7 +10,7 @@ export type EmailProvider = 'Resend';
  */
 export async function createEmailService(): Promise<EmailService> {
   const emailProvider = serverConfig.emailProvider;
-  
+
   switch (emailProvider) {
     case 'Resend':
     default: {

@@ -28,7 +28,8 @@ describe('updateUser', () => {
       },
       subscription: {
         findByUserId: jest.fn(),
-        update: jest.fn(),      },
+        update: jest.fn(),
+      },
     };
     (createDatabaseService as jest.Mock).mockResolvedValue(mockDbClient);
   });

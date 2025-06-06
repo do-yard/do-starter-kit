@@ -8,7 +8,7 @@ jest.mock('../../../services/status/statusService');
 describe('System Status API Route', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  });  it('should return status of all services', async () => {
+  }); it('should return status of all services', async () => {
     // Arrange
     const mockHealthState = {
       services: [

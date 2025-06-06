@@ -34,13 +34,13 @@ export interface ConfigurableService {
    * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
    */
   checkConnection(): Promise<boolean>;
-  
+
   /**
    * Checks if the service configuration is valid and tests connection when configuration is complete.
    * @returns {Promise<ServiceConfigStatus>} Configuration and connection status object.
    */
   checkConfiguration(): Promise<ServiceConfigStatus>;
-  
+
   /**
    * Indicates whether this service is required for the application to function properly.
    * @returns {boolean} True if the service is critical, false if it's optional.

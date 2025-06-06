@@ -19,7 +19,7 @@ export class SpacesStorageService extends StorageService {
   private isConfigured: boolean = false;
   private configError: string = '';
   private lastConnectionError: string = '';
-  
+
   // Service name for consistent display across all status responses
   private static readonly serviceName = 'Storage (DigitalOcean Spaces)';
   // Required config items with their corresponding env var names and descriptions
@@ -33,15 +33,15 @@ export class SpacesStorageService extends StorageService {
     super();
     this.initializeClient();
   }
-  
+
   /**
    * Initializes the S3 client based on the configuration.
    * Sets isConfigured flag and configError message if applicable.
    */  private initializeClient(): void {
-    try {      
+    try {
       const accessKeyId = serverConfig.Spaces.SPACES_KEY_ID;
       const secretAccessKey = serverConfig.Spaces.SPACES_KEY_SECRET;
-      const bucketName = serverConfig.Spaces.SPACES_BUCKET_NAME;      const region = serverConfig.Spaces.SPACES_REGION;
+      const bucketName = serverConfig.Spaces.SPACES_BUCKET_NAME; const region = serverConfig.Spaces.SPACES_REGION;
       const endpoint = `https://${region}.digitaloceanspaces.com`;
 
       // Check for missing configuration
@@ -53,9 +53,9 @@ export class SpacesStorageService extends StorageService {
         this.isConfigured = false;
         this.configError = 'Missing required configuration';
         return;
-      }      
+      }
       this.bucketName = bucketName!; // Safe to use ! here since we checked for missing config above
-        this.client = new S3Client({
+      this.client = new S3Client({
         forcePathStyle: false, // Configures to use subdomain/virtual calling format.
         endpoint,
         region,
@@ -83,7 +83,7 @@ export class SpacesStorageService extends StorageService {
     if (!this.client) {
       throw new Error('Storage client not initialized. Check configuration.');
     }
-    
+
     const fileBuffer = await file.arrayBuffer();
 
     const command = new PutObjectCommand({
@@ -102,7 +102,7 @@ export class SpacesStorageService extends StorageService {
     if (!this.client) {
       throw new Error('Storage client not initialized. Check configuration.');
     }
-    
+
     const command = new GetObjectCommand({
       Bucket: this.bucketName,
       Key: this.getFilePath(userId, fileName),
@@ -110,18 +110,18 @@ export class SpacesStorageService extends StorageService {
 
     return await getSignedUrl(this.client, command, { expiresIn });
   }
-  
+
   async deleteFile(userId: string, fileName: string): Promise<void> {
     if (!this.client) {
       throw new Error('Storage client not initialized. Check configuration.');
     }
-    
+
     const command = new DeleteObjectCommand({
       Bucket: this.bucketName,
       Key: this.getFilePath(userId, fileName),
-    });    await this.client.send(command);
+    }); await this.client.send(command);
   }
-  
+
   /**
    * Checks if the Spaces service is properly configured and accessible.
    * Uses ListObjectsV2Command to verify bucket access and connectivity.
@@ -144,17 +144,17 @@ export class SpacesStorageService extends StorageService {
       return true;
     } catch (listError) {
       const listErrorMsg = listError instanceof Error ? listError.message : String(listError);
-      
+
       console.error('Storage connection test failed:', {
         listError: listErrorMsg
       });
-      
+
       // Store the last error details for use in checkConfiguration
       this.lastConnectionError = `Connection error: ${listErrorMsg}`;
-          return false;
+      return false;
     }
   }
-  
+
   /**
    * Checks if the storage service configuration is valid and tests connection when configuration is complete.
    */
@@ -187,7 +187,7 @@ export class SpacesStorageService extends StorageService {
         error: this.lastConnectionError || 'Connection failed'
       };
     }
-    
+
     return {
       name: SpacesStorageService.serviceName,
       configured: true,

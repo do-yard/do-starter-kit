@@ -37,14 +37,14 @@ export async function middleware(request: NextRequest) {
     // Skip health checks in edge runtime to avoid Prisma client issues
     // Edge runtime doesn't have access to Node.js APIs needed for database connections
     const isEdgeRuntime = typeof process === 'undefined' || process.env.NEXT_RUNTIME === 'edge';
-    
+
     if (!isEdgeRuntime) {
       // Ensure StatusService is initialized
       await StatusService.initialize();
-      
+
       // Use cached health state for fast performance
       const isHealthy = StatusService.isApplicationHealthy();
-      
+
       if (!isHealthy) {
         console.log(`Redirecting to system status due to unhealthy services for route: ${pathname}`);
         return NextResponse.redirect(new URL('/system-status', request.url));
@@ -72,9 +72,9 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/',
-    '/login', 
+    '/login',
     '/signup',
-    '/dashboard', 
+    '/dashboard',
     '/dashboard/:path*',
     '/system-status',
     '/api/system-status',

@@ -32,18 +32,18 @@ const SystemStatusPage: React.FC = () => {
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const fetchStatus = async (forceRefresh = false) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const url = forceRefresh ? '/api/system-status?refresh=true' : '/api/system-status';
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Failed to fetch status: ${response.statusText}`);
       }
-        const data = await response.json();
+      const data = await response.json();
       console.log('Status page received data:', data);
       setServices(data.services || []);
       setSystemInfo(data.systemInfo);
@@ -58,14 +58,16 @@ const SystemStatusPage: React.FC = () => {
   useEffect(() => {
     fetchStatus();
   }, []);
+
   const requiredServices = services.filter(service => service.required);
   const optionalServices = services.filter(service => !service.required);
-  
+
   const hasRequiredIssues = requiredServices.some(service => !service.configured || !service.connected);
   const hasOptionalIssues = optionalServices.some(service => !service.configured || !service.connected);
-  
+
   const unconfiguredRequiredServices = requiredServices.filter(service => !service.configured);
   const configuredButDisconnectedRequiredServices = requiredServices.filter(service => service.configured && !service.connected);
+  
   const getOverallStatusMessage = () => {
     if (!hasRequiredIssues && !hasOptionalIssues) {
       return {
@@ -74,7 +76,7 @@ const SystemStatusPage: React.FC = () => {
         severity: "success" as const
       };
     }
-    
+
     if (hasRequiredIssues) {
       if (unconfiguredRequiredServices.length > 0) {
         return {
@@ -83,7 +85,7 @@ const SystemStatusPage: React.FC = () => {
           severity: "error" as const
         };
       }
-      
+
       if (configuredButDisconnectedRequiredServices.length > 0) {
         return {
           title: "Critical Service Connection Issues",
@@ -92,7 +94,7 @@ const SystemStatusPage: React.FC = () => {
         };
       }
     }
-    
+
     if (hasOptionalIssues && !hasRequiredIssues) {
       return {
         title: "Optional Services Have Issues",
@@ -100,13 +102,14 @@ const SystemStatusPage: React.FC = () => {
         severity: "warning" as const
       };
     }
-    
+
     return {
       title: "Service Issues Detected",
       description: "Please review the service status details below.",
       severity: "warning" as const
     };
   };
+  
   const statusMessage = getOverallStatusMessage();
 
   return (
@@ -133,20 +136,20 @@ const SystemStatusPage: React.FC = () => {
           {error}
         </Alert>
       ) : (
-        <>          <Alert 
-            severity={statusMessage.severity} 
-            sx={{ mb: 3 }}
-            icon={statusMessage.severity === "success" ? <CheckCircleIcon /> : <ErrorIcon />}
-          >
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Typography variant="h6">
-                {statusMessage.title}
-              </Typography>
-              <Typography variant="body2">
-                {statusMessage.description}
-              </Typography>
-            </Box>
-          </Alert>
+        <>          <Alert
+          severity={statusMessage.severity}
+          sx={{ mb: 3 }}
+          icon={statusMessage.severity === "success" ? <CheckCircleIcon /> : <ErrorIcon />}
+        >
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography variant="h6">
+              {statusMessage.title}
+            </Typography>
+            <Typography variant="body2">
+              {statusMessage.description}
+            </Typography>
+          </Box>
+        </Alert>
 
           {/* Service Status Cards */}
           <Box sx={{ mb: 4 }}>
@@ -159,17 +162,17 @@ const SystemStatusPage: React.FC = () => {
                 <ConfigurableServiceCard key={`${service.name}-${index}`} service={service} />
               ))
             )}
-          </Box>          <Box sx={{ textAlign: 'center' }}>            <Button 
-              variant="contained" 
-              startIcon={<RefreshIcon />}
-              onClick={() => fetchStatus(true)} 
-              sx={{ mr: hasRequiredIssues ? 0 : 2 }}
-              disabled={loading}
-            >
-              Refresh Status
-            </Button>
+          </Box>          <Box sx={{ textAlign: 'center' }}>            <Button
+            variant="contained"
+            startIcon={<RefreshIcon />}
+            onClick={() => fetchStatus(true)}
+            sx={{ mr: hasRequiredIssues ? 0 : 2 }}
+            disabled={loading}
+          >
+            Refresh Status
+          </Button>
             {!hasRequiredIssues && (
-              <Button 
+              <Button
                 variant="outlined"
                 startIcon={<HomeIcon />}
                 href="/"

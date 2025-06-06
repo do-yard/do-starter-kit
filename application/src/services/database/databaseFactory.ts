@@ -10,7 +10,7 @@ export type DatabaseProvider = 'Postgres';
  */
 export async function createDatabaseService(): Promise<DatabaseClient> {
   const databaseProvider = serverConfig.databaseProvider;
-  
+
   switch (databaseProvider) {
     case 'Postgres':
     default: {

@@ -14,21 +14,21 @@ export const GET = async (request: Request) => {
   try {
     const url = new URL(request.url);
     const forceRefresh = url.searchParams.get('refresh') === 'true';
-    
+
     // Ensure StatusService is initialized
     await StatusService.initialize();
-    
+
     // Get health state (fresh check if requested, otherwise use cache)
-    const healthState = forceRefresh 
+    const healthState = forceRefresh
       ? await StatusService.forceHealthCheck()
       : StatusService.getHealthState();
 
     if (!healthState) {
       // This shouldn't happen after initialization, but handle gracefully
       console.warn('Health state is null after initialization');
-      
+
       return NextResponse.json(
-        { 
+        {
           error: 'Health system initialization failed',
           services: [],
           systemInfo: {
@@ -36,12 +36,12 @@ export const GET = async (request: Request) => {
             timestamp: new Date().toISOString()
           },
           status: 'error'
-        }, 
+        },
         { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
       );
     }        // No need to map services - we can use them directly
     const services = healthState.services;
-    
+
     // Add system information
     const systemInfo = {
       environment: process.env.NODE_ENV || 'unknown',
@@ -49,10 +49,11 @@ export const GET = async (request: Request) => {
       lastHealthCheck: healthState.lastChecked.toISOString()
     };
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       services,
       systemInfo,
-      status: healthState.isHealthy ? 'ok' : 'issues_detected' }, { 
+      status: healthState.isHealthy ? 'ok' : 'issues_detected'
+    }, {
       status: HTTP_STATUS.OK,
       headers: {
         'Cache-Control': forceRefresh ? 'no-store, max-age=0' : 'public, max-age=60'
@@ -61,11 +62,11 @@ export const GET = async (request: Request) => {
   } catch (error) {
     console.error('Error checking system status:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to check system status',
         message: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString()
-      }, 
+      },
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     );
   }

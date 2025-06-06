@@ -14,7 +14,7 @@ export class ResendEmailService extends EmailService {
 
   // Service name for consistent display across all status responses
   private static readonly serviceName = 'Email Service (Resend)';
-    // Required config items with their corresponding env var names and descriptions
+  // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
     'apiKey': { envVar: 'RESEND_API_KEY', description: 'Resend API Key' },
     'fromEmail': { envVar: 'RESEND_EMAIL_SENDER', description: 'From email address' }
@@ -29,7 +29,8 @@ export class ResendEmailService extends EmailService {
    * Sets isConfigured flag if applicable.
    */
   private initializeClient(): void {
-    try {      const apiKey = serverConfig.Resend.apiKey;
+    try {
+      const apiKey = serverConfig.Resend.apiKey;
       const fromEmail = serverConfig.Resend.fromEmail;
 
       // Check for missing configuration
@@ -94,11 +95,11 @@ export class ResendEmailService extends EmailService {
       return true;
     } catch (connectionError) {
       const errorMsg = connectionError instanceof Error ? connectionError.message : String(connectionError);
-      
+
       console.error('Email connection test failed:', {
         error: errorMsg
       });
-      
+
       this.lastConnectionError = `Connection error: ${errorMsg}`;
       return false;
     }
@@ -135,7 +136,7 @@ export class ResendEmailService extends EmailService {
         error: this.lastConnectionError || 'Connection failed'
       };
     }
-      return {
+    return {
       name: ResendEmailService.serviceName,
       configured: true,
       connected: true

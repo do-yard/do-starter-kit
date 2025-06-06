@@ -25,14 +25,14 @@ const ConfigurableServiceCard: React.FC<ConfigurableServiceCardProps> = ({ servi
     if (service.configured === false) {
       // Show gray circle with question mark for connection when not configured
       return (
-        <Box sx={{ 
-          width: 24, 
-          height: 24, 
-          borderRadius: '50%', 
-          bgcolor: 'grey.400', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center' 
+        <Box sx={{
+          width: 24,
+          height: 24,
+          borderRadius: '50%',
+          bgcolor: 'grey.400',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}>
           <Typography variant="caption" sx={{ color: 'white', fontSize: '12px' }}>
             ?
@@ -40,7 +40,7 @@ const ConfigurableServiceCard: React.FC<ConfigurableServiceCardProps> = ({ servi
         </Box>
       );
     }
-    
+
     return service.connected ? (
       <CheckCircleIcon color="success" />
     ) : (
@@ -78,29 +78,29 @@ const ConfigurableServiceCard: React.FC<ConfigurableServiceCardProps> = ({ servi
           <Typography variant="h6">
             {service.name}
           </Typography>
-          <Chip 
-            label={service.required ? 'Required' : 'Optional'} 
+          <Chip
+            label={service.required ? 'Required' : 'Optional'}
             color={service.required ? 'primary' : 'default'}
             size="small"
           />
         </Box>
-        
+
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          {service.configured ? 
-            <CheckCircleIcon color="success" /> : 
+          {service.configured ?
+            <CheckCircleIcon color="success" /> :
             <ErrorIcon color="error" />}
           <Typography variant="body1" sx={{ ml: 1 }}>
             Configuration: {service.configured ? 'Valid' : 'Invalid'}
           </Typography>
         </Box>
-        
+
         <Box sx={{ display: 'flex', alignItems: 'center', mb: service.error ? 1 : 0 }}>
           {getConnectionIcon()}
           <Typography variant="body1" sx={{ ml: 1 }}>
             Connection: {getConnectionStatus()}
           </Typography>
         </Box>
-          {service.error && (
+        {service.error && (
           <Alert severity={getErrorSeverity()} sx={{ mt: 2 }}>
             <Typography variant="body2">
               {getErrorMessage()}

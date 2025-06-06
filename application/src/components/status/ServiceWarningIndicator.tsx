@@ -29,18 +29,18 @@ const ServiceWarningIndicator: React.FC = () => {
         if (response.ok) {
           const data = await response.json();
           const services: ServiceStatus[] = data.services || [];
-          
+
           // Check for issues in required vs optional services
           const requiredServices = services.filter(service => service.required);
           const optionalServices = services.filter(service => !service.required);
-          
-          const hasRequiredIssues = requiredServices.some(service => 
+
+          const hasRequiredIssues = requiredServices.some(service =>
             !service.configured || !service.connected
           );
-          const optionalIssues = optionalServices.filter(service => 
+          const optionalIssues = optionalServices.filter(service =>
             !service.configured || !service.connected
           );
-          
+
           // Only show warning if there are optional issues but no required issues
           setHasOptionalIssues(!hasRequiredIssues && optionalIssues.length > 0);
           setOptionalIssuesCount(optionalIssues.length);
@@ -71,9 +71,9 @@ const ServiceWarningIndicator: React.FC = () => {
 
   return (
     <Tooltip title={`${optionalIssuesCount} optional service${optionalIssuesCount !== 1 ? 's' : ''} have configuration issues. Click to view details.`}>
-      <IconButton 
+      <IconButton
         onClick={handleClick}
-        sx={{ 
+        sx={{
           color: 'warning.main',
           '&:hover': {
             backgroundColor: 'warning.light',

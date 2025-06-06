@@ -30,16 +30,17 @@ export class StatusService {
     }
 
     console.log('🔍 Initializing application health checks...');
-    
+
     try {
       await this.performHealthCheck();
       this.isInitialized = true;
-      
+
       if (this.cachedHealthState?.isHealthy) {
         console.log('✅ All services are healthy');
       } else {
         console.log('⚠️ Some services have issues');
-      }    } catch (error) {
+      }
+    } catch (error) {
       console.error('❌ Failed to initialize health checks:', error);
       // Set unhealthy state as fallback
       this.cachedHealthState = {
@@ -77,17 +78,17 @@ export class StatusService {
     await this.performHealthCheck();
     return this.cachedHealthState!;
   }
-  
+
   /**
    * Performs the actual health check and updates the cached state.
    */
   private static async performHealthCheck(): Promise<void> {
     try {
       const serviceStatuses = await this.checkAllServices();
-      
+
       // Determine if the application is healthy - only required services matter for overall health
       const requiredServices = serviceStatuses.filter(service => service.required);
-      const isHealthy = requiredServices.every(service => 
+      const isHealthy = requiredServices.every(service =>
         service.configured && service.connected
       );
 
@@ -98,7 +99,7 @@ export class StatusService {
       };
     } catch (error) {
       console.error('Failed to perform health check:', error);
-      
+
       // Set unhealthy state on error
       this.cachedHealthState = {
         isHealthy: false,
@@ -109,10 +110,11 @@ export class StatusService {
           connected: false,
           required: true, // Health check system itself is required
           error: `Health check failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-        }]      };
+        }]
+      };
     }
   }
-  
+
   /**
    * Checks the status of storage service configuration and connectivity.
    * Uses the StorageService interface to check the current storage provider.
@@ -122,7 +124,7 @@ export class StatusService {
   static async checkStorageStatus(): Promise<ServiceStatus> {
     try {
       const storageService = await createStorageService();
-      
+
       // Get configuration status from the service and add required classification
       const configStatus = await storageService.checkConfiguration();
       return {
@@ -136,11 +138,12 @@ export class StatusService {
         connected: false,
         required: false, // Default to false if service can't be initialized
         error: error instanceof Error
-          ? `Failed to initialize storage service: ${error.message}` 
-          : 'Failed to initialize storage service: Unknown error'      };
+          ? `Failed to initialize storage service: ${error.message}`
+          : 'Failed to initialize storage service: Unknown error'
+      };
     }
   }
-  
+
   /**
    * Checks the configuration and connectivity status of the email service.
    * Uses the EmailService interface to check the current email provider.
@@ -150,7 +153,7 @@ export class StatusService {
   static async checkEmailStatus(): Promise<ServiceStatus> {
     try {
       const emailService = await createEmailService();
-      
+
       // Get configuration status from the service and add required classification
       const configStatus = await emailService.checkConfiguration();
       return {
@@ -164,7 +167,7 @@ export class StatusService {
         connected: false,
         required: true, // Default to true since email is critical
         error: error instanceof Error
-          ? `Failed to initialize email service: ${error.message}` 
+          ? `Failed to initialize email service: ${error.message}`
           : 'Failed to initialize email service: Unknown error'
       };
     }
@@ -179,7 +182,7 @@ export class StatusService {
   static async checkDatabaseStatus(): Promise<ServiceStatus> {
     try {
       const databaseService = await createDatabaseService();
-      
+
       // Get configuration status from the service and add required classification
       const configStatus = await databaseService.checkConfiguration();
       return {
@@ -193,7 +196,7 @@ export class StatusService {
         connected: false,
         required: true, // Default to true since database is critical
         error: error instanceof Error
-          ? `Failed to initialize database service: ${error.message}` 
+          ? `Failed to initialize database service: ${error.message}`
           : 'Failed to initialize database service: Unknown error'
       };
     }
@@ -207,19 +210,19 @@ export class StatusService {
    */
   static async checkAllServices(): Promise<ServiceStatus[]> {
     const services: ServiceStatus[] = [];
-    
+
     // Check storage service
     const storageStatus = await this.checkStorageStatus();
     services.push(storageStatus);
-    
+
     // Check email service (demonstrates extensibility)
     const emailStatus = await this.checkEmailStatus();
     services.push(emailStatus);
-    
+
     // Check database service (demonstrates extensibility)
     const databaseStatus = await this.checkDatabaseStatus();
     services.push(databaseStatus);
-    
+
     return services;
   }
 }

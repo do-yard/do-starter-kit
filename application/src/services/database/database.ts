@@ -9,7 +9,8 @@ export type QueryParams = unknown[];
  * Abstract base class for database clients.
  * Provides a common interface for database operations across different database providers.
  */
-export abstract class DatabaseClient implements ConfigurableService {abstract user: {
+export abstract class DatabaseClient implements ConfigurableService {
+  abstract user: {
     findById: (id: string) => Promise<User | null>;
     findByEmail: (email: string) => Promise<User | null>;
     findByEmailAndPassword: (email: string, passwordHash: string) => Promise<User | null>;
@@ -42,10 +43,10 @@ export abstract class DatabaseClient implements ConfigurableService {abstract us
     update: (id: string, note: Partial<Omit<Note, 'id' | 'createdAt'>>) => Promise<Note>;
     delete: (id: string) => Promise<void>;
   };
-    abstract checkConnection(): Promise<boolean>;
-  
+  abstract checkConnection(): Promise<boolean>;
+
   abstract checkConfiguration(): Promise<ServiceConfigStatus>;
-  
+
   /**
    * Default implementation: database services are required by default.
    * Override this method if a specific database implementation should be optional.

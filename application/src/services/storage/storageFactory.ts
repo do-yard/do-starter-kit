@@ -10,7 +10,7 @@ export type StorageProvider = 'Spaces';
  */
 export async function createStorageService(): Promise<StorageService> {
   const storageProvider = serverConfig.storageProvider;
-  
+
   switch (storageProvider) {
     case 'Spaces':
     default: {

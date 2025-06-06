@@ -12,7 +12,7 @@ import { HTTP_STATUS } from 'lib/api/http';
 export const updateUser = async (request: NextRequest): Promise<NextResponse> => {
   try {
     const body = await request.json();
-    const { id, ...updateData } = body;    if (!id) {
+    const { id, ...updateData } = body; if (!id) {
       return NextResponse.json({ error: 'User ID is required' }, { status: HTTP_STATUS.BAD_REQUEST });
     }
 
@@ -24,7 +24,8 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
       if (!allowedFields.includes(key)) {
         delete updateData[key];
       }
-    });    if (Object.keys(updateData).length === 0) {    return NextResponse.json({ error: 'No valid fields to update' }, { status: HTTP_STATUS.BAD_REQUEST });
+    }); if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: 'No valid fields to update' }, { status: HTTP_STATUS.BAD_REQUEST });
     }
 
     const dbClient = await createDatabaseService();
@@ -38,7 +39,8 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
       await dbClient.subscription.update(userSubscriptions[0].id, updateData.subscriptions[0]);
     }
 
-    return NextResponse.json({ user: updatedUser });  } catch (error) {
+    return NextResponse.json({ user: updatedUser });
+  } catch (error) {
     console.error('Server error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
   }

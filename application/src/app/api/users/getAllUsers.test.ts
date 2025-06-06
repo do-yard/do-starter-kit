@@ -21,7 +21,8 @@ describe('getAllUsers', () => {
     mockDbClient = {
       user: {
         findAll: jest.fn(),
-      },    };
+      },
+    };
     (createDatabaseService as jest.Mock).mockResolvedValue(mockDbClient);
   });
 

@@ -10,7 +10,7 @@ import { ServiceConfigStatus } from '../status/serviceConfigStatus';
 export class SqlDatabaseService extends DatabaseClient {
   // Service name for consistent display across all status responses
   private static readonly serviceName = 'Database (PostgreSQL)';
-  
+
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
     'databaseUrl': { envVar: 'DATABASE_URL', description: 'PostgreSQL connection string' }
@@ -122,7 +122,8 @@ export class SqlDatabaseService extends DatabaseClient {
       return prisma.note.update({ where: { id }, data: note });
     },
     delete: async (id: string): Promise<void> => {
-      await prisma.note.delete({ where: { id } });    },
+      await prisma.note.delete({ where: { id } });
+    },
   };
   /**
    * Checks if the database service is properly configured and accessible.
@@ -133,7 +134,7 @@ export class SqlDatabaseService extends DatabaseClient {
    */
   async checkConnection(): Promise<boolean> {
     let testClient: PrismaClient | null = null;
-    
+
     try {
       // Create a fresh Prisma client to test the current DATABASE_URL
       // This ensures we're testing with the latest environment variable value
@@ -144,18 +145,18 @@ export class SqlDatabaseService extends DatabaseClient {
           }
         }
       });
-      
+
       // Test connection by performing a simple query
       await testClient.$queryRaw`SELECT 1`;
       return true;
     } catch (connectionError) {
       const errorMsg = connectionError instanceof Error ? connectionError.message : String(connectionError);
-      
+
       console.error('Database connection test failed:', {
         error: errorMsg,
         databaseUrl: process.env.DATABASE_URL ? 'SET' : 'NOT SET'
       });
-      
+
       this.lastConnectionError = `Connection error: ${errorMsg}`;
       return false;
     } finally {
@@ -193,7 +194,7 @@ export class SqlDatabaseService extends DatabaseClient {
         error: this.lastConnectionError || 'Connection failed'
       };
     }
-      return {
+    return {
       name: SqlDatabaseService.serviceName,
       configured: true,
       connected: true

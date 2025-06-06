@@ -17,7 +17,7 @@ export const updateUserProfile = async (
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
-    const newName = formData.get('name') as string | null;    if (newName === '') {
+    const newName = formData.get('name') as string | null; if (newName === '') {
       return NextResponse.json({ error: 'Name invalid' }, { status: HTTP_STATUS.BAD_REQUEST });
     }
 
@@ -41,7 +41,7 @@ export const updateUserProfile = async (
 
       const extension = file.name.includes('.')
         ? file.name.substring(file.name.lastIndexOf('.'))
-        : '';      const fileName = `${uuidv4()}${extension}`;
+        : ''; const fileName = `${uuidv4()}${extension}`;
 
       const storageService = await createStorageService();
       const uploadedFileName = await storageService.uploadFile(user.id, fileName, file, {
@@ -64,7 +64,8 @@ export const updateUserProfile = async (
 
     await db.user.update(dbUser.id, dbUser);
 
-    return NextResponse.json({ name: dbUser.name, image: dbUser.image }, { status: HTTP_STATUS.OK });  } catch (error) {
+    return NextResponse.json({ name: dbUser.name, image: dbUser.image }, { status: HTTP_STATUS.OK });
+  } catch (error) {
     console.error('Profile update error:', error instanceof Error ? `${error.name}: ${error.message}` : error);
     return NextResponse.json({ error: 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
   }
