@@ -16,7 +16,6 @@ const updateSubscription = async (sub: any, id: string) => {
   const dbClient = createDatabaseClient();
 
   if (sub.plan === SubscriptionPlanEnum.PRO) {
-    console.log('PRO');
     if (!serverConfig.Stripe.proGiftPriceId) {
       throw new Error('Pro gift price ID is not configured');
     }
