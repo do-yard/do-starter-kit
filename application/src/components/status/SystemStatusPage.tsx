@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Typography, Alert, CircularProgress, Button } from '@mui/material';
+import { Container, Typography, Alert, CircularProgress, Button, Stack } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -40,9 +40,11 @@ const SystemStatusPage: React.FC = () => {
     try {
       const url = forceRefresh ? '/api/system-status?refresh=true' : '/api/system-status';
       const response = await fetch(url);
+
       if (!response.ok) {
         throw new Error(`Failed to fetch status: ${response.statusText}`);
       }
+
       const data = await response.json();
       console.log('Status page received data:', data);
       setServices(data.services || []);
@@ -65,125 +67,103 @@ const SystemStatusPage: React.FC = () => {
   const hasRequiredIssues = requiredServices.some(service => !service.configured || !service.connected);
   const hasOptionalIssues = optionalServices.some(service => !service.configured || !service.connected);
 
-  const unconfiguredRequiredServices = requiredServices.filter(service => !service.configured);
-  const configuredButDisconnectedRequiredServices = requiredServices.filter(service => service.configured && !service.connected);
-  
   const getOverallStatusMessage = () => {
+    // All services are working
     if (!hasRequiredIssues && !hasOptionalIssues) {
       return {
         title: "All Services Operational",
-        description: "All configured services are properly configured and connected.",
+        description: "All systems are functioning normally.",
         severity: "success" as const
       };
     }
 
+    // Critical service issues
     if (hasRequiredIssues) {
-      if (unconfiguredRequiredServices.length > 0) {
-        return {
-          title: "Critical Services Missing Configuration",
-          description: "Required services are missing configuration. The application cannot function properly until these are resolved.",
-          severity: "error" as const
-        };
-      }
-
-      if (configuredButDisconnectedRequiredServices.length > 0) {
-        return {
-          title: "Critical Service Connection Issues",
-          description: "Required services are configured but connection failed. Please verify credentials and network connectivity.",
-          severity: "error" as const
-        };
-      }
-    }
-
-    if (hasOptionalIssues && !hasRequiredIssues) {
       return {
-        title: "Optional Services Have Issues",
-        description: "Some optional services have configuration or connection issues, but the application can still function.",
-        severity: "warning" as const
+        title: "Critical Service Issues",
+        description: "One or more required services have issues that need attention.",
+        severity: "error" as const
       };
     }
 
+    // Only optional service issues
     return {
-      title: "Service Issues Detected",
-      description: "Please review the service status details below.",
+      title: "Optional Service Issues",
+      description: "Some optional features may be unavailable.",
       severity: "warning" as const
     };
   };
-  
-  const statusMessage = getOverallStatusMessage();
 
-  return (
-    <Container maxWidth="md" sx={{ py: 8 }}>
-      <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <Typography variant="h3" component="h1" gutterBottom>
+  const statusMessage = getOverallStatusMessage(); return (
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Stack spacing={4}>        <Stack alignItems="center" spacing={1}>
+        <Typography variant="h3" component="h1">
           System Status
-        </Typography>        <Typography variant="body1" color="text.secondary">
+        </Typography>
+        <Typography color="text.secondary">
           Service Configuration and Connectivity Status
         </Typography>
         {systemInfo?.lastHealthCheck && (
-          <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 1 }}>
+          <Typography variant="caption" color="text.secondary">
             Last checked: {new Date(systemInfo.lastHealthCheck).toLocaleString()}
           </Typography>
         )}
-      </Box>
+      </Stack>
 
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-          <CircularProgress />
-        </Box>
-      ) : error ? (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      ) : (
-        <>          <Alert
-          severity={statusMessage.severity}
-          sx={{ mb: 3 }}
-          icon={statusMessage.severity === "success" ? <CheckCircleIcon /> : <ErrorIcon />}
-        >
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography variant="h6">
-              {statusMessage.title}
-            </Typography>
-            <Typography variant="body2">
-              {statusMessage.description}
-            </Typography>
-          </Box>
-        </Alert>
+        {loading ? (
+          <Stack alignItems="center">
+            <CircularProgress />
+          </Stack>
+        ) : error ? (
+          <Alert severity="error">
+            {error}
+          </Alert>
+        ) : (
+          <Stack spacing={3}>
+            <Alert
+              severity={statusMessage.severity}
+              icon={statusMessage.severity === "success" ? <CheckCircleIcon /> : <ErrorIcon />}
+            >
+              <Typography variant="h6">
+                {statusMessage.title}
+              </Typography>
+              <Typography variant="body2">
+                {statusMessage.description}
+              </Typography>
+            </Alert>
 
-          {/* Service Status Cards */}
-          <Box sx={{ mb: 4 }}>
-            {services.length === 0 ? (
-              <Alert severity="info">
-                No services configured for status checking.
-              </Alert>
-            ) : (
-              services.map((service, index) => (
-                <ConfigurableServiceCard key={`${service.name}-${index}`} service={service} />
-              ))
-            )}
-          </Box>          <Box sx={{ textAlign: 'center' }}>            <Button
-            variant="contained"
-            startIcon={<RefreshIcon />}
-            onClick={() => fetchStatus(true)}
-            sx={{ mr: hasRequiredIssues ? 0 : 2 }}
-            disabled={loading}
-          >
-            Refresh Status
-          </Button>
-            {!hasRequiredIssues && (
+            {/* Service Status Cards */}
+            <Stack spacing={2}>
+              {(
+                services.map((service, index) => (
+                  <ConfigurableServiceCard key={`${service.name}-${index}`} service={service} />
+                ))
+              )}
+            </Stack>
+
+            <Stack direction="row" justifyContent="center" spacing={2}>
               <Button
-                variant="outlined"
-                startIcon={<HomeIcon />}
-                href="/"
+                variant="contained"
+                startIcon={<RefreshIcon />}
+                onClick={() => fetchStatus(true)}
                 disabled={loading}
               >
-                Return Home
+                Refresh Status
               </Button>
-            )}
-          </Box>
-        </>
-      )}
+              {!hasRequiredIssues && (
+                <Button
+                  variant="outlined"
+                  startIcon={<HomeIcon />}
+                  href="/"
+                  disabled={loading}
+                >
+                  Return Home
+                </Button>
+              )}
+            </Stack>
+          </Stack>
+        )}
+      </Stack>
     </Container>
   );
 };
