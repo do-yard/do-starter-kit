@@ -64,7 +64,7 @@ describe('UpdatePasswordForm', () => {
     fireEvent.click(screen.getByRole('button', { name: /update password/i }));
     expect(screen.getByRole('button', { name: /updating/i })).toBeDisabled();
     // Finish fetch
-    fetchResolve && fetchResolve();
+    if (fetchResolve) fetchResolve();
     await waitFor(() => expect(screen.getByRole('button', { name: /update password/i })).not.toBeDisabled());
     (global.fetch as jest.Mock).mockRestore?.();
   });
