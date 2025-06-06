@@ -14,80 +14,22 @@ import {
   TableRow,
   InputAdornment,
   IconButton,
-  styled,
   Select,
   MenuItem,
   FormControl,
   CircularProgress,
+  Card,
+  CardContent,
+  CardActions,
+  Stack,
+  Paper,
+  Dialog,
+  DialogContent,
+  DialogTitle,
 } from '@mui/material';
-import { SxProps, Theme } from '@mui/material/styles';
-import { Add, Search, List, GridView, Edit, Save } from '@mui/icons-material';
+import { Add, Search, List, GridView, Edit, Save, Close } from '@mui/icons-material';
 import { Note, NotesApiClient } from 'lib/api/notes';
-import Paper from 'components/common/Paper';
-
-// Styled components
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  color: theme.palette.text.primary,
-  backgroundColor: theme.palette.background.paper,
-  borderBottom: `1px solid ${theme.palette.divider}`,
-  padding: theme.spacing(2),
-}));
-
-const StyledTableHeaderCell = styled(TableCell)(({ theme }) => ({
-  color: theme.palette.text.secondary,
-  backgroundColor: theme.palette.background.default,
-  borderBottom: `1px solid ${theme.palette.divider}`,
-  padding: theme.spacing(2),
-  fontWeight: 500,
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  '&:last-child td, &:last-child th': {
-    borderBottom: 0,
-  },
-}));
-
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiInputBase-root': {
-    backgroundColor: theme.palette.background.paper,
-    borderRadius: theme.shape.borderRadius,
-    border: `1px solid ${theme.palette.divider}`,
-    color: theme.palette.text.primary,
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
-    '&.Mui-focused': {
-      borderColor: theme.palette.primary.dark,
-      boxShadow: `0 0 0 2px ${theme.palette.primary.light}33`,
-    },
-  },
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1.5),
-  },
-  '& .MuiInputAdornment-root': {
-    color: theme.palette.text.disabled,
-  },
-}));
-
-const StyledSelect = styled(Select)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
-  borderRadius: theme.shape.borderRadius,
-  border: `1px solid ${theme.palette.divider}`,
-  color: theme.palette.text.primary,
-  '&:hover': {
-    borderColor: theme.palette.primary.main,
-  },
-  '& .MuiSelect-select': {
-    padding: theme.spacing(1.5),
-  },
-  '& .MuiSvgIcon-root': {
-    color: theme.palette.text.disabled,
-  },
-}));
+import NoteForm from '../notes/NoteForm';
 
 // Create an instance of the ApiClient
 const apiClient = new NotesApiClient();
@@ -101,10 +43,13 @@ const MyNotes: React.FC = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [searchQuery, setSearchQuery] = useState('');
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
-  const [editedTitle, setEditedTitle] = useState('');
-  const [notes, setNotes] = useState<Note[]>([]);
+  const [editedTitle, setEditedTitle] = useState(''); const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
 
   // Fetch notes from API
   useEffect(() => {
@@ -166,7 +111,6 @@ const MyNotes: React.FC = () => {
   const handleEditChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEditedTitle(event.target.value);
   };
-
   const handleEditSave = async (noteId: string) => {
     try {
       const currentNote = notes.find((note) => note.id === noteId);
@@ -192,60 +136,79 @@ const MyNotes: React.FC = () => {
     } catch (err) {
       console.error('Error updating note:', err);
     } finally {
-      setEditingNoteId(null);
-      setEditedTitle('');
+      setEditingNoteId(null); setEditedTitle('');
     }
   };
 
-  interface NoteCardProps {
-    children: React.ReactNode;
-    sx?: SxProps<Theme>;
-    key?: string;
-  }
+  const handleCreateNote = async (noteData: { title: string; content: string }) => {
+    try {
+      const newNote = await apiClient.createNote(noteData);
+      setNotes([newNote, ...notes]);
+      setIsCreateModalOpen(false);
+    } catch (err) {
+      console.error('Error creating note:', err);
+      setError('Failed to create note. Please try again.');
+    }
+  };
+  const handleCloseCreateModal = () => {
+    setIsCreateModalOpen(false);
+  };
 
-  const NoteCard: React.FC<NoteCardProps> = (props) => (
-    <Paper
-      fullWidth
-      sx={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        margin: 0,
-        width: '100%',
-        backgroundColor: (theme) => theme.palette.background.paper,
-        ...(props.sx || {}),
-      }}
-    >
-      {props.children}
-    </Paper>
-  );
+  const handleViewNote = (noteId: string) => {
+    setSelectedNoteId(noteId);
+    setIsViewModalOpen(true);
+  };
 
-  const NoteCardHeader = styled(Box)(({ theme }) => ({
-    padding: theme.spacing(2),
-    display: 'flex',
-    flexDirection: 'column',
-    gap: theme.spacing(1.5),
-  }));
+  const handleEditNote = (noteId: string) => {
+    setSelectedNoteId(noteId);
+    setIsEditModalOpen(true);
+  }; const fetchNotes = async () => {
+    try {
+      setIsLoading(true);
+      const data = await apiClient.getNotes();
+      setNotes(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching notes:', err);
+      setError('Failed to load notes. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const NoteCardContent = styled(Box)(({ theme }) => ({
-    padding: theme.spacing(2),
-    paddingTop: 0,
-    flexGrow: 1,
-  }));
+  const handleCloseViewModal = () => {
+    setIsViewModalOpen(false);
+    setSelectedNoteId(null);
+    // Refresh notes list in case note was deleted
+    fetchNotes();
+  };
 
-  const NoteCardFooter = styled(Box)(({ theme }) => ({
-    padding: theme.spacing(2),
-    paddingTop: 0,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  }));
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedNoteId(null);
+  };
 
+  const handleUpdateNote = async (noteData: { id?: string; title: string; content: string }) => {
+    try {
+      if (noteData.id) {
+        const updatedNote = await apiClient.updateNote(noteData.id, {
+          title: noteData.title,
+          content: noteData.content,
+        });
+        setNotes(notes.map(note => note.id === noteData.id ? updatedNote : note));
+        setIsEditModalOpen(false);
+        setSelectedNoteId(null);
+      }
+    } catch (err) {
+      console.error('Error updating note:', err);
+      setError('Failed to update note. Please try again.');
+    }
+  };
   const renderGridView = () => {
     if (isLoading) {
       return (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress color="inherit" />
+          <CircularProgress />
         </Box>
       );
     }
@@ -279,146 +242,76 @@ const MyNotes: React.FC = () => {
         }}
       >
         {filteredNotes.map((note) => (
-          <NoteCard key={note.id}>
-            <NoteCardHeader>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                {editingNoteId === note.id ? (
-                  <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                    <TextField
-                      value={editedTitle}
-                      onChange={handleEditChange}
-                      variant="standard"
-                      autoFocus
-                      onKeyDown={(e) => {
-                        if (e.key === 'Escape') {
-                          handleEditCancel();
-                        }
-                      }}
-                      sx={{
-                        flexGrow: 1,
-                        '& .MuiInputBase-root': {
-                          color: (theme) => theme.palette.text.primary,
-                        },
-                        '& .MuiInput-underline:before': {
-                          borderBottomColor: '#4b5563',
-                        },
-                        '& .MuiInput-underline:hover:before': {
-                          borderBottomColor: '#6b7280',
-                        },
-                        '& .MuiInput-underline:after': {
-                          borderBottomColor: '#9ca3af',
-                        },
-                      }}
-                    />
-                    <Button
-                      size="small"
-                      variant="text"
-                      sx={{
-                        ml: 1,
-                        color: (theme) => theme.palette.text.primary,
-                        minWidth: 'auto',
-                        padding: '4px',
-                        backgroundColor: 'transparent',
-                        '&:hover': { backgroundColor: 'rgba(16, 185, 129, 0.1)' },
-                      }}
-                      onClick={() => handleEditSave(note.id)}
-                    >
-                      <Save
-                        fontSize="small"
-                        sx={{ color: (theme) => theme.palette.text.primary }}
+          <Card key={note.id} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <CardContent sx={{ flexGrow: 1 }}>
+              <Stack spacing={2}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  {editingNoteId === note.id ? (
+                    <Stack direction="row" alignItems="center" spacing={1} sx={{ width: '100%' }}>
+                      <TextField
+                        value={editedTitle}
+                        onChange={handleEditChange}
+                        variant="standard"
+                        autoFocus
+                        fullWidth
+                        onKeyDown={(e) => {
+                          if (e.key === 'Escape') {
+                            handleEditCancel();
+                          }
+                        }}
                       />
-                    </Button>
-                  </Box>
-                ) : (
-                  <>
-                    <Typography variant="h5" fontWeight="bold" sx={{ color: 'text.primary' }}>
-                      {note.title}
-                    </Typography>
-                    <IconButton
-                      sx={{
-                        height: 40,
-                        width: 40,
-                      }}
-                      onClick={() => handleEditStart(note.id, note.title)}
-                    >
-                      <Edit
-                        fontSize="small"
-                        sx={{ color: (theme) => theme.palette.text.primary }}
-                      />
-                    </IconButton>
-                  </>
-                )}
-              </Box>
-            </NoteCardHeader>
-            <NoteCardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                {/* Image content removed as per requirement */}
-                <Typography variant="body2" sx={{ color: '#9ca3af', flexGrow: 1 }}>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEditSave(note.id)}
+                      >
+                        <Save fontSize="small" />
+                      </IconButton>
+                    </Stack>
+                  ) : (
+                    <>
+                      <Typography variant="h6" component="h3">
+                        {note.title}
+                      </Typography>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEditStart(note.id, note.title)}
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
+                    </>
+                  )}
+                </Stack>
+                <Typography variant="body2" color="text.secondary">
                   {note.content}
                 </Typography>
-              </Box>
-            </NoteCardContent>
-            <NoteCardFooter>
-              <Typography variant="body2" sx={{ color: '#6b7280' }}>
-                {new Date(note.createdAt).toLocaleDateString()}
-              </Typography>
-              <Box>
-                <Button
-                  component="a"
-                  href={`/dashboard/notes/${note.id}`}
-                  sx={{
-                    mr: 1,
-                    color: (theme) =>
-                      theme.palette.mode === 'light' ? theme.palette.grey[800] : '#d1d5db',
-                    '&:hover': {
-                      backgroundColor: (theme) =>
-                        theme.palette.mode === 'light'
-                          ? theme.palette.grey[200]
-                          : 'rgba(209, 213, 219, 0.1)',
-                    },
-                    textTransform: 'none',
-                    borderRadius: 1,
-                    padding: '8px 12px',
-                    fontWeight: 500,
-                    fontSize: '0.875rem',
-                  }}
-                >
-                  View
-                </Button>
-                <Button
-                  component="a"
-                  href={`/dashboard/notes/${note.id}/edit`}
-                  sx={{
-                    color: (theme) =>
-                      theme.palette.mode === 'light' ? theme.palette.grey[800] : '#d1d5db',
-                    '&:hover': {
-                      backgroundColor: (theme) =>
-                        theme.palette.mode === 'light'
-                          ? theme.palette.grey[200]
-                          : 'rgba(209, 213, 219, 0.1)',
-                    },
-                    textTransform: 'none',
-                    borderRadius: 1,
-                    padding: '8px 12px',
-                    fontWeight: 500,
-                    fontSize: '0.875rem',
-                  }}
-                >
-                  Edit
-                </Button>
-              </Box>
-            </NoteCardFooter>
-          </NoteCard>
+                <Typography variant="caption" color="text.secondary">
+                  {new Date(note.createdAt).toLocaleDateString()}
+                </Typography>
+              </Stack>
+            </CardContent>            <CardActions>
+              <Button
+                size="small"
+                onClick={() => handleViewNote(note.id)}
+              >
+                View
+              </Button>
+              <Button
+                size="small"
+                onClick={() => handleEditNote(note.id)}
+              >
+                Edit
+              </Button>
+            </CardActions>
+          </Card>
         ))}
       </Box>
     );
   };
-
   const renderListView = () => {
     if (isLoading) {
       return (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-          <CircularProgress color="inherit" />
+          <CircularProgress />
         </Box>
       );
     }
@@ -440,139 +333,81 @@ const MyNotes: React.FC = () => {
     }
 
     return (
-      <TableContainer
-        component={(props) => <Paper {...props} fullWidth />}
-        sx={{
-          maxWidth: '100%',
-          width: '100%',
-        }}
-      >
+      <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <StyledTableHeaderCell width="25%">Title</StyledTableHeaderCell>
-              <StyledTableHeaderCell width="45%">Content</StyledTableHeaderCell>
-              <StyledTableHeaderCell width="15%">Date</StyledTableHeaderCell>
-              <StyledTableHeaderCell width="15%">Actions</StyledTableHeaderCell>
+              <TableCell>Title</TableCell>
+              <TableCell>Content</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredNotes.map((note) => (
-              <StyledTableRow key={note.id}>
-                <StyledTableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                    {editingNoteId === note.id ? (
-                      <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                        <TextField
-                          value={editedTitle}
-                          onChange={handleEditChange}
-                          variant="standard"
-                          autoFocus
-                          onKeyDown={(e) => {
-                            if (e.key === 'Escape') {
-                              handleEditCancel();
-                            }
-                          }}
-                          sx={{
-                            flexGrow: 1,
-                            '& .MuiInputBase-root': {
-                              color: (theme) => theme.palette.text.primary,
-                            },
-                            '& .MuiInput-underline:before': {
-                              borderBottomColor: '#4b5563',
-                            },
-                            '& .MuiInput-underline:hover:before': {
-                              borderBottomColor: '#6b7280',
-                            },
-                            '& .MuiInput-underline:after': {
-                              borderBottomColor: '#9ca3af',
-                            },
-                          }}
-                        />
-                        <Button
-                          size="small"
-                          variant="text"
-                          sx={{
-                            ml: 1,
-                            color: '#d1d5db',
-                            minWidth: 'auto',
-                            padding: '4px',
-                            backgroundColor: 'transparent',
-                            '&:hover': { backgroundColor: 'rgba(16, 185, 129, 0.1)' },
-                          }}
-                          onClick={() => handleEditSave(note.id)}
-                        >
-                          <Save fontSize="small" />
-                        </Button>
-                      </Box>
-                    ) : (
-                      <>
-                        <Typography variant="body1" sx={{ flexGrow: 1 }}>
-                          {note.title}
-                        </Typography>
-                        <IconButton
-                          size="small"
-                          sx={{ ml: 1, color: '#d1d5db' }}
-                          onClick={() => handleEditStart(note.id, note.title)}
-                        >
-                          <Edit fontSize="small" />
-                        </IconButton>
-                      </>
-                    )}
-                  </Box>
-                </StyledTableCell>
-                <StyledTableCell>{note.content}</StyledTableCell>
-                <StyledTableCell>
-                  <Typography variant="body2" sx={{ color: '#6b7280' }}>
+              <TableRow key={note.id} hover>
+                <TableCell>
+                  {editingNoteId === note.id ? (
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <TextField
+                        value={editedTitle}
+                        onChange={handleEditChange}
+                        variant="standard"
+                        autoFocus
+                        fullWidth
+                        onKeyDown={(e) => {
+                          if (e.key === 'Escape') {
+                            handleEditCancel();
+                          }
+                        }}
+                      />
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEditSave(note.id)}
+                      >
+                        <Save fontSize="small" />
+                      </IconButton>
+                    </Stack>
+                  ) : (
+                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Typography variant="body1">
+                        {note.title}
+                      </Typography>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEditStart(note.id, note.title)}
+                      >
+                        <Edit fontSize="small" />
+                      </IconButton>
+                    </Stack>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2" color="text.secondary">
+                    {note.content}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2" color="text.secondary">
                     {new Date(note.createdAt).toLocaleDateString()}
                   </Typography>
-                </StyledTableCell>
-                <StyledTableCell>
-                  <Button
-                    component="a"
-                    href={`/dashboard/notes/${note.id}`}
-                    sx={{
-                      color: (theme) =>
-                        theme.palette.mode === 'light' ? theme.palette.grey[800] : '#d1d5db',
-                      '&:hover': {
-                        backgroundColor: (theme) =>
-                          theme.palette.mode === 'light'
-                            ? theme.palette.grey[200]
-                            : 'rgba(209, 213, 219, 0.1)',
-                      },
-                      textTransform: 'none',
-                      borderRadius: 1,
-                      padding: '8px 12px',
-                      fontWeight: 500,
-                      fontSize: '0.875rem',
-                      marginRight: 1,
-                    }}
-                  >
-                    View
-                  </Button>
-                  <Button
-                    component="a"
-                    href={`/dashboard/notes/${note.id}/edit`}
-                    sx={{
-                      color: (theme) =>
-                        theme.palette.mode === 'light' ? theme.palette.grey[800] : '#d1d5db',
-                      '&:hover': {
-                        backgroundColor: (theme) =>
-                          theme.palette.mode === 'light'
-                            ? theme.palette.grey[200]
-                            : 'rgba(209, 213, 219, 0.1)',
-                      },
-                      textTransform: 'none',
-                      borderRadius: 1,
-                      padding: '8px 12px',
-                      fontWeight: 500,
-                      fontSize: '0.875rem',
-                    }}
-                  >
-                    Edit
-                  </Button>
-                </StyledTableCell>
-              </StyledTableRow>
+                </TableCell>                <TableCell>
+                  <Stack direction="row" spacing={1}>
+                    <Button
+                      size="small"
+                      onClick={() => handleViewNote(note.id)}
+                    >
+                      View
+                    </Button>
+                    <Button
+                      size="small"
+                      onClick={() => handleEditNote(note.id)}
+                    >
+                      Edit
+                    </Button>
+                  </Stack>
+                </TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>
@@ -586,27 +421,11 @@ const MyNotes: React.FC = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h2" fontWeight="bold">
           My Notes
-        </Typography>
-        <Button
-          component="a"
-          href="/dashboard/notes/new"
+        </Typography>        <Button
+          onClick={() => setIsCreateModalOpen(true)}
           startIcon={<Add fontSize="small" />}
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === 'light' ? theme.palette.primary.main : '#fff',
-            color: (theme) =>
-              theme.palette.mode === 'light' ? theme.palette.primary.contrastText : '#111827',
-            '&:hover': {
-              backgroundColor: (theme) =>
-                theme.palette.mode === 'light' ? theme.palette.primary.dark : '#f3f4f6',
-            },
-            textTransform: 'none',
-            borderRadius: 1,
-            padding: '8px 16px',
-            fontWeight: 500,
-            fontSize: '0.875rem',
-            height: 40,
-          }}
+          variant="contained"
+          color="primary"
         >
           New Note
         </Button>
@@ -665,8 +484,7 @@ const MyNotes: React.FC = () => {
             gap: 2,
             width: { xs: '100%', sm: 'auto' },
           }}
-        >
-          <StyledTextField
+        >          <TextField
             placeholder="Search notes..."
             size="small"
             value={searchQuery}
@@ -679,10 +497,8 @@ const MyNotes: React.FC = () => {
                 </InputAdornment>
               ),
             }}
-          />
-
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <StyledSelect
+          />          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <Select
               value={sortBy}
               onChange={handleSortChange}
               displayEmpty
@@ -710,13 +526,79 @@ const MyNotes: React.FC = () => {
               <MenuItem value="newest">Date (Newest)</MenuItem>
               <MenuItem value="oldest">Date (Oldest)</MenuItem>
               <MenuItem value="title">Title (A-Z)</MenuItem>
-            </StyledSelect>
+            </Select>
           </FormControl>
         </Box>
-      </Box>
-
-      {/* Table view */}
+      </Box>      {/* Table view */}
       {viewMode === 'list' ? renderListView() : renderGridView()}
+
+      {/* Create Note Modal */}
+      <Dialog
+        open={isCreateModalOpen}
+        onClose={handleCloseCreateModal}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          Create New Note
+          <IconButton onClick={handleCloseCreateModal} size="small">
+            <Close />
+          </IconButton>
+        </DialogTitle>        <DialogContent>
+          <NoteForm
+            mode="create"
+            onSave={handleCreateNote}
+            onCancel={handleCloseCreateModal}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* View Note Modal */}
+      <Dialog
+        open={isViewModalOpen}
+        onClose={handleCloseViewModal}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          View Note
+          <IconButton onClick={handleCloseViewModal} size="small">
+            <Close />
+          </IconButton>
+        </DialogTitle>        <DialogContent>
+          {selectedNoteId && (
+            <NoteForm
+              mode="view"
+              noteId={selectedNoteId}
+              onCancel={handleCloseViewModal}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Note Modal */}
+      <Dialog
+        open={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          Edit Note
+          <IconButton onClick={handleCloseEditModal} size="small">
+            <Close />
+          </IconButton>
+        </DialogTitle>        <DialogContent>
+          {selectedNoteId && (
+            <NoteForm
+              mode="edit"
+              noteId={selectedNoteId}
+              onSave={handleUpdateNote}
+              onCancel={handleCloseEditModal}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

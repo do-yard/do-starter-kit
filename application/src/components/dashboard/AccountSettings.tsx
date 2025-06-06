@@ -130,7 +130,7 @@ export default function AccountSettings() {
         </Typography>
       </Box>
 
-      <Card variant="outlined">
+      <Card >
         <Box sx={{ p: 3, width: '100%' }}>
           <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
             Profile Information
@@ -151,7 +151,6 @@ export default function AccountSettings() {
                   value={formData.name}
                   onChange={handleInputChange}
                   fullWidth
-                  variant="outlined"
                   disabled={isLoading}
                 />
               </Box>
@@ -168,7 +167,6 @@ export default function AccountSettings() {
                   value={formData.email}
                   onChange={handleInputChange}
                   fullWidth
-                  variant="outlined"
                   disabled={true}
                 />
               </Box>
@@ -205,7 +203,6 @@ export default function AccountSettings() {
                       />
                     </Box>
                     <Button
-                      variant="outlined"
                       onClick={() => setFormData((prev) => ({ ...prev, profileImage: null }))}
                       disabled={isLoading}
                     >

@@ -183,7 +183,7 @@ export default function AdminDashboard() {
         Admin Dashboard
       </Typography>
 
-      <Card variant="outlined" sx={{ mb: 4 }}>
+      <Card sx={{ mb: 4 }}>
         <CardHeader
           title={
             <Typography variant="h6" fontWeight="bold">
@@ -195,7 +195,6 @@ export default function AdminDashboard() {
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} mb={3} alignItems="center">
             <TextField
               label="Search by name"
-              variant="outlined"
               size="small"
               fullWidth
               sx={{
@@ -214,7 +213,6 @@ export default function AdminDashboard() {
             <TextField
               select
               label="Filter by plan"
-              variant="outlined"
               size="small"
               fullWidth
               sx={{
@@ -236,7 +234,6 @@ export default function AdminDashboard() {
             <TextField
               select
               label="Filter by status"
-              variant="outlined"
               size="small"
               fullWidth
               sx={{
@@ -259,7 +256,6 @@ export default function AdminDashboard() {
             <TextField
               select
               label="Rows per page"
-              variant="outlined"
               size="small"
               sx={{
                 maxWidth: 120,
@@ -337,7 +333,6 @@ export default function AdminDashboard() {
                           <TableCell>
                             <Stack direction="row" spacing={1}>
                               <Button
-                                variant="outlined"
                                 size="small"
                                 onClick={() => handleEditClick(user)}
                               >

@@ -51,7 +51,7 @@ const LoginForm: React.FC = () => {
         alignItems="center"
         bgcolor="#f3f4f6"
       >
-        <Card variant="outlined" sx={{ width: '100%', maxWidth: 400 }} >
+        <Card sx={{ width: '100%', maxWidth: 400 }} >
           <Box display="flex" flexDirection="column" gap={1.5} p={3}>
             <Typography fontWeight="bold" variant="h5">
               Log In
