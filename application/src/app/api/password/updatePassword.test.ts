@@ -1,6 +1,4 @@
 jest.mock('services/database/database');
-// Use correct relative path for helpers/hash
-const hashHelpers = require('../../../helpers/hash');
 
 import { updatePassword } from './updatePassword';
 import { NextRequest } from 'next/server';
@@ -77,24 +75,15 @@ describe('updatePassword', () => {
     expect(json.error).toMatch(/current password is incorrect/i);
   });
 
-  it.only('updates password and returns success', async () => {
-    mockDb.user.findById.mockResolvedValue({ id: 'user1', name: 'Test', image: 'img', passwordHash: 'old' });
-
-    // Only mock for this test
-    //const verifyPasswordSpy = jest.spyOn(hashHelpers, 'verifyPassword').mockResolvedValue(true);
-    //const hashPasswordSpy = jest.spyOn(hashHelpers, 'hashPassword').mockResolvedValue('newhash');
-
+  it('updates password and returns success', async () => {
+    mockDb.user.findById.mockResolvedValue({ id: 'user1', name: 'Test', image: 'img', passwordHash: '$2b$12$iyGm98HPjDxoD74cIbEHz.QVTvoPu5kPhiIuB6chsL6agm1x.KgF.' });
     mockDb.user.update.mockResolvedValue(undefined);
-    const req = createRequestWithFormData({ currentPassword: 'old', newPassword: 'new', confirmNewPassword: 'new' });
+    const req = createRequestWithFormData({ currentPassword: '1234', newPassword: 'new', confirmNewPassword: 'new' });
     const res = await updatePassword(req, mockUser);
     const json = await res.json();
     expect(res.status).toBe(HTTP_STATUS.OK);
     expect(json.name).toBe('Test');
     expect(json.image).toBe('img');
-
-    // Restore the original implementation after the test
-    //verifyPasswordSpy.mockRestore();
-    //hashPasswordSpy.mockRestore();
   });
 
   it('returns 500 on unexpected error', async () => {
