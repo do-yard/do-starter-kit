@@ -11,6 +11,7 @@ import NotesGridView from '../notes/NotesGridView';
 import NotesListView from '../notes/NotesListView';
 import NotesHeader from '../notes/NotesHeader';
 import PageContainer from '../common/PageContainer';
+import ConfirmationDialog from '../common/ConfirmationDialog';
 
 // Create an instance of the ApiClient
 const apiClient = new NotesApiClient();
@@ -30,8 +31,9 @@ const MyNotes: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
   // Fetch notes from API
   const fetchNotes = async () => {
@@ -137,7 +139,7 @@ const MyNotes: React.FC = () => {
 
   const handleUpdateNote = async (noteData: { title: string; content: string }) => {
     if (!selectedNoteId) return;
-    
+
     try {
       const updatedNote = await apiClient.updateNote(selectedNoteId, noteData);
       setNotes(notes.map(note => note.id === selectedNoteId ? updatedNote : note));
@@ -148,15 +150,34 @@ const MyNotes: React.FC = () => {
       setError('Failed to update note. Please try again.');
     }
   };
+  const handleDeleteConfirmation = (noteId: string) => {
+    setNoteToDelete(noteId);
+    setDeleteConfirmationOpen(true);
+  };
 
-  const handleDeleteNote = async (noteId: string) => {
-    try {
-      await apiClient.deleteNote(noteId);
-      setNotes(notes.filter(note => note.id !== noteId));
-    } catch (err) {
-      console.error('Error deleting note:', err);
-      setError('Failed to delete note. Please try again.');
+  const handleConfirmDelete = async () => {
+    if (noteToDelete) {
+      try {
+        await apiClient.deleteNote(noteToDelete);
+        setNotes(notes.filter(note => note.id !== noteToDelete));
+      } catch (err) {
+        console.error('Error deleting note:', err);
+        setError('Failed to delete note. Please try again.');
+      } finally {
+        setDeleteConfirmationOpen(false);
+        setNoteToDelete(null);
+      }
     }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmationOpen(false);
+    setNoteToDelete(null);
+  };
+
+  // Legacy handler - now redirects to confirmation flow
+  const handleDeleteNote = (noteId: string) => {
+    handleDeleteConfirmation(noteId);
   };
   const handleCloseCreateModal = () => {
     setIsCreateModalOpen(false);
@@ -175,11 +196,11 @@ const MyNotes: React.FC = () => {
   const handleCloseViewModal = () => {
     setIsViewModalOpen(false);
     setSelectedNoteId(null);
-  };  const handleCloseEditModal = () => {
+  }; const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
     setSelectedNoteId(null);
     // Don't fetch notes here - only refresh when actual updates are made
-  };return (
+  }; return (
     <PageContainer title="My Notes">
       {/* Header and Controls */}
       <NotesHeader
@@ -193,7 +214,7 @@ const MyNotes: React.FC = () => {
       />
 
       {/* Notes Display */}
-      {viewMode === 'list' ? (        
+      {viewMode === 'list' ? (
         <NotesListView
           notes={filteredNotes}
           isLoading={isLoading}
@@ -208,7 +229,7 @@ const MyNotes: React.FC = () => {
           onEditNote={handleEditNote}
           onDeleteNote={handleDeleteNote}
         />
-      ) : (        
+      ) : (
         <NotesGridView
           notes={filteredNotes}
           isLoading={isLoading}
@@ -223,8 +244,8 @@ const MyNotes: React.FC = () => {
           onEditNote={handleEditNote}
           onDeleteNote={handleDeleteNote}
         />
-      )}      
-      
+      )}
+
       {/* Create Note Modal */}
       <Dialog
         open={isCreateModalOpen}
@@ -275,8 +296,19 @@ const MyNotes: React.FC = () => {
               onCancel={handleCloseEditModal}
             />
           )}
-        </DialogContent>
-      </Dialog>
+        </DialogContent>      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        open={deleteConfirmationOpen}
+        title="Delete Note"
+        message="Are you sure you want to delete this note? This action cannot be undone."
+        confirmButtonText="Delete"
+        cancelButtonText="Cancel"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        confirmButtonColor="error"
+      />
     </PageContainer>
   );
 };

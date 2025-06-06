@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button, Card, CardContent, CircularProgress } from '@mui/material';
-import { Delete } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { NotesApiClient } from 'lib/api/notes';
 
@@ -56,23 +55,6 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
         ? { id: noteId, title, content }
         : { title, content };
       onSave(noteData);
-    }
-  };
-  const handleDelete = async () => {
-    if (noteId) {
-      try {
-        await apiClient.deleteNote(noteId);
-        if (onCancel) {
-          // For modal mode, call onCancel to close modal
-          onCancel();
-        } else {
-          // For standalone mode, redirect to notes page
-          router.push('/dashboard/my-notes');
-        }
-      } catch (err) {
-        console.error('Error deleting note:', err);
-        setError('Failed to delete note. Please try again.');
-      }
     }
   };
 
