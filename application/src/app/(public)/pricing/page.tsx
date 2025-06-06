@@ -3,6 +3,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import { createBillingService } from 'services/billing/billing';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic'; // Ensure this page is always revalidated
+
 /**
  * Renders the pricing page with available subscription plans.
  */
