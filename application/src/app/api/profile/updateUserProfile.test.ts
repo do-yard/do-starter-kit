@@ -39,10 +39,11 @@ jest.mock('../../../services/database/databaseFactory', () => ({
   }),
 }));
 
-import { NextRequest } from 'next/server';
 // Import the handler after mocks
+import { NextRequest } from 'next/server';
 import { updateUserProfile } from './updateUserProfile';
 import { USER_ROLES } from 'lib/auth/roles';
+import { HTTP_STATUS } from 'lib/api/http';
 
 describe('upload picture should', () => {
   beforeEach(() => {
@@ -102,7 +103,7 @@ describe('upload picture should', () => {
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
     expect(json).toEqual({ error: 'Internal server error' });
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
 
   it('return success response on successful file upload', async () => {
@@ -114,7 +115,7 @@ describe('upload picture should', () => {
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
     expect(json).toEqual({ name: 'mockName', image: 'https://example.com/file-url' });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
   });
 
   it('return error if user not found in db', async () => {
@@ -127,7 +128,7 @@ describe('upload picture should', () => {
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
     expect(json).toEqual({ error: "User doesn't exist" });
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
   });
 
   it('return error if db update fails', async () => {
@@ -140,7 +141,7 @@ describe('upload picture should', () => {
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
     expect(json).toEqual({ error: 'Internal server error' });
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
 
   it('return error if db delete fails', async () => {
@@ -151,7 +152,7 @@ describe('upload picture should', () => {
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
     expect(json).toEqual({ error: 'Internal server error' });
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
 
   it('update name if receive name param and file', async () => {
@@ -167,7 +168,7 @@ describe('upload picture should', () => {
       image: 'https://example.com/file-url',
       name: 'testNewName',
     });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
   });
 
   it('update name if only receive name param', async () => {
@@ -181,7 +182,7 @@ describe('upload picture should', () => {
       image: 'image-url',
       name: 'testNewName',
     });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
   });
 
   it('fails name param is empty string', async () => {
@@ -190,6 +191,6 @@ describe('upload picture should', () => {
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
     expect(json).toEqual({ error: 'Name invalid' });
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
   });
 });

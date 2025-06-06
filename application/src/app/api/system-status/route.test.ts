@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { GET } from './route';
 import { StatusService } from '../../../services/status/statusService';
+import { HTTP_STATUS } from 'lib/api/http';
 
 jest.mock('../../../services/status/statusService');
 
@@ -34,7 +35,7 @@ describe('System Status API Route', () => {
     const data = await response.json();
 
     // Assert
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(HTTP_STATUS.OK);
     expect(data.services).toEqual(mockHealthState.services);
     expect(data.status).toBe('ok');
     expect(data.systemInfo).toBeDefined();
@@ -54,7 +55,7 @@ describe('System Status API Route', () => {
     const data = await response.json();
 
     // Assert
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(data.error).toBe('Failed to check system status');
   });
 });

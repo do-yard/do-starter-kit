@@ -1,5 +1,6 @@
 import { getAllUsers } from './getAllUsers';
 import { NextRequest } from 'next/server';
+import { HTTP_STATUS } from 'lib/api/http';
 
 jest.mock('services/database/databaseFactory', () => ({
   createDatabaseService: jest.fn(),
@@ -41,7 +42,7 @@ describe('getAllUsers', () => {
     const req = makeRequest('http://localhost/api/users');
     const res = await getAllUsers(req);
     const json = await res.json();
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(json).toEqual({ users, total: 2 });
     expect(mockDbClient.user.findAll).toHaveBeenCalledWith({
       page: 1,
@@ -84,7 +85,7 @@ describe('getAllUsers', () => {
     mockDbClient.user.findAll.mockRejectedValue(new Error('DB fail'));
     const req = makeRequest('http://localhost/api/users');
     const res = await getAllUsers(req);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     const json = await res.json();
     expect(json).toEqual({ error: 'Internal server error' });
   });

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseService } from 'services/database/databaseFactory';
+import { HTTP_STATUS } from 'lib/api/http';
 
 /**
  * Updates a user with the provided data in the request body.
@@ -11,10 +12,8 @@ import { createDatabaseService } from 'services/database/databaseFactory';
 export const updateUser = async (request: NextRequest): Promise<NextResponse> => {
   try {
     const body = await request.json();
-    const { id, ...updateData } = body;
-
-    if (!id) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    const { id, ...updateData } = body;    if (!id) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: HTTP_STATUS.BAD_REQUEST });
     }
 
     // Only allow updating specific fields (e.g., name, email, role)
@@ -25,9 +24,7 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
       if (!allowedFields.includes(key)) {
         delete updateData[key];
       }
-    });
-
-    if (Object.keys(updateData).length === 0) {    return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
+    });    if (Object.keys(updateData).length === 0) {    return NextResponse.json({ error: 'No valid fields to update' }, { status: HTTP_STATUS.BAD_REQUEST });
     }
 
     const dbClient = await createDatabaseService();
@@ -41,9 +38,8 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
       await dbClient.subscription.update(userSubscriptions[0].id, updateData.subscriptions[0]);
     }
 
-    return NextResponse.json({ user: updatedUser });
-  } catch (error) {
+    return NextResponse.json({ user: updatedUser });  } catch (error) {
     console.error('Server error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
   }
 };

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { StatusService } from '../../../services/status/statusService';
+import { StatusService } from 'services/status/statusService';
+import { HTTP_STATUS } from 'lib/api/http';
 
 /**
  * Handles GET requests for the system status endpoint.
@@ -25,6 +26,7 @@ export const GET = async (request: Request) => {
     if (!healthState) {
       // This shouldn't happen after initialization, but handle gracefully
       console.warn('Health state is null after initialization');
+      
       return NextResponse.json(
         { 
           error: 'Health system initialization failed',
@@ -35,16 +37,12 @@ export const GET = async (request: Request) => {
           },
           status: 'error'
         }, 
-        { status: 500 }
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
       );
-    }    // Convert health state to the expected API format
-    const services = healthState.services.map(service => ({
-      name: service.name,
-      configured: service.configured,
-      connected: service.connected,
-      error: service.error,
-      configToReview: service.configToReview
-    }));    // Add system information
+    }        // No need to map services - we can use them directly
+    const services = healthState.services;
+    
+    // Add system information
     const systemInfo = {
       environment: process.env.NODE_ENV || 'unknown',
       timestamp: new Date().toISOString(),
@@ -54,9 +52,8 @@ export const GET = async (request: Request) => {
     return NextResponse.json({ 
       services,
       systemInfo,
-      status: healthState.isHealthy ? 'ok' : 'issues_detected'
-    }, { 
-      status: 200,
+      status: healthState.isHealthy ? 'ok' : 'issues_detected' }, { 
+      status: HTTP_STATUS.OK,
       headers: {
         'Cache-Control': forceRefresh ? 'no-store, max-age=0' : 'public, max-age=60'
       }
@@ -69,7 +66,7 @@ export const GET = async (request: Request) => {
         message: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString()
       }, 
-      { status: 500 }
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     );
   }
 };

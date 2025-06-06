@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseService } from 'services/database/databaseFactory';
+import { HTTP_STATUS } from 'lib/api/http';
 
 /**
  * Handles the retrieval of all users with optional pagination and filtering.
@@ -30,9 +31,8 @@ export const getAllUsers = async (request: NextRequest): Promise<NextResponse> =
       filterPlan,
       filterStatus,
     });
-    return NextResponse.json({ users, total });
-  } catch (error) {
+    return NextResponse.json({ users, total });  } catch (error) {
     console.error('Server error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
   }
 };

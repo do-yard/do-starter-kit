@@ -33,7 +33,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           overflowY: 'auto',
           position: 'relative',
         }}
-      >        <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 10, display: 'flex', gap: 1 }}>
+      >        
+          <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 10, display: 'flex', gap: 1 }}>
           <ServiceWarningIndicator />
           <ThemeToggle />
         </Box>
