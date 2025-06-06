@@ -39,6 +39,7 @@ RESEND_EMAIL_SENDER=your-email-sender-address # Email sender address, your-addre
 # Stripe
 
 BILLING_PROVIDER=Stripe
+STRIPE_SECRET_KEY= # Stripe secret key
 STRIPE_WEBHOOK_SECRET= # Secret to verify payloads authenticity
 STRIPE_FREE_PRODUCT_ID= # The free product Id created with the stripe script
 NEXT_PUBLIC_STRIPE_FREE_PRICE_ID= # The free price Id created with the stripe script
