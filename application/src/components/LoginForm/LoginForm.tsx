@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
 import Link from 'next/link';
-import FormButton from './FormButton';
+import FormButton from 'components/FormButton/FormButton';
 import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
 import { ThemeProvider, createTheme } from '@mui/material/styles';

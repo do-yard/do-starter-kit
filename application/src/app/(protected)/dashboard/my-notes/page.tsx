@@ -1,6 +1,6 @@
 'use client';
 
-import MyNotes from 'components/dashboard/MyNotes';
+import MyNotes from 'components/MyNotes/MyNotes';
 
 /**
  * MyNotesPage component
