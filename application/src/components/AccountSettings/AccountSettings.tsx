@@ -6,7 +6,7 @@ import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
 import DoneIcon from '@mui/icons-material/Done';
 import Image from 'next/image';
-import PageContainer from '../common/PageContainer';
+import PageContainer from '../PageContainer/PageContainer';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
   border: '2px dashed',

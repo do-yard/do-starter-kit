@@ -29,7 +29,7 @@ import {
   Pagination,
 } from '@mui/material';
 import { Edit as EditIcon, Close as CloseIcon } from '@mui/icons-material';
-import PageContainer from '../common/PageContainer';
+import PageContainer from '../PageContainer/PageContainer';
 import { UsersClient } from '../../lib/api/users';
 import { UserWithSubscriptions } from '../../types';
 import Toast from 'components/Toast/Toast';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import NotesHeader from './NotesHeader';
+import NotesHeader from '../notes/NotesHeader';
 
 const theme = createTheme();
 

@@ -6,12 +6,12 @@ import {
   DialogContent,
 } from '@mui/material';
 import { Note, NotesApiClient } from 'lib/api/notes';
-import NoteForm from '../notes/NoteForm';
-import NotesGridView from '../notes/NotesGridView';
-import NotesListView from '../notes/NotesListView';
-import NotesHeader from '../notes/NotesHeader';
-import PageContainer from '../common/PageContainer';
-import ConfirmationDialog from '../common/ConfirmationDialog';
+import NoteForm from '../NotesForm/NoteForm';
+import NotesGridView from '../NotesGridView/NotesGridView';
+import NotesListView from '../NotesListView/NotesListView';
+import NotesHeader from '../NotesHeader/NotesHeader';
+import PageContainer from '../PageContainer/PageContainer';
+import ConfirmationDialog from '../ConfirmationDialog/ConfirmationDialog';
 
 // Create an instance of the ApiClient
 const apiClient = new NotesApiClient();
