@@ -32,7 +32,7 @@ import { Edit as EditIcon, Close as CloseIcon } from '@mui/icons-material';
 import PageContainer from '../common/PageContainer';
 import { UsersClient } from '../../lib/api/users';
 import { UserWithSubscriptions } from '../../types';
-import Toast from '../common/Toast';
+import Toast from 'components/Toast/Toast';
 import { USER_ROLES } from '../../lib/auth/roles';
 import { useSession } from 'next-auth/react';
 

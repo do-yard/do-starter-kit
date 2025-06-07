@@ -12,151 +12,163 @@ The architecture diagram above shows the complete structure of the SaaS Starter 
 
 ## Get Started
 
-This guide describes how to use DigitalOcean App Platform to deploy a complete SaaS application with:
+The DigitalOcean SaaS Starter Kit can be run [locally](#running-locally) or in [DigitalOcean platform](#deploy-to-digitalocean-platform). Follow the steps for each case below.
 
-- User authentication
-- Database integration
-- API endpoints
-- File storage
-- Subscription billing
+## Running locally
 
-### Requirements
+1. Download/clone the repo.
+1. Navigate to \application folder
+1. Run `npm install`
+1. Copy .env file with `cp env-example .env`
+1. Complete at minimum 'Database configuration' and 'Auth.js configuration' settings sections. Postgres DB can be a local instance or a Managed Database in DigitalOcean platform. Either way, the Postgres connection string is used in for connection.
+1. Run Prisma generate: `npx prisma generate`
+1. Run Prisma migration: `npx prisma migrate deploy`
+1. Start the site: `npm run dev`
 
-- You need a DigitalOcean account. If you do not already have one, first [sign up](https://cloud.digitalocean.com/registrations/new).
-- You must create a DigitalOcean Space (object storage) manually for file uploads. See [Storage setup instructions](./docs/storage.md).
-- For local development, you need Docker installed (or access to a Postgres database).
+If you made changes to the repo and want to deploy them to DigitalOcean, navigate to the [Deploy from local environment](#deploy-from-local-environment) section.
 
-## Deploy the App
+## Deploy to DigitalOcean platform
 
-Click the following button to deploy the app to App Platform. If you are not currently logged in with your DigitalOcean account, this button prompts you to log in.
+1. Click on the one-click deployment button below. If you are not currently logged in with your DigitalOcean account, this button prompts you to log in.
 
 [![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/do-yard/do-starter-kit/tree/main)
 
-To enable automatic redeployment or to modify the code, we recommend you fork this repository:
+2. After deployment is complete, configure the environment variables under Settings -> saas-application.
+      - DATABASE_URL: is automatically populated, but if you want to use a DigitalOcean Managed DB, replace the connection string value.
+      - NEXTAUTH_URL: URL of the site
+      - NEXTAUTH_SECRET: random string for authentication. After setting a value, check the encrypt box.
+3. Run Prisma migrations:
+   - Go to Console, in the DigitalOcean dashboard
+   - Run `npx prisma migrate deploy` command
+4. Navigate to the site
 
-1. Click the **Fork** button in the top-right of [this GitHub repository](https://github.com/do-yard/do-starter-kit), then follow the on-screen instructions
-2. In your forked repo, the README will display as `https://github.com/<your-org>/do-starter-kit`
-3. To deploy your fork, visit the [App Platform control panel](https://cloud.digitalocean.com/apps) and click **Create App**
-4. Select **GitHub** as your service provider, select your forked repo, and ensure the main branch is selected with **Autodeploy** enabled
-5. Click **Next**
+## Configure DigitalOcean Spaces storage
 
-After clicking the Deploy button or setting up your fork, follow these steps:
+DigitalOcean Spaces Storage is necessary to upload profile pictures. If you want to use this feature, you can find the configuration steps in the [DigitalOcean Spaces Storage Setup](./docs/storage.md) article.
 
-1. **Configure environment variables and database:**
-   - Set up the required environment variables (see [Environment Variables](#environment-variables) below)
-2. **Deploy your application:**
+## Postgres DB options
 
-   - Provide a name for your app and select a region
-   - Review settings and click **Launch Basic/Pro App**
+There are three Postgres DB options.
 
-3. **Complete post-deployment setup:**
-   - After the build completes, use the App Platform Console to run database migrations:
-     ```bash
-     npx prisma generate
-     npx prisma migrate deploy
-     ```
-4. **Access your application:**
-   - Click the **Live App** link in the header to see your running SaaS application
+### DigitalOcean Managed
 
-## Environment Variables
+To use a DigitalOcean Managed DB, replace the connection string value in the environment variable DATABASE_URL with you DB connection string. For info on Managed Databases please navigate to [Managed Databases](https://docs.digitalocean.com/products/databases/) official documentation.
 
-The following environment variables are required:
+### Dev provisioned
 
-1. **Database Environment Variables**:
+The one-click deploy button automatically creates and configures a development Postgres DB that is attached to the application. If you wish to connect to the DB locally follow the guide below:
 
-   ```
-   DATABASE_URL=postgres://username:password@host:port/database
-   ```
+**Prerequisites**
 
-   - This will be automatically configured if you create a DigitalOcean Managed Database
-   - For details on setting up the database, see the [Database Guide](./docs/database.md).
+- Access to your DigitalOcean project
+- Your **public IP address**
 
-2. **NextAuth Environment Variables**:
+**Whitelist IP for Access**
 
-   ```
-   NEXTAUTH_URL=https://your-app-name.ondigitalocean.app
-   NEXTAUTH_SECRET=your-secure-random-string
-   ```
+1. **Generate API Token**
 
-   - Generate a secure random string for `NEXTAUTH_SECRET` using a tool like [Password Generator](https://passwords-generator.org/)
-   - `NEXTAUTH_URL` should be your app's full URL (will be available after first deployment)
+   - Visit [DigitalOcean API Tokens](https://cloud.digitalocean.com/account/api/tokens)
+   - Create a new token and **store it securely**
 
-3. **DigitalOcean Spaces Environment Variables**:
-   ```
-   SPACES_KEY=your-spaces-access-key
-   SPACES_SECRET=your-spaces-secret-key
-   SPACES_ENDPOINT=your-region.digitaloceanspaces.com
-   SPACES_BUCKET=your-bucket-name
-   ```
-   - Get these values from your DigitalOcean Spaces setup (see [storage.md](./docs/storage.md))
+2. **Get Database ID**
 
-## Local Development
+   - Navigate to your app on the [DigitalOcean App Platform](https://cloud.digitalocean.com/apps)
+   - Find the database under “Settings” > “Components”
 
-To run the application locally:
+3. **Update Firewall Rules**
 
-1. **Clone the repository:**
+Replace values accordingly:
 
-   ```bash
-   git clone https://github.com/do-yard/do-starter-kit
-   cd application
-   ```
+```bash
+curl -X PUT \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $DIGITALOCEAN_TOKEN" \
+  -d '{"rules": [{"type": "ip_addr", "value": "YOUR_PUBLIC_IP"}]}' \
+  "https://api.digitalocean.com/v2/databases/YOUR_DATABASE_ID/firewall"
+```
 
-2. **Install dependencies:**
+### Docker instance
 
-   ```bash
-   npm install
-   ```
+If you wish to use a Postgres Docker instance follow the steps below.
 
-3. **Set up environment variables:**
+**Step 1: Define Environment Variables**
 
-   ```bash
-   cp env-example .env
-   ```
+Create a `.env` file inside the `application/` directory:
 
-4. **Start the database:**
+```dotenv
+# Local application database configuration
+DATABASE_URL=postgresql://user:password@host:port/database
 
-   ```bash
-   docker-compose up -d
-   ```
+# Docker container initialization (PostgreSQL)
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=saas_kit_db
+```
 
-5. **Run database migrations:**
+> ℹ️ The `DATABASE_URL` is used by your application, while the `POSTGRES_*` variables configure the Docker PostgreSQL instance. Keep them aligned to avoid mismatches.
 
-   ```bash
-   npx prisma generate
-   npx prisma migrate deploy
-   ```
+**Step 2: Start the PostgreSQL Container**
 
-6. **Start the development server:**
+From the project root, run:
 
-   ```bash
-   npm run dev
-   ```
+```bash
+cd application
+docker-compose up -d
+```
 
-7. **Open your browser** at [http://localhost:3000](http://localhost:3000)
+Defaults used:
 
-For detailed development instructions, see our [Development Guide](./docs/development-guide.md).
+- Port: `5432`
+- User: `postgres`
+- Password: `postgres`
+- Database: `saas_kit_db`
 
-## Make Changes to Your App
+**Step 4: Run the App**
 
-If you forked this repository, you can now make changes to your copy of the starter kit. Pushing changes to the main branch will automatically redeploy your app on App Platform with zero downtime.
+```bash
+npm run dev
+```
 
-To understand the project structure and make effective changes:
+## Deploy from local environment
 
-1. Review the [Project Structure Guide](./docs/project-structure.md) to understand the codebase
-2. Follow the [Development Guide](./docs/development-guide.md) for best practices
-3. Consult the [Tech Stack Guide](./docs/tech-stack.md) for details on included technologies
+If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
 
-## Learn More
+1. Upload the repo to GitHub or push the changes if created a fork of the original DigitalOcean repo.
+1. Create an **app.yaml** file by copying **app.template.yaml**.
+1. **Important**: settings from .env file do not transfer automatically to the **app.yaml**, they have to be copied manually. Also, there are a few other values to complete in the YAML. The following is a checklist with all placeholders:
+   - [ ] **APP_NAME**: arbitrary name for your app.
+   - [ ] **repo**: replace _do-yard/do-starter-kit_ with your GitHub username and repo name. 
+   - [ ] **GITHUB_BRANCH**: the branch you want to deploy.
+   - [ ] **DB_NAME**: arbitrary name for your database.
+   - [ ] **SPACES_KEY_ID**: id of an existing Spaces storage key.
+   - [ ] **SPACES_KEY_SECRET**: secret of an existing Spaces storage key.
+   - [ ] **SPACES_BUCKET_NAME**: name of an existing bucket.
+   - [ ] **SPACES_REGION**: bucket region.
+   - [ ] **NEXTAUTH_SECRET**: arbitrary string for Auth.js.
+   - [ ] **APP_URL**: URL of the site, can be obtained after the site is deployed. You can leave it blank before deployment.
+   - [ ] **RESEND_API_KEY**: Your Resend API key. This feature is WIP.
+   - [ ] **RESEND_EMAIL_SENDER**: Sender address for the emails that the app will send. This feature is WIP.
+   - [ ] **CLUSTER_NAME**: arbitrary name for the DB cluster.
+1. Download and install [DigitalOcean doctl](https://docs.digitalocean.com/reference/doctl/how-to/install/).
+1. Create and API key in [DigitalOcean](https://cloud.digitalocean.com/account/api/tokens) and store it securely.
+1. Authenticate locally using `doctl auth init`
+1. From the root directory of the repo, deploy the app using `doctl apps create --spec .do\app.yaml`
+1. Once the app is deployed. Configure the `NEXTAUTH_URL` with the app URL.
+1. Run Prisma migrations from the DigitalOcean console `npx prisma migrate deploy`
 
-For detailed documentation on all aspects of this starter kit:
+### Best practices when working with secrets and environment variables
 
-- **[Project Structure](./docs/project-structure.md)** - Codebase organization
-- **[Tech Stack](./docs/tech-stack.md)** - Technologies used
-- **[Development Guide](./docs/development-guide.md)** - Local development workflow
-- **[Database Guide](./docs/database.md)** - Database setup and management
-- **[Storage Guide](./docs/storage.md)** - DigitalOcean Spaces configuration
+**Never commit secrets to version control**
+- Add `.env`, `.env.*`, and any secret files to your .gitignore.
+- Use example files (like env-example) to show required variables without real values.
 
-To learn more about App Platform and how to manage your applications, see [DigitalOcean App Platform documentation](https://www.digitalocean.com/docs/app-platform/).
+**Encrypt secrets at rest and in transit**
+- Ensure secrets are encrypted wherever they are stored and when transmitted.
+- Check `Encrypt` checkbox for sensitive values in DigitalOcean environment variables configuration.
+
+**Do secret maintenance**
+- Expire or revoke unused access tokens.
+- Remove whitelisted IPs when no longer needed.
 
 ## Delete the App
 

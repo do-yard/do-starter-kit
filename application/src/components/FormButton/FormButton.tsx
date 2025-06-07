@@ -11,7 +11,12 @@ const FormButton: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     type="submit"
     variant="contained"
     fullWidth
-    sx={{ fontWeight: 500, boxShadow: 'none', '&:hover': { bgcolor: '#185EA5', boxShadow: 'none' }, textTransform: 'none' }}
+    sx={{
+      fontWeight: 500,
+      boxShadow: 'none',
+      '&:hover': { bgcolor: '#185EA5', boxShadow: 'none' },
+      textTransform: 'none',
+    }}
   >
     {children}
   </Button>
