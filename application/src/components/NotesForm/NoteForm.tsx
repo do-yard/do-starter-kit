@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Card, CardContent, CircularProgress } from '@mui/material';
-import { useRouter } from 'next/navigation';
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+} from '@mui/material';
 import { NotesApiClient } from 'lib/api/notes';
 
 const apiClient = new NotesApiClient();
@@ -17,7 +24,6 @@ interface NoteFormProps {
  * This component handles creating, editing, and viewing notes with different UI states
  */
 const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) => {
-  const router = useRouter();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [createdAt, setCreatedAt] = useState<string>('');
@@ -51,17 +57,21 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
     e.preventDefault();
 
     if (onSave) {
-      const noteData = mode === 'edit' && noteId
-        ? { id: noteId, title, content }
-        : { title, content };
+      const noteData =
+        mode === 'edit' && noteId ? { id: noteId, title, content } : { title, content };
       onSave(noteData);
     }
   };
-
   // Show loading state
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="50vh"
+        data-testid="note-loading-state"
+      >
         <CircularProgress />
       </Box>
     );
@@ -70,14 +80,11 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
   // Show error message
   if (error) {
     return (
-      <Box textAlign="center" p={3}>
-        <Typography variant="h4" gutterBottom>
+      <Box textAlign="center" p={3} data-testid="note-error-state">
+        <Typography variant="h4" gutterBottom data-testid="note-error-message">
           {error}
         </Typography>
-        <Button
-          onClick={onCancel}
-          variant="contained"
-        >
+        <Button onClick={onCancel} variant="contained" data-testid="note-error-back-button">
           Back to Notes
         </Button>
       </Box>
@@ -91,13 +98,17 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
         <Typography variant="body2" color="text.secondary" gutterBottom>
           Created: {new Date(createdAt).toLocaleDateString()}
         </Typography>
-      )}      <Card>
+      )}{' '}
+      <Card>
         <CardContent>
-          <Typography variant="h6" gutterBottom>
-            {mode === 'create' ? 'Create New Note' : 
-             mode === 'edit' ? 'Edit Note' : 'View Note'}
+          <Typography variant="h6" gutterBottom data-testid="note-form-title">
+            {mode === 'create' ? 'Create New Note' : mode === 'edit' ? 'Edit Note' : 'View Note'}
           </Typography>
-          <form onSubmit={mode !== 'view' ? handleSubmit : (e) => e.preventDefault()}>
+          <form
+            onSubmit={mode !== 'view' ? handleSubmit : (e) => e.preventDefault()}
+            data-testid="note-form"
+          >
+            {' '}
             <TextField
               id="title"
               label="Title"
@@ -108,8 +119,8 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
               onChange={(e) => setTitle(e.target.value)}
               required
               InputProps={{ readOnly: isReadOnly }}
+              data-testid="note-title-input"
             />
-
             <TextField
               id="content"
               label="Content"
@@ -122,19 +133,20 @@ const NoteForm: React.FC<NoteFormProps> = ({ mode, noteId, onSave, onCancel }) =
               onChange={(e) => setContent(e.target.value)}
               required
               InputProps={{ readOnly: isReadOnly }}
-            />
-
+              data-testid="note-content-input"
+            />{' '}
             <Box display="flex" justifyContent="flex-end" gap={1} mt={2}>
-              <Button onClick={onCancel}>
-                Cancel
+              <Button onClick={onCancel} data-testid="note-cancel-button">
+                {mode === 'view' ? 'Close' : 'Cancel'}
               </Button>
               {mode !== 'view' && (
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
+                  data-testid="note-save-button"
                 >
-                  {mode === 'edit' ? 'Update Note' : 'Save Note'}
+                  {mode === 'edit' ? 'Save Changes' : 'Save Note'}
                 </Button>
               )}
             </Box>

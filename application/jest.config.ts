@@ -4,11 +4,11 @@ const createJestConfig = nextJest({ dir: './' });
 
 const customJestConfig = {
   testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts', '@testing-library/jest-dom'],
-  moduleNameMapper: {
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts', '@testing-library/jest-dom'],  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^hooks/(.*)$': '<rootDir>/src/hooks/$1',
-    '^components/(.*)$': '/src/components/$1',
+    '^components/(.*)$': '<rootDir>/src/components/$1',
+    '^lib/(.*)$': '<rootDir>/src/lib/$1',
   },
   testPathIgnorePatterns: [
     '<rootDir>/src/lib/',

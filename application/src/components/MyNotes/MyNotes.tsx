@@ -12,6 +12,7 @@ import NotesListView from '../NotesListView/NotesListView';
 import NotesHeader from '../NotesHeader/NotesHeader';
 import PageContainer from '../PageContainer/PageContainer';
 import ConfirmationDialog from '../ConfirmationDialog/ConfirmationDialog';
+import Toast from '../Toast/Toast';
 
 // Create an instance of the ApiClient
 const apiClient = new NotesApiClient();
@@ -33,6 +34,10 @@ const MyNotes: React.FC = () => {
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
+  // Toast state
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastSeverity, setToastSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
 
   // Fetch notes from API
   const fetchNotes = async () => {
@@ -80,18 +85,24 @@ const MyNotes: React.FC = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
-
   const handleCreateNote = async (noteData: { title: string; content: string }) => {
     try {
       const newNote = await apiClient.createNote(noteData);
       setNotes([newNote, ...notes]);
       setIsCreateModalOpen(false);
+      // Show success toast
+      setToastMessage('Note created successfully');
+      setToastSeverity('success');
+      setToastOpen(true);
     } catch (err) {
       console.error('Error creating note:', err);
       setError('Failed to create note. Please try again.');
+      // Show error toast
+      setToastMessage('Failed to create note');
+      setToastSeverity('error');
+      setToastOpen(true);
     }
   };
-
   const handleUpdateNote = async (noteData: { title: string; content: string }) => {
     if (!selectedNoteId) return;
 
@@ -100,24 +111,39 @@ const MyNotes: React.FC = () => {
       setNotes(notes.map(note => note.id === selectedNoteId ? updatedNote : note));
       setIsEditModalOpen(false);
       setSelectedNoteId(null);
+      // Show success toast
+      setToastMessage('Note updated successfully');
+      setToastSeverity('success');
+      setToastOpen(true);
     } catch (err) {
       console.error('Error updating note:', err);
       setError('Failed to update note. Please try again.');
+      // Show error toast
+      setToastMessage('Failed to update note');
+      setToastSeverity('error');
+      setToastOpen(true);
     }
   };
   const handleDeleteConfirmation = (noteId: string) => {
     setNoteToDelete(noteId);
     setDeleteConfirmationOpen(true);
   };
-
   const handleConfirmDelete = async () => {
     if (noteToDelete) {
       try {
         await apiClient.deleteNote(noteToDelete);
         setNotes(notes.filter(note => note.id !== noteToDelete));
+        // Show success toast
+        setToastMessage('Note deleted successfully');
+        setToastSeverity('success');
+        setToastOpen(true);
       } catch (err) {
         console.error('Error deleting note:', err);
         setError('Failed to delete note. Please try again.');
+        // Show error toast
+        setToastMessage('Failed to delete note');
+        setToastSeverity('error');
+        setToastOpen(true);
       } finally {
         setDeleteConfirmationOpen(false);
         setNoteToDelete(null);
@@ -128,6 +154,10 @@ const MyNotes: React.FC = () => {
   const handleCancelDelete = () => {
     setDeleteConfirmationOpen(false);
     setNoteToDelete(null);
+  };
+
+  const handleCloseToast = () => {
+    setToastOpen(false);
   };
 
   // Legacy handler - now redirects to confirmation flow
@@ -243,7 +273,8 @@ const MyNotes: React.FC = () => {
               onCancel={handleCloseEditModal}
             />
           )}
-        </DialogContent>      </Dialog>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation Dialog */}
       <ConfirmationDialog
@@ -255,6 +286,14 @@ const MyNotes: React.FC = () => {
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
         confirmButtonColor="error"
+      />
+
+      {/* Toast notifications */}
+      <Toast
+        open={toastOpen}
+        message={toastMessage}
+        severity={toastSeverity}
+        onClose={handleCloseToast}
       />
     </PageContainer>
   );

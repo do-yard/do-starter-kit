@@ -84,6 +84,7 @@ const SignUpForm: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     fullWidth
                     size="small"
+                    inputProps={{ 'data-testid': 'signup-email-input' }}
                   />
                 </Box>
 
@@ -100,6 +101,7 @@ const SignUpForm: React.FC = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     fullWidth
                     size="small"
+                    inputProps={{ 'data-testid': 'signup-password-input' }}
                   />
                 </Box>
 
@@ -116,12 +118,12 @@ const SignUpForm: React.FC = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     fullWidth
                     size="small"
+                    inputProps={{ 'data-testid': 'signup-confirm-password-input' }}
                   />
                 </Box>
               </Box>
-
               {error && (
-                <Typography color="error" fontSize={14} mt={2}>
+                <Typography color="error" fontSize={14} mt={2} data-testid="signup-error-message">
                   {error}
                 </Typography>
               )}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import NotesHeader from '../notes/NotesHeader';
+import NotesHeader from './NotesHeader';
 
 const theme = createTheme();
 
@@ -23,6 +23,7 @@ describe('NotesHeader', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
+
   it('renders the create note button correctly', () => {
     render(
       <TestWrapper>
@@ -30,7 +31,7 @@ describe('NotesHeader', () => {
       </TestWrapper>
     );
 
-    expect(screen.getByText('Create Note')).toBeInTheDocument();
+    expect(screen.getByTestId('notes-create-button')).toBeInTheDocument();
   });
 
   it('renders the create note button', () => {
@@ -40,7 +41,7 @@ describe('NotesHeader', () => {
       </TestWrapper>
     );
 
-    const createButton = screen.getByRole('button', { name: /create note/i });
+    const createButton = screen.getByTestId('notes-create-button');
     expect(createButton).toBeInTheDocument();
   });
 
@@ -51,7 +52,7 @@ describe('NotesHeader', () => {
       </TestWrapper>
     );
 
-    const createButton = screen.getByRole('button', { name: /create note/i });
+    const createButton = screen.getByTestId('notes-create-button');
     fireEvent.click(createButton);
 
     expect(mockProps.onCreateNote).toHaveBeenCalledTimes(1);
@@ -64,7 +65,7 @@ describe('NotesHeader', () => {
       </TestWrapper>
     );
 
-    const searchInput = screen.getByPlaceholderText('Search notes...');
+    const searchInput = screen.getByTestId('notes-search-input');
     expect(searchInput).toBeInTheDocument();
   });
 
@@ -75,7 +76,7 @@ describe('NotesHeader', () => {
       </TestWrapper>
     );
 
-    expect(screen.getByRole('button', { name: /list/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /grid/i })).toBeInTheDocument();
+    expect(screen.getByTestId('notes-list-view-button')).toBeInTheDocument();
+    expect(screen.getByTestId('notes-grid-view-button')).toBeInTheDocument();
   });
 });

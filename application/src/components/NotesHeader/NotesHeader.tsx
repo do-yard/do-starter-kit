@@ -24,6 +24,10 @@ interface NotesHeaderProps {
     onCreateNote: () => void;
 }
 
+/**
+ * Header component for notes page with search, sort, view mode controls, and create button.
+ * Provides filtering and layout controls for the notes interface.
+ */
 const NotesHeader: React.FC<NotesHeaderProps> = ({
     searchQuery,
     sortBy,
@@ -34,19 +38,21 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
     onCreateNote,
 }) => {
     return (
-        <Box>
+        <Box data-testid="notes-header">
             {/* Header */}
             <Stack direction="row" justifyContent="right" sx={{ mb: 3 }}>
                 <Button
                     variant="contained"
                     startIcon={<Add />}
                     onClick={onCreateNote}
+                    data-testid="notes-create-button"
                 >
                     Create Note
                 </Button>
             </Stack>
             {/* Search and Filter Controls */}
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 3 }} alignItems="center">
+                {' '}
                 <TextField
                     placeholder="Search notes..."
                     value={searchQuery}
@@ -57,23 +63,24 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
                             <InputAdornment position="start">
                                 <Search />
                             </InputAdornment>
-                        )
+                        ),
                     }}
                     sx={{ flex: 1 }}
-                />
-
+                    inputProps={{ 'data-testid': 'notes-search-input' }}
+                />{' '}
                 <FormControl sx={{ minWidth: 120 }}>
                     <Select
                         value={sortBy}
                         onChange={onSortChange}
                         displayEmpty
                         size="small"
+                        data-testid="notes-sort-select"
                     >
                         <MenuItem value="newest">Newest</MenuItem>
                         <MenuItem value="oldest">Oldest</MenuItem>
                         <MenuItem value="title">Title</MenuItem>
                     </Select>
-                </FormControl>
+                </FormControl>{' '}
                 <Stack direction="row" spacing={1}>
                     <Button
                         variant={viewMode === 'list' ? 'contained' : 'outlined'}
@@ -82,8 +89,9 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
                         sx={{
                             minWidth: '40px',
                             width: '40px',
-                            padding: 0
+                            padding: 0,
                         }}
+                        data-testid="notes-list-view-button"
                     >
                         <List fontSize="small" />
                     </Button>
@@ -94,8 +102,9 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
                         sx={{
                             minWidth: '40px',
                             width: '40px',
-                            padding: 0
+                            padding: 0,
                         }}
+                        data-testid="notes-grid-view-button"
                     >
                         <GridView fontSize="small" />
                     </Button>

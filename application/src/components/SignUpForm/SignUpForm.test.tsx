@@ -26,20 +26,20 @@ describe('SignUpForm', () => {
 
   it('renders all inputs', () => {
     render(<SignUpForm />);
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
+    expect(screen.getByTestId('signup-email-input')).toBeInTheDocument();
+    expect(screen.getByTestId('signup-password-input')).toBeInTheDocument();
+    expect(screen.getByTestId('signup-confirm-password-input')).toBeInTheDocument();
   });
 
   it('shows error if passwords do not match', async () => {
     render(<SignUpForm />);
-    await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');
-    await userEvent.type(screen.getByLabelText(/^password$/i), '123456');
-    await userEvent.type(screen.getByLabelText(/confirm password/i), '654321');
+    await userEvent.type(screen.getByTestId('signup-email-input'), 'test@example.com');
+    await userEvent.type(screen.getByTestId('signup-password-input'), '123456');
+    await userEvent.type(screen.getByTestId('signup-confirm-password-input'), '654321');
 
     fireEvent.submit(screen.getByTestId('signup-form'));
 
-    expect(await screen.findByText(/passwords do not match/i)).toBeInTheDocument();
+    expect(await screen.findByTestId('signup-error-message')).toBeInTheDocument();
     expect(signIn).not.toHaveBeenCalled();
   });
 
@@ -48,9 +48,9 @@ describe('SignUpForm', () => {
     mockSignIn.mockResolvedValue({ ok: true });
 
     render(<SignUpForm />);
-    await userEvent.type(screen.getByLabelText(/email/i), 'user@example.com');
-    await userEvent.type(screen.getByLabelText(/^password$/i), 'securepass');
-    await userEvent.type(screen.getByLabelText(/confirm password/i), 'securepass');
+    await userEvent.type(screen.getByTestId('signup-email-input'), 'user@example.com');
+    await userEvent.type(screen.getByTestId('signup-password-input'), 'securepass');
+    await userEvent.type(screen.getByTestId('signup-confirm-password-input'), 'securepass');
 
     fireEvent.submit(screen.getByTestId('signup-form'));
 

@@ -25,6 +25,10 @@ interface NotesListViewProps {
   onDeleteNote: (noteId: string) => void;
 }
 
+/**
+ * List view component for displaying notes in a table format.
+ * Provides view, edit, and delete actions for each note in a tabular layout.
+ */
 const NotesListView: React.FC<NotesListViewProps> = ({
   notes,
   isLoading,
@@ -35,31 +39,30 @@ const NotesListView: React.FC<NotesListViewProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <Box display="flex" justifyContent="center" p={4}>
+      <Box display="flex" justifyContent="center" p={4} data-testid="notes-list-loading">
         <CircularProgress />
       </Box>
     );
   }
-
   if (error) {
     return (
-      <Box display="flex" justifyContent="center" p={4}>
-        <Typography color="error">{error}</Typography>
+      <Box display="flex" justifyContent="center" p={4} data-testid="notes-list-error">
+        <Typography color="error" data-testid="notes-list-error-message">
+          {error}
+        </Typography>
       </Box>
     );
   }
-
   if (notes.length === 0) {
     return (
-      <Box display="flex" justifyContent="center" p={4}>
+      <Box display="flex" justifyContent="center" p={4} data-testid="notes-list-empty">
         <Typography>No notes found. Create your first note!</Typography>
       </Box>
     );
   }
-
   return (
-    <TableContainer component={Paper}>
-      <Table>
+    <TableContainer component={Paper} data-testid="notes-list-container">
+      <Table data-testid="notes-table">
         <TableHead>
           <TableRow>
             <TableCell>Title</TableCell>
@@ -69,40 +72,49 @@ const NotesListView: React.FC<NotesListViewProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
+          {' '}
           {notes.map((note) => (
-            <TableRow key={note.id} hover>
-              <TableCell>
-                <Typography variant="body1">
+            <TableRow key={note.id} hover data-testid={`note-row-${note.id}`}>
+              <TableCell data-testid={`note-title-cell-${note.id}`}>
+                <Typography variant="body1" data-testid={`note-title-${note.id}`}>
                   {note.title}
                 </Typography>
-              </TableCell>              
-              <TableCell>
-                <Typography 
-                  variant="body2" 
+              </TableCell>{' '}
+              <TableCell data-testid={`note-content-cell-${note.id}`}>
+                <Typography
+                  variant="body2"
                   color="text.secondary"
                   sx={{
                     maxWidth: '300px', // Set a maximum width for the content
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    display: 'block' // Ensures the typography behaves as a block element
+                    display: 'block', // Ensures the typography behaves as a block element
                   }}
                   title={note.content} // Show full content on hover
+                  data-testid={`note-content-${note.id}`}
                 >
                   {note.content}
                 </Typography>
               </TableCell>
-              <TableCell>
-                <Typography variant="body2" color="text.secondary">
+              <TableCell data-testid={`note-date-cell-${note.id}`}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  data-testid={`note-date-${note.id}`}
+                >
                   {new Date(note.createdAt).toLocaleDateString()}
                 </Typography>
-              </TableCell>
-              <TableCell>                <Stack direction="row" spacing={1}>
+              </TableCell>{' '}
+              <TableCell data-testid={`note-actions-cell-${note.id}`}>
+                {' '}
+                <Stack direction="row" spacing={1}>
                   <IconButton
                     size="small"
                     color="primary"
                     onClick={() => onViewNote(note.id)}
                     title="View note"
+                    data-testid={`note-view-button-${note.id}`}
                   >
                     <Visibility fontSize="small" />
                   </IconButton>
@@ -111,6 +123,7 @@ const NotesListView: React.FC<NotesListViewProps> = ({
                     color="primary"
                     onClick={() => onEditNote(note.id)}
                     title="Edit note"
+                    data-testid={`note-edit-button-${note.id}`}
                   >
                     <Edit fontSize="small" />
                   </IconButton>
@@ -119,6 +132,7 @@ const NotesListView: React.FC<NotesListViewProps> = ({
                     color="error"
                     onClick={() => onDeleteNote(note.id)}
                     title="Delete note"
+                    data-testid={`note-delete-button-${note.id}`}
                   >
                     <Delete fontSize="small" />
                   </IconButton>

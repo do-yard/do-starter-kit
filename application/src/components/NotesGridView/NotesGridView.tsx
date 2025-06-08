@@ -21,6 +21,10 @@ interface NotesGridViewProps {
     onDeleteNote: (noteId: string) => void;
 }
 
+/**
+ * Grid view component for displaying notes in a card-based layout.
+ * Provides view, edit, and delete actions for each note.
+ */
 const NotesGridView: React.FC<NotesGridViewProps> = ({
     notes,
     isLoading,
@@ -31,7 +35,7 @@ const NotesGridView: React.FC<NotesGridViewProps> = ({
 }) => {
     if (isLoading) {
         return (
-            <Box display="flex" justifyContent="center" p={4}>
+            <Box display="flex" justifyContent="center" p={4} data-testid="notes-grid-loading">
                 <CircularProgress />
             </Box>
         );
@@ -39,20 +43,21 @@ const NotesGridView: React.FC<NotesGridViewProps> = ({
 
     if (error) {
         return (
-            <Box display="flex" justifyContent="center" p={4}>
-                <Typography color="error">{error}</Typography>
+            <Box display="flex" justifyContent="center" p={4} data-testid="notes-grid-error">
+                <Typography color="error" data-testid="notes-grid-error-message">
+                    {error}
+                </Typography>
             </Box>
         );
     }
 
     if (notes.length === 0) {
         return (
-            <Box display="flex" justifyContent="center" p={4}>
+            <Box display="flex" justifyContent="center" p={4} data-testid="notes-grid-empty">
                 <Typography>No notes found. Create your first note!</Typography>
             </Box>
         );
     }
-
     return (
         <Box
             sx={{
@@ -64,28 +69,51 @@ const NotesGridView: React.FC<NotesGridViewProps> = ({
                 },
                 gap: 3,
             }}
+            data-testid="notes-grid-container"
         >
             {notes.map((note) => (
-                <Card key={note.id} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <Card
+                    key={note.id}
+                    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+                    data-testid={`note-card-${note.id}`}
+                >
                     <CardContent sx={{ flexGrow: 1 }}>
                         <Stack spacing={2}>
-                            <Typography variant="h6" component="h3">
+                            <Typography variant="h6" component="h3" data-testid={`note-title-${note.id}`}>
                                 {note.title}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            </Typography>{' '}
+                            <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 3,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                }}
+                                title={note.content}
+                                data-testid={`note-content-${note.id}`}
+                            >
                                 {note.content}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
+                            </Typography>{' '}
+                            <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                data-testid={`note-date-${note.id}`}
+                            >
                                 {new Date(note.createdAt).toLocaleDateString()}
                             </Typography>
                         </Stack>
                     </CardContent>
                     <CardActions sx={{ justifyContent: 'flex-end' }}>
+                        {' '}
                         <IconButton
                             size="small"
                             color="primary"
                             onClick={() => onViewNote(note.id)}
                             title="View note"
+                            data-testid={`note-view-button-${note.id}`}
                         >
                             <Visibility fontSize="small" />
                         </IconButton>
@@ -94,6 +122,7 @@ const NotesGridView: React.FC<NotesGridViewProps> = ({
                             color="primary"
                             onClick={() => onEditNote(note.id)}
                             title="Edit note"
+                            data-testid={`note-edit-button-${note.id}`}
                         >
                             <Edit fontSize="small" />
                         </IconButton>
@@ -102,6 +131,7 @@ const NotesGridView: React.FC<NotesGridViewProps> = ({
                             color="error"
                             onClick={() => onDeleteNote(note.id)}
                             title="Delete note"
+                            data-testid={`note-delete-button-${note.id}`}
                         >
                             <Delete fontSize="small" />
                         </IconButton>
