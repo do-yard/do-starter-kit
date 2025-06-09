@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, Typography, TextField, Button, styled, CircularProgress } from '@mui/material';
+import { Box, Typography, Button, styled, CircularProgress, Card } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
 import DoneIcon from '@mui/icons-material/Done';
 import Image from 'next/image';
+import UpdatePasswordForm from '../UpdatePasswordForm/UpdatePasswordForm';
+import CustomTextField from '../CustomTextField/CustomTextField';
 import PageContainer from '../PageContainer/PageContainer';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
@@ -125,7 +127,12 @@ export default function AccountSettings() {
 
   return (
     <PageContainer title="Account Settings">
-      <Box sx={{ p: 3, width: '100%' }}>
+      <Card
+        variant="outlined"
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{ p: 3, mx: 'auto', display: 'flex', flexDirection: 'column' }}
+      >
         <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
           Profile Information
         </Typography>
@@ -135,33 +142,24 @@ export default function AccountSettings() {
         <form onSubmit={handleSubmit}>
           <Box sx={{ display: 'grid', gap: 4 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-              <Typography component="label" htmlFor="name" variant="body2" fontWeight={500}>
-                Name
-              </Typography>
-              <TextField
+              <CustomTextField
+                value={formData.name}
+                onChange={handleInputChange}
+                disabled={isLoading}
+                label="Name"
                 id="name"
                 name="name"
                 placeholder="Your name"
-                value={formData.name}
-                onChange={handleInputChange}
-                fullWidth
-                disabled={isLoading}
               />
-            </Box>
-
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-              <Typography component="label" htmlFor="email" variant="body2" fontWeight={500}>
-                Email
-              </Typography>
-              <TextField
+              <CustomTextField
+                value={formData.email}
+                onChange={handleInputChange}
+                disabled={true}
+                label="Email"
                 id="email"
                 name="email"
                 type="email"
                 placeholder="Your email"
-                value={formData.email}
-                onChange={handleInputChange}
-                fullWidth
-                disabled={true}
               />
             </Box>
 
@@ -250,6 +248,9 @@ export default function AccountSettings() {
             )}
           </Box>
         </form>
+      </Card>
+      <Box sx={{ mt: 4 }}>
+        <UpdatePasswordForm />
       </Box>
     </PageContainer>
   );
