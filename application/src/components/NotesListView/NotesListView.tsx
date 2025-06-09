@@ -72,7 +72,6 @@ const NotesListView: React.FC<NotesListViewProps> = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {' '}
           {notes.map((note) => (
             <TableRow key={note.id} hover data-testid={`note-row-${note.id}`}>
               <TableCell data-testid={`note-title-cell-${note.id}`}>
@@ -80,7 +79,6 @@ const NotesListView: React.FC<NotesListViewProps> = ({
                   {note.title}
                 </Typography>
               </TableCell>
-              {' '}
               <TableCell data-testid={`note-content-cell-${note.id}`}>
                 <Typography
                   variant="body2"
@@ -107,9 +105,7 @@ const NotesListView: React.FC<NotesListViewProps> = ({
                   {new Date(note.createdAt).toLocaleDateString()}
                 </Typography>
               </TableCell>
-              {' '}
               <TableCell data-testid={`note-actions-cell-${note.id}`}>
-                {' '}
                 <Stack direction="row" spacing={1}>
                   <IconButton
                     size="small"
