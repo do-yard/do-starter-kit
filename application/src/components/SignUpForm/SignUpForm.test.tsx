@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import SignUpForm from './SignUpForm';
 import React from 'react';
 
-
 jest.mock('next/link', () => ({
   __esModule: true,
   default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
