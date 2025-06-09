@@ -44,8 +44,9 @@ const SignUpForm: React.FC = () => {
       } else {
         setSuccess('Email verification sent. Check your inbox.');
       }
-    } catch (err: any) {
-      setError('Something went wrong');
+    } catch (err) {
+      console.error('Signup error:', err);
+      setError('Something went wrong during signup. Please try again later.');
     }
     setNavigating(false);
   };

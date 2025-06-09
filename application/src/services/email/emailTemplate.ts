@@ -1,3 +1,12 @@
+/**
+ * Generates a branded HTML email template with a blue banner and centered title.
+ * The template uses tables and inline styles for maximum compatibility with email clients.
+ *
+ * @param {Object} params - The template parameters.
+ * @param {string} params.title - The title to display in the banner (displayed as part of the header).
+ * @param {string} params.content - The main HTML content of the email body.
+ * @returns {string} The complete HTML string for the email.
+ */
 export function emailTemplate({ title, content }: { title: string; content: string }): string {
   return `
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family: Arial, Helvetica, sans-serif; margin:0; padding:0;">

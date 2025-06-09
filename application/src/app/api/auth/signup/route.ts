@@ -7,6 +7,24 @@ import { createEmailClient } from 'services/email/email';
 import { emailTemplate } from 'services/email/emailTemplate';
 import { HTTP_STATUS } from 'lib/api/http';
 
+/**
+ * @api {post} /api/auth/signup User Signup
+ * @description
+ * API endpoint for user registration. Creates a new user, sends a verification email with a secure token,
+ * and returns a success or error response. Handles duplicate users and missing fields. The verification email
+ * uses a branded HTML template and includes a styled button for verification.
+ *
+ * Request body:
+ *   - name: string (required)
+ *   - email: string (required)
+ *   - password: string (required)
+ *
+ * Response:
+ *   - 200: { ok: true, message: string }
+ *   - 400: { error: string }
+ *   - 409: { error: string }
+ *   - 500: { error: string }
+ */
 export async function POST(req: NextRequest) {
   try {
     const { name, email, password } = await req.json();
@@ -60,7 +78,7 @@ export async function POST(req: NextRequest) {
     );
 
     return NextResponse.json({ ok: true, message: 'Verification email sent.' });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
+  } catch (error) {
+    return NextResponse.json({ error: (error as Error).message || 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
   }
 }

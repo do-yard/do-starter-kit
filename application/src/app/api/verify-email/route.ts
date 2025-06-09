@@ -2,6 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
 import { HTTP_STATUS } from 'lib/api/http';
 
+/**
+ * @api {get} /api/verify-email Verify Email
+ * @description
+ * API endpoint to verify a user's email address using a verification token.
+ * Finds the user by the provided token, marks the email as verified, and clears the token.
+ * Returns a success or error response depending on the outcome.
+ *
+ * Query parameters:
+ *   - token: string (required)
+ *
+ * Response:
+ *   - 200: { success: true }
+ *   - 400: { error: string }
+ */
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token');
   if (!token) {

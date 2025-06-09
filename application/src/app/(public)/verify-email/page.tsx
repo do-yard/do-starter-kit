@@ -4,6 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { Box, Card, CardContent, Typography, CircularProgress, Alert, Button } from '@mui/material';
 import { useSearchParams, useRouter } from 'next/navigation';
 
+/**
+ * Email verification page.
+ * Handles verifying a user's email address using a token from the query string.
+ * Shows loading, success, and error states with appropriate messages.
+ * On success, allows the user to proceed to login.
+ */
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
