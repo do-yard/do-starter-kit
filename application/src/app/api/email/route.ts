@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ResendEmailService } from '../../../services/email/resendEmailService';
+import { HTTP_STATUS } from 'lib/api/http';
 
 /**
  * Handles POST requests to send an email using the ResendEmailService.
@@ -11,7 +12,7 @@ export async function POST(req: NextRequest) {
     if (!to || typeof to !== 'string') {
       return NextResponse.json(
         { error: 'Missing or invalid "to" email address.' },
-        { status: 400 }
+        { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
     const emailService = new ResendEmailService();
@@ -19,6 +20,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error sending email:', error);
-    return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to send email' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 }

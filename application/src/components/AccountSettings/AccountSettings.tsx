@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, Typography, Button, styled, CircularProgress, Card } from '@mui/material';
+import { Box, Typography, TextField, Button, styled, CircularProgress } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
 import DoneIcon from '@mui/icons-material/Done';
 import Image from 'next/image';
 import UpdatePasswordForm from '../UpdatePasswordForm/UpdatePasswordForm';
 import CustomTextField from '../CustomTextField/CustomTextField';
+import PageContainer from '../PageContainer/PageContainer';
 
 const StyledFileInput = styled('div')(({ theme }) => ({
   border: '2px dashed',
@@ -125,23 +126,17 @@ export default function AccountSettings() {
   }, [formData.profileImage]);
 
   return (
-    <Box sx={{ width: '800px', pt: 4, mx: 'auto' }}>
-      <Box sx={{ maxWidth: '800px', mx: 'auto', mb: 4 }}>
-        <Typography variant="h3" fontWeight="bold">
-          Account Settings
+    <PageContainer title="Account Settings">
+      <Box sx={{ p: 3, width: '100%' }}>
+        <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
+          Profile Information
         </Typography>
-      </Box>
-
-      <Card variant="outlined">
-        <Box sx={{ p: 3, width: '100%' }}>
-          <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
-            Profile Information
-          </Typography>
-          <Typography variant="body2" color="#9ca3af" sx={{ mb: 3 }}>
-            Update your account details
-          </Typography>
-          <form onSubmit={handleSubmit}>
-            <Box sx={{ display: 'grid', gap: 4 }}>
+        <Typography variant="body2" color="#9ca3af" sx={{ mb: 3 }}>
+          Update your account details
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ display: 'grid', gap: 4 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               <CustomTextField
                 value={formData.name}
                 onChange={handleInputChange}
@@ -161,100 +156,97 @@ export default function AccountSettings() {
                 type="email"
                 placeholder="Your email"
               />
-
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-                <Typography variant="body2" fontWeight={500}>
-                  Profile Image
-                </Typography>
-                {/* Show selected file name if present */}
-                {formData.profileImage && (
-                  <Typography variant="caption" sx={{ mb: 1 }}>
-                    Selected file: {formData.profileImage.name}
-                  </Typography>
-                )}
-
-                {previewUrl ? (
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Box
-                      sx={{
-                        width: 200,
-                        height: 200,
-                        position: 'relative',
-                        mx: 'auto',
-                        mb: 2,
-                        borderRadius: 2,
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <Image
-                        src={previewUrl}
-                        alt="Selected profile image preview"
-                        fill
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </Box>
-                    <Button
-                      variant="outlined"
-                      onClick={() => setFormData((prev) => ({ ...prev, profileImage: null }))}
-                      disabled={isLoading}
-                    >
-                      Change Image
-                    </Button>
-                  </Box>
-                ) : (
-                  <StyledFileInput {...getRootProps()}>
-                    <input {...getInputProps()} disabled={isLoading} />
-                    <Typography variant="body2">
-                      Drag &apos;n&apos; drop a profile image here, or click to select one
-                    </Typography>
-                  </StyledFileInput>
-                )}
-                {uploadError && (
-                  <Typography variant="caption" color="error" sx={{ mt: 1 }}>
-                    {uploadError}
-                  </Typography>
-                )}
-              </Box>
             </Box>
 
-            <Box
-              sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', mt: 4 }}
-            >
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  textTransform: 'none',
-                  borderRadius: 1,
-                  padding: '8px 16px',
-                  fontWeight: 500,
-                  fontSize: '0.875rem',
-                  marginRight: 2,
-                }}
-              >
-                {isLoading ? (
-                  <>
-                    <CircularProgress style={{ marginRight: 6, color: 'white' }} />
-                    Saving...
-                  </>
-                ) : (
-                  'Save Changes'
-                )}
-              </Button>
-              {showSuccess && (
-                <span
-                  style={{ color: 'green', marginLeft: 8, display: 'flex', alignItems: 'center' }}
-                >
-                  <DoneIcon />
-                </span>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+              <Typography variant="body2" fontWeight={500}>
+                Profile Image
+              </Typography>
+              {/* Show selected file name if present */}
+              {formData.profileImage && (
+                <Typography variant="caption" sx={{ mb: 1 }}>
+                  Selected file: {formData.profileImage.name}
+                </Typography>
+              )}
+
+              {previewUrl ? (
+                <Box sx={{ textAlign: 'center' }}>
+                  <Box
+                    sx={{
+                      width: 200,
+                      height: 200,
+                      position: 'relative',
+                      mx: 'auto',
+                      mb: 2,
+                      borderRadius: 2,
+                      overflow: 'hidden',
+                    }}
+                  >
+                    <Image
+                      src={previewUrl}
+                      alt="Selected profile image preview"
+                      fill
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </Box>
+                  <Button
+                    onClick={() => setFormData((prev) => ({ ...prev, profileImage: null }))}
+                    disabled={isLoading}
+                  >
+                    Change Image
+                  </Button>
+                </Box>
+              ) : (
+                <StyledFileInput {...getRootProps()}>
+                  <input {...getInputProps()} disabled={isLoading} />
+                  <Typography variant="body2">
+                    Drag &apos;n&apos; drop a profile image here, or click to select one
+                  </Typography>
+                </StyledFileInput>
+              )}
+              {uploadError && (
+                <Typography variant="caption" color="error" sx={{ mt: 1 }}>
+                  {uploadError}
+                </Typography>
               )}
             </Box>
-          </form>
-        </Box>
-      </Card>
+          </Box>
+
+          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', mt: 4 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                textTransform: 'none',
+                borderRadius: 1,
+                padding: '8px 16px',
+                fontWeight: 500,
+                fontSize: '0.875rem',
+                marginRight: 2,
+              }}
+            >
+              {isLoading ? (
+                <>
+                  <CircularProgress style={{ marginRight: 6, color: 'white' }} />
+                  Saving...
+                </>
+              ) : (
+                'Save Changes'
+              )}
+            </Button>
+            {showSuccess && (
+              <span
+                style={{ color: 'green', marginLeft: 8, display: 'flex', alignItems: 'center' }}
+              >
+                <DoneIcon />
+              </span>
+            )}
+          </Box>
+        </form>
+      </Box>
       <Box sx={{ mt: 4 }}>
         <UpdatePasswordForm />
       </Box>
-    </Box>
+    </PageContainer>
   );
 }
