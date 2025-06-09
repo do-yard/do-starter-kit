@@ -11,6 +11,7 @@ export interface DatabaseClient {
     findById: (id: string) => Promise<User | null>;
     findByEmail: (email: string) => Promise<User | null>;
     findByEmailAndPassword: (email: string, passwordHash: string) => Promise<User | null>;
+    findByVerificationToken: (token: string) => Promise<User | null>;
     findAll: (options?: {
       page?: number;
       pageSize?: number;

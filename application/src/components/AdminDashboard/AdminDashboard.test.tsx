@@ -69,11 +69,11 @@ describe('AdminDashboard', () => {
     expect(await screen.findByText('Alice')).toBeInTheDocument();
     expect(await screen.findByText('Bob')).toBeInTheDocument();
   });
-
   it('opens edit modal when clicking Edit', async () => {
     render(<AdminDashboard />);
-    const editButton = await screen.findAllByText('Edit');
-    fireEvent.click(editButton[0]);
+    // Find edit icon buttons by their title attribute
+    const editButtons = await screen.findAllByTitle('Edit user');
+    fireEvent.click(editButtons[0]);
     expect(await screen.findByText(/Edit User/i)).toBeInTheDocument();
     expect(screen.getByDisplayValue('Alice')).toBeInTheDocument();
   });

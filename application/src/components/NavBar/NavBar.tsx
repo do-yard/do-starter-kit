@@ -109,6 +109,7 @@ const NavBar = () => {
                   href={href}
                   prefetch={true}
                   onClick={onClick}
+                  variant="text"
                   sx={{
                     color: 'text.secondary',
                     fontWeight: 500,

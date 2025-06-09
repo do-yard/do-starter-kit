@@ -9,7 +9,9 @@ export type WithAuthOptions = {
 
 type Handler = (
   req: NextRequest,
-  user: { id: string; role: UserRole; email: string }
+  user: { id: string; role: UserRole; email: string }\
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  params: Promise<any>
 ) => Promise<Response>;
 
 /**
@@ -18,7 +20,8 @@ type Handler = (
  */
 export const withAuth =
   (handler: Handler, options: WithAuthOptions = {}) =>
-  async (req: NextRequest): Promise<Response> => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async (req: NextRequest, { params }: { params: Promise<any> }): Promise<Response> => {
     try {
       const session = await auth();
 
@@ -34,7 +37,7 @@ export const withAuth =
         return NextResponse.json(res, { status: HTTP_STATUS.FORBIDDEN });
       }
 
-      return await handler(req, { id, role, email });
+      return await handler(req, { id, role, email }, params);
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('Auth error:', error.message);
