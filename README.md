@@ -17,13 +17,15 @@ The DigitalOcean SaaS Starter Kit can be run [locally](#running-locally) or in [
 ## Running locally
 
 1. Download/clone the repo.
-1. Navigate to \application folder
-1. Run `npm install`
-1. Copy .env file with `cp env-example .env`
-1. Complete at minimum 'Database configuration' and 'Auth.js configuration' settings sections. Postgres DB can be a local instance or a Managed Database in DigitalOcean platform. Either way, the Postgres connection string is used in for connection.
-1. Run Prisma generate: `npx prisma generate`
-1. Run Prisma migration: `npx prisma migrate deploy`
-1. Start the site: `npm run dev`
+2. Navigate to \application folder
+3. Run `npm install`
+4. Copy .env file with `cp env-example .env`
+5. Complete at minimum 'Database configuration' and 'Auth.js configuration' settings sections. Postgres DB can be a local instance or a Managed Database in DigitalOcean platform. Either way, the Postgres connection string is used in for connection.
+6. Run Prisma generate: `npx prisma generate`
+7. Run Prisma migration: `npx prisma migrate deploy`
+8. Start the site: `npm run dev`
+
+> To generate the required stripe products automatically follow [these steps](docs/stripe-setup.md). The instructions to get configure Stripe events webhook are available [here](docs/stripe-webhooks.md).
 
 If you made changes to the repo and want to deploy them to DigitalOcean, navigate to the [Deploy from local environment](#deploy-from-local-environment) section.
 
