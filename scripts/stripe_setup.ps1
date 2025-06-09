@@ -27,8 +27,7 @@ try {
     
     $PRO_PRODUCT_ID = New-StripeProduct -name $PRO_PRODUCT_NAME -type "service" -secretKey $STRIPE_SECRET_KEY
     $PRO_PRICE_ID = New-StripePrice -productId $PRO_PRODUCT_ID -unitAmount 1000 -currency "usd" -interval "month" -productName $PRO_PRODUCT_NAME -secretKey $STRIPE_SECRET_KEY    Write-Info "==============================================="
-    $PRO_GIFT_PRICE_ID = New-StripePrice -productId $PRO_PRODUCT_ID -unitAmount 0 -currency "usd" -interval "month" -productName "$PRO_PRODUCT_NAME" -secretKey $STRIPE_SECRET_KEY
-
+    
     Write-Info "==============================================="
     Write-Success "✅ Stripe was setup successfully!"
     Write-Info "==============================================="

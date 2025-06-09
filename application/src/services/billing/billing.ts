@@ -27,6 +27,16 @@ export interface BillingService {
     successUrl: string,
     cancelUrl: string
   ) => Promise<string | null>;
+  getProducts: () => Promise<
+    {
+      priceId: string;
+      amount: number;
+      interval: string | null;
+      name: string;
+      description: string;
+      features: string[];
+    }[]
+  >;
 }
 
 /**

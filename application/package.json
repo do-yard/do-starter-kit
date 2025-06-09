@@ -11,7 +11,8 @@
     "format:check": "prettier --check .",
     "test": "jest",
     "test:server": "jest --config jest.server.config.ts",
-    "test:all": "npm run test && npm run test:server"
+    "test:all": "npm run test && npm run test:server",
+    "setup": "node ./setup/init.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.9.1",
