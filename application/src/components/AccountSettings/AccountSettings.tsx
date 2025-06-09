@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { Box, Typography, TextField, Button, styled, CircularProgress } from '@mui/material';
+import { Box, Typography, Button, styled, CircularProgress, Card } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { useSession } from 'next-auth/react';
 import DoneIcon from '@mui/icons-material/Done';
@@ -127,7 +127,14 @@ export default function AccountSettings() {
 
   return (
     <PageContainer title="Account Settings">
-      <Box sx={{ p: 3, width: '100%' }}>
+              <Card
+                variant="outlined"
+                component="form"
+                onSubmit={handleSubmit}
+                sx={{ p: 3, mx: 'auto', display: 'flex', flexDirection: 'column' }}
+              >
+
+
         <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
           Profile Information
         </Typography>
@@ -243,7 +250,7 @@ export default function AccountSettings() {
             )}
           </Box>
         </form>
-      </Box>
+              </Card>
       <Box sx={{ mt: 4 }}>
         <UpdatePasswordForm />
       </Box>
