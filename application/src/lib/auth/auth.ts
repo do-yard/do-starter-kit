@@ -4,10 +4,9 @@ import type { Provider } from 'next-auth/providers';
 import { createDatabaseClient } from 'services/database/database';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '../prisma';
-import { hashPassword, verifyPassword } from 'helpers/hash';
+import { verifyPassword } from 'helpers/hash';
 import { User, UserRole } from 'types';
-import { MissingCredentialsError, InvalidCredentialsError, UserAlreadyExistsError } from './errors';
-import { USER_ROLES } from './roles';
+import { MissingCredentialsError, InvalidCredentialsError, EmailNotVerifiedError } from './errors';
 
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
@@ -19,7 +18,6 @@ const providers: Provider[] = [
       name: {},
       email: {},
       password: {},
-      isSignUp: {},
     },
     authorize: async (credentials) => {
       if (!credentials.email || !credentials.password) {
@@ -28,35 +26,13 @@ const providers: Provider[] = [
 
       const dbClient = createDatabaseClient();
 
-      if (credentials?.isSignUp === 'true') {
-        if (!credentials.name) {
-          throw new InvalidCredentialsError();
-        }
-
-        const userCount = await dbClient.user.count();
-        const isFirstUser = userCount === 0;
-
-        const userExists = await dbClient.user.findByEmail(credentials.email as string);
-        if (userExists) {
-          throw new UserAlreadyExistsError();
-        }
-
-        const hashedPassword = await hashPassword(credentials.password as string);
-
-        const user = await dbClient.user.create({
-          name: credentials.name as string,
-          email: credentials.email as string,
-          image: null,
-          passwordHash: hashedPassword,
-          role: isFirstUser ? USER_ROLES.ADMIN : USER_ROLES.USER,
-        });
-
-        return user;
-      }
-
       const user = await dbClient.user.findByEmail(credentials.email as string);
       if (!user || !user.passwordHash) {
         throw new InvalidCredentialsError();
+      }
+
+      if (user.emailVerified === false) {
+        throw new EmailNotVerifiedError();
       }
 
       const isValid = await verifyPassword(credentials.password as string, user.passwordHash);

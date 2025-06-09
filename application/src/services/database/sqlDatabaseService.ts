@@ -16,6 +16,9 @@ export class SqlDatabaseService implements DatabaseClient {
     findByEmailAndPassword: async (email: string, passwordHash: string) => {
       return prisma.user.findFirst({ where: { email, passwordHash } });
     },
+    findByVerificationToken: async (token: string) => {
+      return prisma.user.findFirst({ where: { verificationToken: token } });
+    },
     findAll: async (options?: {
       page?: number;
       pageSize?: number;

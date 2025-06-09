@@ -23,6 +23,14 @@ export class InvalidCredentialsError extends Error {
 }
 
 /**
+ * Error thrown when email is not verified.
+ */
+export class EmailNotVerifiedError extends Error {
+  name = 'CredentialsSignin';
+  code = 'Email not verified';
+}
+
+/**
  * Error thrown when the current password is empty.
  */
 export class EmptyCurrentPasswordError extends Error {
