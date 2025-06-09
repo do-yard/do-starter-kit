@@ -18,7 +18,7 @@ function validateKeyFormat(key) {
 
 async function readConfigFile() {
   try {
-    const file = await fs.readFile(path.resolve('./setup//stripe-config.json'), 'utf8');
+    const file = await fs.readFile(path.resolve('./setup/stripe-config.json'), 'utf8');
     return JSON.parse(file);
   } catch (err) {
     console.error('❌ Failed to read stripe-config.json.');
