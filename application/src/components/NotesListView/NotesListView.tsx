@@ -79,7 +79,8 @@ const NotesListView: React.FC<NotesListViewProps> = ({
                 <Typography variant="body1" data-testid={`note-title-${note.id}`}>
                   {note.title}
                 </Typography>
-              </TableCell>{' '}
+              </TableCell>
+              {' '}
               <TableCell data-testid={`note-content-cell-${note.id}`}>
                 <Typography
                   variant="body2"
@@ -105,7 +106,8 @@ const NotesListView: React.FC<NotesListViewProps> = ({
                 >
                   {new Date(note.createdAt).toLocaleDateString()}
                 </Typography>
-              </TableCell>{' '}
+              </TableCell>
+              {' '}
               <TableCell data-testid={`note-actions-cell-${note.id}`}>
                 {' '}
                 <Stack direction="row" spacing={1}>
