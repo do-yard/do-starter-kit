@@ -69,4 +69,3 @@ export class IncorrectCurrentPasswordError extends Error {
   name = 'UpdatePassword';
   code = 'Current password is incorrect';
 }
-
