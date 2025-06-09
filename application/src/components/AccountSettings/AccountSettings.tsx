@@ -204,9 +204,7 @@ export default function AccountSettings() {
                   </Button>
                 </Box>
               ) : (
-                <StyledFileInput
-                  {...getRootProps()}
-                >
+                <StyledFileInput {...getRootProps()}>
                   <input {...getInputProps()} disabled={isLoading} />
                   <Typography variant="body2">
                     Drag &apos;n&apos; drop a profile image here, or click to select one
@@ -221,9 +219,7 @@ export default function AccountSettings() {
             </Box>
           </Box>
 
-          <Box
-            sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', mt: 4 }}
-          >
+          <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', mt: 4 }}>
             <Button
               type="submit"
               variant="contained"

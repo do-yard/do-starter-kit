@@ -17,7 +17,10 @@ export const createNote = async (
     const { title, content } = await request.json();
 
     if (!title || !content) {
-      return NextResponse.json({ error: 'Title and content are required' }, { status: HTTP_STATUS.BAD_REQUEST });
+      return NextResponse.json(
+        { error: 'Title and content are required' },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
 
     const dbClient = createDatabaseClient();
@@ -31,6 +34,9 @@ export const createNote = async (
     return NextResponse.json(note, { status: HTTP_STATUS.CREATED });
   } catch (error) {
     console.error('Error creating note:', error);
-    return NextResponse.json({ error: 'Failed to create note' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
+    return NextResponse.json(
+      { error: 'Failed to create note' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

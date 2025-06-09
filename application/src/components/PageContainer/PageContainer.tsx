@@ -11,7 +11,7 @@ interface PageContainerProps extends Omit<BoxProps, 'sx'> {
 
 /**
  * Reusable page container component that provides consistent layout and spacing.
- * 
+ *
  * Features:
  * - Consistent max width and centering
  * - Standard horizontal and vertical padding
@@ -19,7 +19,7 @@ interface PageContainerProps extends Omit<BoxProps, 'sx'> {
  * - Customizable max width
  * - Option to disable padding for full-width content
  * - Supports all Box props for additional customization
- * 
+ *
  * @param children - Content to be rendered inside the container
  * @param maxWidth - Maximum width of the container (default: 1200)
  * @param disablePadding - Whether to disable the default padding
@@ -48,18 +48,11 @@ const PageContainer: React.FC<PageContainerProps> = ({
       {...boxProps}
     >
       {title && (
-        <Typography 
-          variant="h4"
-          component="h1" 
-          fontWeight="bold" 
-          mb={4}
-        >
+        <Typography variant="h4" component="h1" fontWeight="bold" mb={4}>
           {title}
         </Typography>
       )}
-        <Card sx={{ p: 4 }}>
-            {children}
-        </Card>
+      <Card sx={{ p: 4 }}>{children}</Card>
     </Box>
   );
 };

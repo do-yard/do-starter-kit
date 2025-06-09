@@ -1,10 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import {
-  Dialog,
-  DialogContent,
-} from '@mui/material';
+import { Dialog, DialogContent } from '@mui/material';
 import { Note, NotesApiClient } from 'lib/api/notes';
 import NoteForm from '../NotesForm/NoteForm';
 import NotesGridView from '../NotesGridView/NotesGridView';
@@ -37,7 +34,9 @@ const MyNotes: React.FC = () => {
   // Toast state
   const [toastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  const [toastSeverity, setToastSeverity] = useState<'success' | 'error' | 'info' | 'warning'>('success');
+  const [toastSeverity, setToastSeverity] = useState<'success' | 'error' | 'info' | 'warning'>(
+    'success'
+  );
 
   // Fetch notes from API
   const fetchNotes = async () => {
@@ -108,7 +107,7 @@ const MyNotes: React.FC = () => {
 
     try {
       const updatedNote = await apiClient.updateNote(selectedNoteId, noteData);
-      setNotes(notes.map(note => note.id === selectedNoteId ? updatedNote : note));
+      setNotes(notes.map((note) => (note.id === selectedNoteId ? updatedNote : note)));
       setIsEditModalOpen(false);
       setSelectedNoteId(null);
       // Show success toast
@@ -132,7 +131,7 @@ const MyNotes: React.FC = () => {
     if (noteToDelete) {
       try {
         await apiClient.deleteNote(noteToDelete);
-        setNotes(notes.filter(note => note.id !== noteToDelete));
+        setNotes(notes.filter((note) => note.id !== noteToDelete));
         // Show success toast
         setToastMessage('Note deleted successfully');
         setToastSeverity('success');
@@ -224,46 +223,23 @@ const MyNotes: React.FC = () => {
       )}
 
       {/* Create Note Modal */}
-      <Dialog
-        open={isCreateModalOpen}
-        onClose={handleCloseCreateModal}
-        maxWidth="md"
-        fullWidth
-      >
+      <Dialog open={isCreateModalOpen} onClose={handleCloseCreateModal} maxWidth="md" fullWidth>
         <DialogContent>
-          <NoteForm
-            mode="create"
-            onSave={handleCreateNote}
-            onCancel={handleCloseCreateModal}
-          />
+          <NoteForm mode="create" onSave={handleCreateNote} onCancel={handleCloseCreateModal} />
         </DialogContent>
       </Dialog>
 
       {/* View Note Modal */}
-      <Dialog
-        open={isViewModalOpen}
-        onClose={handleCloseViewModal}
-        maxWidth="md"
-        fullWidth
-      >
+      <Dialog open={isViewModalOpen} onClose={handleCloseViewModal} maxWidth="md" fullWidth>
         <DialogContent>
           {selectedNoteId && (
-            <NoteForm
-              mode="view"
-              noteId={selectedNoteId}
-              onCancel={handleCloseViewModal}
-            />
+            <NoteForm mode="view" noteId={selectedNoteId} onCancel={handleCloseViewModal} />
           )}
         </DialogContent>
       </Dialog>
 
       {/* Edit Note Modal */}
-      <Dialog
-        open={isEditModalOpen}
-        onClose={handleCloseEditModal}
-        maxWidth="md"
-        fullWidth
-      >
+      <Dialog open={isEditModalOpen} onClose={handleCloseEditModal} maxWidth="md" fullWidth>
         <DialogContent>
           {selectedNoteId && (
             <NoteForm

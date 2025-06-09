@@ -176,9 +176,9 @@ export default function AdminDashboard() {
       }
     };
     fetchUsers();
-  }, [page, pageSize, searchName, filterPlan, filterStatus]); return (
+  }, [page, pageSize, searchName, filterPlan, filterStatus]);
+  return (
     <PageContainer title="Admin Dashboard">
-
       <CardHeader
         title={
           <Typography variant="h6" fontWeight="bold">
@@ -312,9 +312,7 @@ export default function AdminDashboard() {
                             }}
                           />
                         </TableCell>
-                        <TableCell>
-                          {new Date(user.createdAt).toISOString().slice(0, 10)}
-                        </TableCell>
+                        <TableCell>{new Date(user.createdAt).toISOString().slice(0, 10)}</TableCell>
                         <TableCell>
                           {isLoadingEdit && user.id === selectedUser?.id ? (
                             <CircularProgress size={20} />
@@ -357,8 +355,6 @@ export default function AdminDashboard() {
           </>
         )}
       </CardContent>
-
-
       {/* Edit User Modal */}
       <Dialog open={openEdit} onClose={handleEditClose} maxWidth="xs" fullWidth>
         <DialogTitle>Edit User</DialogTitle>
@@ -435,7 +431,8 @@ export default function AdminDashboard() {
             Save Changes
           </Button>
         </DialogActions>
-      </Dialog>      <Toast
+      </Dialog>{' '}
+      <Toast
         open={toast.open}
         message={toast.message}
         severity={toast.severity}

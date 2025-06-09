@@ -32,6 +32,9 @@ export const getNote = async (
     return NextResponse.json(note, { status: HTTP_STATUS.OK });
   } catch (error) {
     console.error('Error fetching note:', error);
-    return NextResponse.json({ error: 'Failed to fetch note' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
+    return NextResponse.json(
+      { error: 'Failed to fetch note' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

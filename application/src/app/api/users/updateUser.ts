@@ -15,7 +15,10 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
     const { id, ...updateData } = body;
 
     if (!id) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: HTTP_STATUS.BAD_REQUEST });
+      return NextResponse.json(
+        { error: 'User ID is required' },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
 
     // Only allow updating specific fields (e.g., name, email, role)
@@ -29,7 +32,10 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
     });
 
     if (Object.keys(updateData).length === 0) {
-      return NextResponse.json({ error: 'No valid fields to update' }, { status: HTTP_STATUS.BAD_REQUEST });
+      return NextResponse.json(
+        { error: 'No valid fields to update' },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
 
     const dbClient = createDatabaseClient();
@@ -46,6 +52,9 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
     return NextResponse.json({ user: updatedUser });
   } catch (error) {
     console.error('Server error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

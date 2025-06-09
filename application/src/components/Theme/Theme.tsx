@@ -13,38 +13,39 @@ export const typography = {
     fontSize: '2.5rem',
     fontWeight: 700,
     marginBottom: '16px',
-    color: '#fff'
+    color: '#fff',
   },
   h2: {
     fontSize: '2rem',
     fontWeight: 700,
     marginBottom: '48px',
-    color: '#fff'
+    color: '#fff',
   },
   h3: {
     fontSize: '1.75rem',
-    fontWeight: 500
+    fontWeight: 500,
   },
   h4: {
     fontSize: '1.5rem',
-    fontWeight: 500
+    fontWeight: 500,
   },
   h5: {
     fontSize: '1.25rem',
-    fontWeight: 600
+    fontWeight: 600,
   },
   h6: {
     fontSize: '1rem',
-    fontWeight: 500
+    fontWeight: 500,
   },
   subtitle1: {
     fontSize: '1.25rem',
     marginBottom: '32px',
-    color: '#6b7280'  }
+    color: '#6b7280',
+  },
 };
 
 // Define component overrides
-export const components: ThemeOptions['components'] = {  
+export const components: ThemeOptions['components'] = {
   MuiButton: {
     defaultProps: {
       disableElevation: true,
@@ -56,9 +57,9 @@ export const components: ThemeOptions['components'] = {
         fontWeight: 600,
         height: 44,
         paddingLeft: 32,
-        paddingRight: 32
+        paddingRight: 32,
       },
-    }
+    },
   },
   MuiCard: {
     defaultProps: {
@@ -79,9 +80,8 @@ export const components: ThemeOptions['components'] = {
     styleOverrides: {
       root: ({ theme }) => ({
         '& .MuiBackdrop-root': {
-          backgroundColor: theme.palette.mode === 'dark' 
-            ? 'rgba(255, 255, 255, 0.2)' 
-            : 'rgba(0, 0, 0, 0.5)',
+          backgroundColor:
+            theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.5)',
         },
       }),
     },
@@ -89,9 +89,8 @@ export const components: ThemeOptions['components'] = {
   MuiBackdrop: {
     styleOverrides: {
       root: ({ theme }) => ({
-        backgroundColor: theme.palette.mode === 'dark' 
-          ? 'rgba(255, 255, 255, 0.2)' 
-          : 'rgba(0, 0, 0, 0.5)',
+        backgroundColor:
+          theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.5)',
       }),
     },
   },
@@ -148,17 +147,18 @@ export default function MaterialThemeProvider({ children }: { children: React.Re
     if (typeof window !== 'undefined') {
       localStorage.setItem('themeMode', mode);
     }
-  }, [mode]);  const palette = useMemo(
+  }, [mode]);
+  const palette = useMemo(
     () => ({
       mode: mode,
       primary: {
-        main: '#0061EB'
+        main: '#0061EB',
       },
       backdrop: {
         // Custom backdrop colors for consistent theming
         light: 'rgba(0, 0, 0, 0.5)',
-        dark: 'rgba(255, 255, 255, 0.2)'
-      }
+        dark: 'rgba(255, 255, 255, 0.2)',
+      },
     }),
     [mode]
   );
@@ -170,7 +170,7 @@ export default function MaterialThemeProvider({ children }: { children: React.Re
             createTheme({
               palette,
               typography: typography as ThemeOptions['typography'],
-              components: components as ThemeOptions['components']
+              components: components as ThemeOptions['components'],
             }),
           [palette]
         )}

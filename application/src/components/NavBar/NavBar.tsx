@@ -40,16 +40,16 @@ const NavBar = () => {
 
   const navLinks = session
     ? [
-      { href: '/pricing', label: 'Pricing' },
-      { href: '/faq', label: 'FAQ' },
-      { href: '#', label: 'Sign out', onClick: handleLogout },
-    ]
+        { href: '/pricing', label: 'Pricing' },
+        { href: '/faq', label: 'FAQ' },
+        { href: '#', label: 'Sign out', onClick: handleLogout },
+      ]
     : [
-      { href: '/pricing', label: 'Pricing' },
-      { href: '/faq', label: 'FAQ' },
-      { href: '/login', label: 'Log in' },
-      { href: '/signup', label: 'Sign up' },
-    ];
+        { href: '/pricing', label: 'Pricing' },
+        { href: '/faq', label: 'FAQ' },
+        { href: '/login', label: 'Log in' },
+        { href: '/signup', label: 'Sign up' },
+      ];
   const drawer = (
     <Box
       sx={{

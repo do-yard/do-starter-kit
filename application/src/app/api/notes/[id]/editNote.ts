@@ -45,6 +45,9 @@ export const editNote = async (
     return NextResponse.json(updatedNote, { status: HTTP_STATUS.OK });
   } catch (error) {
     console.error('Error updating note:', error);
-    return NextResponse.json({ error: 'Failed to update note' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
+    return NextResponse.json(
+      { error: 'Failed to update note' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

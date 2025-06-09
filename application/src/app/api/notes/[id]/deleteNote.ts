@@ -34,6 +34,9 @@ export const deleteNote = async (
     return NextResponse.json({ success: true }, { status: HTTP_STATUS.OK });
   } catch (error) {
     console.error('Error deleting note:', error);
-    return NextResponse.json({ error: 'Failed to delete note' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
+    return NextResponse.json(
+      { error: 'Failed to delete note' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

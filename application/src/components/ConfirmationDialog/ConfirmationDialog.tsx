@@ -17,13 +17,13 @@ interface ConfirmationDialogProps {
   onConfirm: () => void;
   onCancel: () => void;
   confirmButtonColor?:
-  | 'inherit'
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'error'
-  | 'info'
-  | 'warning';
+    | 'inherit'
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'error'
+    | 'info'
+    | 'warning';
 }
 
 /**
