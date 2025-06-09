@@ -40,7 +40,7 @@ describe('SignUpForm', () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
       json: async () => ({}),
-    }) as any;
+    }) as unknown as jest.Mock;
 
     render(<SignUpForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'user@example.com');
@@ -65,7 +65,7 @@ describe('SignUpForm', () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
       json: async () => ({ error: 'User already exists' }),
-    }) as any;
+    }) as unknown as jest.Mock;
 
     render(<SignUpForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'exists@example.com');
