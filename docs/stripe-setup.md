@@ -32,6 +32,7 @@ In the script outputs, you will see the respective IDs for the products and the 
 - NEXT_PUBLIC_STRIPE_FREE_PRICE_ID
 - STRIPE_PRO_PRODUCT_ID
 - NEXT_PUBLIC_STRIPE_PRO_PRICE_ID
+- STRIPE_PRO_GIFT_PRICE_ID
 
 Also add the following environment variable, using the secret you obtained in step **3** of [Setting up Stripe](#setting-up-stripe).
 
