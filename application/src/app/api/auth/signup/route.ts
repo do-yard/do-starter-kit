@@ -8,8 +8,6 @@ import { emailTemplate } from 'services/email/emailTemplate';
 import { HTTP_STATUS } from 'lib/api/http';
 
 /**
- * @api {post} /api/auth/signup User Signup
- * @description
  * API endpoint for user registration. Creates a new user, sends a verification email with a secure token,
  * and returns a success or error response. Handles duplicate users and missing fields. The verification email
  * uses a branded HTML template and includes a styled button for verification.
