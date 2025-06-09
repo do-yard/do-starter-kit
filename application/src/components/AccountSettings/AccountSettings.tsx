@@ -121,7 +121,9 @@ export default function AccountSettings() {
     setPreviewUrl(objectUrl);
 
     return () => URL.revokeObjectURL(objectUrl);
-  }, [formData.profileImage]); return (
+  }, [formData.profileImage]);
+
+  return (
     <PageContainer title="Account Settings">
       <Box sx={{ p: 3, width: '100%' }}>
         <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
