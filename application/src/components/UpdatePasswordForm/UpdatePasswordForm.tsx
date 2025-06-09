@@ -39,8 +39,8 @@ export const UpdatePasswordForm: React.FC = () => {
         body: formData,
       });
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || 'Failed to update password.');
+        const data = await response.json();
+        throw new Error(`Error ${response.status}: ${data.error || 'Failed to update password.'}`);
       }
       setSuccess('Password updated successfully.');
       setCurrentPassword('');

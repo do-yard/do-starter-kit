@@ -2,6 +2,14 @@ import { createDatabaseClient } from 'services/database/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { hashPassword, verifyPassword } from 'helpers/hash';
 import { HTTP_STATUS } from 'lib/api/http';
+import {
+  EmptyCurrentPasswordError,
+  EmptyNewPasswordError,
+  EmptyConfirmNewPasswordError,
+  NewPasswordsDoNotMatchError,
+  UserDoesNotExistError,
+  IncorrectCurrentPasswordError,
+} from 'lib/auth/errors';
 
 /**
  * Updates the user's password.
@@ -20,28 +28,28 @@ export const updatePassword = async (
 
     if (currentPassword === '') {
       return NextResponse.json(
-        { error: 'Current password cannot be empty' },
+        { error: new EmptyCurrentPasswordError().code },
         { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 
     if (newPassword === '') {
       return NextResponse.json(
-        { error: 'New password cannot be empty' },
+        { error: new EmptyNewPasswordError().code },
         { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 
     if (confirmNewPassword === '') {
       return NextResponse.json(
-        { error: 'Confirm new password cannot be empty' },
+        { error: new EmptyConfirmNewPasswordError().code },
         { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 
     if (newPassword !== confirmNewPassword) {
       return NextResponse.json(
-        { error: 'New passwords do not match' },
+        { error: new NewPasswordsDoNotMatchError().code },
         { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
@@ -50,13 +58,16 @@ export const updatePassword = async (
     const dbUser = await db.user.findById(user.id);
 
     if (!dbUser) {
-      return NextResponse.json({ error: "User doesn't exist" }, { status: HTTP_STATUS.NOT_FOUND });
+      return NextResponse.json(
+        { error: new UserDoesNotExistError().code },
+        { status: HTTP_STATUS.NOT_FOUND }
+      );
     }
 
     const isValid = await verifyPassword(currentPassword as string, dbUser.passwordHash);
     if (!isValid) {
       return NextResponse.json(
-        { error: 'Current password is incorrect' },
+        { error: new IncorrectCurrentPasswordError().code },
         { status: HTTP_STATUS.UNAUTHORIZED }
       );
     }
