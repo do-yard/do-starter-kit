@@ -23,7 +23,7 @@ export const editNote = async (
     if (!title && !content) {
       return NextResponse.json(
         { error: 'At least one field (title or content) is required' },
-        { status: 400 }
+        { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 

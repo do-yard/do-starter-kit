@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
 
@@ -16,7 +17,7 @@ export const createNote = async (
     const { title, content } = await request.json();
 
     if (!title || !content) {
-      return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
+      return NextResponse.json({ error: 'Title and content are required' }, { status: HTTP_STATUS.BAD_REQUEST });
     }
 
     const dbClient = createDatabaseClient();
@@ -27,9 +28,9 @@ export const createNote = async (
       content,
     });
 
-    return NextResponse.json(note, { status: 201 });
+    return NextResponse.json(note, { status: HTTP_STATUS.CREATED });
   } catch (error) {
     console.error('Error creating note:', error);
-    return NextResponse.json({ error: 'Failed to create note' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create note' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
   }
 };
