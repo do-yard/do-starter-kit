@@ -1,5 +1,7 @@
+import { USER_ROLES } from 'lib/auth/roles';
 import { getAllNotes } from './getAllNotes';
 import { NextRequest } from 'next/server';
+import { HTTP_STATUS } from 'lib/api/http';
 
 const mockFindByUserId = jest.fn();
 jest.mock('services/database/database', () => ({
@@ -19,7 +21,7 @@ describe('getAllNotes', () => {
     return {} as unknown as NextRequest;
   }
 
-  const user = { id: 'user-1', role: 'USER' };
+  const user = { id: 'user-1', role: USER_ROLES.USER };
 
   it('returns notes for user and status 200', async () => {
     const notes = [
@@ -30,7 +32,7 @@ describe('getAllNotes', () => {
     const req = makeRequest();
     const res = await getAllNotes(req, user);
     expect(mockFindByUserId).toHaveBeenCalledWith('user-1');
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual(notes);
   });
 
@@ -38,7 +40,7 @@ describe('getAllNotes', () => {
     mockFindByUserId.mockRejectedValue(new Error('fail'));
     const req = makeRequest();
     const res = await getAllNotes(req, user);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Failed to fetch notes' });
   });
 });

@@ -320,7 +320,7 @@ export default function AdminDashboard() {
                             <CircularProgress size={20} />
                           ) : (
                             <Switch
-                              checked={user.role === 'ADMIN'}
+                              checked={user.role === USER_ROLES.ADMIN}
                               onChange={(_, checked) => handleAdminSwitchChange(user, checked)}
                             />
                           )}

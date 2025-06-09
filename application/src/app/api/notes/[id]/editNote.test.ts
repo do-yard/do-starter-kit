@@ -1,5 +1,7 @@
 import { editNote } from './editNote';
 import { NextRequest } from 'next/server';
+import { USER_ROLES } from 'lib/auth/roles';
+import { HTTP_STATUS } from 'lib/api/http';
 
 const mockFindById = jest.fn();
 const mockUpdate = jest.fn();
@@ -26,7 +28,7 @@ describe('editNote', () => {
     } as unknown as NextRequest;
   }
 
-  const user = { id: 'user-1', role: 'USER' };
+  const user = { id: 'user-1', role: USER_ROLES.USER };
   const note = { id: 'n1', userId: 'user-1', title: 't', content: 'c', createdAt: 'now' };
 
   it('updates note and returns 200', async () => {
@@ -36,14 +38,14 @@ describe('editNote', () => {
     const res = await editNote(req, user, makeParams('n1'));
     expect(mockFindById).toHaveBeenCalledWith('n1');
     expect(mockUpdate).toHaveBeenCalledWith('n1', { title: 'new' });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ ...note, title: 'new' });
   });
 
   it('returns 400 if no fields provided', async () => {
     const req = makeRequest({});
     const res = await editNote(req, user, makeParams('n1'));
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
     expect(await res.json()).toEqual({
       error: 'At least one field (title or content) is required',
     });
@@ -53,7 +55,7 @@ describe('editNote', () => {
     mockFindById.mockResolvedValue(null);
     const req = makeRequest({ title: 'new' });
     const res = await editNote(req, user, makeParams('n1'));
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
     expect(await res.json()).toEqual({ error: 'Note not found' });
   });
 
@@ -61,7 +63,7 @@ describe('editNote', () => {
     mockFindById.mockResolvedValue({ ...note, userId: 'other' });
     const req = makeRequest({ title: 'new' });
     const res = await editNote(req, user, makeParams('n1'));
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(HTTP_STATUS.FORBIDDEN);
     expect(await res.json()).toEqual({ error: 'Unauthorized' });
   });
 
@@ -70,7 +72,7 @@ describe('editNote', () => {
     mockUpdate.mockRejectedValue(new Error('fail'));
     const req = makeRequest({ title: 'new' });
     const res = await editNote(req, user, makeParams('n1'));
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Failed to update note' });
   });
 });

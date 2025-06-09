@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
 
@@ -21,16 +22,16 @@ export const getNote = async (
     const note = await dbClient.note.findById(noteId);
 
     if (!note) {
-      return NextResponse.json({ error: 'Note not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Note not found' }, { status: HTTP_STATUS.NOT_FOUND });
     }
 
     if (note.userId !== userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: HTTP_STATUS.FORBIDDEN });
     }
 
     return NextResponse.json(note, { status: 200 });
   } catch (error) {
     console.error('Error fetching note:', error);
-    return NextResponse.json({ error: 'Failed to fetch note' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch note' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
   }
 };

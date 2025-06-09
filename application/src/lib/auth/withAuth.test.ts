@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from 'lib/api/http';
 import { USER_ROLES } from './roles';
 import { withAuth } from './withAuth';
 import { NextRequest, NextResponse } from 'next/server';
@@ -24,7 +25,7 @@ describe('withAuth', () => {
     const wrapped = withAuth(handler);
     const response = await wrapped(createMockRequest(), { params: Promise.resolve({}) });
     const json = await response.json();
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(HTTP_STATUS.UNAUTHORIZED);
     expect(json).toEqual({ error: 'Unauthorized' });
     expect(handler).not.toHaveBeenCalled();
   });
@@ -34,7 +35,7 @@ describe('withAuth', () => {
     const wrapped = withAuth(handler);
     const response = await wrapped(createMockRequest(), { params: Promise.resolve({}) });
     const json = await response.json();
-    expect(response.status).toBe(401);
+    expect(response.status).toBe(HTTP_STATUS.UNAUTHORIZED);
     expect(json).toEqual({ error: 'Unauthorized' });
     expect(handler).not.toHaveBeenCalled();
   });
@@ -44,7 +45,7 @@ describe('withAuth', () => {
     const wrapped = withAuth(handler, { allowedRoles: [USER_ROLES.ADMIN] });
     const response = await wrapped(createMockRequest(), { params: Promise.resolve({}) });
     const json = await response.json();
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(HTTP_STATUS.FORBIDDEN);
     expect(json).toEqual({ error: 'Forbidden' });
     expect(handler).not.toHaveBeenCalled();
   });
@@ -97,7 +98,7 @@ describe('withAuth', () => {
     const response = await wrapped(createMockRequest(), { params: Promise.resolve({}) });
     const json = await response.json();
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(json).toEqual({ error: 'Internal server error' });
   });
 });

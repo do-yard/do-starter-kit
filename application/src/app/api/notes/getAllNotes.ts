@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
 
@@ -17,9 +18,9 @@ export const getAllNotes = async (
 
     const notes = await dbClient.note.findByUserId(userId);
 
-    return NextResponse.json(notes, { status: 200 });
+    return NextResponse.json(notes, { status: HTTP_STATUS.OK });
   } catch (error) {
     console.error('Error fetching notes:', error);
-    return NextResponse.json({ error: 'Failed to fetch notes' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch notes' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
   }
 };

@@ -17,6 +17,7 @@ describe('PageContainer', () => {
     expect(screen.getByTestId('child-element')).toBeInTheDocument();
     expect(screen.getByText('Child content')).toBeInTheDocument();
   });
+
   it('applies padding correctly', () => {
     const { container } = render(<PageContainer title="Test Page" />);
     // Check if the Box component has padding
@@ -33,6 +34,7 @@ describe('PageContainer', () => {
     const typographyElements = container.querySelectorAll('.MuiTypography-root');
     expect(typographyElements.length).toBe(1);
   });
+  
   it('accepts additional props', () => {
     render(<PageContainer title="Test Page" data-testid="custom-page-container" />);
     expect(screen.getByText('Test Page')).toBeInTheDocument();

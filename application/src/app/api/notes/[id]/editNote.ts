@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseClient } from 'services/database/database';
 
@@ -29,11 +30,11 @@ export const editNote = async (
     const existingNote = await dbClient.note.findById(noteId);
 
     if (!existingNote) {
-      return NextResponse.json({ error: 'Note not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Note not found' }, { status: HTTP_STATUS.NOT_FOUND });
     }
 
     if (existingNote.userId !== userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: HTTP_STATUS.FORBIDDEN });
     }
 
     const updatedNote = await dbClient.note.update(noteId, {
@@ -44,6 +45,6 @@ export const editNote = async (
     return NextResponse.json(updatedNote, { status: 200 });
   } catch (error) {
     console.error('Error updating note:', error);
-    return NextResponse.json({ error: 'Failed to update note' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update note' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
   }
 };

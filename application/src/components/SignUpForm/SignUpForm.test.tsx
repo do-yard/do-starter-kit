@@ -4,6 +4,7 @@ import SignUpForm from './SignUpForm';
 import { signIn } from 'next-auth/react';
 import React from 'react';
 import { UserAlreadyExistsError } from 'lib/auth/errors';
+import { USER_ROLES } from 'lib/auth/roles';
 
 jest.mock('next/link', () => ({
   __esModule: true,
@@ -59,7 +60,7 @@ describe('SignUpForm', () => {
         redirect: false,
         email: 'user@example.com',
         password: 'securepass',
-        name: 'USER',
+        name: USER_ROLES.USER,
         isSignUp: 'true',
       });
     });
