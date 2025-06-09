@@ -38,7 +38,13 @@ export default function VerifyEmailPage() {
   }, [searchParams]);
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh" bgcolor="#f3f4f6">
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="80vh"
+      bgcolor="#f3f4f6"
+    >
       <Card sx={{ maxWidth: 480, width: '100%', borderRadius: 2, boxShadow: 2 }}>
         <CardContent>
           <Typography variant="h4" fontWeight={700} mb={2} align="center">
@@ -52,7 +58,11 @@ export default function VerifyEmailPage() {
           )}
           {status === 'success' && (
             <Alert severity="success" sx={{ mb: 2 }}>
-              Your email has been verified! You can now <Button color="success" onClick={() => router.push('/login')}>log in</Button>.
+              Your email has been verified! You can now{' '}
+              <Button color="success" onClick={() => router.push('/login')}>
+                log in
+              </Button>
+              .
             </Alert>
           )}
           {status === 'error' && (

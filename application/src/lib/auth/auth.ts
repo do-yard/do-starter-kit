@@ -17,7 +17,7 @@ const providers: Provider[] = [
     credentials: {
       name: {},
       email: {},
-      password: {}
+      password: {},
     },
     authorize: async (credentials) => {
       if (!credentials.email || !credentials.password) {

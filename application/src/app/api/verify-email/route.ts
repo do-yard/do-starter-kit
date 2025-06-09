@@ -23,7 +23,10 @@ export async function GET(request: NextRequest) {
   // Find user by verification token
   const user = await db.user.findByVerificationToken(token);
   if (!user) {
-    return NextResponse.json({ error: 'Invalid or expired token' }, { status: HTTP_STATUS.BAD_REQUEST });
+    return NextResponse.json(
+      { error: 'Invalid or expired token' },
+      { status: HTTP_STATUS.BAD_REQUEST }
+    );
   }
   // Mark email as verified and clear the token
   await db.user.update(user.id, { emailVerified: true, verificationToken: null });

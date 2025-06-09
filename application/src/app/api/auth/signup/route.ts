@@ -27,7 +27,10 @@ export async function POST(req: NextRequest) {
   try {
     const { name, email, password } = await req.json();
     if (!email || !password || !name) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: HTTP_STATUS.BAD_REQUEST });
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: HTTP_STATUS.BAD_REQUEST }
+      );
     }
 
     const dbClient = createDatabaseClient();
@@ -71,12 +74,15 @@ export async function POST(req: NextRequest) {
             <a href="${verifyUrl}" style="display:inline-block; padding:14px 32px; background:#0061EB; color:#fff; border-radius:6px; font-size:16px; font-weight:600; text-decoration:none; letter-spacing:0.5px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border: none; mso-padding-alt:0; mso-border-alt:none;">Verify Email</a>
             <!--<![endif]-->
           </p>
-          <p style="font-size:13px; color:#888; text-align:center;">If the button doesn't work, copy and paste this link into your browser:<br><span style="word-break:break-all; color:#0061EB;">${verifyUrl}</span></p>`
+          <p style="font-size:13px; color:#888; text-align:center;">If the button doesn't work, copy and paste this link into your browser:<br><span style="word-break:break-all; color:#0061EB;">${verifyUrl}</span></p>`,
       })
     );
 
     return NextResponse.json({ ok: true, message: 'Verification email sent.' });
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message || 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
+    return NextResponse.json(
+      { error: (error as Error).message || 'Internal server error' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 }
