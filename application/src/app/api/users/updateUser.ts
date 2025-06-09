@@ -18,6 +18,7 @@ const updateSubscription = async (sub: any, id: string) => {
 
   if (sub.plan === SubscriptionPlanEnum.PRO) {
     if (!serverConfig.Stripe.proGiftPriceId) {
+      console.error('Prop price Id is not configured');
       throw new Error('Pro gift price ID is not configured');
     }
     const existingSubscription = await dbClient.subscription.findByUserId(id);
@@ -125,7 +126,11 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
     }
 
     return NextResponse.json({ user: updatedUser });
-  } catch {
+  } catch (error) {
+    console.error(
+      'Unexpected error in updateUser',
+      (error as { message: string }).message ? (error as { message: string }).message : error
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
