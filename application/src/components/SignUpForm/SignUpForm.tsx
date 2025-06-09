@@ -61,7 +61,7 @@ const SignUpForm: React.FC = () => {
         alignItems="center"
         bgcolor="#f3f4f6"
       >
-        <Card variant="outlined" sx={{ width: '100%', maxWidth: 400 }}>
+        <Card sx={{ width: '100%', maxWidth: 400 }}>
           <Box display="flex" flexDirection="column" gap={1.5} p={3}>
             <Typography fontWeight="bold" variant="h5">
               Sign Up
@@ -87,6 +87,7 @@ const SignUpForm: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     fullWidth
                     size="small"
+                    inputProps={{ 'data-testid': 'signup-email-input' }}
                   />
                 </Box>
 
@@ -103,6 +104,7 @@ const SignUpForm: React.FC = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     fullWidth
                     size="small"
+                    inputProps={{ 'data-testid': 'signup-password-input' }}
                   />
                 </Box>
 
@@ -119,12 +121,12 @@ const SignUpForm: React.FC = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     fullWidth
                     size="small"
+                    inputProps={{ 'data-testid': 'signup-confirm-password-input' }}
                   />
                 </Box>
               </Box>
-
               {error && (
-                <Typography color="error" fontSize={14} mt={2}>
+                <Typography color="error" fontSize={14} mt={2} data-testid="signup-error-message">
                   {error}
                 </Typography>
               )}

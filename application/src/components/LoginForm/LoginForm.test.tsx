@@ -38,6 +38,7 @@ describe('LoginForm', () => {
     await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');
     await userEvent.type(screen.getByLabelText(/password/i), 'password123');
 
+    // Get the form element and submit it
     const form = screen.getByTestId('login-form');
     fireEvent.submit(form);
 
@@ -65,7 +66,9 @@ describe('LoginForm', () => {
     await userEvent.type(screen.getByLabelText(/email/i), 'fail@example.com');
     await userEvent.type(screen.getByLabelText(/password/i), 'wrong-pass');
 
-    fireEvent.submit(screen.getByTestId('login-form'));
+    // Submit the form by clicking the submit button
+    const submitButton = screen.getByRole('button', { name: /log in/i });
+    fireEvent.click(submitButton);
 
     expect(await screen.findByText(/invalid credentials/i)).toBeInTheDocument();
   });

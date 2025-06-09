@@ -49,6 +49,7 @@ export const components: ThemeOptions['components'] = {
   MuiButton: {
     defaultProps: {
       disableElevation: true,
+      variant: 'outlined',
     },
     styleOverrides: {
       contained: {
@@ -58,6 +59,39 @@ export const components: ThemeOptions['components'] = {
         paddingLeft: 32,
         paddingRight: 32,
       },
+    },
+  },
+  MuiCard: {
+    defaultProps: {
+      variant: 'outlined',
+    },
+  },
+  MuiTextField: {
+    defaultProps: {
+      variant: 'outlined',
+    },
+  },
+  MuiPaper: {
+    defaultProps: {
+      variant: 'outlined',
+    },
+  },
+  MuiDialog: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        '& .MuiBackdrop-root': {
+          backgroundColor:
+            theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.5)',
+        },
+      }),
+    },
+  },
+  MuiBackdrop: {
+    styleOverrides: {
+      root: ({ theme }) => ({
+        backgroundColor:
+          theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.5)',
+      }),
     },
   },
 };
@@ -114,17 +148,20 @@ export default function MaterialThemeProvider({ children }: { children: React.Re
       localStorage.setItem('themeMode', mode);
     }
   }, [mode]);
-
   const palette = useMemo(
     () => ({
       mode: mode,
       primary: {
         main: '#0061EB',
       },
+      backdrop: {
+        // Custom backdrop colors for consistent theming
+        light: 'rgba(0, 0, 0, 0.5)',
+        dark: 'rgba(255, 255, 255, 0.2)',
+      },
     }),
     [mode]
   );
-
   return (
     <ThemeModeContext.Provider value={{ mode, toggleMode }}>
       <ThemeProvider

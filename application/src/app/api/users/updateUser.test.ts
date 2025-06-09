@@ -7,6 +7,7 @@ jest.mock('services/database/database', () => ({
 }));
 
 import { createDatabaseClient } from 'services/database/database';
+import { HTTP_STATUS } from 'lib/api/http';
 
 type MockDbClient = {
   user: {
@@ -47,7 +48,7 @@ describe('updateUser', () => {
   it('returns 400 if no id is provided', async () => {
     const req = makeRequest({ name: 'Test' });
     const res = await updateUser(req);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
     const json = await res.json();
     expect(json).toEqual({ error: 'User ID is required' });
   });
@@ -55,7 +56,7 @@ describe('updateUser', () => {
   it('returns 400 if no valid fields to update', async () => {
     const req = makeRequest({ id: 1, notAllowed: 'foo' });
     const res = await updateUser(req);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
     const json = await res.json();
     expect(json).toEqual({ error: 'No valid fields to update' });
   });
@@ -69,7 +70,7 @@ describe('updateUser', () => {
       name: 'New',
       role: USER_ROLES.ADMIN,
     });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     const json = await res.json();
     expect(json).toEqual({ user: updatedUser });
   });
@@ -83,14 +84,14 @@ describe('updateUser', () => {
     const res = await updateUser(req);
     expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith(1);
     expect(mockDbClient.subscription.update).toHaveBeenCalledWith(10, { plan: 'pro' });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
   });
 
   it('returns 500 on server error', async () => {
     mockDbClient.user.update.mockRejectedValue(new Error('fail'));
     const req = makeRequest({ id: 1, name: 'X' });
     const res = await updateUser(req);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     const json = await res.json();
     expect(json).toEqual({ error: 'Internal server error' });
   });
