@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { Box, Card, CardContent, Typography, CircularProgress, Alert, Button } from '@mui/material';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -11,6 +11,14 @@ import { useSearchParams, useRouter } from 'next/navigation';
  * On success, allows the user to proceed to login.
  */
 export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <VerifyEmailContent />
+    </Suspense>
+  );
+}
+
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
