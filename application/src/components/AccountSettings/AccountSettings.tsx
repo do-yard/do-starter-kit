@@ -127,14 +127,12 @@ export default function AccountSettings() {
 
   return (
     <PageContainer title="Account Settings">
-              <Card
-                variant="outlined"
-                component="form"
-                onSubmit={handleSubmit}
-                sx={{ p: 3, mx: 'auto', display: 'flex', flexDirection: 'column' }}
-              >
-
-
+      <Card
+        variant="outlined"
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{ p: 3, mx: 'auto', display: 'flex', flexDirection: 'column' }}
+      >
         <Typography variant="h4" fontWeight={600} sx={{ mb: 2 }}>
           Profile Information
         </Typography>
@@ -250,7 +248,7 @@ export default function AccountSettings() {
             )}
           </Box>
         </form>
-              </Card>
+      </Card>
       <Box sx={{ mt: 4 }}>
         <UpdatePasswordForm />
       </Box>
