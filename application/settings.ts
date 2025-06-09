@@ -20,7 +20,7 @@ export interface ServerConfig {
     freePriceId?: string;
     proProductId?: string;
     proPriceId?: string;
-    proGiftPriceId: string;
+    proGiftPriceId?: string;
     webhookSecret?: string;
   };
 }
