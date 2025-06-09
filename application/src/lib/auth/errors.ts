@@ -21,3 +21,11 @@ export class InvalidCredentialsError extends Error {
   name = 'CredentialsSignin';
   code = 'Invalid credentials';
 }
+
+/**
+ * Error thrown when email is not verified.
+ */
+export class EmailNotVerifiedError extends Error {
+  name = 'CredentialsSignin';
+  code = 'Email not verified';
+}

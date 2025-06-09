@@ -1,10 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SignUpForm from './SignUpForm';
-import { signIn } from 'next-auth/react';
 import React from 'react';
-import { UserAlreadyExistsError } from 'lib/auth/errors';
-import { USER_ROLES } from 'lib/auth/roles';
+
 
 jest.mock('next/link', () => ({
   __esModule: true,
@@ -14,10 +12,6 @@ jest.mock('next/link', () => ({
 jest.mock('hooks/navigation', () => ({
   usePrefetchRouter: () => ({ navigate: jest.fn() }),
   useNavigating: () => ({ setNavigating: jest.fn() }),
-}));
-
-jest.mock('next-auth/react', () => ({
-  signIn: jest.fn(),
 }));
 
 describe('SignUpForm', () => {
@@ -40,13 +34,14 @@ describe('SignUpForm', () => {
 
     fireEvent.submit(screen.getByTestId('signup-form'));
 
-    expect(await screen.findByTestId('signup-error-message')).toBeInTheDocument();
-    expect(signIn).not.toHaveBeenCalled();
+    expect(await screen.findByText(/passwords do not match/i)).toBeInTheDocument();
   });
 
-  it('submits and calls signIn with correct data', async () => {
-    const mockSignIn = signIn as jest.Mock;
-    mockSignIn.mockResolvedValue({ ok: true });
+  it('submits and calls the signup API with correct data', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({}),
+    }) as unknown as jest.Mock;
 
     render(<SignUpForm />);
     await userEvent.type(screen.getByTestId('signup-email-input'), 'user@example.com');
@@ -56,25 +51,22 @@ describe('SignUpForm', () => {
     fireEvent.submit(screen.getByTestId('signup-form'));
 
     await waitFor(() => {
-      expect(mockSignIn).toHaveBeenCalledWith('credentials', {
-        redirect: false,
-        email: 'user@example.com',
-        password: 'securepass',
-        name: USER_ROLES.USER,
-        isSignUp: 'true',
-      });
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/auth/signup',
+        expect.objectContaining({
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'user@example.com', password: 'securepass', name: 'USER' }),
+        })
+      );
     });
   });
 
-  it('shows error message if signIn fails', async () => {
-    const mockSignIn = signIn as jest.Mock;
-    const errorInstance = new UserAlreadyExistsError();
-
-    mockSignIn.mockResolvedValue({
+  it('shows error message if signup fails', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
       ok: false,
-      error: true,
-      code: errorInstance.code,
-    });
+      json: async () => ({ error: 'User already exists' }),
+    }) as unknown as jest.Mock;
 
     render(<SignUpForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'exists@example.com');
