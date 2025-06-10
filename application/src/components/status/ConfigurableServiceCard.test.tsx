@@ -39,7 +39,7 @@ describe('ConfigurableServiceCard', () => {
 
   it('shows "Optional" chip for optional services', () => {
     const optionalService = { ...mockService, required: false };
-    
+
     render(
       <TestWrapper>
         <ConfigurableServiceCard service={optionalService} />
@@ -61,7 +61,7 @@ describe('ConfigurableServiceCard', () => {
 
   it('shows invalid configuration status when not configured', () => {
     const unconfiguredService = { ...mockService, configured: false };
-    
+
     render(
       <TestWrapper>
         <ConfigurableServiceCard service={unconfiguredService} />
@@ -83,7 +83,7 @@ describe('ConfigurableServiceCard', () => {
 
   it('shows failed connection status when not connected but configured', () => {
     const disconnectedService = { ...mockService, connected: false };
-    
+
     render(
       <TestWrapper>
         <ConfigurableServiceCard service={disconnectedService} />
@@ -95,7 +95,7 @@ describe('ConfigurableServiceCard', () => {
 
   it('shows "Not tested" connection status when not configured', () => {
     const unconfiguredService = { ...mockService, configured: false, connected: false };
-    
+
     render(
       <TestWrapper>
         <ConfigurableServiceCard service={unconfiguredService} />
@@ -106,13 +106,13 @@ describe('ConfigurableServiceCard', () => {
   });
 
   it('displays error message when error exists', () => {
-    const serviceWithError = { 
-      ...mockService, 
+    const serviceWithError = {
+      ...mockService,
       configured: false,
       error: 'Configuration error',
-      configToReview: ['API_KEY', 'SECRET']
+      configToReview: ['API_KEY', 'SECRET'],
     };
-    
+
     render(
       <TestWrapper>
         <ConfigurableServiceCard service={serviceWithError} />
@@ -123,11 +123,11 @@ describe('ConfigurableServiceCard', () => {
   });
 
   it('displays error alert for required services with error severity', () => {
-    const serviceWithError = { 
-      ...mockService, 
-      error: 'Test error message'
+    const serviceWithError = {
+      ...mockService,
+      error: 'Test error message',
     };
-    
+
     render(
       <TestWrapper>
         <ConfigurableServiceCard service={serviceWithError} />
@@ -140,12 +140,12 @@ describe('ConfigurableServiceCard', () => {
   });
 
   it('displays warning alert for optional services with error', () => {
-    const optionalServiceWithError = { 
-      ...mockService, 
+    const optionalServiceWithError = {
+      ...mockService,
       required: false,
-      error: 'Optional service error'
+      error: 'Optional service error',
     };
-    
+
     render(
       <TestWrapper>
         <ConfigurableServiceCard service={optionalServiceWithError} />
@@ -168,29 +168,31 @@ describe('ConfigurableServiceCard', () => {
   });
 
   it('formats complex error messages with configToReview when configured', () => {
-    const serviceWithComplexError = { 
-      ...mockService, 
+    const serviceWithComplexError = {
+      ...mockService,
       configured: true,
       connected: false,
       error: 'Connection failed',
-      configToReview: ['HOST', 'PORT']
+      configToReview: ['HOST', 'PORT'],
     };
-    
+
     render(
       <TestWrapper>
         <ConfigurableServiceCard service={serviceWithComplexError} />
       </TestWrapper>
     );
 
-    expect(screen.getByText('Connection failed. Please review the following settings: HOST, PORT')).toBeInTheDocument();
+    expect(
+      screen.getByText('Connection failed. Please review the following settings: HOST, PORT')
+    ).toBeInTheDocument();
   });
 
   it('handles missing configToReview gracefully', () => {
-    const serviceWithError = { 
-      ...mockService, 
-      error: 'Simple error message'
+    const serviceWithError = {
+      ...mockService,
+      error: 'Simple error message',
     };
-    
+
     render(
       <TestWrapper>
         <ConfigurableServiceCard service={serviceWithError} />

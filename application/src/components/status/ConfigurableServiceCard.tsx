@@ -28,11 +28,7 @@ const ConfigurableServiceCard: React.FC<ConfigurableServiceCardProps> = ({ servi
       return <HelpIcon color="disabled" />;
     }
 
-    return service.connected ? (
-      <CheckCircleIcon color="success" />
-    ) : (
-      <ErrorIcon color="error" />
-    );
+    return service.connected ? <CheckCircleIcon color="success" /> : <ErrorIcon color="error" />;
   };
 
   const getConnectionStatus = () => {
@@ -56,14 +52,13 @@ const ConfigurableServiceCard: React.FC<ConfigurableServiceCardProps> = ({ servi
   const getErrorSeverity = () => {
     // For non-required services, show warnings instead of errors
     return service.required ? 'error' : 'warning';
-  }; return (
+  };
+  return (
     <Card>
       <CardContent>
         <Stack spacing={2}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="h6">
-              {service.name}
-            </Typography>
+            <Typography variant="h6">{service.name}</Typography>
             <Chip
               label={service.required ? 'Required' : 'Optional'}
               color={service.required ? 'primary' : 'default'}
@@ -71,26 +66,16 @@ const ConfigurableServiceCard: React.FC<ConfigurableServiceCardProps> = ({ servi
             />
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1}>
-            {service.configured ?
-              <CheckCircleIcon color="success" /> :
-              <ErrorIcon color="error" />}
-            <Typography>
-              Configuration: {service.configured ? 'Valid' : 'Invalid'}
-            </Typography>
+            {service.configured ? <CheckCircleIcon color="success" /> : <ErrorIcon color="error" />}
+            <Typography>Configuration: {service.configured ? 'Valid' : 'Invalid'}</Typography>
           </Stack>
 
           <Stack direction="row" alignItems="center" spacing={1}>
             {getConnectionIcon()}
-            <Typography>
-              Connection: {getConnectionStatus()}
-            </Typography>
+            <Typography>Connection: {getConnectionStatus()}</Typography>
           </Stack>
 
-          {service.error && (
-            <Alert severity={getErrorSeverity()}>
-              {getErrorMessage()}
-            </Alert>
-          )}
+          {service.error && <Alert severity={getErrorSeverity()}>{getErrorMessage()}</Alert>}
         </Stack>
       </CardContent>
     </Card>

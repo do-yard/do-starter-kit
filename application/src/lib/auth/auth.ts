@@ -20,7 +20,8 @@ const providers: Provider[] = [
       email: {},
       password: {},
       isSignUp: {},
-    },    authorize: async (credentials) => {
+    },
+    authorize: async (credentials) => {
       if (!credentials.email || !credentials.password) {
         throw new MissingCredentialsError();
       }

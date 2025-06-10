@@ -8,7 +8,8 @@ jest.mock('../../../services/status/statusService');
 describe('System Status API Route', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  }); it('should return status of all services', async () => {
+  });
+  it('should return status of all services', async () => {
     // Arrange
     const mockHealthState = {
       services: [
@@ -17,11 +18,11 @@ describe('System Status API Route', () => {
           configured: true,
           connected: true,
           error: null,
-          configToReview: undefined
+          configToReview: undefined,
         },
       ],
       isHealthy: true,
-      lastChecked: new Date('2025-01-01T00:00:00.000Z')
+      lastChecked: new Date('2025-01-01T00:00:00.000Z'),
     };
 
     (StatusService.initialize as jest.Mock).mockResolvedValue(undefined);

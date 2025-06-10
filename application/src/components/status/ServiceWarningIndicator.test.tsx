@@ -39,12 +39,12 @@ describe('ServiceWarningIndicator', () => {
   it('does not render when there are no optional issues', async () => {
     const servicesWithoutOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
-      { name: 'Cache', configured: true, connected: true, required: false }
+      { name: 'Cache', configured: true, connected: true, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithoutOptionalIssues })
+      json: async () => ({ services: servicesWithoutOptionalIssues }),
     });
 
     const { container } = render(
@@ -61,12 +61,12 @@ describe('ServiceWarningIndicator', () => {
   it('does not render when there are required issues (even with optional issues)', async () => {
     const servicesWithRequiredIssues = [
       { name: 'Database', configured: false, connected: false, required: true },
-      { name: 'Email', configured: false, connected: false, required: false }
+      { name: 'Email', configured: false, connected: false, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithRequiredIssues })
+      json: async () => ({ services: servicesWithRequiredIssues }),
     });
 
     const { container } = render(
@@ -84,12 +84,12 @@ describe('ServiceWarningIndicator', () => {
     const servicesWithOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
       { name: 'Email', configured: false, connected: false, required: false },
-      { name: 'Analytics', configured: true, connected: false, required: false }
+      { name: 'Analytics', configured: true, connected: false, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithOptionalIssues })
+      json: async () => ({ services: servicesWithOptionalIssues }),
     });
 
     render(
@@ -107,12 +107,12 @@ describe('ServiceWarningIndicator', () => {
     const servicesWithTwoOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
       { name: 'Email', configured: false, connected: false, required: false },
-      { name: 'Analytics', configured: true, connected: false, required: false }
+      { name: 'Analytics', configured: true, connected: false, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithTwoOptionalIssues })
+      json: async () => ({ services: servicesWithTwoOptionalIssues }),
     });
 
     render(
@@ -129,12 +129,12 @@ describe('ServiceWarningIndicator', () => {
   it('shows correct tooltip text for single optional service issue', async () => {
     const servicesWithOneOptionalIssue = [
       { name: 'Database', configured: true, connected: true, required: true },
-      { name: 'Email', configured: false, connected: false, required: false }
+      { name: 'Email', configured: false, connected: false, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithOneOptionalIssue })
+      json: async () => ({ services: servicesWithOneOptionalIssue }),
     });
 
     render(
@@ -149,7 +149,9 @@ describe('ServiceWarningIndicator', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('1 optional service have configuration issues. Click to view details.')).toBeInTheDocument();
+      expect(
+        screen.getByText('1 optional service have configuration issues. Click to view details.')
+      ).toBeInTheDocument();
     });
   });
 
@@ -157,12 +159,12 @@ describe('ServiceWarningIndicator', () => {
     const servicesWithMultipleOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
       { name: 'Email', configured: false, connected: false, required: false },
-      { name: 'Analytics', configured: true, connected: false, required: false }
+      { name: 'Analytics', configured: true, connected: false, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithMultipleOptionalIssues })
+      json: async () => ({ services: servicesWithMultipleOptionalIssues }),
     });
 
     render(
@@ -177,19 +179,21 @@ describe('ServiceWarningIndicator', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('2 optional services have configuration issues. Click to view details.')).toBeInTheDocument();
+      expect(
+        screen.getByText('2 optional services have configuration issues. Click to view details.')
+      ).toBeInTheDocument();
     });
   });
 
   it('navigates to system status page when clicked', async () => {
     const servicesWithOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
-      { name: 'Email', configured: false, connected: false, required: false }
+      { name: 'Email', configured: false, connected: false, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithOptionalIssues })
+      json: async () => ({ services: servicesWithOptionalIssues }),
     });
 
     render(
@@ -219,13 +223,16 @@ describe('ServiceWarningIndicator', () => {
       expect(container.firstChild).toBeNull();
     });
 
-    expect(console.error).toHaveBeenCalledWith('Failed to check service status:', expect.any(Error));
+    expect(console.error).toHaveBeenCalledWith(
+      'Failed to check service status:',
+      expect.any(Error)
+    );
   });
 
   it('handles non-ok response status gracefully', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
-      statusText: 'Internal Server Error'
+      statusText: 'Internal Server Error',
     });
 
     const { container } = render(
@@ -242,12 +249,12 @@ describe('ServiceWarningIndicator', () => {
   it('checks status every 5 minutes', async () => {
     const servicesWithOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
-      { name: 'Email', configured: false, connected: false, required: false }
+      { name: 'Email', configured: false, connected: false, required: false },
     ];
 
     mockFetch.mockResolvedValue({
       ok: true,
-      json: async () => ({ services: servicesWithOptionalIssues })
+      json: async () => ({ services: servicesWithOptionalIssues }),
     });
 
     render(
@@ -279,12 +286,12 @@ describe('ServiceWarningIndicator', () => {
   it('clears interval on component unmount', async () => {
     const servicesWithOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
-      { name: 'Email', configured: false, connected: false, required: false }
+      { name: 'Email', configured: false, connected: false, required: false },
     ];
 
     mockFetch.mockResolvedValue({
       ok: true,
-      json: async () => ({ services: servicesWithOptionalIssues })
+      json: async () => ({ services: servicesWithOptionalIssues }),
     });
 
     const { unmount } = render(
@@ -309,7 +316,7 @@ describe('ServiceWarningIndicator', () => {
   it('handles missing services in response', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({}) // No services property
+      json: async () => ({}), // No services property
     });
 
     const { container } = render(
@@ -326,12 +333,12 @@ describe('ServiceWarningIndicator', () => {
   it('correctly identifies configured but disconnected services as having issues', async () => {
     const servicesWithConnectionIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
-      { name: 'Email', configured: true, connected: false, required: false }
+      { name: 'Email', configured: true, connected: false, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithConnectionIssues })
+      json: async () => ({ services: servicesWithConnectionIssues }),
     });
 
     render(
@@ -349,12 +356,12 @@ describe('ServiceWarningIndicator', () => {
   it('correctly identifies unconfigured services as having issues', async () => {
     const servicesWithConfigurationIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
-      { name: 'Email', configured: false, connected: true, required: false }
+      { name: 'Email', configured: false, connected: true, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithConfigurationIssues })
+      json: async () => ({ services: servicesWithConfigurationIssues }),
     });
 
     render(

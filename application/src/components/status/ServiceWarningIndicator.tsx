@@ -31,14 +31,14 @@ const ServiceWarningIndicator: React.FC = () => {
           const services: ServiceStatus[] = data.services || [];
 
           // Check for issues in required vs optional services
-          const requiredServices = services.filter(service => service.required);
-          const optionalServices = services.filter(service => !service.required);
+          const requiredServices = services.filter((service) => service.required);
+          const optionalServices = services.filter((service) => !service.required);
 
-          const hasRequiredIssues = requiredServices.some(service =>
-            !service.configured || !service.connected
+          const hasRequiredIssues = requiredServices.some(
+            (service) => !service.configured || !service.connected
           );
-          const optionalIssues = optionalServices.filter(service =>
-            !service.configured || !service.connected
+          const optionalIssues = optionalServices.filter(
+            (service) => !service.configured || !service.connected
           );
 
           // Only show warning if there are optional issues but no required issues
@@ -70,15 +70,17 @@ const ServiceWarningIndicator: React.FC = () => {
   }
 
   return (
-    <Tooltip title={`${optionalIssuesCount} optional service${optionalIssuesCount !== 1 ? 's' : ''} have configuration issues. Click to view details.`}>
+    <Tooltip
+      title={`${optionalIssuesCount} optional service${optionalIssuesCount !== 1 ? 's' : ''} have configuration issues. Click to view details.`}
+    >
       <IconButton
         onClick={handleClick}
         sx={{
           color: 'warning.main',
           '&:hover': {
             backgroundColor: 'warning.light',
-            color: 'warning.dark'
-          }
+            color: 'warning.dark',
+          },
         }}
       >
         <Badge badgeContent={optionalIssuesCount} color="warning">

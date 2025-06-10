@@ -23,7 +23,7 @@ global.fetch = mockFetch;
 const mockSystemInfo = {
   environment: 'test',
   timestamp: '2025-06-06T10:00:00Z',
-  lastHealthCheck: '2025-06-06T10:00:00Z'
+  lastHealthCheck: '2025-06-06T10:00:00Z',
 };
 
 const mockServices = [
@@ -31,15 +31,15 @@ const mockServices = [
     name: 'Database',
     configured: true,
     connected: true,
-    required: true
+    required: true,
   },
   {
     name: 'Email Service',
     configured: false,
     connected: false,
     required: false,
-    error: 'Missing API key'
-  }
+    error: 'Missing API key',
+  },
 ];
 
 describe('SystemStatusPage', () => {
@@ -57,7 +57,7 @@ describe('SystemStatusPage', () => {
   it('renders the system status title', () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: [], systemInfo: mockSystemInfo })
+      json: async () => ({ services: [], systemInfo: mockSystemInfo }),
     });
 
     render(
@@ -85,7 +85,7 @@ describe('SystemStatusPage', () => {
   it('displays services after successful fetch', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: mockServices, systemInfo: mockSystemInfo })
+      json: async () => ({ services: mockServices, systemInfo: mockSystemInfo }),
     });
 
     render(
@@ -103,7 +103,7 @@ describe('SystemStatusPage', () => {
   it('displays last health check timestamp when available', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: [], systemInfo: mockSystemInfo })
+      json: async () => ({ services: [], systemInfo: mockSystemInfo }),
     });
 
     render(
@@ -120,12 +120,12 @@ describe('SystemStatusPage', () => {
   it('shows success status when all services are operational', async () => {
     const allGoodServices = [
       { name: 'Database', configured: true, connected: true, required: true },
-      { name: 'Cache', configured: true, connected: true, required: false }
+      { name: 'Cache', configured: true, connected: true, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: allGoodServices, systemInfo: mockSystemInfo })
+      json: async () => ({ services: allGoodServices, systemInfo: mockSystemInfo }),
     });
 
     render(
@@ -143,12 +143,12 @@ describe('SystemStatusPage', () => {
   it('shows critical error status when required services have issues', async () => {
     const servicesWithRequiredIssues = [
       { name: 'Database', configured: false, connected: false, required: true, error: 'DB error' },
-      { name: 'Cache', configured: true, connected: true, required: false }
+      { name: 'Cache', configured: true, connected: true, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithRequiredIssues, systemInfo: mockSystemInfo })
+      json: async () => ({ services: servicesWithRequiredIssues, systemInfo: mockSystemInfo }),
     });
 
     render(
@@ -159,19 +159,21 @@ describe('SystemStatusPage', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Critical Service Issues')).toBeInTheDocument();
-      expect(screen.getByText('One or more required services have issues that need attention.')).toBeInTheDocument();
+      expect(
+        screen.getByText('One or more required services have issues that need attention.')
+      ).toBeInTheDocument();
     });
   });
 
   it('shows warning status when only optional services have issues', async () => {
     const servicesWithOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
-      { name: 'Email', configured: false, connected: false, required: false, error: 'Email error' }
+      { name: 'Email', configured: false, connected: false, required: false, error: 'Email error' },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithOptionalIssues, systemInfo: mockSystemInfo })
+      json: async () => ({ services: servicesWithOptionalIssues, systemInfo: mockSystemInfo }),
     });
 
     render(
@@ -203,7 +205,7 @@ describe('SystemStatusPage', () => {
   it('handles non-ok response status', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: false,
-      statusText: 'Internal Server Error'
+      statusText: 'Internal Server Error',
     });
 
     render(
@@ -221,11 +223,11 @@ describe('SystemStatusPage', () => {
     mockFetch
       .mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ services: mockServices, systemInfo: mockSystemInfo })
+        json: async () => ({ services: mockServices, systemInfo: mockSystemInfo }),
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ services: mockServices, systemInfo: mockSystemInfo })
+        json: async () => ({ services: mockServices, systemInfo: mockSystemInfo }),
       });
 
     render(
@@ -250,12 +252,12 @@ describe('SystemStatusPage', () => {
   it('shows return home button when no required issues exist', async () => {
     const servicesWithoutRequiredIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
-      { name: 'Email', configured: false, connected: false, required: false }
+      { name: 'Email', configured: false, connected: false, required: false },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithoutRequiredIssues, systemInfo: mockSystemInfo })
+      json: async () => ({ services: servicesWithoutRequiredIssues, systemInfo: mockSystemInfo }),
     });
 
     render(
@@ -271,12 +273,12 @@ describe('SystemStatusPage', () => {
 
   it('hides return home button when required issues exist', async () => {
     const servicesWithRequiredIssues = [
-      { name: 'Database', configured: false, connected: false, required: true }
+      { name: 'Database', configured: false, connected: false, required: true },
     ];
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: servicesWithRequiredIssues, systemInfo: mockSystemInfo })
+      json: async () => ({ services: servicesWithRequiredIssues, systemInfo: mockSystemInfo }),
     });
 
     render(
@@ -293,7 +295,7 @@ describe('SystemStatusPage', () => {
   it('handles empty services array', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ services: [], systemInfo: mockSystemInfo })
+      json: async () => ({ services: [], systemInfo: mockSystemInfo }),
     });
 
     render(
@@ -310,7 +312,7 @@ describe('SystemStatusPage', () => {
   it('handles missing services in response', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ systemInfo: mockSystemInfo })
+      json: async () => ({ systemInfo: mockSystemInfo }),
     });
 
     render(

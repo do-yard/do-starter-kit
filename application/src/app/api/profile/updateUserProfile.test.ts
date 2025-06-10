@@ -8,11 +8,12 @@ const mockUploadFile = jest.fn();
 const mockGetFileUrl = jest.fn();
 const mockDeleteFile = jest.fn();
 jest.mock('../../../services/storage/storageFactory', () => ({
-  createStorageService: () => Promise.resolve({
-    uploadFile: mockUploadFile,
-    getFileUrl: mockGetFileUrl,
-    deleteFile: mockDeleteFile,
-  }),
+  createStorageService: () =>
+    Promise.resolve({
+      uploadFile: mockUploadFile,
+      getFileUrl: mockGetFileUrl,
+      deleteFile: mockDeleteFile,
+    }),
 }));
 
 // Mock auth
@@ -31,12 +32,13 @@ jest.mock('../../../helpers/fileName', () => ({
 const mockFindById = jest.fn();
 const mockUpdate = jest.fn();
 jest.mock('../../../services/database/databaseFactory', () => ({
-  createDatabaseService: () => Promise.resolve({
-    user: {
-      findById: mockFindById,
-      update: mockUpdate,
-    },
-  }),
+  createDatabaseService: () =>
+    Promise.resolve({
+      user: {
+        findById: mockFindById,
+        update: mockUpdate,
+      },
+    }),
 }));
 
 // Import the handler after mocks
