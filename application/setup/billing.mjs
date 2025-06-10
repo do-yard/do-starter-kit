@@ -152,6 +152,28 @@ async function createProductsAndPrices(stripe, productsConfig, featuresMap, stri
   return priceEnvVars;
 }
 
+async function configureBillingPortal(stripe, portalConfigId, priceEnvVars) {
+  await stripe.billingPortal.configurations.update(portalConfigId, {
+    features: {
+      subscription_update: {
+        enabled: true,
+        default_allowed_updates: ['price'],
+        products: [
+          {
+            product: created.products.find((p) => p.plan === 'FREE')?.id,
+            prices: [priceEnvVars.STRIPE_FREE_PRICE_ID],
+          },
+          {
+            product: created.products.find((p) => p.plan === 'PRO')?.id,
+            prices: [priceEnvVars.STRIPE_PRO_PRICE_ID],
+          },
+        ],
+      },
+    },
+  });
+  console.log('✅ Billing Portal configured: FREE & PRO prices enabled for plan updates.');
+}
+
 function writeEnvFile(vars, stripeSecret) {
   const lines = [
     `BILLING_PROVIDER=Stripe`,
@@ -235,6 +257,13 @@ async function main() {
 
     await writeEnvFile(priceEnvVars, secretKey);
     console.log('📄 .env file created successfully.\n');
+
+    const portalConfigs = await stripe.billingPortal.configurations.list({ active: true });
+    if (portalConfigs.data.length > 0) {
+      await configureBillingPortal(stripe, portalConfigs.data[0].id, priceEnvVars);
+    } else {
+      console.warn('⚠️ No Billing Portal config found, skipping portal setup.');
+    }
   } catch (err) {
     console.error('❌ Setup failed:');
     console.error(err.message || err);

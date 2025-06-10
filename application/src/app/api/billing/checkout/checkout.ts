@@ -35,15 +35,14 @@ export const checkout = async (
   try {
     const billingService = createBillingService();
 
-    const url = await billingService.checkout(
+    const url = await billingService.manageSubscription(
       serverConfig.Stripe.proPriceId,
       subscription[0].customerId,
-      `${serverConfig.baseURL}/dashboard/subscription/success`,
-      `${serverConfig.baseURL}/dashboard/subscription/cancel`
+      `${serverConfig.baseURL}/dashboard/billing`
     );
 
     if (!url) {
-      console.error('Failed to create checkout session');
+      console.error('Failed to create Billing Portal session');
       return NextResponse.json(
         { error: 'Internal Server Error' },
         { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
@@ -53,7 +52,7 @@ export const checkout = async (
     return NextResponse.json({ url }, { status: HTTP_STATUS.OK });
   } catch (error) {
     console.error(
-      'Error creating checkout session',
+      'Error creating Billing Portal session',
       (error as { message?: string }).message ?? undefined
     );
     return NextResponse.json(
