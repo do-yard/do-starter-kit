@@ -34,9 +34,9 @@ If you made changes to the repo and want to deploy them to DigitalOcean, navigat
 [![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/do-yard/do-starter-kit/tree/main)
 
 2. After deployment is complete, configure the environment variables under Settings -> saas-application.
-      - DATABASE_URL: is automatically populated, but if you want to use a DigitalOcean Managed DB, replace the connection string value.
-      - NEXTAUTH_URL: URL of the site
-      - NEXTAUTH_SECRET: random string for authentication. After setting a value, check the encrypt box.
+   - DATABASE_URL: is automatically populated, but if you want to use a DigitalOcean Managed DB, replace the connection string value.
+   - NEXTAUTH_URL: URL of the site
+   - NEXTAUTH_SECRET: random string for authentication. After setting a value, check the encrypt box.
 3. Run Prisma migrations:
    - Go to Console, in the DigitalOcean dashboard
    - Run `npx prisma migrate deploy` command
@@ -129,6 +129,9 @@ Defaults used:
 npm run dev
 ```
 
+**Step 5: Check system status**
+Navigate to the `/system-status` page to see if all the required services are correctly configured.
+
 ## Deploy from local environment
 
 If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
@@ -137,7 +140,7 @@ If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
 1. Create an **app.yaml** file by copying **app.template.yaml**.
 1. **Important**: settings from .env file do not transfer automatically to the **app.yaml**, they have to be copied manually. Also, there are a few other values to complete in the YAML. The following is a checklist with all placeholders:
    - [ ] **APP_NAME**: arbitrary name for your app.
-   - [ ] **repo**: replace _do-yard/do-starter-kit_ with your GitHub username and repo name. 
+   - [ ] **repo**: replace _do-yard/do-starter-kit_ with your GitHub username and repo name.
    - [ ] **GITHUB_BRANCH**: the branch you want to deploy.
    - [ ] **DB_NAME**: arbitrary name for your database.
    - [ ] **SPACES_KEY_ID**: id of an existing Spaces storage key.
@@ -159,14 +162,17 @@ If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
 ### Best practices when working with secrets and environment variables
 
 **Never commit secrets to version control**
+
 - Add `.env`, `.env.*`, and any secret files to your .gitignore.
 - Use example files (like env-example) to show required variables without real values.
 
 **Encrypt secrets at rest and in transit**
+
 - Ensure secrets are encrypted wherever they are stored and when transmitted.
 - Check `Encrypt` checkbox for sensitive values in DigitalOcean environment variables configuration.
 
 **Do secret maintenance**
+
 - Expire or revoke unused access tokens.
 - Remove whitelisted IPs when no longer needed.
 
