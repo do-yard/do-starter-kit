@@ -50,9 +50,10 @@ export default function ProfileUpdateForm() {
     email: '',
     profileImage: null,
   });
+
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   const session = useSession();
@@ -97,6 +98,7 @@ export default function ProfileUpdateForm() {
     async (e: React.FormEvent) => {
       e.preventDefault();
       setError(null);
+      setSuccess(null);
       setIsLoading(true);
 
       try {
@@ -122,12 +124,11 @@ export default function ProfileUpdateForm() {
         }
 
         const json = await response.json();
-
         session.update({ user: { name: json.name, image: json.image } });
         setFormData((prev) => ({ ...prev, profileImage: null, name: json.name }));
 
-        setShowSuccess(true);
-        setTimeout(() => setShowSuccess(false), 3000);
+        setSuccess('Profile updated successfully!');
+        setTimeout(() => setSuccess(null), 3000);
       } catch (error) {
         setError((error as Error).message || 'An error occurred while updating the profile.');
       } finally {
@@ -144,16 +145,15 @@ export default function ProfileUpdateForm() {
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         Update your account details
       </Typography>
-
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
         </Alert>
       )}
 
-      {showSuccess && (
+      {success && (
         <Alert severity="success" icon={<CheckCircleOutlineIcon />} sx={{ mb: 2 }}>
-          Profile updated successfully!
+          {success}
         </Alert>
       )}
 
