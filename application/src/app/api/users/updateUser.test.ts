@@ -7,8 +7,6 @@ jest.mock('services/database/databaseFactory', () => ({
   createDatabaseService: jest.fn(),
 }));
 
-import { createDatabaseClient } from 'services/database/database';
-
 type MockDbClient = {
   user: {
     update: jest.Mock;

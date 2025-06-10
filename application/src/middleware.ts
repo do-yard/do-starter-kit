@@ -2,7 +2,6 @@ import { NextResponse, NextRequest } from 'next/server';
 import { auth } from 'lib/auth/auth';
 import { UserRole } from 'types';
 import { USER_ROLES } from 'lib/auth/roles';
-import { StatusService } from './services/status/statusService';
 
 const ROLE_HOME_URL: Record<UserRole, string> = {
   [USER_ROLES.USER]: '/dashboard',
