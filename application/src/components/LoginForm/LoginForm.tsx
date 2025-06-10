@@ -28,8 +28,8 @@ const LoginForm: React.FC = () => {
 
     const res = await signIn('credentials', {
       redirect: false,
-      email: email,
-      password: password,
+      email,
+      password,
     });
 
     if (!res || res.error) {
