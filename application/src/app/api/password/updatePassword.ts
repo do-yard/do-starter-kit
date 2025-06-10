@@ -86,7 +86,7 @@ export const updatePassword = async (
         'Your password has been updated',
         emailTemplate({
           title: 'Your password has been updated',
-          content: `<p>Your password has been updated successfully and you can use it log into your account.</p>
+          content: `<p>Your password has been updated successfully and you can use it to log into your account.</p>
             <p style="font-size:13px; color:#888; text-align:center;">If you didn't request this change, please contact us immediately.</p>`,
         })
       );
