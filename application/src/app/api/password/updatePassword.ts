@@ -10,6 +10,8 @@ import {
   UserDoesNotExistError,
   IncorrectCurrentPasswordError,
 } from 'lib/auth/errors';
+import { createEmailClient } from 'services/email/email';
+import { emailTemplate } from 'services/email/emailTemplate';
 
 /**
  * Updates the user's password.
@@ -76,6 +78,24 @@ export const updatePassword = async (
     dbUser.passwordHash = hashedPassword;
 
     await db.user.update(dbUser.id, dbUser);
+
+    try {
+      const emailClient = createEmailClient();
+      await emailClient.sendEmail(
+        dbUser.email,
+        'Your password has been updated',
+        emailTemplate({
+          title: 'Your password has been updated',
+          content: `<p>Your password has been updated successfully and you can use it log into your account.</p>
+            <p style="font-size:13px; color:#888; text-align:center;">If you didn't request this change, please contact us immediately.</p>`,
+        })
+      );
+    } catch (error) {
+      console.error(
+        'Error sending email notification:',
+        error instanceof Error ? `${error.name}: ${error.message}` : error
+      );
+    }
 
     return NextResponse.json(
       { name: dbUser.name, image: dbUser.image },
