@@ -20,27 +20,27 @@ const providers: Provider[] = [
     },
     authorize: async (credentials) => {
       try {
-      if (!credentials.email || !credentials.password) {
-        throw new Error('Email and password are required');
-      }
+        if (!credentials.email || !credentials.password) {
+          throw new Error('Email and password are required');
+        }
 
-      const dbClient = createDatabaseClient();
+        const dbClient = createDatabaseClient();
 
-      const user = await dbClient.user.findByEmail(credentials.email as string);
-      if (!user || !user.passwordHash) {
-        throw new Error('User not found or password hash is missing');
-      }
+        const user = await dbClient.user.findByEmail(credentials.email as string);
+        if (!user || !user.passwordHash) {
+          throw new Error('User not found or password hash is missing');
+        }
 
-      if (user.emailVerified === false) {
-        throw new Error('Email not verified');
-      }
+        if (user.emailVerified === false) {
+          throw new Error('Email not verified');
+        }
 
-      const isValid = await verifyPassword(credentials.password as string, user.passwordHash);
-      if (!isValid) {
-        throw new Error('Invalid credentials');
-      }
+        const isValid = await verifyPassword(credentials.password as string, user.passwordHash);
+        if (!isValid) {
+          throw new Error('Invalid credentials');
+        }
 
-      return user;
+        return user;
       } catch (error) {
         throw new InvalidCredentialsError((error as Error).message);
       }

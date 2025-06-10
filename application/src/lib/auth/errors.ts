@@ -1,9 +1,9 @@
-import { CredentialsSignin  } from 'next-auth';
+import { CredentialsSignin } from 'next-auth';
 
 /**
  * Error thrown when provided credentials are invalid.
  */
-export class InvalidCredentialsError extends CredentialsSignin  {
+export class InvalidCredentialsError extends CredentialsSignin {
   code = 'custom';
   constructor(message: string) {
     super(message);
