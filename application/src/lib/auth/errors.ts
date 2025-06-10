@@ -1,3 +1,5 @@
+import { CredentialsSignin } from 'next-auth';
+
 /**
  * Error thrown when the current password is empty.
  */
@@ -44,4 +46,15 @@ export class UserDoesNotExistError extends Error {
 export class IncorrectCurrentPasswordError extends Error {
   name = 'UpdatePassword';
   code = 'Current password is incorrect';
+}
+
+/**
+ * Error thrown when provided credentials are invalid.
+ */
+export class InvalidCredentialsError extends CredentialsSignin {
+  code = 'custom';
+  constructor(message: string) {
+    super(message);
+    this.code = message;
+  }
 }
