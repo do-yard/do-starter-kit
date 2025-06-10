@@ -16,8 +16,7 @@ const customJestConfig = {
     '<rootDir>/src/services/',
     '<rootDir>/src/app/api/',
     '/node_modules/',
-  ],
-  preset: 'ts-jest',
+  ]
 };
 
 export default createJestConfig(customJestConfig);
