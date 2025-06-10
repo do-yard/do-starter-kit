@@ -12,9 +12,15 @@ describe('UpdatePasswordForm', () => {
     const user = userEvent.setup();
     render(<UpdatePasswordForm />);
 
-    const currentPasswordInput = screen.getByTestId('current-password-input').querySelector('input') as HTMLInputElement;
-    const newPasswordInput = screen.getByTestId('new-password-input').querySelector('input') as HTMLInputElement;
-    const confirmPasswordInput = screen.getByTestId('confirm-password-input').querySelector('input') as HTMLInputElement;
+    const currentPasswordInput = screen
+      .getByTestId('current-password-input')
+      .querySelector('input') as HTMLInputElement;
+    const newPasswordInput = screen
+      .getByTestId('new-password-input')
+      .querySelector('input') as HTMLInputElement;
+    const confirmPasswordInput = screen
+      .getByTestId('confirm-password-input')
+      .querySelector('input') as HTMLInputElement;
 
     await user.type(currentPasswordInput, 'oldpass');
     await user.type(newPasswordInput, 'newpass1');
@@ -32,9 +38,15 @@ describe('UpdatePasswordForm', () => {
     });
     render(<UpdatePasswordForm />);
 
-    const currentPasswordInput = screen.getByTestId('current-password-input').querySelector('input') as HTMLInputElement;
-    const newPasswordInput = screen.getByTestId('new-password-input').querySelector('input') as HTMLInputElement;
-    const confirmPasswordInput = screen.getByTestId('confirm-password-input').querySelector('input') as HTMLInputElement;
+    const currentPasswordInput = screen
+      .getByTestId('current-password-input')
+      .querySelector('input') as HTMLInputElement;
+    const newPasswordInput = screen
+      .getByTestId('new-password-input')
+      .querySelector('input') as HTMLInputElement;
+    const confirmPasswordInput = screen
+      .getByTestId('confirm-password-input')
+      .querySelector('input') as HTMLInputElement;
 
     await user.type(currentPasswordInput, 'wrongpass');
     await user.type(newPasswordInput, 'newpass');
@@ -50,9 +62,15 @@ describe('UpdatePasswordForm', () => {
     global.fetch = jest.fn().mockResolvedValue({ ok: true });
     render(<UpdatePasswordForm />);
 
-    const currentPasswordInput = screen.getByTestId('current-password-input').querySelector('input') as HTMLInputElement;
-    const newPasswordInput = screen.getByTestId('new-password-input').querySelector('input') as HTMLInputElement;
-    const confirmPasswordInput = screen.getByTestId('confirm-password-input').querySelector('input') as HTMLInputElement;
+    const currentPasswordInput = screen
+      .getByTestId('current-password-input')
+      .querySelector('input') as HTMLInputElement;
+    const newPasswordInput = screen
+      .getByTestId('new-password-input')
+      .querySelector('input') as HTMLInputElement;
+    const confirmPasswordInput = screen
+      .getByTestId('confirm-password-input')
+      .querySelector('input') as HTMLInputElement;
 
     await user.type(currentPasswordInput, 'oldpass');
     await user.type(newPasswordInput, 'newpass');
@@ -75,9 +93,15 @@ describe('UpdatePasswordForm', () => {
     global.fetch = jest.fn(() => fetchPromise);
     render(<UpdatePasswordForm />);
 
-    const currentPasswordInput = screen.getByTestId('current-password-input').querySelector('input') as HTMLInputElement;
-    const newPasswordInput = screen.getByTestId('new-password-input').querySelector('input') as HTMLInputElement;
-    const confirmPasswordInput = screen.getByTestId('confirm-password-input').querySelector('input') as HTMLInputElement;
+    const currentPasswordInput = screen
+      .getByTestId('current-password-input')
+      .querySelector('input') as HTMLInputElement;
+    const newPasswordInput = screen
+      .getByTestId('new-password-input')
+      .querySelector('input') as HTMLInputElement;
+    const confirmPasswordInput = screen
+      .getByTestId('confirm-password-input')
+      .querySelector('input') as HTMLInputElement;
 
     await user.type(currentPasswordInput, 'oldpass');
     await user.type(newPasswordInput, 'newpass');
@@ -89,9 +113,7 @@ describe('UpdatePasswordForm', () => {
 
     // Finish fetch
     if (fetchResolve) fetchResolve();
-    await waitFor(() =>
-      expect(screen.getByTestId('update-password-button')).not.toBeDisabled()
-    );
+    await waitFor(() => expect(screen.getByTestId('update-password-button')).not.toBeDisabled());
     (global.fetch as jest.Mock).mockRestore?.();
   });
 });

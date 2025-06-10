@@ -60,7 +60,9 @@ describe('ProfileUpdateForm', () => {
     await user.type(nameInput, 'Jane Doe');
 
     expect(screen.getByDisplayValue('Jane Doe')).toBeInTheDocument();
-  }); it('shows the upload button for profile image', () => {
+  });
+
+  it('shows the upload button for profile image', () => {
     render(<ProfileUpdateForm />);
     expect(screen.getByTestId('upload-image-button')).toBeInTheDocument();
   });
@@ -69,7 +71,9 @@ describe('ProfileUpdateForm', () => {
     const user = userEvent.setup();
     render(<ProfileUpdateForm />);
 
-    const fileInput = screen.getByTestId('upload-image-button').querySelector('input[type="file"]') as HTMLInputElement;
+    const fileInput = screen
+      .getByTestId('upload-image-button')
+      .querySelector('input[type="file"]') as HTMLInputElement;
     const file = new File(['test'], 'test.jpg', { type: 'image/jpeg' });
 
     await user.upload(fileInput, file);

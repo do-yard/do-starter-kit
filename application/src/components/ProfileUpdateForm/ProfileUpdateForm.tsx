@@ -10,7 +10,7 @@ import {
   Alert,
   Stack,
   Avatar,
-  TextField
+  TextField,
 } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -34,10 +34,7 @@ const AvatarPreview: React.FC<AvatarPreviewProps> = ({ label, src, fallback }) =
     <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
       {label}
     </Typography>
-    <Avatar
-      src={src}
-      sx={{ width: { xs: 60, sm: 80 }, height: { xs: 60, sm: 80 } }}
-    >
+    <Avatar src={src} sx={{ width: { xs: 60, sm: 80 }, height: { xs: 60, sm: 80 } }}>
       {fallback}
     </Avatar>
   </Box>
@@ -163,20 +160,26 @@ export default function ProfileUpdateForm() {
       <Box component="form" onSubmit={handleSubmit}>
         <Stack spacing={3}>
           {/* Current Profile Image */}
-          <Box sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            alignItems: { xs: 'stretch', sm: 'center' },
-            gap: { xs: 2, sm: 3 }
-          }}>            <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: { xs: 1.5, sm: 2 },
-            justifyContent: { xs: 'center', sm: 'flex-start' }
-          }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              alignItems: { xs: 'stretch', sm: 'center' },
+              gap: { xs: 2, sm: 3 },
+            }}
+          >
+            {' '}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: { xs: 1.5, sm: 2 },
+                justifyContent: { xs: 'center', sm: 'flex-start' },
+              }}
+            >
               {/* Single Avatar that shows Current or Preview based on state */}
               <AvatarPreview
-                label={previewUrl ? "Preview" : "Current"}
+                label={previewUrl ? 'Preview' : 'Current'}
                 src={previewUrl || user?.image || undefined}
                 fallback={user?.name?.[0]?.toUpperCase()}
               />
@@ -185,12 +188,14 @@ export default function ProfileUpdateForm() {
               <Typography variant="body2" fontWeight={500}>
                 Profile Picture
               </Typography>
-              <Box sx={{
-                display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
-                gap: 1,
-                mt: 1
-              }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  gap: 1,
+                  mt: 1,
+                }}
+              >
                 <Button
                   component="label"
                   startIcon={<CloudUploadIcon />}
@@ -199,12 +204,7 @@ export default function ProfileUpdateForm() {
                   data-testid="upload-image-button"
                 >
                   {formData.profileImage ? 'Change' : 'Upload'}
-                  <input
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
+                  <input type="file" hidden accept="image/*" onChange={handleFileChange} />
                 </Button>
                 {formData.profileImage && (
                   <Button
@@ -226,7 +226,7 @@ export default function ProfileUpdateForm() {
                   sx={{
                     display: 'block',
                     mt: 1,
-                    wordBreak: 'break-all'
+                    wordBreak: 'break-all',
                   }}
                 >
                   Selected: {formData.profileImage.name}

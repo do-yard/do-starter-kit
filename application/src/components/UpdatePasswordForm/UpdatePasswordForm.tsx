@@ -9,7 +9,8 @@ import { Button, Card, Typography, Stack, Alert, CircularProgress, TextField } f
 export const UpdatePasswordForm: React.FC = () => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState(''); const [error, setError] = useState<string | null>(null);
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -54,11 +55,7 @@ export const UpdatePasswordForm: React.FC = () => {
     }
   };
   return (
-    <Card
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{ p: { xs: 2, sm: 3 } }}
-    >
+    <Card component="form" onSubmit={handleSubmit} sx={{ p: { xs: 2, sm: 3 } }}>
       <Typography variant="h5" gutterBottom>
         Change Password
       </Typography>

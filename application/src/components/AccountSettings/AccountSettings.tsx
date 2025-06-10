@@ -17,7 +17,7 @@ export default function AccountSettings() {
         sx={{
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', lg: '1fr 1fr' },
-          gap: { xs: 2, sm: 3 }
+          gap: { xs: 2, sm: 3 },
         }}
       >
         <ProfileUpdateForm />
