@@ -14,12 +14,7 @@ global.URL.revokeObjectURL = jest.fn();
 global.URL.createObjectURL = jest.fn(() => 'blob:preview-url');
 global.URL.revokeObjectURL = jest.fn();
 
-jest.mock('react-dropzone', () => ({
-  useDropzone: () => ({
-    getRootProps: () => ({}),
-    getInputProps: () => ({}),
-  }),
-}));
+// Removed unused mock for react-dropzone
 
 describe('ProfileUpdateForm', () => {
   const mockUser = {
