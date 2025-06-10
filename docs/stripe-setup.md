@@ -28,9 +28,7 @@ The script will ask you for the Stripe key you created before:
 After this, the script will create two products with your specified names and two prices (one free and one paid), linked to those products.
 In the script outputs, you will see the respective IDs for the products and the prices. _Use these IDs in the deployment templates as the required environment variables_:
 
-- STRIPE_FREE_PRODUCT_ID
 - NEXT_PUBLIC_STRIPE_FREE_PRICE_ID
-- STRIPE_PRO_PRODUCT_ID
 - NEXT_PUBLIC_STRIPE_PRO_PRICE_ID
 - STRIPE_PRO_GIFT_PRICE_ID
 
