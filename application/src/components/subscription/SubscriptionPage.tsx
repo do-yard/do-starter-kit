@@ -84,18 +84,20 @@ const Subscription = () => {
         Subscription
       </Typography>
 
-      {subscription?.plan && subscription?.status && subscription.status !== 'CANCELED' ? (
-        <Box display="flex" flexDirection="column" alignItems="flex-start">
-          <Typography mb={2}>
-            Subscription status: <strong>{subscription.status}</strong> (
-            {isProPlan
-              ? `${SubscriptionPlanEnum.PRO} Plan`
-              : isBasePlan
-                ? `${SubscriptionPlanEnum.FREE} Plan`
-                : 'No Plan'}
-            )
-          </Typography>
+      {subscription ? (
+        <Typography mb={2}>
+          Subscription status: <strong>{subscription.status}</strong> (
+          {isProPlan
+            ? `${SubscriptionPlanEnum.PRO} Plan`
+            : isBasePlan
+              ? `${SubscriptionPlanEnum.FREE} Plan`
+              : 'No Plan'}
+          )
+        </Typography>
+      ) : null}
 
+      {subscription?.plan && subscription?.status ? (
+        <Box display="flex" flexDirection="column" alignItems="flex-start">
           {isBasePlan && (
             <Button
               onClick={handleUpgradeToPro}

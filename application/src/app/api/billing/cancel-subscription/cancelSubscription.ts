@@ -44,22 +44,13 @@ export const cancelSubscription = async (
       );
     }
 
-    if (dbSubscription[0].plan === SubscriptionPlanEnum.PRO) {
-      await billingService.updateSubscription(
-        stripeSub.id,
-        stripeSub.items[0].id,
-        serverConfig.Stripe.freePriceId!
-      );
-      await db.subscription.update(user.id, {
-        plan: SubscriptionPlanEnum.FREE,
-        status: SubscriptionStatusEnum.PENDING,
-      });
-      return NextResponse.json({ canceled: true });
-    }
-
-    await billingService.cancelSubscription(stripeSub.id);
-
+    await billingService.updateSubscription(
+      stripeSub.id,
+      stripeSub.items[0].id,
+      serverConfig.Stripe.freePriceId!
+    );
     await db.subscription.update(user.id, {
+      plan: SubscriptionPlanEnum.FREE,
       status: SubscriptionStatusEnum.PENDING,
     });
 
