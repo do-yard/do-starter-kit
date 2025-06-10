@@ -46,6 +46,6 @@ describe('AccountSettings', () => {
 
   it('renders the page title', () => {
     render(<AccountSettings />);
-    expect(screen.getByText('Account Settings')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Account Settings/i })).toBeInTheDocument();
   });
 });
