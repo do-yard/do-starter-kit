@@ -6,7 +6,20 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '../prisma';
 import { verifyPassword } from 'helpers/hash';
 import { User, UserRole } from 'types';
-import { InvalidCredentialsError } from './errors';
+import { CredentialsSignin } from 'next-auth';
+
+/**
+ * Error thrown when provided credentials are invalid.
+ * This class is in this file to solve error in unit test "Cannot use import statement outside a module"
+ */
+class InvalidCredentialsError extends CredentialsSignin {
+  code = 'custom';
+  constructor(message: string) {
+    super(message);
+    this.code = message;
+  }
+}
+
 
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
