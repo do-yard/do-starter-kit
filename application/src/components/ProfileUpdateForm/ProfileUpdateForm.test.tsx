@@ -11,8 +11,6 @@ jest.mock('next-auth/react', () => ({
 global.URL.createObjectURL = jest.fn(() => 'blob:preview-url');
 global.URL.revokeObjectURL = jest.fn();
 
-// Removed unused mock for react-dropzone
-
 describe('ProfileUpdateForm', () => {
   const mockUser = {
     name: 'John Doe',
