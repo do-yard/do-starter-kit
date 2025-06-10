@@ -1,6 +1,5 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextResponse } from 'next/server';
-import { HTTP_STATUS } from 'lib/api/http';
 
 /**
  * Handles GET requests for the health endpoint.

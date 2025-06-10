@@ -1,13 +1,11 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { getAllUsers } from './getAllUsers';
 import { NextRequest } from 'next/server';
-import { HTTP_STATUS } from 'lib/api/http';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 jest.mock('services/database/databaseFactory', () => ({
   createDatabaseService: jest.fn(),
 }));
-
-import { createDatabaseService } from 'services/database/databaseFactory';
 
 type MockDbClient = {
   user: {

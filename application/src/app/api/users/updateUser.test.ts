@@ -3,34 +3,26 @@ import { updateUser } from './updateUser';
 import { NextRequest } from 'next/server';
 import { HTTP_STATUS } from 'lib/api/http';
 
-jest.mock('services/database/databaseFactory', () => ({
-  createDatabaseService: jest.fn(),
-}));
-
-type MockDbClient = {
+const mockUpdate = jest.fn();
+const mockFindByUserId = jest.fn();
+const mockSubUpdate = jest.fn();
+const mockDbClient = {
   user: {
-    update: jest.Mock;
-  };
+    update: mockUpdate,
+  },
   subscription: {
-    findByUserId: jest.Mock;
-    update: jest.Mock;
-  };
+    findByUserId: mockFindByUserId,
+    update: mockSubUpdate,
+  },
 };
 
-describe('updateUser', () => {
-  let mockDbClient: MockDbClient;
+jest.mock('../../../services/database/databaseFactory', () => ({
+  createDatabaseService: () => Promise.resolve(mockDbClient),
+}));
 
+describe('updateUser', () => {
   beforeEach(() => {
-    mockDbClient = {
-      user: {
-        update: jest.fn(),
-      },
-      subscription: {
-        findByUserId: jest.fn(),
-        update: jest.fn(),
-      },
-    };
-    (createDatabaseService as jest.Mock).mockResolvedValue(mockDbClient);
+    jest.resetAllMocks();
   });
 
   afterEach(() => {
@@ -61,10 +53,10 @@ describe('updateUser', () => {
 
   it('updates allowed fields and returns updated user', async () => {
     const updatedUser = { id: 1, name: 'New', role: USER_ROLES.ADMIN };
-    mockDbClient.user.update.mockResolvedValue(updatedUser);
+    mockUpdate.mockResolvedValue(updatedUser);
     const req = makeRequest({ id: 1, name: 'New', role: USER_ROLES.ADMIN });
     const res = await updateUser(req);
-    expect(mockDbClient.user.update).toHaveBeenCalledWith(1, {
+    expect(mockUpdate).toHaveBeenCalledWith(1, {
       name: 'New',
       role: USER_ROLES.ADMIN,
     });
@@ -75,18 +67,18 @@ describe('updateUser', () => {
 
   it('updates subscriptions if provided', async () => {
     const updatedUser = { id: 1, name: 'A', role: USER_ROLES.USER };
-    mockDbClient.user.update.mockResolvedValue(updatedUser);
-    mockDbClient.subscription.findByUserId.mockResolvedValue([{ id: 10 }]);
-    mockDbClient.subscription.update.mockResolvedValue({});
+    mockUpdate.mockResolvedValue(updatedUser);
+    mockFindByUserId.mockResolvedValue([{ id: 10 }]);
+    mockSubUpdate.mockResolvedValue({});
     const req = makeRequest({ id: 1, subscriptions: [{ plan: 'pro' }] });
     const res = await updateUser(req);
-    expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith(1);
-    expect(mockDbClient.subscription.update).toHaveBeenCalledWith(10, { plan: 'pro' });
+    expect(mockFindByUserId).toHaveBeenCalledWith(1);
+    expect(mockSubUpdate).toHaveBeenCalledWith(10, { plan: 'pro' });
     expect(res.status).toBe(HTTP_STATUS.OK);
   });
 
   it('returns 500 on server error', async () => {
-    mockDbClient.user.update.mockRejectedValue(new Error('fail'));
+    mockUpdate.mockRejectedValue(new Error('fail'));
     const req = makeRequest({ id: 1, name: 'X' });
     const res = await updateUser(req);
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);

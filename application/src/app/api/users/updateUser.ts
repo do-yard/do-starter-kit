@@ -1,7 +1,6 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseService } from 'services/database/databaseFactory';
-import { HTTP_STATUS } from 'lib/api/http';
 
 /**
  * Updates a user with the provided data in the request body.

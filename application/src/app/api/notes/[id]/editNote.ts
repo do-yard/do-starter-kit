@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Handles the editing of a note.
@@ -18,7 +18,7 @@ export const editNote = async (
     const { id: noteId } = await params;
     const userId = user.id;
     const { title, content } = await request.json();
-    const dbClient = createDatabaseClient();
+    const dbClient = await createDatabaseService();
 
     if (!title && !content) {
       return NextResponse.json(
