@@ -82,8 +82,12 @@ export const updateUserProfile = async (
       'Profile update error:',
       error instanceof Error ? `${error.name}: ${error.message}` : error
     );
+
+    // Return the actual error message to the user
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: errorMessage },
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     );
   }
