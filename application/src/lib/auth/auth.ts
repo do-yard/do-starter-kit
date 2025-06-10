@@ -6,7 +6,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '../prisma';
 import { verifyPassword } from 'helpers/hash';
 import { User, UserRole } from 'types';
-import { MissingCredentialsError, InvalidCredentialsError, EmailNotVerifiedError } from './errors';
+import { InvalidCredentialsError } from './errors';
 
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
@@ -15,32 +15,35 @@ const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
 const providers: Provider[] = [
   Credentials({
     credentials: {
-      name: {},
       email: {},
       password: {},
     },
     authorize: async (credentials) => {
+      try {
       if (!credentials.email || !credentials.password) {
-        throw new MissingCredentialsError();
+        throw new Error('Email and password are required');
       }
 
       const dbClient = createDatabaseClient();
 
       const user = await dbClient.user.findByEmail(credentials.email as string);
       if (!user || !user.passwordHash) {
-        throw new InvalidCredentialsError();
+        throw new Error('User not found or password hash is missing');
       }
 
       if (user.emailVerified === false) {
-        throw new EmailNotVerifiedError();
+        throw new Error('Email not verified');
       }
 
       const isValid = await verifyPassword(credentials.password as string, user.passwordHash);
       if (!isValid) {
-        throw new InvalidCredentialsError();
+        throw new Error('Invalid credentials');
       }
 
       return user;
+      } catch (error) {
+        throw new InvalidCredentialsError((error as Error).message);
+      }
     },
   }),
 ];
