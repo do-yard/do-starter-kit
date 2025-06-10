@@ -17,7 +17,8 @@ export const createSubscription = async (
   try {
     const billingService = createBillingService();
 
-    const { priceId }: { priceId: string } = await request.json();
+    const { priceId, cancelInvoices }: { priceId: string; cancelInvoices: boolean } =
+      await request.json();
 
     if (!priceId) {
       return NextResponse.json(
@@ -49,7 +50,11 @@ export const createSubscription = async (
       });
     }
 
-    const { clientSecret } = await billingService.createSubscription(customerId, priceId);
+    const { clientSecret } = await billingService.createSubscription(
+      customerId,
+      priceId,
+      cancelInvoices
+    );
 
     await db.subscription.update(user.id, {
       status: SubscriptionStatusEnum.PENDING,

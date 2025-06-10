@@ -14,12 +14,15 @@ export class StripeClient {
     return res.json();
   }
 
-  async createSubscription(priceId: string): Promise<{ clientSecret: string }> {
+  async createSubscription(
+    priceId: string,
+    cancelInvoices = false
+  ): Promise<{ clientSecret: string }> {
     const res = await fetch(`${this.baseURL}/create-subscription`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ priceId }),
+      body: JSON.stringify({ priceId: priceId, cancelInvoices: cancelInvoices }),
     });
     if (!res.ok) throw new Error('Failed to create subscription');
     return res.json();

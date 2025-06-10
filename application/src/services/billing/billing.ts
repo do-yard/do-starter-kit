@@ -13,7 +13,8 @@ export interface BillingService {
   ) => Promise<{ id: string; status: string; items: { id: string }[] }[]>;
   createSubscription: (
     customerId: string,
-    priceId: string
+    priceId: string,
+    cancelInvoices: boolean
   ) => Promise<{ clientSecret: string | undefined }>;
   cancelSubscription: (subscriptionId: string) => Promise<void>;
   updateSubscription: (

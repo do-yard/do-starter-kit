@@ -35,7 +35,7 @@ export class StripeBillingService implements BillingService {
     });
   }
 
-  async createSubscription(customerId: string, priceId: string) {
+  async createSubscription(customerId: string, priceId: string, cancelInvoices: boolean) {
     const result = await this.stripe.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
@@ -43,6 +43,9 @@ export class StripeBillingService implements BillingService {
       payment_settings: {
         save_default_payment_method: 'on_subscription',
       },
+      ...(cancelInvoices && {
+        pause_collection: { behavior: 'keep_as_draft' },
+      }),
     });
 
     if (
