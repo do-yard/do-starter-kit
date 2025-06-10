@@ -51,7 +51,7 @@ describe('createSubscription API', () => {
     expect(await res.json()).toEqual({ clientSecret: 'secret_abc' });
     expect(mockDbFindByUserId).toHaveBeenCalledWith(user.id);
     expect(mockCreateCustomer).not.toHaveBeenCalled();
-    expect(mockCreateSubscription).toHaveBeenCalledWith('cust1', priceId);
+    expect(mockCreateSubscription).toHaveBeenCalledWith('cust1', priceId, undefined);
     expect(mockDbCreate).not.toHaveBeenCalled();
     expect(mockDbUpdate).toHaveBeenCalledWith(user.id, expect.any(Object));
   });
@@ -66,7 +66,7 @@ describe('createSubscription API', () => {
     expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ clientSecret: 'secret_xyz' });
     expect(mockCreateCustomer).toHaveBeenCalledWith(user.email, { userId: user.email });
-    expect(mockCreateSubscription).toHaveBeenCalledWith('cust2', priceId);
+    expect(mockCreateSubscription).toHaveBeenCalledWith('cust2', priceId, undefined);
     expect(mockDbCreate).toHaveBeenCalledWith({
       customerId: 'cust2',
       plan: null,
@@ -74,6 +74,14 @@ describe('createSubscription API', () => {
       userId: 'u1',
     });
     expect(mockDbUpdate).toHaveBeenCalledWith(user.id, expect.any(Object));
+  });
+
+  it('passes cancelInvoices=true to billingService.createSubscription', async () => {
+    mockDbFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
+    mockCreateSubscription.mockResolvedValue({ clientSecret: 'secret_free' });
+    const res = await createSubscription(mockRequest({ priceId, cancelInvoices: true }), user);
+    expect(res.status).toBe(HTTP_STATUS.OK);
+    expect(mockCreateSubscription).toHaveBeenCalledWith('cust1', priceId, true);
   });
 
   it('returns 500 if db update fails after subscription', async () => {
