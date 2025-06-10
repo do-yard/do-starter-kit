@@ -26,10 +26,7 @@ export const updateUserProfile = async (
     const dbUser = await db.user.findById(user.id);
 
     if (!dbUser) {
-      return NextResponse.json(
-        { error: "User doesn't exist" },
-        { status: HTTP_STATUS.BAD_REQUEST }
-      );
+      return NextResponse.json({ error: "User doesn't exist" }, { status: HTTP_STATUS.NOT_FOUND });
     }
 
     if (file) {
@@ -84,6 +81,9 @@ export const updateUserProfile = async (
       'Profile update error:',
       error instanceof Error ? `${error.name}: ${error.message}` : error
     );
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 };

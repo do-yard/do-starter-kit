@@ -29,6 +29,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
+import { USER_ROLES } from 'lib/auth/roles';
 
 interface SidebarLinkProps {
   href: string;
@@ -111,7 +112,7 @@ const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
 
       <Box sx={{ p: 2 }}>
         <List sx={{ p: 0 }}>
-          {session?.user?.role === 'ADMIN' && (
+          {session?.user?.role === USER_ROLES.ADMIN && (
             <SidebarLink
               href="/admin/dashboard"
               icon={<Assessment fontSize="small" />}

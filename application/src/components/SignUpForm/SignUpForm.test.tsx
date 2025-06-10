@@ -1,9 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SignUpForm from './SignUpForm';
-import { signIn } from 'next-auth/react';
 import React from 'react';
-import { UserAlreadyExistsError } from 'lib/auth/errors';
 
 jest.mock('next/link', () => ({
   __esModule: true,
@@ -15,10 +13,6 @@ jest.mock('hooks/navigation', () => ({
   useNavigating: () => ({ setNavigating: jest.fn() }),
 }));
 
-jest.mock('next-auth/react', () => ({
-  signIn: jest.fn(),
-}));
-
 describe('SignUpForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -26,54 +20,52 @@ describe('SignUpForm', () => {
 
   it('renders all inputs', () => {
     render(<SignUpForm />);
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
+    expect(screen.getByTestId('signup-email-input')).toBeInTheDocument();
+    expect(screen.getByTestId('signup-password-input')).toBeInTheDocument();
+    expect(screen.getByTestId('signup-confirm-password-input')).toBeInTheDocument();
   });
 
   it('shows error if passwords do not match', async () => {
     render(<SignUpForm />);
-    await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');
-    await userEvent.type(screen.getByLabelText(/^password$/i), '123456');
-    await userEvent.type(screen.getByLabelText(/confirm password/i), '654321');
+    await userEvent.type(screen.getByTestId('signup-email-input'), 'test@example.com');
+    await userEvent.type(screen.getByTestId('signup-password-input'), '123456');
+    await userEvent.type(screen.getByTestId('signup-confirm-password-input'), '654321');
 
     fireEvent.submit(screen.getByTestId('signup-form'));
 
     expect(await screen.findByText(/passwords do not match/i)).toBeInTheDocument();
-    expect(signIn).not.toHaveBeenCalled();
   });
 
-  it('submits and calls signIn with correct data', async () => {
-    const mockSignIn = signIn as jest.Mock;
-    mockSignIn.mockResolvedValue({ ok: true });
+  it('submits and calls the signup API with correct data', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({}),
+    }) as unknown as jest.Mock;
 
     render(<SignUpForm />);
-    await userEvent.type(screen.getByLabelText(/email/i), 'user@example.com');
-    await userEvent.type(screen.getByLabelText(/^password$/i), 'securepass');
-    await userEvent.type(screen.getByLabelText(/confirm password/i), 'securepass');
+    await userEvent.type(screen.getByTestId('signup-email-input'), 'user@example.com');
+    await userEvent.type(screen.getByTestId('signup-password-input'), 'securepass');
+    await userEvent.type(screen.getByTestId('signup-confirm-password-input'), 'securepass');
 
     fireEvent.submit(screen.getByTestId('signup-form'));
 
     await waitFor(() => {
-      expect(mockSignIn).toHaveBeenCalledWith('credentials', {
-        redirect: false,
-        email: 'user@example.com',
-        password: 'securepass',
-        name: 'USER',
-        isSignUp: 'true',
-      });
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/auth/signup',
+        expect.objectContaining({
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'user@example.com', password: 'securepass', name: 'USER' }),
+        })
+      );
     });
   });
 
-  it('shows error message if signIn fails', async () => {
-    const mockSignIn = signIn as jest.Mock;
-    const errorInstance = new UserAlreadyExistsError();
-
-    mockSignIn.mockResolvedValue({
+  it('shows error message if signup fails', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
       ok: false,
-      error: true,
-      code: errorInstance.code,
-    });
+      json: async () => ({ error: 'User already exists' }),
+    }) as unknown as jest.Mock;
 
     render(<SignUpForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'exists@example.com');

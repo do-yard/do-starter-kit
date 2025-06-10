@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
 import Link from 'next/link';
 import FormButton from 'components/FormButton/FormButton';
-import { signIn } from 'next-auth/react';
-import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
+import { useNavigating } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
@@ -14,17 +13,18 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
  * Includes password validation, Auth.js integration and error handling.
  */
 const SignUpForm: React.FC = () => {
-  const { navigate } = usePrefetchRouter();
   const { setNavigating } = useNavigating();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccess(null);
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
@@ -32,20 +32,23 @@ const SignUpForm: React.FC = () => {
     }
 
     setNavigating(true);
-    const res = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-      name: USER_ROLES.USER,
-      isSignUp: 'true',
-    });
-
-    setNavigating(false);
-    if (!res || res.error) {
-      setError(res?.code || 'Something went wrong');
-    } else if (res.ok) {
-      navigate('/');
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, name: USER_ROLES.USER }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setError(data.error || 'Something went wrong');
+      } else {
+        setSuccess('Email verification sent. Check your inbox.');
+      }
+    } catch (err) {
+      console.error('Signup error:', err);
+      setError('Something went wrong during signup. Please try again later.');
     }
+    setNavigating(false);
   };
 
   return (
@@ -58,7 +61,7 @@ const SignUpForm: React.FC = () => {
         alignItems="center"
         bgcolor="#f3f4f6"
       >
-        <Card variant="outlined" sx={{ width: '100%', maxWidth: 400 }}>
+        <Card sx={{ width: '100%', maxWidth: 400 }}>
           <Box display="flex" flexDirection="column" gap={1.5} p={3}>
             <Typography fontWeight="bold" variant="h5">
               Sign Up
@@ -84,6 +87,7 @@ const SignUpForm: React.FC = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     fullWidth
                     size="small"
+                    inputProps={{ 'data-testid': 'signup-email-input' }}
                   />
                 </Box>
 
@@ -100,6 +104,7 @@ const SignUpForm: React.FC = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     fullWidth
                     size="small"
+                    inputProps={{ 'data-testid': 'signup-password-input' }}
                   />
                 </Box>
 
@@ -116,13 +121,18 @@ const SignUpForm: React.FC = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     fullWidth
                     size="small"
+                    inputProps={{ 'data-testid': 'signup-confirm-password-input' }}
                   />
                 </Box>
               </Box>
-
               {error && (
-                <Typography color="error" fontSize={14} mt={2}>
+                <Typography color="error" fontSize={14} mt={2} data-testid="signup-error-message">
                   {error}
+                </Typography>
+              )}
+              {success && (
+                <Typography color="success" fontSize={14} mt={2}>
+                  {success}
                 </Typography>
               )}
 

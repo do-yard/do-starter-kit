@@ -7,7 +7,7 @@ jest.mock('services/database/databaseFactory', () => ({
   createDatabaseService: jest.fn(),
 }));
 
-import { createDatabaseService } from 'services/database/databaseFactory';
+import { createDatabaseClient } from 'services/database/database';
 
 type MockDbClient = {
   user: {
@@ -70,7 +70,7 @@ describe('updateUser', () => {
       name: 'New',
       role: USER_ROLES.ADMIN,
     });
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     const json = await res.json();
     expect(json).toEqual({ user: updatedUser });
   });
