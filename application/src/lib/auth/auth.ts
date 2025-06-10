@@ -20,7 +20,6 @@ class InvalidCredentialsError extends CredentialsSignin {
   }
 }
 
-
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
 };
