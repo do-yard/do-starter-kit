@@ -7,6 +7,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import HomeIcon from '@mui/icons-material/Home';
 import ConfigurableServiceCard from './ConfigurableServiceCard';
+import { timeAgo } from './helper';
 
 interface ServiceStatus {
   name: string;
@@ -112,7 +113,7 @@ const SystemStatusPage: React.FC = () => {
           </Typography>
           {systemInfo?.lastHealthCheck && (
             <Typography variant="caption" color="text.secondary">
-              Last checked: {new Date(systemInfo.lastHealthCheck).toLocaleString()}
+              Last checked: {timeAgo(new Date(systemInfo.lastHealthCheck))}
             </Typography>
           )}
         </Stack>
