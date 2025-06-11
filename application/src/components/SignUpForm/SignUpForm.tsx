@@ -7,8 +7,6 @@ import FormButton from 'components/FormButton/FormButton';
 import { useNavigating } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { StripeClient } from 'lib/api/stripe';
-import { serverConfig } from '../../../settings';
 
 /**
  * User registration form.
@@ -45,9 +43,6 @@ const SignUpForm: React.FC = () => {
         setError(data.error || 'Something went wrong');
       } else {
         setSuccess('Email verification sent. Check your inbox.');
-
-        const billingApi = new StripeClient();
-        await billingApi.createSubscription(serverConfig.Stripe.freePriceId!);
       }
     } catch (err) {
       console.error('Signup error:', err);

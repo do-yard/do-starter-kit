@@ -16,9 +16,7 @@ export interface ServerConfig {
   };
   Stripe: {
     stripeSecretKey?: string;
-    freeProductId?: string;
     freePriceId?: string;
-    proProductId?: string;
     proPriceId?: string;
     proGiftPriceId?: string;
     webhookSecret?: string;
@@ -43,9 +41,7 @@ export const serverConfig: ServerConfig = {
   },
   Stripe: {
     stripeSecretKey: process.env.STRIPE_SECRET_KEY,
-    freeProductId: process.env.STRIPE_FREE_PRODUCT_ID,
     freePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
-    proProductId: process.env.STRIPE_PRO_PRODUCT_ID,
     proPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
     proGiftPriceId: process.env.STRIPE_PRO_GIFT_PRICE_ID,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
