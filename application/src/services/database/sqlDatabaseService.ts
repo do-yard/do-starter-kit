@@ -113,4 +113,24 @@ export class SqlDatabaseService implements DatabaseClient {
       await prisma.note.delete({ where: { id } });
     },
   };
+  verificationToken = {
+    create: async (data: { identifier: string; token: string; expires: Date }) => {
+      await prisma.verificationToken.create({ data });
+    },
+    find: async (identifier: string, token: string) => {
+      return prisma.verificationToken.findUnique({
+        where: { identifier_token: { identifier, token } },
+      });
+    },
+    delete: async (identifier: string, token: string) => {
+      await prisma.verificationToken.delete({
+        where: { identifier_token: { identifier, token } },
+      });
+    },
+    deleteExpired: async (now: Date) => {
+      await prisma.verificationToken.deleteMany({
+        where: { expires: { lt: now } },
+      });
+    },
+  };
 }

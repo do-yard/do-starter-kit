@@ -42,6 +42,14 @@ model Note {
   createdAt  DateTime @default(now())
 }
 
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
 enum Role {
   USER
   ADMIN
