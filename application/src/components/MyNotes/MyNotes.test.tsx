@@ -24,7 +24,7 @@ jest.mock('lib/api/notes', () => {
   return {
     Note: jest.requireActual('lib/api/notes').Note,
     NotesApiClient: jest.fn().mockImplementation(() => ({
-      getNotes: jest.fn().mockResolvedValue(mockNotes),
+      getNotes: jest.fn().mockResolvedValue({ notes: mockNotes, total: mockNotes.length }),
       createNote: jest.fn().mockImplementation((data) =>
         Promise.resolve({
           id: '3',
