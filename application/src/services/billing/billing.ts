@@ -22,11 +22,10 @@ export interface BillingService {
     itemId: string,
     priceId: string
   ) => Promise<{ clientSecret: string | undefined }>;
-  checkout: (
+  manageSubscription: (
     priceId: string,
     customerId: string,
-    successUrl: string,
-    cancelUrl: string
+    returnUrl: string
   ) => Promise<string | null>;
   getProducts: () => Promise<
     {

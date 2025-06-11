@@ -1,10 +1,9 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { HTTP_STATUS } from 'lib/api/http';
 import { checkout } from './checkout';
 import { NextRequest } from 'next/server';
 
 const mockFindByUserId = jest.fn();
-const mockCheckout = jest.fn();
+const mockManageSubscription = jest.fn();
 
 jest.mock('services/database/database', () => ({
   createDatabaseClient: () => ({
@@ -13,9 +12,10 @@ jest.mock('services/database/database', () => ({
     },
   }),
 }));
+
 jest.mock('services/billing/billing', () => ({
   createBillingService: () => ({
-    checkout: mockCheckout,
+    manageSubscription: mockManageSubscription,
   }),
 }));
 
@@ -36,7 +36,7 @@ jest.mock('../../../../../settings', () => ({
 
 describe('checkout', () => {
   const user = { id: 'u1', role: 'user', email: 'test@example.com' };
-  function mockNextRequest(body: any = {}) {
+  function mockNextRequest(body: unknown = {}) {
     return { json: jest.fn().mockResolvedValue(body) } as unknown as NextRequest;
   }
   beforeEach(() => {
@@ -59,9 +59,9 @@ describe('checkout', () => {
     expect(await res.json()).toEqual({ error: 'No subscription found' });
   });
 
-  it('returns 500 if billingService.checkout fails', async () => {
+  it('returns 500 if billingService.manageSubscription fails', async () => {
     mockFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
-    mockCheckout.mockResolvedValue(undefined);
+    mockManageSubscription.mockResolvedValue(undefined);
     const res = await checkout(mockNextRequest(), user);
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'Internal Server Error' });
@@ -69,9 +69,9 @@ describe('checkout', () => {
 
   it('returns 200 and url on success', async () => {
     mockFindByUserId.mockResolvedValue([{ customerId: 'cust1' }]);
-    mockCheckout.mockResolvedValue('http://checkout-url');
+    mockManageSubscription.mockResolvedValue('http://portal-url');
     const res = await checkout(mockNextRequest(), user);
     expect(res.status).toBe(HTTP_STATUS.OK);
-    expect(await res.json()).toEqual({ url: 'http://checkout-url' });
+    expect(await res.json()).toEqual({ url: 'http://portal-url' });
   });
 });

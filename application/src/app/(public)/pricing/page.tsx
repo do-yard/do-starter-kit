@@ -64,7 +64,7 @@ export default async function PricingPage() {
                 variant="contained"
                 fullWidth
                 component={Link}
-                href="/login"
+                href="/signup"
                 sx={{
                   mt: 2,
                   bgcolor: 'black',
