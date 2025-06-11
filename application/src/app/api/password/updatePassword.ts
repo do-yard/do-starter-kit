@@ -1,4 +1,4 @@
-import { createDatabaseClient } from 'services/database/database';
+import {} from 'services/database/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { hashPassword, verifyPassword } from 'helpers/hash';
 import { HTTP_STATUS } from 'lib/api/http';
@@ -10,8 +10,9 @@ import {
   UserDoesNotExistError,
   IncorrectCurrentPasswordError,
 } from 'lib/auth/errors';
-import { createEmailClient } from 'services/email/email';
 import { emailTemplate } from 'services/email/emailTemplate';
+import { createDatabaseService } from 'services/database/databaseFactory';
+import { createEmailService } from 'services/email/emailFactory';
 
 /**
  * Updates the user's password.
@@ -56,7 +57,7 @@ export const updatePassword = async (
       );
     }
 
-    const db = createDatabaseClient();
+    const db = await createDatabaseService();
     const dbUser = await db.user.findById(user.id);
 
     if (!dbUser) {
@@ -80,7 +81,7 @@ export const updatePassword = async (
     await db.user.update(dbUser.id, dbUser);
 
     try {
-      const emailClient = createEmailClient();
+      const emailClient = await createEmailService();
       await emailClient.sendEmail(
         dbUser.email,
         'Your password has been updated',

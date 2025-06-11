@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Create a new note
@@ -23,7 +23,7 @@ export const createNote = async (
       );
     }
 
-    const dbClient = createDatabaseClient();
+    const dbClient = await createDatabaseService();
 
     const note = await dbClient.note.create({
       userId,
