@@ -11,6 +11,8 @@ export class ResendEmailService extends EmailService {
   private fromEmail: string = '';
   private isConfigured: boolean = false;
   private lastConnectionError: string = '';
+  private description: string =
+    'The following features are impacted: email verification (signup), password reset email confirmation';
 
   // Service name for consistent display across all status responses
   private static readonly serviceName = 'Email Service (Resend)';
@@ -122,6 +124,7 @@ export class ResendEmailService extends EmailService {
         connected: undefined, // Don't test connection when configuration is missing
         configToReview: missingConfig,
         error: 'Configuration missing',
+        description: this.description,
       };
     }
 
@@ -136,6 +139,7 @@ export class ResendEmailService extends EmailService {
           (config) => config.envVar
         ),
         error: this.lastConnectionError || 'Connection failed',
+        description: this.description,
       };
     }
     return {

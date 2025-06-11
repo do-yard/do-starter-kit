@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, Typography, Alert, Chip, Stack } from '@mui/material';
+import { Card, CardContent, Typography, Alert, Chip, Stack, Divider } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import HelpIcon from '@mui/icons-material/Help';
@@ -11,6 +11,7 @@ interface ServiceStatus {
   required: boolean;
   error?: string;
   configToReview?: string[];
+  description?: string;
 }
 
 interface ConfigurableServiceCardProps {
@@ -75,7 +76,13 @@ const ConfigurableServiceCard: React.FC<ConfigurableServiceCardProps> = ({ servi
             <Typography>Connection: {getConnectionStatus()}</Typography>
           </Stack>
 
-          {service.error && <Alert severity={getErrorSeverity()}>{getErrorMessage()}</Alert>}
+          {service.error && (
+            <Alert severity={getErrorSeverity()}>
+              {getErrorMessage()}
+              <Divider sx={{ marginY: 1 }} />
+              {service.description}
+            </Alert>
+          )}
         </Stack>
       </CardContent>
     </Card>

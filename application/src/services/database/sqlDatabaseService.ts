@@ -10,6 +10,8 @@ import { ServiceConfigStatus } from '../status/serviceConfigStatus';
 export class SqlDatabaseService extends DatabaseClient {
   // Service name for consistent display across all status responses
   private static readonly serviceName = 'Database (PostgreSQL)';
+  private description: string =
+    'The following features are impacted: overall app functionality, user, subscription and notes management';
 
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
@@ -184,6 +186,7 @@ export class SqlDatabaseService extends DatabaseClient {
         connected: undefined, // Don't test connection when configuration is missing
         configToReview: ['DATABASE_URL'],
         error: 'Configuration missing',
+        description: this.description,
       };
     }
 
@@ -196,6 +199,7 @@ export class SqlDatabaseService extends DatabaseClient {
         connected: false,
         configToReview: ['DATABASE_URL'],
         error: this.lastConnectionError || 'Connection failed',
+        description: this.description,
       };
     }
     return {

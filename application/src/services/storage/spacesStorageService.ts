@@ -19,6 +19,7 @@ export class SpacesStorageService extends StorageService {
   private isConfigured: boolean = false;
   private configError: string = '';
   private lastConnectionError: string = '';
+  private description: string = 'The following features are impacted: profile picture upload';
 
   // Service name for consistent display across all status responses
   private static readonly serviceName = 'Storage (DigitalOcean Spaces)';
@@ -178,6 +179,7 @@ export class SpacesStorageService extends StorageService {
         connected: undefined, // Don't test connection when configuration is missing
         configToReview: missingConfig,
         error: 'Configuration missing',
+        description: this.description,
       };
     }
 
@@ -192,6 +194,7 @@ export class SpacesStorageService extends StorageService {
           (config) => config.envVar
         ),
         error: this.lastConnectionError || 'Connection failed',
+        description: this.description,
       };
     }
 

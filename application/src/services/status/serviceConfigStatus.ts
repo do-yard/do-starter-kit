@@ -14,6 +14,7 @@ export interface ServiceConfigStatus {
   connected?: boolean; // true if connection to the service was successful
   configToReview?: string[]; // if there was a missing setting, add it here, if the connection failed add all the required settings here
   error?: string; // Configuration missing or Connection failed
+  description?: string; // Service usage description
 }
 
 /**
