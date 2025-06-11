@@ -112,18 +112,34 @@ export class StripeBillingService implements BillingService {
     };
   }
 
-  async checkout(priceId: string, customerId: string, successUrl: string, cancelUrl: string) {
-    const session = await this.stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
-      success_url: successUrl,
-      cancel_url: cancelUrl,
+  async manageSubscription(priceId: string, customerId: string, returnUrl: string) {
+    const result = await this.stripe.subscriptions.list({
       customer: customerId,
+      limit: 1,
+    });
+
+    const subscription = result.data.map((subscription) => ({
+      id: subscription.id,
+      items: subscription.items.data.map((item) => ({ id: item.id, priceId: item.price.id })),
+    }));
+
+    const session = await this.stripe.billingPortal.sessions.create({
+      customer: customerId,
+      configuration: serverConfig.Stripe.portalConfigId,
+      flow_data: {
+        type: 'subscription_update_confirm',
+        subscription_update_confirm: {
+          subscription: subscription[0].id,
+          items: [
+            {
+              id: subscription[0].items[0].id,
+              price: priceId,
+              quantity: 1,
+            },
+          ],
+        },
+      },
+      return_url: returnUrl,
     });
 
     return session.url;
