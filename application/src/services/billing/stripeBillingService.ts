@@ -184,4 +184,14 @@ export class StripeBillingService implements BillingService {
 
     return plans;
   }
+
+  async setInvoicesActive(subscriptionId: string, active: boolean) {
+    if (active) {
+      await this.stripe.subscriptions.update(subscriptionId, { pause_collection: '' });
+    } else {
+      await this.stripe.subscriptions.update(subscriptionId, {
+        pause_collection: { behavior: 'keep_as_draft' },
+      });
+    }
+  }
 }

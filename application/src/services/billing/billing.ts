@@ -37,6 +37,7 @@ export interface BillingService {
       features: string[];
     }[]
   >;
+  setInvoicesActive: (customerId: string, active: boolean) => Promise<void>;
 }
 
 /**

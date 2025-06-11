@@ -2,6 +2,7 @@
 import { createDatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { serverConfig } from '../../../../settings';
+import { StripeBillingService } from 'services/billing/stripeBillingService'; // Ajusta el import según tu estructura
 
 const PLAN_MAP: Record<string, SubscriptionPlanEnum> = {
   [serverConfig.Stripe.proPriceId!]: SubscriptionPlanEnum.PRO,
@@ -16,8 +17,10 @@ const PLAN_MAP: Record<string, SubscriptionPlanEnum> = {
  * @throws Will throw an error if customer ID is not provided.
  */
 export const handleSubscriptionUpdated = async (json: any) => {
-  const customerId = json.data.object.customer;
-  const priceId = json.data.object.items.data[0].price.id;
+  const subscription = json.data.object;
+  const customerId = subscription.customer;
+  const priceId = subscription.items.data[0].price.id;
+  const subscriptionId = subscription.id;
 
   if (!customerId || !priceId) {
     throw new Error(`Invalid event payload: missing ${!customerId ? 'customer' : 'price'} ID`);
@@ -28,6 +31,9 @@ export const handleSubscriptionUpdated = async (json: any) => {
     console.warn(`⚠️ Ignoring unknown price ID: ${priceId}`);
     return;
   }
+
+  const billingService = new StripeBillingService();
+  await billingService.setInvoicesActive(subscriptionId, plan === SubscriptionPlanEnum.PRO);
 
   const db = createDatabaseClient();
 

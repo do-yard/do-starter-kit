@@ -33,7 +33,7 @@ const createSubscription = async (db: DatabaseClient, user: User) => {
     });
   }
 
-  await billingService.createSubscription(customerId, serverConfig.Stripe.freePriceId);
+  await billingService.createSubscription(customerId, serverConfig.Stripe.freePriceId, true);
 
   await db.subscription.update(user.id, {
     status: SubscriptionStatusEnum.PENDING,

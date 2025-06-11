@@ -2,23 +2,38 @@ import { handleSubscriptionUpdated } from './handleSubscriptionUpdated';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import * as dbModule from 'services/database/database';
 
+// Mocks para base de datos
 jest.mock('services/database/database', () => ({
   createDatabaseClient: jest.fn(),
 }));
 
 const mockUpdateByCustomerId = jest.fn();
 
-beforeEach(() => {
-  jest.clearAllMocks();
-  (dbModule.createDatabaseClient as jest.Mock).mockReturnValue({
-    subscription: { updateByCustomerId: mockUpdateByCustomerId },
-  });
+// Mock de StripeBillingService y su método setInvoicesActive
+jest.mock('services/billing/stripeBillingService', () => ({
+  StripeBillingService: jest.fn().mockImplementation(() => ({
+    setInvoicesActive: jest.fn().mockResolvedValue(undefined),
+  })),
+}));
+
+// Mock global de Stripe SDK para evitar requests reales
+jest.mock('stripe', () => {
+  return jest.fn().mockImplementation(() => ({
+    subscriptions: {
+      update: jest.fn().mockResolvedValue({}),
+    },
+  }));
 });
 
-// Helper to build minimal Stripe event
-const makeEvent = (customer: unknown, priceId: unknown) => ({
+// Helper para crear eventos de prueba
+const makeEvent = (
+  customer: string | undefined,
+  priceId: string | undefined,
+  subscriptionId = 'sub_123'
+) => ({
   data: {
     object: {
+      id: subscriptionId,
       customer,
       items: { data: [{ price: { id: priceId } }] },
     },
@@ -33,9 +48,17 @@ jest.mock('../../../../settings', () => ({
     Stripe: {
       proPriceId: 'pro_price_id',
       freePriceId: 'free_price_id',
+      stripeSecretKey: 'sk_test_123',
     },
   },
 }));
+
+beforeEach(() => {
+  jest.clearAllMocks();
+  (dbModule.createDatabaseClient as jest.Mock).mockReturnValue({
+    subscription: { updateByCustomerId: mockUpdateByCustomerId },
+  });
+});
 
 describe('handleSubscriptionUpdated', () => {
   it('sets plan to PRO if price matches proPriceId', async () => {
