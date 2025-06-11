@@ -16,11 +16,23 @@ export const getAllNotes = async (
     const userId = user.id;
     const dbClient = createDatabaseClient();
 
-    const notes = await dbClient.note.findByUserId(userId);
+    // Parse pagination params
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const pageSize = parseInt(searchParams.get('pageSize') || '10', 10);
 
-    return NextResponse.json(notes, { status: HTTP_STATUS.OK });
-  } catch (error) {
-    console.error('Error fetching notes:', error);
+    // Get all notes for the user
+    const allNotes = await dbClient.note.findByUserId(userId);
+    const total = allNotes.length;
+
+    // Paginate
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const notes = allNotes.slice(start, end);
+
+    // Return both notes and total count
+    return NextResponse.json({ notes, total }, { status: HTTP_STATUS.OK });
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch notes' },
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }

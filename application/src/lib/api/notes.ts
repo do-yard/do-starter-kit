@@ -16,6 +16,11 @@ export interface UpdateNoteData {
   content?: string;
 }
 
+export interface PaginatedNotes {
+  notes: Note[];
+  total: number;
+}
+
 /**
  * API client for managing notes
  * This client provides methods to interact with the notes API, including fetching, creating, updating, and deleting notes.
@@ -24,8 +29,15 @@ export class NotesApiClient {
   constructor(private baseURL = '/api/notes') {}
 
   // Fetch all notes
-  async getNotes(): Promise<Note[]> {
-    const res = await fetch(`${this.baseURL}`);
+  async getNotes(params?: { page?: number; pageSize?: number }): Promise<PaginatedNotes> {
+    let url = `${this.baseURL}`;
+    if (params && (params.page || params.pageSize)) {
+      const query = new URLSearchParams();
+      if (params.page) query.append('page', params.page.toString());
+      if (params.pageSize) query.append('pageSize', params.pageSize.toString());
+      url += `?${query.toString()}`;
+    }
+    const res = await fetch(url);
     if (!res.ok) throw new Error('Failed to fetch notes');
     return res.json();
   }
