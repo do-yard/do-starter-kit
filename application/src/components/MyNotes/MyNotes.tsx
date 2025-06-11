@@ -212,13 +212,13 @@ const MyNotes: React.FC = () => {
         />
       )}
 
-      <Box display="flex" justifyContent="flex-end" alignItems="center" mt={2}>
+      <Box display="flex" justifyContent="flex-end" alignItems="center" mt={4}>
         <TextField
           select
           label="Rows per page"
           size="small"
           sx={{
-            minWidth: 40,
+            minWidth: 120,
             maxWidth: 120,
             mr: 2,
             '& .MuiFormLabel-root': { color: 'text.medium' },
