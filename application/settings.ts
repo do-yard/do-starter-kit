@@ -20,6 +20,7 @@ export interface ServerConfig {
     proPriceId?: string;
     proGiftPriceId?: string;
     webhookSecret?: string;
+    portalConfigId?: string;
   };
 }
 
@@ -45,5 +46,6 @@ export const serverConfig: ServerConfig = {
     proPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
     proGiftPriceId: process.env.STRIPE_PRO_GIFT_PRICE_ID,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    portalConfigId: process.env.STRIPE_PORTAL_CONFIG_ID,
   },
 };

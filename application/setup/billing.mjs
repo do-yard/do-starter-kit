@@ -121,7 +121,7 @@ async function createProductsAndPrices(stripe, productsConfig, featuresMap, stri
     created.products.push({ id: productId, plan: productConfig.plan, price: basePrice.id });
     created.prices.push(basePrice.id);
 
-    let envVarKey = `STRIPE_${productConfig.id.toUpperCase()}_PRICE_ID`;
+    let envVarKey = `NEXT_PUBLIC_STRIPE_${productConfig.id.toUpperCase()}_PRICE_ID`;
 
     priceEnvVars[envVarKey] = basePrice.id;
     if (productConfig.giftable) {
