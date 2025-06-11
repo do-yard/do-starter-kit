@@ -50,10 +50,7 @@ export const updatePassword = async (
     const dbUser = await db.user.findById(user.id);
 
     if (!dbUser) {
-      return NextResponse.json(
-        { error: "User doesn't exist" },
-        { status: HTTP_STATUS.NOT_FOUND }
-      );
+      return NextResponse.json({ error: "User doesn't exist" }, { status: HTTP_STATUS.NOT_FOUND });
     }
 
     const isValid = await verifyPassword(currentPassword as string, dbUser.passwordHash);
