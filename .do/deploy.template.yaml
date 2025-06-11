@@ -60,6 +60,8 @@ spec:
           value: ""
         - key: "STRIPE_PRO_GIFT_PRICE_ID"
           value: ""
+        - key: "STRIPE_PORTAL_CONFIG_ID"
+          value: ""
         - key: "RESEND_API_KEY"
           value: ""
           type: "SECRET"
