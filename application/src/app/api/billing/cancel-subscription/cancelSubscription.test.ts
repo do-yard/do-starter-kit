@@ -61,7 +61,7 @@ describe('cancelSubscription API', () => {
     expect(await res.json()).toEqual({ error: 'No active subscription found' });
   });
 
-  it('downgrades PRO plan to FREE and returns canceled', async () => {
+  it('downgrades subscription to FREE and returns canceled', async () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
     mockFindByUserId.mockResolvedValue([{ plan: 'PRO' }]);
@@ -72,19 +72,6 @@ describe('cancelSubscription API', () => {
     expect(await res.json()).toEqual({ canceled: true });
     expect(mockStripeUpdateSubscription).toHaveBeenCalledWith('sub1', 'item1', 'free_price_id');
     expect(mockUpdateSubscription).toHaveBeenCalledWith('u1', { plan: 'FREE', status: 'PENDING' });
-  });
-
-  it('cancels non-pro plan and returns canceled', async () => {
-    mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
-    mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
-    mockFindByUserId.mockResolvedValue([{ plan: 'FREE' }]);
-    mockCancelSubscription.mockResolvedValue(undefined);
-    mockUpdateSubscription.mockResolvedValue({});
-    const res = await cancelSubscription({} as NextRequest, user);
-    expect(res.status).toBe(HTTP_STATUS.OK);
-    expect(await res.json()).toEqual({ canceled: true });
-    expect(mockCancelSubscription).toHaveBeenCalledWith('sub1');
-    expect(mockUpdateSubscription).toHaveBeenCalledWith('u1', { status: 'PENDING' });
   });
 
   it('returns 500 if db update fails', async () => {

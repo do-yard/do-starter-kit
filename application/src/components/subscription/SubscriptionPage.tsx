@@ -8,7 +8,6 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
-import { serverConfig } from '../../../settings';
 
 /**
  * Main component for managing user subscriptions.
@@ -62,18 +61,6 @@ const Subscription = () => {
     }
   };
 
-  const handleSubscribeToFreePlan = async () => {
-    setLoading(true);
-    try {
-      await stripeApi.createSubscription(serverConfig.Stripe.freePriceId!);
-      await fetchSubscription();
-      setLoading(false);
-    } catch {
-      setError(`Failed to subscribe to ${SubscriptionPlanEnum.FREE} plan`);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchSubscription();
   }, []);
@@ -97,18 +84,20 @@ const Subscription = () => {
         Subscription
       </Typography>
 
-      {subscription?.plan && subscription?.status && subscription.status !== 'CANCELED' ? (
-        <Box display="flex" flexDirection="column" alignItems="flex-start">
-          <Typography mb={2}>
-            Subscription status: <strong>{subscription.status}</strong> (
-            {isProPlan
-              ? `${SubscriptionPlanEnum.PRO} Plan`
-              : isBasePlan
-                ? `${SubscriptionPlanEnum.FREE} Plan`
-                : 'No Plan'}
-            )
-          </Typography>
+      {subscription ? (
+        <Typography mb={2}>
+          Subscription status: <strong>{subscription.status}</strong> (
+          {isProPlan
+            ? `${SubscriptionPlanEnum.PRO} Plan`
+            : isBasePlan
+              ? `${SubscriptionPlanEnum.FREE} Plan`
+              : 'No Plan'}
+          )
+        </Typography>
+      ) : null}
 
+      {subscription?.plan && subscription?.status ? (
+        <Box display="flex" flexDirection="column" alignItems="flex-start">
           {isBasePlan && (
             <Button
               onClick={handleUpgradeToPro}
@@ -121,27 +110,20 @@ const Subscription = () => {
             </Button>
           )}
 
-          <Button
-            onClick={handleCancel}
-            disabled={loading}
-            variant="contained"
-            color="error"
-            sx={{ mt: 2, minWidth: 200 }}
-          >
-            Cancel Subscription
-          </Button>
+          {isProPlan && (
+            <Button
+              onClick={handleCancel}
+              disabled={loading}
+              variant="contained"
+              color="error"
+              sx={{ mt: 2, minWidth: 200 }}
+            >
+              Cancel Subscription
+            </Button>
+          )}
         </Box>
       ) : (
         <Box display={'flex'} flexDirection="column" alignItems="flex-start" mt={2}>
-          <Button
-            onClick={handleSubscribeToFreePlan}
-            disabled={loading}
-            variant="contained"
-            color="primary"
-            sx={{ mt: 2, minWidth: 200 }}
-          >
-            Subscribe to {SubscriptionPlanEnum.FREE} Plan
-          </Button>
           <Button
             onClick={handleUpgradeToPro}
             disabled={loading}
