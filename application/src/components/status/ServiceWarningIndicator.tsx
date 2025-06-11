@@ -72,6 +72,7 @@ const ServiceWarningIndicator: React.FC = () => {
   return (
     <Tooltip
       title={`${optionalIssuesCount} optional service${optionalIssuesCount !== 1 ? 's' : ''} have configuration issues. Click to view details.`}
+      data-testid="ServiceWarningIndicator"
     >
       <IconButton
         onClick={handleClick}
