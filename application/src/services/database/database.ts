@@ -40,6 +40,15 @@ export interface DatabaseClient {
     create: (note: Omit<Note, 'id' | 'createdAt'>) => Promise<Note>;
     update: (id: string, note: Partial<Omit<Note, 'id' | 'createdAt'>>) => Promise<Note>;
     delete: (id: string) => Promise<void>;
+    findMany: (args: {
+      where: Record<string, string | number>;
+      skip: number;
+      take: number;
+      orderBy: {
+        createdAt: 'desc' | 'asc';
+      };
+    }) => Promise<Note[]>;
+    count: (args: { where: Record<string, string | number> }) => Promise<number>;
   };
 }
 

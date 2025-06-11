@@ -22,13 +22,15 @@ export const getAllNotes = async (
     const pageSize = parseInt(searchParams.get('pageSize') || '10', 10);
 
     // Get all notes for the user
-    const allNotes = await dbClient.note.findByUserId(userId);
-    const total = allNotes.length;
-
-    // Paginate
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    const notes = allNotes.slice(start, end);
+    const [notes, total] = await Promise.all([
+      dbClient.note.findMany({
+        where: { userId },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        orderBy: { createdAt: 'desc' }, // or your preferred order
+      }),
+      dbClient.note.count({ where: { userId } }),
+    ]);
 
     // Return both notes and total count
     return NextResponse.json({ notes, total }, { status: HTTP_STATUS.OK });

@@ -1,6 +1,7 @@
 import { DatabaseClient } from './database';
 import { prisma } from '../../lib/prisma';
 import { Subscription, Note, User, UserWithSubscriptions } from 'types';
+import { Prisma } from '@prisma/client';
 
 /**
  * Service for interacting with the SQL database using Prisma.
@@ -111,6 +112,12 @@ export class SqlDatabaseService implements DatabaseClient {
     },
     delete: async (id: string): Promise<void> => {
       await prisma.note.delete({ where: { id } });
+    },
+    findMany: async (args: Prisma.NoteFindManyArgs) => {
+      return prisma.note.findMany(args);
+    },
+    count: async (args: Prisma.NoteCountArgs) => {
+      return prisma.note.count(args);
     },
   };
 }
