@@ -94,7 +94,6 @@ describe('upload picture should', () => {
     expect(json).toEqual({ error: 'File size must be 5MB or less' });
     expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
   });
-
   it('return error if upload fails', async () => {
     // auth is mocked as authenticated
     mockUploadFile.mockRejectedValueOnce(new Error('Upload failed'));
@@ -102,7 +101,7 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toEqual({ error: 'Internal server error' });
+    expect(json).toEqual({ error: 'Upload failed' });
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
 
@@ -130,7 +129,6 @@ describe('upload picture should', () => {
     expect(json).toEqual({ error: "User doesn't exist" });
     expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
   });
-
   it('return error if db update fails', async () => {
     // auth is mocked as authenticated
     mockUploadFile.mockResolvedValueOnce('mock-uuid.jpg');
@@ -140,10 +138,9 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toEqual({ error: 'Internal server error' });
+    expect(json).toEqual({ error: 'DB update failed' });
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
-
   it('return error if db delete fails', async () => {
     // auth is mocked as authenticated
     mockDeleteFile.mockRejectedValueOnce(new Error('DB update failed'));
@@ -151,7 +148,7 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toEqual({ error: 'Internal server error' });
+    expect(json).toEqual({ error: 'DB update failed' });
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
 
