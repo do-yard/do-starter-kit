@@ -1,105 +1,16 @@
 'use client';
 
-import { ThemeProvider, createTheme, ThemeOptions } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import React, { useMemo, useState, useContext, createContext, useEffect } from 'react';
-import IconButton from '@mui/material/IconButton';
-import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
+import { createThemeFromConfig } from './ThemeRegistry';
 
-export const typography = {
-  fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-  h1: {
-    fontSize: '2.5rem',
-    fontWeight: 700,
-    marginBottom: '16px',
-    color: '#fff',
-  },
-  h2: {
-    fontSize: '2rem',
-    fontWeight: 700,
-    marginBottom: '48px',
-    color: '#fff',
-  },
-  h3: {
-    fontSize: '1.75rem',
-    fontWeight: 500,
-  },
-  h4: {
-    fontSize: '1.5rem',
-    fontWeight: 500,
-  },
-  h5: {
-    fontSize: '1.25rem',
-    fontWeight: 600,
-  },
-  h6: {
-    fontSize: '1rem',
-    fontWeight: 500,
-  },
-  subtitle1: {
-    fontSize: '1.25rem',
-    marginBottom: '32px',
-    color: '#6b7280',
-  },
-};
-
-// Define component overrides
-export const components: ThemeOptions['components'] = {
-  MuiButton: {
-    defaultProps: {
-      disableElevation: true,
-      variant: 'outlined',
-    },
-    styleOverrides: {
-      contained: {
-        textTransform: 'none',
-        fontWeight: 600,
-        height: 44,
-        paddingLeft: 32,
-        paddingRight: 32,
-      },
-    },
-  },
-  MuiCard: {
-    defaultProps: {
-      variant: 'outlined',
-    },
-  },
-  MuiTextField: {
-    defaultProps: {
-      variant: 'outlined',
-    },
-  },
-  MuiPaper: {
-    defaultProps: {
-      variant: 'outlined',
-    },
-  },
-  MuiDialog: {
-    styleOverrides: {
-      root: ({ theme }) => ({
-        '& .MuiBackdrop-root': {
-          backgroundColor:
-            theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.5)',
-        },
-      }),
-    },
-  },
-  MuiBackdrop: {
-    styleOverrides: {
-      root: ({ theme }) => ({
-        backgroundColor:
-          theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.5)',
-      }),
-    },
-  },
-};
-
-// Theme context for mode switching
+// Theme context for mode and theme switching
 interface ThemeModeContextProps {
   mode: 'light' | 'dark';
   toggleMode: () => void;
+  currentTheme: string;
+  setCurrentTheme: (theme: string) => void;
 }
 const ThemeModeContext = createContext<ThemeModeContextProps | undefined>(undefined);
 
@@ -113,28 +24,20 @@ export function useThemeMode() {
 }
 
 /**
- * Theme toggle button component for switching between light and dark mode.
- */
-export function ThemeToggle() {
-  const { mode, toggleMode } = useThemeMode();
-  return (
-    <IconButton onClick={toggleMode} color="inherit" aria-label="Toggle dark/light mode">
-      {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
-    </IconButton>
-  );
-}
-
-/**
  * Provides the Material UI theme and color mode context to the application.
  */
 export default function MaterialThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<'light' | 'dark'>('light'); // Always start with 'light' for SSR
+  const [currentTheme, setCurrentTheme] = useState('default'); // Default theme
 
-  // On mount, sync mode with localStorage (SSR-safe)
+  // On mount, sync with localStorage (SSR-safe)
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('themeMode') as 'light' | 'dark' | null;
-      if (stored && stored !== mode) setMode(stored);
+      const storedMode = localStorage.getItem('themeMode') as 'light' | 'dark' | null;
+      const storedTheme = localStorage.getItem('currentTheme') || 'default';
+
+      if (storedMode && storedMode !== mode) setMode(storedMode);
+      if (storedTheme !== currentTheme) setCurrentTheme(storedTheme);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -143,38 +46,30 @@ export default function MaterialThemeProvider({ children }: { children: React.Re
     setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
   };
 
+  const handleSetCurrentTheme = (theme: string) => {
+    setCurrentTheme(theme);
+  };
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('themeMode', mode);
+      localStorage.setItem('currentTheme', currentTheme);
     }
-  }, [mode]);
-  const palette = useMemo(
-    () => ({
-      mode: mode,
-      primary: {
-        main: '#0061EB',
-      },
-      backdrop: {
-        // Custom backdrop colors for consistent theming
-        light: 'rgba(0, 0, 0, 0.5)',
-        dark: 'rgba(255, 255, 255, 0.2)',
-      },
-    }),
-    [mode]
-  );
+  }, [mode, currentTheme]);
+  const theme = useMemo(() => {
+    return createThemeFromConfig(currentTheme, mode);
+  }, [currentTheme, mode]);
+
   return (
-    <ThemeModeContext.Provider value={{ mode, toggleMode }}>
-      <ThemeProvider
-        theme={useMemo(
-          () =>
-            createTheme({
-              palette,
-              typography: typography as ThemeOptions['typography'],
-              components: components as ThemeOptions['components'],
-            }),
-          [palette]
-        )}
-      >
+    <ThemeModeContext.Provider
+      value={{
+        mode,
+        toggleMode,
+        currentTheme,
+        setCurrentTheme: handleSetCurrentTheme,
+      }}
+    >
+      <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}
       </ThemeProvider>

@@ -3,7 +3,7 @@
 import { Box } from '@mui/material';
 import NavBar from 'components/NavBar/NavBar';
 import Footer from 'components/Footer/Footer';
-import MaterialLightThemeProvider from 'components/Theme/LightTheme';
+import PublicThemeProvider from 'components/Theme/PublicThemeProvider';
 import { useNavigating } from 'hooks/navigation';
 import { useEffect } from 'react';
 
@@ -19,9 +19,8 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     setNavigating(false);
   }, [setNavigating]);
-
   return (
-    <MaterialLightThemeProvider>
+    <PublicThemeProvider>
       <Box display="flex" flexDirection="column" minHeight="100vh">
         <NavBar />
         <Box component="main" flexGrow={1}>
@@ -29,7 +28,7 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
         </Box>
         <Footer />
       </Box>
-    </MaterialLightThemeProvider>
+    </PublicThemeProvider>
   );
 };
 

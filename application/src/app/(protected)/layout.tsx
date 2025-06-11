@@ -2,7 +2,8 @@
 
 import { Box } from '@mui/material';
 import Sidebar from 'components/Sidebar/Sidebar';
-import MaterialThemeProvider, { ThemeToggle } from 'components/Theme/Theme';
+import MaterialThemeProvider from 'components/Theme/Theme';
+import { ThemePicker } from 'components/Theme/ThemePicker';
 import { useNavigating } from 'hooks/navigation';
 import { useEffect } from 'react';
 
@@ -30,9 +31,9 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
             overflowY: 'auto',
             position: 'relative',
           }}
-        >
-          <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
-            <ThemeToggle />
+        >          
+        <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
+            <ThemePicker />
           </Box>
           {children}
         </Box>
