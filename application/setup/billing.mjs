@@ -65,8 +65,13 @@ async function createFeatures(stripe, featuresConfig) {
     } catch (err) {
       if (err?.raw?.type === 'invalid_request_error' && err?.raw?.message?.includes('lookup_key')) {
         try {
-          const existing = await stripe.entitlements.features.retrieve(feat.key);
+          const { data } = await stripe.entitlements.features.list({ limit: 100 });
+          const existing = data.find((f) => f.lookup_key === feat.key);
+          if (!existing) {
+            throw new Error(`Feature "${feat.name}" not found after conflict.`);
+          }
           createdFeatures.set(feat.key, existing.id);
+          created.features.push(existing.id);
           console.log(`✅ Feature "${feat.name}" already exists.`);
         } catch (retrieveErr) {
           console.error(`❌ Failed to retrieve existing feature "${feat.name}"`);
@@ -87,14 +92,13 @@ async function createProductsAndPrices(stripe, productsConfig, featuresMap, stri
 
   for (const productConfig of productsConfig) {
     console.log(`🛒 Creating product "${productConfig.name}"...`);
-
-    let product;
+    let productId;
     try {
-      product = await stripe.products.create({
+      const product = await stripe.products.create({
         name: productConfig.name,
         description: productConfig.description,
       });
-      created.products.push(product.id);
+      productId = product.id;
     } catch (err) {
       if (err?.raw?.code === 'resource_already_exists') {
         console.log(`✅ Product "${productConfig.name}" already exists.`);
@@ -102,7 +106,7 @@ async function createProductsAndPrices(stripe, productsConfig, featuresMap, stri
           (p) => p.name === productConfig.name
         );
         if (!existing) throw new Error(`Product "${productConfig.name}" not found after conflict.`);
-        product = existing;
+        productId = existing.id;
       } else {
         throw err;
       }
@@ -112,23 +116,24 @@ async function createProductsAndPrices(stripe, productsConfig, featuresMap, stri
       unit_amount: productConfig.price,
       currency: productConfig.currency,
       recurring: { interval: productConfig.interval },
-      product: product.id,
+      product: productId,
     });
+    created.products.push({ id: productId, plan: productConfig.plan, price: basePrice.id });
     created.prices.push(basePrice.id);
 
-    if (productConfig.id === 'FREE') {
-      priceEnvVars.STRIPE_FREE_PRICE_ID = basePrice.id;
-    } else if (productConfig.id === 'PRO') {
-      priceEnvVars.STRIPE_PRO_PRICE_ID = basePrice.id;
+    let envVarKey = `STRIPE_${productConfig.id.toUpperCase()}_PRICE_ID`;
 
+    priceEnvVars[envVarKey] = basePrice.id;
+    if (productConfig.giftable) {
       const giftPrice = await stripe.prices.create({
         unit_amount: 0,
         currency: productConfig.currency,
         recurring: { interval: productConfig.interval },
-        product: product.id,
+        product: productId,
       });
       created.prices.push(giftPrice.id);
-      priceEnvVars.STRIPE_GIFT_PRICE_ID = giftPrice.id;
+      let giftEnvVarKey = `STRIPE_${productConfig.id.toUpperCase()}_GIFT_PRICE_ID`;
+      priceEnvVars[giftEnvVarKey] = giftPrice.id;
     }
 
     for (const featKey of productConfig.features) {
@@ -139,50 +144,44 @@ async function createProductsAndPrices(stripe, productsConfig, featuresMap, stri
       }
 
       console.log(`🔗 Attaching feature "${featKey}" to "${productConfig.name}"...`);
-      await attachFeatureToProduct(
-        stripeSecret,
-        product.id,
-        featureId,
-        productConfig.name,
-        featKey
-      );
+      await attachFeatureToProduct(stripeSecret, productId, featureId, productConfig.name, featKey);
     }
   }
 
   return priceEnvVars;
 }
 
-async function configureBillingPortal(stripe, portalConfigId, priceEnvVars) {
-  await stripe.billingPortal.configurations.update(portalConfigId, {
+async function configureBillingPortal(stripe) {
+  // Create config with needed features
+  const portalConfig = await stripe.billingPortal.configurations.create({
+    business_profile: { headline: 'Saas Starter Kit' },
     features: {
+      subscription_cancel: { enabled: false },
+      payment_method_update: { enabled: true },
       subscription_update: {
         enabled: true,
         default_allowed_updates: ['price'],
-        products: [
-          {
-            product: created.products.find((p) => p.plan === 'FREE')?.id,
-            prices: [priceEnvVars.STRIPE_FREE_PRICE_ID],
-          },
-          {
-            product: created.products.find((p) => p.plan === 'PRO')?.id,
-            prices: [priceEnvVars.STRIPE_PRO_PRICE_ID],
-          },
-        ],
+        products: created.products.map((p) => ({
+          product: p.id,
+          prices: [p.price],
+        })),
       },
+      invoice_history: { enabled: true },
+      customer_update: { enabled: false },
     },
   });
-  console.log('✅ Billing Portal configured: FREE & PRO prices enabled for plan updates.');
+
+  console.log(`✅ Created Billing Portal config (${portalConfig.id})`);
+  return portalConfig.id;
 }
 
-function writeEnvFile(vars, stripeSecret) {
+function writeEnvFile(vars, stripeSecret, portalConfigId) {
   const lines = [
     `BILLING_PROVIDER=Stripe`,
     `STRIPE_SECRET_KEY=${stripeSecret}`,
-    `STRIPE_FREE_PRICE_ID=${vars.STRIPE_FREE_PRICE_ID ?? ''}`,
-    `STRIPE_PRO_PRICE_ID=${vars.STRIPE_PRO_PRICE_ID ?? ''}`,
-    `STRIPE_GIFT_PRICE_ID=${vars.STRIPE_GIFT_PRICE_ID ?? ''}`,
+    `STRIPE_PORTAL_CONFIG_ID=${portalConfigId}`,
+    ...Object.entries(vars).map(([k, v]) => `${k}=${v}`),
   ];
-
   return fs.writeFile(path.resolve('./.env'), lines.join('\n'), 'utf8');
 }
 
@@ -198,12 +197,12 @@ async function rollback(stripe) {
     }
   }
 
-  for (const productId of [...created.products].reverse()) {
+  for (const product of [...created.products].reverse()) {
     try {
-      await stripe.products.update(productId, { active: false });
-      console.log(`🗑️ Deactivated product ${productId}`);
+      await stripe.products.update(product.id, { active: false });
+      console.log(`🗑️ Deactivated product ${product.id}`);
     } catch (err) {
-      console.warn(`⚠️ Could not deactivate product ${productId}: ${err.message}`);
+      console.warn(`⚠️ Could not deactivate product ${product.id}: ${err.message}`);
     }
   }
 
@@ -219,7 +218,11 @@ async function rollback(stripe) {
   console.log('🔁 Rollback complete.\n');
 }
 
-async function main() {
+/**
+ * Main entry point for Stripe Billing Setup.
+ * This function guides the user through setting up Stripe billing products, features, and portal configuration.
+ */
+export default async function main() {
   console.log('🚀 Stripe Billing Setup');
   console.log('This script assumes a clean Stripe account with no existing billing setup.\n');
 
@@ -255,15 +258,10 @@ async function main() {
     );
     console.log('✅ All products and prices created.\n');
 
-    await writeEnvFile(priceEnvVars, secretKey);
-    console.log('📄 .env file created successfully.\n');
+    const portalConfigId = await configureBillingPortal(stripe, created.products);
+    await writeEnvFile(priceEnvVars, secretKey, portalConfigId);
 
-    const portalConfigs = await stripe.billingPortal.configurations.list({ active: true });
-    if (portalConfigs.data.length > 0) {
-      await configureBillingPortal(stripe, portalConfigs.data[0].id, priceEnvVars);
-    } else {
-      console.warn('⚠️ No Billing Portal config found, skipping portal setup.');
-    }
+    console.log('📄 .env file created successfully.\n');
   } catch (err) {
     console.error('❌ Setup failed:');
     console.error(err.message || err);
@@ -273,5 +271,3 @@ async function main() {
 
   rl.close();
 }
-
-main();

@@ -3,6 +3,11 @@ import { createDatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { serverConfig } from '../../../../settings';
 
+const PLAN_MAP: Record<string, SubscriptionPlanEnum> = {
+  [serverConfig.Stripe.proPriceId!]: SubscriptionPlanEnum.PRO,
+  [serverConfig.Stripe.freePriceId!]: SubscriptionPlanEnum.FREE,
+};
+
 /**
  * Handles the creation of a subscription.
  * Updates the subscription status to ACTIVE in the database.
@@ -14,17 +19,20 @@ export const handleSubscriptionUpdated = async (json: any) => {
   const customerId = json.data.object.customer;
   const priceId = json.data.object.items.data[0].price.id;
 
-  if (!customerId) {
-    throw new Error('Customer ID is required');
+  if (!customerId || !priceId) {
+    throw new Error(`Invalid event payload: missing ${!customerId ? 'customer' : 'price'} ID`);
+  }
+
+  const plan = PLAN_MAP[priceId];
+  if (!plan) {
+    console.warn(`⚠️ Ignoring unknown price ID: ${priceId}`);
+    return;
   }
 
   const db = createDatabaseClient();
 
-  if (priceId === serverConfig.Stripe.proPriceId) {
-    await db.subscription.updateByCustomerId(customerId, {
-      status: SubscriptionStatusEnum.ACTIVE,
-      plan: SubscriptionPlanEnum.PRO,
-    });
-    return;
-  }
+  await db.subscription.updateByCustomerId(customerId, {
+    status: SubscriptionStatusEnum.ACTIVE,
+    plan,
+  });
 };

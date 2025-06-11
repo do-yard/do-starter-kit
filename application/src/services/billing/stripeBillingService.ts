@@ -125,6 +125,7 @@ export class StripeBillingService implements BillingService {
 
     const session = await this.stripe.billingPortal.sessions.create({
       customer: customerId,
+      configuration: process.env.STRIPE_PORTAL_CONFIG_ID,
       flow_data: {
         type: 'subscription_update_confirm',
         subscription_update_confirm: {
