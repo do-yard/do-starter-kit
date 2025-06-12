@@ -26,7 +26,7 @@ export const defaultTheme: BaseThemeConfig = {
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: 'var(--font-roboto), "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
       fontSize: '2.5rem',
       fontWeight: 700,
@@ -49,14 +49,38 @@ export const defaultTheme: BaseThemeConfig = {
           textTransform: 'none',
           fontWeight: 600,
           height: 44,
-          paddingLeft: 32,
-          paddingRight: 32,
+          paddingLeft: 16,
+          paddingRight: 16,
+        },
+        sizeSmall: {
+          height: 36,
+          paddingLeft: 12,
+          paddingRight: 12,
+          fontSize: '0.875rem',
         },
       },
     },
     MuiCard: {
       defaultProps: {
         variant: 'outlined',
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          '& .MuiOutlinedInput-root': {
+            '& input': {
+              '&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus': {
+                WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.default} inset`,
+                WebkitTextFillColor: theme.palette.text.primary,
+                fontSize: 'inherit',
+                fontFamily: 'inherit',
+                fontWeight: 'inherit',
+                transition: 'background-color 5000s ease-in-out 0s',
+              },
+            },
+          },
+        }),
       },
     },
   },

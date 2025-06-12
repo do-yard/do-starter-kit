@@ -106,7 +106,8 @@ export const modernizeTheme: BaseThemeConfig = {
     },
   },
   typography: {
-    fontFamily: '"Plus Jakarta Sans", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily:
+      'var(--font-plus-jakarta-sans), "Plus Jakarta Sans", var(--font-roboto), "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
       fontWeight: 600,
       fontSize: '2.25rem',
@@ -134,6 +135,12 @@ export const modernizeTheme: BaseThemeConfig = {
           textTransform: 'none',
           borderRadius: '7px',
           fontWeight: 600,
+          padding: '8px 16px',
+        },
+        sizeSmall: {
+          padding: '6px 12px',
+          fontSize: '0.875rem',
+          height: 36,
         },
       },
     },
@@ -141,17 +148,28 @@ export const modernizeTheme: BaseThemeConfig = {
       styleOverrides: {
         root: {
           borderRadius: '7px',
-          boxShadow: 'rgb(145 158 171 / 30%) 0px 0px 2px 0px, rgb(145 158 171 / 12%) 0px 12px 24px -4px',
+          boxShadow:
+            'rgb(145 158 171 / 30%) 0px 0px 2px 0px, rgb(145 158 171 / 12%) 0px 12px 24px -4px',
         },
       },
     },
     MuiTextField: {
       styleOverrides: {
-        root: {
+        root: ({ theme }) => ({
           '& .MuiOutlinedInput-root': {
             borderRadius: '7px',
+            '& input': {
+              '&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus': {
+                WebkitBoxShadow: `0 0 0 1000px ${theme.palette.background.default} inset`,
+                WebkitTextFillColor: theme.palette.text.primary,
+                fontSize: 'inherit',
+                fontFamily: 'inherit',
+                fontWeight: 'inherit',
+                transition: 'background-color 5000s ease-in-out 0s',
+              },
+            },
           },
-        },
+        }),
       },
     },
   },

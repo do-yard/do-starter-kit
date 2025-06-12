@@ -19,10 +19,11 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     setNavigating(false);
   }, [setNavigating]);
+
   return (
     <PublicThemeProvider>
       <Box display="flex" flexDirection="column" minHeight="100vh">
-        <NavBar />
+        <NavBar bgcolor="background.default" />
         <Box component="main" flexGrow={1}>
           {children}
         </Box>

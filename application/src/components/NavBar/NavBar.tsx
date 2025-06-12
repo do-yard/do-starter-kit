@@ -66,7 +66,7 @@ const NavBar = () => {
             key={label}
             disablePadding
             sx={{
-              borderBottom: '1px solid #E5E7EB',
+              borderBottom: `1px solid ${theme.palette.divider}`,
             }}
           >
             <ListItemButton component={Link} href={href} onClick={onClick}>
@@ -86,12 +86,17 @@ const NavBar = () => {
         sx={{
           borderBottom: 1,
           borderColor: 'divider',
-          backgroundColor: 'white',
+          backgroundColor: theme.palette.background.paper,
         }}
       >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
-            <Typography variant="h5" color="#0061EB" fontWeight={700} sx={{ cursor: 'pointer' }}>
+            <Typography
+              variant="h5"
+              color="primary.main"
+              fontWeight={700}
+              sx={{ cursor: 'pointer' }}
+            >
               DO Starter Kit
             </Typography>
           </Link>

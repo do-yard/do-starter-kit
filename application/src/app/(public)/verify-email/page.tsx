@@ -1,8 +1,9 @@
 'use client';
 
 import React, { Suspense, useEffect, useState } from 'react';
-import { Box, Card, CardContent, Typography, CircularProgress, Alert, Button } from '@mui/material';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { Box, Card, CardContent, Typography, CircularProgress, Alert, Link as MuiLink } from '@mui/material';
+import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 
 /**
  * Email verification page.
@@ -20,7 +21,6 @@ export default function VerifyEmailPage() {
 
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
   const [error, setError] = useState<string | null>(null);
 
@@ -51,9 +51,16 @@ function VerifyEmailContent() {
       justifyContent="center"
       alignItems="center"
       minHeight="80vh"
-      bgcolor="#f3f4f6"
+      sx={{
+        p: 2,
+      }}
     >
-      <Card sx={{ maxWidth: 480, width: '100%', borderRadius: 2, boxShadow: 2 }}>
+      <Card
+        sx={{
+          maxWidth: 480,
+          width: '100%',
+        }}
+      >
         <CardContent>
           <Typography variant="h4" fontWeight={700} mb={2} align="center">
             Email Verification
@@ -64,12 +71,13 @@ function VerifyEmailContent() {
               <Typography variant="body1">Verifying your email...</Typography>
             </Box>
           )}
+          
           {status === 'success' && (
             <Alert severity="success" sx={{ mb: 2 }}>
               Your email has been verified! You can now{' '}
-              <Button color="success" onClick={() => router.push('/login')}>
+              <MuiLink component={Link} href="/login" variant="body2" color="primary" sx={{ fontWeight: 600 }} prefetch={true} >
                 log in
-              </Button>
+              </MuiLink>
               .
             </Alert>
           )}

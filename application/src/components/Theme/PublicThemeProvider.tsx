@@ -6,17 +6,22 @@ import { createThemeFromConfig } from './ThemeRegistry';
 /**
  * Static theme provider for public pages (login, signup, landing, etc.)
  *
- * This provider uses a fixed light theme without theme switching capabilities.
+ * This provider uses a fixed sky light theme without theme switching capabilities.
+ * No async loading - the theme is created synchronously to avoid flickering.
  * For protected pages with full theme customization, use the main Theme.tsx provider.
  *
  * Features:
- * - Always uses the 'default' theme
+ * - Always uses the 'sky' theme
  * - Always uses 'light' mode
  * - No theme switching UI
+ * - No async loading or flickering
  * - Optimized for public-facing pages
  */
 export default function PublicThemeProvider({ children }: { children: React.ReactNode }) {
-  const publicTheme = useMemo(() => createThemeFromConfig('modernize', 'light'), []);
+  const publicTheme = useMemo(
+    () => createThemeFromConfig('sky', 'light', { cssVariables: true }),
+    []
+  );
 
   return (
     <ThemeProvider theme={publicTheme}>

@@ -31,8 +31,20 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
             overflowY: 'auto',
             position: 'relative',
           }}
-        >          
-        <Box sx={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 16,
+              right: 16,
+              zIndex: 10,
+              display: { xs: 'none', md: 'block' }, // Hide on mobile since FAB is used
+            }}
+          >
+            <ThemePicker />
+          </Box>
+          {/* Mobile theme picker renders itself with fixed positioning */}
+          <Box sx={{ display: { xs: 'block', md: 'none' } }}>
             <ThemePicker />
           </Box>
           {children}

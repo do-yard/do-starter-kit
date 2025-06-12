@@ -2,8 +2,9 @@
 
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import React, { useMemo, useState, useContext, createContext, useEffect } from 'react';
+import React, { useState, useContext, createContext, useEffect } from 'react';
 import { createThemeFromConfig } from './ThemeRegistry';
+import { createTheme } from '@mui/material/styles';
 
 // Theme context for mode and theme switching
 interface ThemeModeContextProps {
@@ -28,19 +29,36 @@ export function useThemeMode() {
  */
 export default function MaterialThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<'light' | 'dark'>('light'); // Always start with 'light' for SSR
-  const [currentTheme, setCurrentTheme] = useState('default'); // Default theme
+  const [currentTheme, setCurrentTheme] = useState('modernize'); // Default theme
+  const [theme, setTheme] = useState(() => {
+    // Create a basic fallback theme for SSR
+    return createTheme({
+      palette: { mode: 'light', primary: { main: '#0061EB' } },
+      cssVariables: true,
+    });
+  });
 
   // On mount, sync with localStorage (SSR-safe)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedMode = localStorage.getItem('themeMode') as 'light' | 'dark' | null;
-      const storedTheme = localStorage.getItem('currentTheme') || 'default';
+      const storedTheme = localStorage.getItem('currentTheme') || 'modernize';
 
       if (storedMode && storedMode !== mode) setMode(storedMode);
       if (storedTheme !== currentTheme) setCurrentTheme(storedTheme);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    try {
+      const newTheme = createThemeFromConfig(currentTheme, mode, { cssVariables: true });
+      setTheme(newTheme);
+    } catch (error) {
+      console.warn('Failed to load theme:', error);
+      // Keep using the current theme as fallback
+    }
+  }, [currentTheme, mode]);
 
   const toggleMode = () => {
     setMode((prev) => (prev === 'light' ? 'dark' : 'light'));
@@ -56,9 +74,6 @@ export default function MaterialThemeProvider({ children }: { children: React.Re
       localStorage.setItem('currentTheme', currentTheme);
     }
   }, [mode, currentTheme]);
-  const theme = useMemo(() => {
-    return createThemeFromConfig(currentTheme, mode);
-  }, [currentTheme, mode]);
 
   return (
     <ThemeModeContext.Provider
