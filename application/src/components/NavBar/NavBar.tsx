@@ -19,6 +19,8 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useSession, signOut } from 'next-auth/react';
+import ServiceWarningIndicator from 'components/status/ServiceWarningIndicator';
+import { usePathname } from 'next/navigation';
 
 /**
  * Main navigation bar of the application.
@@ -29,6 +31,9 @@ const NavBar = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isSystemStatusPage = pathname === '/system-status';
 
   const handleDrawerToggle = () => {
     setMobileOpen((prev) => !prev);
@@ -61,6 +66,8 @@ const NavBar = () => {
       onClick={handleDrawerToggle}
     >
       <List disablePadding>
+        {!isSystemStatusPage ? <ServiceWarningIndicator /> : null}
+
         {navLinks.map(({ href, label, onClick }) => (
           <ListItem
             key={label}
@@ -107,6 +114,7 @@ const NavBar = () => {
             </IconButton>
           ) : (
             <Box>
+              {!isSystemStatusPage ? <ServiceWarningIndicator /> : null}
               {navLinks.map(({ href, label, onClick }) => (
                 <Button
                   key={label}

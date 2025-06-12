@@ -13,6 +13,16 @@ jest.mock('hooks/navigation', () => ({
   useNavigating: () => ({ setNavigating: jest.fn() }),
 }));
 
+jest.mock('next-auth/react', () => ({
+  signIn: jest.fn(),
+}));
+
+jest.mock('../../lib/api/stripe', () => ({
+  StripeClient: jest.fn().mockImplementation(() => ({
+    createSubscription: jest.fn(),
+  })),
+}));
+
 describe('SignUpForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();

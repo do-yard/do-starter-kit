@@ -6,7 +6,6 @@ import React, { useState, useContext, createContext, useEffect } from 'react';
 import { createThemeFromConfig } from './ThemeRegistry';
 import { createTheme } from '@mui/material/styles';
 
-// Theme context for mode and theme switching
 interface ThemeModeContextProps {
   mode: 'light' | 'dark';
   toggleMode: () => void;

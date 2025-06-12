@@ -14,18 +14,20 @@ The architecture diagram above shows the complete structure of the SaaS Starter 
 
 The DigitalOcean SaaS Starter Kit can be run [locally](#running-locally) or in [DigitalOcean platform](#deploy-to-digitalocean-platform). Follow the steps for each case below.
 
->**Important**: the steps below are for running the app and navigating to the landing page. To signup, [Resend](#resend-setup) and Stripe must be configured. For using the profile picture feature, [Spaces](#configure-digitalocean-spaces-storage) must be configured.
+> **Important**: the steps below are for running the app and navigating to the landing page. To signup, [Resend](#resend-setup) and Stripe must be configured. For using the profile picture feature, [Spaces](#configure-digitalocean-spaces-storage) must be configured.
 
 ## Running locally
 
 1. Download/clone the repo.
-1. Navigate to \application folder
-1. Run `npm install`
-1. Copy .env file with `cp env-example .env`
-1. Complete at minimum 'Database configuration' and 'Auth.js configuration' settings sections. Postgres DB can be a local instance or a Managed Database in DigitalOcean platform. Either way, the Postgres connection string is used in for connection.
-1. Run Prisma generate: `npx prisma generate`
-1. Run Prisma migration: `npx prisma migrate deploy`
-1. Start the site: `npm run dev`
+2. Navigate to \application folder
+3. Run `npm install`
+4. Copy .env file with `cp env-example .env`
+5. Complete at minimum 'Database configuration' and 'Auth.js configuration' settings sections. Postgres DB can be a local instance or a Managed Database in DigitalOcean platform. Either way, the Postgres connection string is used in for connection.
+6. Run Prisma generate: `npx prisma generate`
+7. Run Prisma migration: `npx prisma migrate deploy`
+8. Start the site: `npm run dev`
+
+> To generate the required stripe products automatically follow [these steps](docs/stripe-setup.md). The instructions to get configure Stripe events webhook are available [here](docs/stripe-webhooks.md).
 
 If you made changes to the repo and want to deploy them to DigitalOcean, navigate to the [Deploy from local environment](#deploy-from-local-environment) section.
 
@@ -36,9 +38,9 @@ If you made changes to the repo and want to deploy them to DigitalOcean, navigat
 [![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/do-yard/do-starter-kit/tree/main)
 
 2. After deployment is complete, configure the environment variables under Settings -> saas-application.
-      - DATABASE_URL: is automatically populated, but if you want to use a DigitalOcean Managed DB, replace the connection string value.
-      - NEXTAUTH_URL: URL of the site
-      - NEXTAUTH_SECRET: random string for authentication. After setting a value, check the encrypt box.
+   - DATABASE_URL: is automatically populated, but if you want to use a DigitalOcean Managed DB, replace the connection string value.
+   - NEXTAUTH_URL: URL of the site
+   - NEXTAUTH_SECRET: random string for authentication. After setting a value, check the encrypt box.
 3. Run Prisma migrations:
    - Go to Console, in the DigitalOcean dashboard
    - Run `npx prisma migrate deploy` command
@@ -131,6 +133,9 @@ Defaults used:
 npm run dev
 ```
 
+**Step 5: Check system status**
+Navigate to the `/system-status` page to see if all the required services are correctly configured.
+
 ## Resend setup
 
 Resend is required for using the app beyond the landing page. The configuration has two values, a Resend API key and a sender address. To configure them, create an account or login and follow these steps:
@@ -159,7 +164,7 @@ If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
 1. Create an **app.yaml** file by copying **app.template.yaml**.
 1. **Important**: settings from .env file do not transfer automatically to the **app.yaml**, they have to be copied manually. Also, there are a few other values to complete in the YAML. The following is a checklist with all placeholders:
    - [ ] **APP_NAME**: arbitrary name for your app.
-   - [ ] **repo**: replace _do-yard/do-starter-kit_ with your GitHub username and repo name. 
+   - [ ] **repo**: replace _do-yard/do-starter-kit_ with your GitHub username and repo name.
    - [ ] **GITHUB_BRANCH**: the branch you want to deploy.
    - [ ] **DB_NAME**: arbitrary name for your database.
    - [ ] **SPACES_KEY_ID**: id of an existing Spaces storage key.
@@ -181,14 +186,17 @@ If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
 ### Best practices when working with secrets and environment variables
 
 **Never commit secrets to version control**
+
 - Add `.env`, `.env.*`, and any secret files to your .gitignore.
 - Use example files (like env-example) to show required variables without real values.
 
 **Encrypt secrets at rest and in transit**
+
 - Ensure secrets are encrypted wherever they are stored and when transmitted.
 - Check `Encrypt` checkbox for sensitive values in DigitalOcean environment variables configuration.
 
 **Do secret maintenance**
+
 - Expire or revoke unused access tokens.
 - Remove whitelisted IPs when no longer needed.
 

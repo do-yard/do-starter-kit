@@ -24,11 +24,34 @@ jest.mock('@mui/material/useMediaQuery', () => ({
   default: jest.fn(),
 }));
 
+let mockPathName = '/';
+const mockUsePathName = jest.fn().mockImplementation(() => ({
+  get pathName() {
+    return mockPathName;
+  },
+}));
+jest.mock('next/navigation', () => ({
+  usePathname: () => mockUsePathName(),
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+  })),
+}));
+
+jest.mock('components/status/ServiceWarningIndicator', () => ({
+  __esModule: true,
+  default: () => <div data-testid="ServiceWarningIndicator">ServiceWarningIndicator</div>,
+}));
+
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 describe('NavBar', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPathName = '/';
   });
 
   it('renders links for unauthenticated users', () => {
@@ -80,5 +103,14 @@ describe('NavBar', () => {
 
     render(<NavBar />);
     expect(screen.getByRole('button')).toBeInTheDocument(); // menu icon
+  });
+
+  it('renders ServiceWarningIndicator when in landing page', () => {
+    (useSession as jest.Mock).mockReturnValue({ data: null, status: 'unauthenticated' });
+    (useMediaQuery as jest.Mock).mockReturnValue(false); // Desktop
+    mockPathName = '/';
+
+    render(<NavBar />);
+    expect(screen.getAllByText('ServiceWarningIndicator').length).toBeGreaterThan(0);
   });
 });

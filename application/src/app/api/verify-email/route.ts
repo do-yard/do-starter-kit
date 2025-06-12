@@ -1,6 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
+import { DatabaseClient } from 'services/database/database';
 import { HTTP_STATUS } from 'lib/api/http';
+import { createBillingService } from 'services/billing/billing';
+import { serverConfig } from '../../../../settings';
+import { SubscriptionPlanEnum, SubscriptionStatusEnum, User } from 'types';
+import { createDatabaseService } from 'services/database/databaseFactory';
+
+const createSubscription = async (db: DatabaseClient, user: User) => {
+  const billingService = createBillingService();
+
+  if (!serverConfig.Stripe.freePriceId) {
+    throw new Error('Free price Id is not set');
+  }
+
+  let customerId;
+
+  const subscription = await db.subscription.findByUserId(user.id);
+
+  if (subscription.length) {
+    customerId = subscription[0].customerId;
+  }
+
+  if (!customerId) {
+    const customer = await billingService.createCustomer(user.email, {
+      userId: user.email,
+    });
+    customerId = customer.id;
+    await db.subscription.create({
+      customerId: customer.id,
+      plan: null,
+      status: null,
+      userId: user.id,
+    });
+  }
+
+  await billingService.createSubscription(customerId, serverConfig.Stripe.freePriceId);
+
+  await db.subscription.update(user.id, {
+    status: SubscriptionStatusEnum.PENDING,
+    plan: SubscriptionPlanEnum.FREE,
+  });
+};
 
 /**
  * API endpoint to verify a user's email address using a verification token.
@@ -19,7 +59,7 @@ export async function GET(request: NextRequest) {
   if (!token) {
     return NextResponse.json({ error: 'Missing token' }, { status: HTTP_STATUS.BAD_REQUEST });
   }
-  const db = createDatabaseClient();
+  const db = await createDatabaseService();
   // Find user by verification token
   const user = await db.user.findByVerificationToken(token);
   if (!user) {
@@ -30,5 +70,15 @@ export async function GET(request: NextRequest) {
   }
   // Mark email as verified and clear the token
   await db.user.update(user.id, { emailVerified: true, verificationToken: null });
+
+  try {
+    await createSubscription(db, user);
+  } catch (error) {
+    console.error('Error creating subscription', (error as { message: string }).message ?? error);
+    return NextResponse.json(
+      { error: 'Error creating subscription' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
+  }
   return NextResponse.json({ success: true });
 }

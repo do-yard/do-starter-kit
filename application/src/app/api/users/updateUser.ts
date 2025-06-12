@@ -1,6 +1,76 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
+import { createBillingService } from 'services/billing/billing';
+import { SubscriptionPlanEnum } from 'types';
+import { serverConfig } from '../../../../settings';
+import { createDatabaseService } from 'services/database/databaseFactory';
+
+/**
+ * Function to update subscriptions
+ * @param sub subscription data
+ * @param id user id
+ * @returns void or NextResponse in case of error
+ */
+const updateSubscription = async (sub: any, id: string) => {
+  const billing = createBillingService();
+  const dbClient = await createDatabaseService();
+
+  if (sub.plan === SubscriptionPlanEnum.PRO) {
+    if (!serverConfig.Stripe.proGiftPriceId) {
+      console.error('Prop price Id is not configured');
+      throw new Error('Pro gift price ID is not configured');
+    }
+    const existingSubscription = await dbClient.subscription.findByUserId(id);
+    if (
+      !existingSubscription ||
+      !existingSubscription.length ||
+      !existingSubscription[0].customerId
+    ) {
+      console.error('No existing subscription found for user');
+      throw new Error('No existing subscription found for user');
+    }
+
+    const existingStripeSubscription = await billing.listSubscription(
+      existingSubscription[0].customerId
+    );
+
+    await billing.updateSubscription(
+      existingStripeSubscription[0].id,
+      existingStripeSubscription[0].items[0].id,
+      serverConfig.Stripe.proGiftPriceId
+    );
+  }
+
+  if (sub.plan === SubscriptionPlanEnum.FREE) {
+    if (!serverConfig.Stripe.freePriceId) {
+      console.error('Free price ID is not configured');
+      throw new Error('Free price ID is not configured');
+    }
+    const existingSubscription = await dbClient.subscription.findByUserId(id);
+
+    if (
+      !existingSubscription ||
+      !existingSubscription.length ||
+      !existingSubscription[0].customerId
+    ) {
+      console.error('No existing subscription found for user');
+      throw new Error('No existing subscription found for user');
+    }
+
+    const existingStripeSubscription = await billing.listSubscription(
+      existingSubscription[0].customerId
+    );
+
+    await billing.updateSubscription(
+      existingStripeSubscription[0].id,
+      existingStripeSubscription[0].items[0].id,
+      serverConfig.Stripe.freePriceId
+    );
+  }
+
+  await dbClient.subscription.update(id, sub);
+};
 
 /**
  * Updates a user with the provided data in the request body.
@@ -13,7 +83,6 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
   try {
     const body = await request.json();
     const { id, ...updateData } = body;
-
     if (!id) {
       return NextResponse.json(
         { error: 'User ID is required' },
@@ -22,7 +91,7 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
     }
 
     // Only allow updating specific fields (e.g., name, email, role)
-    const allowedFields = ['name', 'role', 'subscriptions'];
+    const allowedFields = ['name', 'role', 'subscription'];
 
     // Remove fields from updateData that are not allowed
     Object.keys(updateData).forEach((key) => {
@@ -30,7 +99,6 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
         delete updateData[key];
       }
     });
-
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
         { error: 'No valid fields to update' },
@@ -38,20 +106,29 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
       );
     }
 
-    const dbClient = createDatabaseClient();
+    const dbClient = await createDatabaseService();
     const updatedUser = await dbClient.user.update(id, {
       name: updateData.name,
       role: updateData.role,
     });
 
-    if (updateData.subscriptions) {
-      const userSubscriptions = await dbClient.subscription.findByUserId(id);
-      await dbClient.subscription.update(userSubscriptions[0].id, updateData.subscriptions[0]);
+    if (updateData.subscription) {
+      try {
+        await updateSubscription(updateData.subscription, id);
+      } catch (error) {
+        return NextResponse.json(
+          { error: (error as Error).message },
+          { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+        );
+      }
     }
 
     return NextResponse.json({ user: updatedUser });
   } catch (error) {
-    console.error('Server error:', error);
+    console.error(
+      'Unexpected error in updateUser',
+      (error as { message: string }).message ? (error as { message: string }).message : error
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }

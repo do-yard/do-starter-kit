@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Deletes a note by its ID.
@@ -17,7 +17,7 @@ export const deleteNote = async (
   try {
     const { id: noteId } = await params;
     const userId = user.id;
-    const dbClient = createDatabaseClient();
+    const dbClient = await createDatabaseService();
 
     const existingNote = await dbClient.note.findById(noteId);
 

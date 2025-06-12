@@ -3,12 +3,13 @@ jest.mock('services/database/database');
 import { updatePassword } from './updatePassword';
 import { NextRequest } from 'next/server';
 import { HTTP_STATUS } from 'lib/api/http';
-import { createDatabaseClient } from 'services/database/database';
 
+const mockFindById = jest.fn();
+const mockUpdate = jest.fn();
 const mockDb = {
   user: {
-    findById: jest.fn(),
-    update: jest.fn(),
+    findById: mockFindById,
+    update: mockUpdate,
     findByEmail: jest.fn(),
     findByEmailAndPassword: jest.fn(),
     findAll: jest.fn(),
@@ -32,6 +33,10 @@ const mockDb = {
   },
 };
 
+jest.mock('../../../services/database/databaseFactory', () => ({
+  createDatabaseService: () => Promise.resolve(mockDb),
+}));
+
 const mockUser = { id: 'user1', role: 'user' };
 
 function createRequestWithFormData(fields: Record<string, string>) {
@@ -42,8 +47,7 @@ function createRequestWithFormData(fields: Record<string, string>) {
 
 describe('updatePassword', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.mocked(createDatabaseClient).mockReturnValue(mockDb);
+    jest.resetAllMocks();
   });
 
   it('returns error if current password is empty', async () => {
@@ -95,7 +99,7 @@ describe('updatePassword', () => {
   });
 
   it('returns error if user does not exist', async () => {
-    mockDb.user.findById.mockResolvedValue(null);
+    mockFindById.mockResolvedValue(null);
     const req = createRequestWithFormData({
       currentPassword: 'a',
       newPassword: 'b',
@@ -108,7 +112,7 @@ describe('updatePassword', () => {
   });
 
   it('returns error if current password is incorrect', async () => {
-    mockDb.user.findById.mockResolvedValue({ passwordHash: 'hash' });
+    mockFindById.mockResolvedValue({ passwordHash: 'hash' });
     const req = createRequestWithFormData({
       currentPassword: 'wrong',
       newPassword: 'b',
@@ -121,13 +125,13 @@ describe('updatePassword', () => {
   });
 
   it('updates password and returns success', async () => {
-    mockDb.user.findById.mockResolvedValue({
+    mockFindById.mockResolvedValue({
       id: 'user1',
       name: 'Test',
       image: 'img',
       passwordHash: '$2b$12$iyGm98HPjDxoD74cIbEHz.QVTvoPu5kPhiIuB6chsL6agm1x.KgF.',
     });
-    mockDb.user.update.mockResolvedValue(undefined);
+    mockUpdate.mockResolvedValue(undefined);
     const req = createRequestWithFormData({
       currentPassword: '1234',
       newPassword: 'new',

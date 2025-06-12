@@ -7,12 +7,13 @@ jest.mock('uuid', () => ({
 const mockUploadFile = jest.fn();
 const mockGetFileUrl = jest.fn();
 const mockDeleteFile = jest.fn();
-jest.mock('../../../services/storage/storage', () => ({
-  createStorageService: () => ({
-    uploadFile: mockUploadFile,
-    getFileUrl: mockGetFileUrl,
-    deleteFile: mockDeleteFile,
-  }),
+jest.mock('../../../services/storage/storageFactory', () => ({
+  createStorageService: () =>
+    Promise.resolve({
+      uploadFile: mockUploadFile,
+      getFileUrl: mockGetFileUrl,
+      deleteFile: mockDeleteFile,
+    }),
 }));
 
 // Mock auth
@@ -30,17 +31,18 @@ jest.mock('../../../helpers/fileName', () => ({
 // Mock database client
 const mockFindById = jest.fn();
 const mockUpdate = jest.fn();
-jest.mock('../../../services/database/database', () => ({
-  createDatabaseClient: () => ({
-    user: {
-      findById: mockFindById,
-      update: mockUpdate,
-    },
-  }),
+jest.mock('../../../services/database/databaseFactory', () => ({
+  createDatabaseService: () =>
+    Promise.resolve({
+      user: {
+        findById: mockFindById,
+        update: mockUpdate,
+      },
+    }),
 }));
 
-import { NextRequest } from 'next/server';
 // Import the handler after mocks
+import { NextRequest } from 'next/server';
 import { updateUserProfile } from './updateUserProfile';
 import { USER_ROLES } from 'lib/auth/roles';
 import { HTTP_STATUS } from 'lib/api/http';

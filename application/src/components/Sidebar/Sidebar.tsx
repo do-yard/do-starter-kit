@@ -129,7 +129,7 @@ const SidebarContent = ({ onNavigate }: { onNavigate?: () => void }) => {
             Account Settings
           </SidebarLink>
           <SidebarLink
-            href="/dashboard/billing"
+            href="/dashboard/subscription"
             icon={<CreditCard fontSize="small" />}
             onClick={onNavigate}
           >
