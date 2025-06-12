@@ -33,16 +33,16 @@ export const handleSubscriptionUpdated = async (json: any) => {
 
   const db = await createDatabaseService();
 
-  await db.subscription.updateByCustomerId(customerId, {
+  const subscription = await db.subscription.updateByCustomerId(customerId, {
     status: SubscriptionStatusEnum.ACTIVE,
     plan,
   });
 
   try {
-    const user = await db.user.findById(customerId);
+    const user = await db.user.findById(subscription.userId);
 
     if (!user) {
-      console.warn(`⚠️ User not found for customer ID: ${customerId}`);
+      console.warn(`⚠️ User not found for customer ID: ${subscription.userId}. Email not sent.`);
       return;
     }
 
@@ -53,12 +53,14 @@ export const handleSubscriptionUpdated = async (json: any) => {
       emailTemplate({
         title: 'Your subscription was updated',
         content: `<p>Your subscription was updated.</p>
-            <p style="text-align:center; margin: 32px 0;">
-              Your subscription plan is now <strong>${plan}</strong>. Thank you for using our service!
-            </p>`,
+          <p style="text-align:center; margin: 32px 0;">
+            Your subscription plan is now <strong>${plan}</strong>. Thank you for using our service!
+          </p>`,
       })
     );
+
+    console.log(`✅ Subscription updated and email sent to ${user.email}`);
   } catch (error) {
-    console.error('Error sending subscription update email:', error);
+    console.error('Error sending subscription update email.', error);
   }
 };
