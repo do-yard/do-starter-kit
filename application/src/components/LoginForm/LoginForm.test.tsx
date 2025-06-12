@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import LoginForm from './LoginForm';
 import { signIn } from 'next-auth/react';
 import React from 'react';
-import { InvalidCredentialsError } from 'lib/auth/errors';
 
 jest.mock('next/link', () => ({
   __esModule: true,
@@ -54,12 +53,10 @@ describe('LoginForm', () => {
   it('shows error message on failed login', async () => {
     const mockSignIn = signIn as jest.Mock;
 
-    const errorInstance = new InvalidCredentialsError();
-
     mockSignIn.mockResolvedValue({
       ok: false,
       error: true,
-      code: errorInstance.code, // Important: match what LoginForm is looking for
+      code: 'Invalid credentials',
     });
 
     render(<LoginForm />);

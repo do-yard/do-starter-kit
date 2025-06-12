@@ -1,6 +1,6 @@
 import { getFileNameFromUrl } from 'helpers/fileName';
-import { createDatabaseClient } from 'services/database/database';
-import { createStorageService } from 'services/storage/storage';
+import { createDatabaseService } from 'services/database/databaseFactory';
+import { createStorageService } from 'services/storage/storageFactory';
 import { v4 as uuidv4 } from 'uuid';
 import { NextRequest, NextResponse } from 'next/server';
 import { HTTP_STATUS } from 'lib/api/http';
@@ -18,12 +18,11 @@ export const updateUserProfile = async (
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const newName = formData.get('name') as string | null;
-
     if (newName === '') {
       return NextResponse.json({ error: 'Name invalid' }, { status: HTTP_STATUS.BAD_REQUEST });
     }
 
-    const db = createDatabaseClient();
+    const db = await createDatabaseService();
     const dbUser = await db.user.findById(user.id);
 
     if (!dbUser) {
@@ -52,7 +51,7 @@ export const updateUserProfile = async (
         : '';
       const fileName = `${uuidv4()}${extension}`;
 
-      const storageService = createStorageService();
+      const storageService = await createStorageService();
       const uploadedFileName = await storageService.uploadFile(user.id, fileName, file, {
         ACL: 'public-read',
       });

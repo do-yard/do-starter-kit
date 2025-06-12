@@ -4,12 +4,8 @@ import { USER_ROLES } from 'lib/auth/roles';
 import { HTTP_STATUS } from 'lib/api/http';
 
 const mockCreate = jest.fn();
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: () => ({
-    note: {
-      create: mockCreate,
-    },
-  }),
+jest.mock('../../../services/database/databaseFactory', () => ({
+  createDatabaseService: () => Promise.resolve({ note: { create: mockCreate } }),
 }));
 
 describe('createNote', () => {

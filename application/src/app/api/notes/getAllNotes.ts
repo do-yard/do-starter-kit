@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Fetches all notes for the authenticated user.
@@ -14,7 +14,7 @@ export const getAllNotes = async (
 ): Promise<NextResponse> => {
   try {
     const userId = user.id;
-    const dbClient = createDatabaseClient();
+    const dbClient = await createDatabaseService();
 
     const notes = await dbClient.note.findByUserId(userId);
 
