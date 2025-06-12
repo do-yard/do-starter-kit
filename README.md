@@ -31,7 +31,7 @@ The DigitalOcean SaaS Starter Kit can be run [locally](#running-locally) or in [
 
 If you made changes to the repo and want to deploy them to DigitalOcean, navigate to the [Deploy from local environment](#deploy-from-local-environment) section.
 
-## Deploy to DigitalOcean platform
+## Deploy to DigitalOcean platform with one-click deployment button
 
 1. Click on the one-click deployment button below. If you are not currently logged in with your DigitalOcean account, this button prompts you to log in.
 
@@ -45,6 +45,65 @@ If you made changes to the repo and want to deploy them to DigitalOcean, navigat
    - Go to Console, in the DigitalOcean dashboard
    - Run `npx prisma migrate deploy` command
 4. Navigate to the site
+
+## Deploy to DigitalOcean App Platform with DOCTL
+
+To deploy your application to [DigitalOcean App Platform](https://www.digitalocean.com/products/app-platform) using `doctl`, follow these steps:
+
+### 1. Prepare your environment variables
+
+Before running any deployment script, **make sure you have a valid `.env` file in your project root**.
+This file should include all required environment variables for your app.
+
+> **Tip:** You can use `.env-example` as a template.
+
+### 2. Generate your DigitalOcean App Spec
+
+This step will create an `app.yaml` file tailored to your configuration and environment:
+
+```bash
+npm run setup:deploy
+```
+
+- The script will prompt you for:
+
+  - App name
+  - GitHub repository (e.g. `user/repo`)
+  - Branch to deploy (default: `main`)
+  - Whether to provision a dev database in DigitalOcean or use an existing database
+
+- It will validate your `.env` file and check for missing variables (allowing you to retry if needed)
+- Once complete, it will generate a ready-to-use `app.yaml` in your project root
+
+### 3. Deploy using DOCTL
+
+Make sure you have the [DigitalOcean CLI (`doctl`)](https://docs.digitalocean.com/reference/doctl/how-to/install/) installed and authenticated.
+
+**Install `doctl`:**
+
+- macOS: `brew install doctl`
+- Windows: `choco install doctl`
+- Linux: `snap install doctl`
+
+**Authenticate:**
+
+```bash
+doctl auth init
+```
+
+Follow the prompts to enter your DigitalOcean API token.
+
+**Deploy your app:**
+
+```bash
+npm run deploy
+```
+
+- The script will check that `doctl` is installed and authenticated
+- It will deploy your app using the generated `app.yaml`
+- Deployment output will be shown in your terminal
+
+**That’s it! Your application will be deployed to DigitalOcean App Platform using your custom app spec and environment.**
 
 ## Configure DigitalOcean Spaces storage
 

@@ -12,7 +12,9 @@
     "test": "jest",
     "test:server": "jest --config jest.server.config.ts",
     "test:all": "npm run test && npm run test:server",
-    "setup:stripe": "node ./setup/stripe.mjs"
+    "setup:stripe": "node ./setup/stripe.mjs",
+    "setup:deploy": "node ./setup/appspec.mjs",
+    "deploy": "node ./setup/deploy.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.9.1",
@@ -32,8 +34,8 @@
     "next-auth": "^5.0.0-beta.28",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "stripe": "^18.1.1",
     "resend": "^4.5.1",
+    "stripe": "^18.1.1",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
@@ -46,6 +48,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^16.5.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "eslint-plugin-jsdoc": "^50.6.17",
