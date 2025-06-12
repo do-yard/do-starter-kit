@@ -37,6 +37,7 @@ const providers: Provider[] = [
       magicLinkToken: {}
     },
     authorize: async (credentials) => {
+      try {
       const dbClient = await createDatabaseService();
       if (credentials.magicLinkToken && credentials.email) {
         await verifyMagicLinkToken(credentials.magicLinkToken as string, credentials.email as string);

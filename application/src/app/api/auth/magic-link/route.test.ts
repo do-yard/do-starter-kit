@@ -1,8 +1,10 @@
 import { POST } from './route';
 import { NextRequest } from 'next/server';
+import { createDatabaseService } from 'services/database/databaseFactory';
+import { createEmailService } from 'services/email/emailFactory';
 
-jest.mock('services/database/database');
-jest.mock('services/email/email');
+jest.mock('services/database/databaseFactory');
+jest.mock('services/email/emailFactory');
 jest.mock('services/email/emailTemplate', () => ({ emailTemplate: jest.fn(() => 'html') }));
 
 const mockDb = {
@@ -15,11 +17,8 @@ const mockDb = {
 };
 const mockEmailClient = { sendEmail: jest.fn() };
 
-const createDatabaseClient = require('services/database/database').createDatabaseClient;
-const createEmailClient = require('services/email/email').createEmailClient;
-
-createDatabaseClient.mockReturnValue(mockDb);
-createEmailClient.mockReturnValue(mockEmailClient);
+(createDatabaseService as jest.Mock).mockReturnValue(mockDb);
+(createEmailService as jest.Mock).mockReturnValue(mockEmailClient);
 
 describe('POST /api/auth/magic-link', () => {
   beforeEach(() => {

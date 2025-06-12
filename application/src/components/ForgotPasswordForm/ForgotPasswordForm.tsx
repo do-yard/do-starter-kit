@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
+import { Card, CardContent, TextField, Typography, Box } from '@mui/material';
 import FormButton from 'components/FormButton/FormButton';
 import { useNavigating } from 'hooks/navigation';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -36,7 +36,7 @@ const LoginForm: React.FC = () => {
         setSuccess('Magic link sent! Please check your email inbox.');
       }
     } catch (err) {
-      setError('Something went wrong, please try again later later.');
+      setError('Something went wrong, please try again later later.' + (err instanceof Error ? `: ${err.message}` : ''));
     } finally {
       setNavigating(false);
     }
