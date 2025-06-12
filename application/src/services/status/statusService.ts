@@ -229,11 +229,11 @@ export class StatusService {
         name: 'Billing Service',
         configured: false,
         connected: false,
-        required: true, // Default to true since database is critical
+        required: false,
         error:
           error instanceof Error
-            ? `Failed to initialize database service: ${error.message}`
-            : 'Failed to initialize database service: Unknown error',
+            ? `Failed to initialize billing service: ${error.message}`
+            : 'Failed to initialize billing service: Unknown error',
       };
     }
   }
