@@ -9,8 +9,8 @@ export async function createBillingService(): Promise<BillingService> {
 
   switch (billingProvider) {
     // Add more providers here in the future
-    // case 'AZURE':
-    //   return new AzureStorageService();
+    // case 'PayPal':
+    //   return new PaypalBillingService();
     case 'Stripe':
     default: {
       const { StripeBillingService } = await import('./stripeBillingService');

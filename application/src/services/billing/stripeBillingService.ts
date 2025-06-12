@@ -213,8 +213,7 @@ export class StripeBillingService extends BillingService {
     }
 
     try {
-      // Test connection by sending a verification email to ourselves
-      // This is a lightweight way to test the API without actually sending emails
+      // Test connection by listing products
       await this.stripe.products.list();
       return true;
     } catch (connectionError) {
