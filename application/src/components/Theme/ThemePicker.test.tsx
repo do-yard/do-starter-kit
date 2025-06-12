@@ -47,7 +47,9 @@ describe('ThemePicker', () => {
       { name: 'minimalist', displayName: 'Minimalist' },
       { name: 'sky', displayName: 'Sky' },
     ]);
-  });  it('renders desktop theme picker with correct theme options', () => {
+  });
+
+  it('renders desktop theme picker with correct theme options', () => {
     render(<ThemePicker />);
 
     // Verify theme select button is rendered
@@ -63,17 +65,20 @@ describe('ThemePicker', () => {
     expect(screen.getByRole('menuitem', { name: /minimalist/i })).toBeInTheDocument();
     expect(screen.getByRole('menuitem', { name: /sky/i })).toBeInTheDocument();
   });
+
   it('toggles theme mode when toggle button is clicked', () => {
     render(<ThemePicker />);
 
     const toggleButton = screen.getByRole('button', { name: /switch to dark mode/i });
-    
+
     act(() => {
       fireEvent.click(toggleButton);
     });
 
     expect(mockToggleMode).toHaveBeenCalledTimes(1);
-  });  it('selects a theme when an option is chosen', () => {
+  });
+
+  it('selects a theme when an option is chosen', () => {
     render(<ThemePicker />);
 
     // Open the dropdown
@@ -88,6 +93,7 @@ describe('ThemePicker', () => {
 
     expect(mockSetCurrentTheme).toHaveBeenCalledWith('minimalist');
   });
+
   it('renders mobile theme picker with FAB', () => {
     (useMediaQuery as jest.Mock).mockReturnValue(true); // Mobile view
 

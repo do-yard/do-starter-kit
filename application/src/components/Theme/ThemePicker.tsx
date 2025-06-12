@@ -116,7 +116,10 @@ export function ThemePicker() {
           }}
         >
           {/* Light/Dark Mode Toggle */}
-          <MenuItem onClick={handleModeToggle} aria-label={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}>
+          <MenuItem
+            onClick={handleModeToggle}
+            aria-label={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}
+          >
             <ListItemIcon>
               {mode === 'dark' ? <LightMode fontSize="small" /> : <DarkMode fontSize="small" />}
             </ListItemIcon>
@@ -179,7 +182,12 @@ export function ThemePicker() {
 
       {/* Light/Dark Mode Toggle */}
       <Tooltip title={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}>
-        <IconButton onClick={toggleMode} color="inherit" size="small" aria-label={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}>
+        <IconButton
+          onClick={toggleMode}
+          color="inherit"
+          size="small"
+          aria-label={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}
+        >
           {mode === 'dark' ? <LightMode fontSize="small" /> : <DarkMode fontSize="small" />}
         </IconButton>
       </Tooltip>

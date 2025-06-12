@@ -1,7 +1,15 @@
 'use client';
 
 import React, { Suspense, useEffect, useState } from 'react';
-import { Box, Card, CardContent, Typography, CircularProgress, Alert, Link as MuiLink } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  CircularProgress,
+  Alert,
+  Link as MuiLink,
+} from '@mui/material';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -71,11 +79,18 @@ function VerifyEmailContent() {
               <Typography variant="body1">Verifying your email...</Typography>
             </Box>
           )}
-          
+
           {status === 'success' && (
             <Alert severity="success" sx={{ mb: 2 }}>
               Your email has been verified! You can now{' '}
-              <MuiLink component={Link} href="/login" variant="body2" color="primary" sx={{ fontWeight: 600 }} prefetch={true} >
+              <MuiLink
+                component={Link}
+                href="/login"
+                variant="body2"
+                color="primary"
+                sx={{ fontWeight: 600 }}
+                prefetch={true}
+              >
                 log in
               </MuiLink>
               .
