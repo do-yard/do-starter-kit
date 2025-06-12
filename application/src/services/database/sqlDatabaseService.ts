@@ -1,7 +1,7 @@
 import { DatabaseClient } from './database';
 import { prisma } from '../../lib/prisma';
+import { Subscription, Note, User, UserWithSubscriptions, SubscriptionStatus } from 'types';
 import { PrismaClient } from '@prisma/client';
-import { Subscription, Note, User, UserWithSubscriptions } from 'types';
 import { ServiceConfigStatus } from '../status/serviceConfigStatus';
 
 /**
@@ -63,7 +63,7 @@ export class SqlDatabaseService extends DatabaseClient {
       const [users, total] = await Promise.all([
         prisma.user.findMany({
           where,
-          include: { subscriptions: true },
+          include: { subscription: true },
           orderBy: { name: 'asc' },
           skip,
           take: pageSize,
@@ -74,13 +74,6 @@ export class SqlDatabaseService extends DatabaseClient {
     },
     create: async (user: Omit<User, 'id' | 'createdAt'>): Promise<User> => {
       const newUser = await prisma.user.create({ data: user });
-      await prisma.subscription.create({
-        data: {
-          userId: newUser.id,
-          plan: 'FREE',
-          status: 'ACTIVE',
-        },
-      });
       return newUser;
     },
     update: async (id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>): Promise<User> => {
@@ -94,6 +87,14 @@ export class SqlDatabaseService extends DatabaseClient {
     },
   };
   subscription = {
+    findByUserAndStatus: async (
+      userId: string,
+      status: SubscriptionStatus
+    ): Promise<Subscription | null> => {
+      return prisma.subscription.findFirst({
+        where: { userId, status },
+      });
+    },
     findById: async (id: string): Promise<Subscription | null> => {
       return prisma.subscription.findUnique({ where: { id } });
     },
@@ -104,10 +105,18 @@ export class SqlDatabaseService extends DatabaseClient {
       return prisma.subscription.create({ data: subscription });
     },
     update: async (
-      id: string,
+      userId: string,
       subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>
     ): Promise<Subscription> => {
-      return prisma.subscription.update({ where: { id }, data: subscription });
+      return prisma.subscription.update({ where: { userId }, data: subscription });
+    },
+    updateByCustomerId: async (
+      customerId: string,
+      subscription: Partial<Omit<Subscription, 'id' | 'createdAt'>>
+    ): Promise<Subscription> => {
+      const existing = await prisma.subscription.findFirst({ where: { customerId } });
+      if (!existing) throw new Error('Subscription not found for customerId');
+      return prisma.subscription.update({ where: { id: existing.id }, data: subscription });
     },
     delete: async (id: string): Promise<void> => {
       await prisma.subscription.delete({ where: { id } });

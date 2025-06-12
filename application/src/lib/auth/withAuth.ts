@@ -9,7 +9,7 @@ export type WithAuthOptions = {
 
 type Handler = (
   req: NextRequest,
-  user: { id: string; role: UserRole },
+  user: { id: string; role: UserRole; email: string },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: Promise<any>
 ) => Promise<Response>;
@@ -30,14 +30,14 @@ export const withAuth =
         return NextResponse.json(res, { status: HTTP_STATUS.UNAUTHORIZED });
       }
 
-      const { id, role } = session.user;
+      const { id, role, email } = session.user;
 
       if (options.allowedRoles && !options.allowedRoles.includes(role)) {
         const res: ErrorResponse = { error: 'Forbidden' };
         return NextResponse.json(res, { status: HTTP_STATUS.FORBIDDEN });
       }
 
-      return await handler(req, { id, role }, params);
+      return await handler(req, { id, role, email }, params);
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('Auth error:', error.message);
