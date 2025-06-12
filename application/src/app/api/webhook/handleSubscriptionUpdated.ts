@@ -52,7 +52,7 @@ export const handleSubscriptionUpdated = async (json: any) => {
       'Your subscription was updated',
       emailTemplate({
         title: 'Your subscription was updated',
-        content: `<p>Your subscription was updated.</p>
+        content: `<p style="text-align:center; margin: 32px 0;">Your subscription was updated.</p>
           <p style="text-align:center; margin: 32px 0;">
             Your subscription plan is now <strong>${plan}</strong>. Thank you for using our service!
           </p>`,
