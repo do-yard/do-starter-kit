@@ -64,8 +64,7 @@ Or open `.env-stripe`, copy all lines, and paste them at the end of your `.env` 
 
 ## 4. (Next Steps) Configure Stripe Webhooks
 
-To enable real-time billing updates, you need to [configure Stripe webhooks](./stripe-webhooks.md) and set `STRIPE_WEBHOOK_SECRET` in your `.env` file.  
-**Follow [these instructions](./stripe-webhooks.md) after this setup.**
+To enable real-time billing updates, you need to [configure Stripe webhooks](./stripe-webhooks.md) and set `STRIPE_WEBHOOK_SECRET` in your `.env` file.
 
 ---
 
