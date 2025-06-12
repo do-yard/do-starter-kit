@@ -63,6 +63,23 @@ const MyNotes: React.FC = () => {
 
   const totalPages = Math.ceil(totalNotes / pageSize);
 
+  const sortedNotes = React.useMemo(() => {
+    if (!notes) return [];
+    const notesCopy = [...notes];
+    if (sortBy === 'newest') {
+      return notesCopy.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    } else if (sortBy === 'oldest') {
+      return notesCopy.sort(
+        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      );
+    } else if (sortBy === 'title') {
+      return notesCopy.sort((a, b) => a.title.localeCompare(b.title));
+    }
+    return notesCopy;
+  }, [notes, sortBy]);
+
   const handleSortChange = (
     event: ChangeEvent<HTMLInputElement> | (Event & { target: { value: unknown; name: string } }),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -194,7 +211,7 @@ const MyNotes: React.FC = () => {
       {/* Notes Display */}
       {viewMode === 'list' ? (
         <NotesListView
-          notes={notes}
+          notes={sortedNotes}
           isLoading={isLoading}
           error={error}
           onViewNote={handleViewNote}
@@ -203,7 +220,7 @@ const MyNotes: React.FC = () => {
         />
       ) : (
         <NotesGridView
-          notes={notes}
+          notes={sortedNotes}
           isLoading={isLoading}
           error={error}
           onViewNote={handleViewNote}
