@@ -33,15 +33,32 @@ const mockDatabaseService = {
   note: {} as any,
 } as jest.Mocked<DatabaseClient>;
 
+const mockBillingService = {
+  listCustomer: jest.fn(),
+  createCustomer: jest.fn(),
+  listSubscription: jest.fn(),
+  createSubscription: jest.fn(),
+  cancelSubscription: jest.fn(),
+  updateSubscription: jest.fn(),
+  manageSubscription: jest.fn(),
+  getProducts: jest.fn(),
+  checkConnection: jest.fn(),
+  checkConfiguration: jest.fn(),
+  isRequired: jest.fn().mockReturnValue(false),
+} as jest.Mocked<BillingService>;
+
 // Mock the factory functions - fix hoisting issue by putting mocks after declarations
 jest.mock('../storage/storageFactory');
 jest.mock('../email/emailFactory');
 jest.mock('../database/databaseFactory');
+jest.mock('../billing/billingFactory');
 
 // Import the mocked functions
 import { createStorageService } from '../storage/storageFactory';
 import { createEmailService } from '../email/emailFactory';
 import { createDatabaseService } from '../database/databaseFactory';
+import { createBillingService } from 'services/billing/billingFactory';
+import { BillingService } from 'services/billing/billing';
 
 // Cast to jest mocks
 const mockCreateStorageService = createStorageService as jest.MockedFunction<
@@ -50,6 +67,9 @@ const mockCreateStorageService = createStorageService as jest.MockedFunction<
 const mockCreateEmailService = createEmailService as jest.MockedFunction<typeof createEmailService>;
 const mockCreateDatabaseService = createDatabaseService as jest.MockedFunction<
   typeof createDatabaseService
+>;
+const mockCreateBillingService = createBillingService as jest.MockedFunction<
+  typeof createBillingService
 >;
 
 describe('StatusService', () => {
@@ -68,6 +88,7 @@ describe('StatusService', () => {
     mockCreateStorageService.mockResolvedValue(mockStorageService);
     mockCreateEmailService.mockResolvedValue(mockEmailService);
     mockCreateDatabaseService.mockResolvedValue(mockDatabaseService);
+    mockCreateBillingService.mockResolvedValue(mockBillingService);
 
     // Reset static state using proper type casting (since we don't have resetForTesting method)
     (StatusService as any).cachedHealthState = null;
@@ -100,6 +121,14 @@ describe('StatusService', () => {
 
     mockDatabaseService.checkConfiguration.mockResolvedValue({
       name: 'Database Service',
+      configured: true,
+      connected: true,
+      error: undefined,
+      configToReview: undefined,
+    });
+
+    mockBillingService.checkConfiguration.mockResolvedValue({
+      name: 'Billing Service',
       configured: true,
       connected: true,
       error: undefined,
@@ -203,7 +232,7 @@ describe('StatusService', () => {
     });
   });
   describe('checkAllServices', () => {
-    it('should return an array with storage, email, and database service status', async () => {
+    it('should return an array with storage, email, database and billing services status', async () => {
       // Arrange
       mockStorageService.checkConnection.mockResolvedValue(true);
 
@@ -212,10 +241,11 @@ describe('StatusService', () => {
 
       // Assert
       expect(Array.isArray(results)).toBe(true);
-      expect(results.length).toBe(3); // Storage + Email + Database
+      expect(results.length).toBe(4); // Storage + Email + Database + Billing
       expect(results.some((r) => r.name.includes('Storage'))).toBe(true);
       expect(results.some((r) => r.name.includes('Email'))).toBe(true);
       expect(results.some((r) => r.name.includes('Database'))).toBe(true);
+      expect(results.some((r) => r.name.includes('Billing'))).toBe(true);
     });
   });
   describe('Health State Management', () => {
@@ -250,7 +280,7 @@ describe('StatusService', () => {
         await StatusService.initialize();
         const healthState = StatusService.getHealthState(); // Assert
         expect(healthState).toBeDefined();
-        expect(healthState?.services).toHaveLength(3); // Storage + Email + Database
+        expect(healthState?.services).toHaveLength(4); // Storage + Email + Database + Billing
         expect(healthState?.isHealthy).toBe(true);
         expect(StatusService.isApplicationHealthy()).toBe(true);
       } finally {

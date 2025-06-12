@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createBillingService } from 'services/billing/billing';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { serverConfig } from '../../../../../settings';
 import { HTTP_STATUS } from 'lib/api/http';
 import { createDatabaseService } from 'services/database/databaseFactory';
+import { createBillingService } from 'services/billing/billingFactory';
 
 /**
  * Creates a subscription for a user. Free or Pro plans are supported.
@@ -15,7 +15,7 @@ export const createSubscription = async (
   user: { id: string; role: string; email: string }
 ): Promise<Response> => {
   try {
-    const billingService = createBillingService();
+    const billingService = await createBillingService();
 
     const { priceId }: { priceId: string } = await request.json();
 

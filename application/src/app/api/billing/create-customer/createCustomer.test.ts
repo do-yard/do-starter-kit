@@ -6,11 +6,12 @@ const mockListCustomer = jest.fn();
 const mockCreateCustomer = jest.fn();
 const mockDbCreate = jest.fn();
 
-jest.mock('services/billing/billing', () => ({
-  createBillingService: () => ({
-    listCustomer: mockListCustomer,
-    createCustomer: mockCreateCustomer,
-  }),
+jest.mock('services/billing/billingFactory', () => ({
+  createBillingService: () =>
+    Promise.resolve({
+      listCustomer: mockListCustomer,
+      createCustomer: mockCreateCustomer,
+    }),
 }));
 jest.mock('services/database/databaseFactory', () => ({
   createDatabaseService: () => ({

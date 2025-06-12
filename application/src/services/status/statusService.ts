@@ -2,6 +2,7 @@ import { createStorageService } from '../storage/storageFactory';
 import { createEmailService } from '../email/emailFactory';
 import { createDatabaseService } from '../database/databaseFactory';
 import { ServiceStatus } from './serviceConfigStatus';
+import { createBillingService } from 'services/billing/billingFactory';
 
 /**
  * Interface for application health state.
@@ -208,6 +209,36 @@ export class StatusService {
   }
 
   /**
+   * Checks the configuration and connectivity status of the billing service.
+   * Uses the BillingService interface to check the current billing provider.
+   *
+   * @returns {Promise<ServiceStatus>} The status of the database service.
+   */
+  static async checkBillingStatus(): Promise<ServiceStatus> {
+    try {
+      const billingService = await createBillingService();
+
+      // Get configuration status from the service and add required classification
+      const configStatus = await billingService.checkConfiguration();
+      return {
+        ...configStatus,
+        required: billingService.isRequired(),
+      };
+    } catch (error) {
+      return {
+        name: 'Billing Service',
+        configured: false,
+        connected: false,
+        required: true, // Default to true since database is critical
+        error:
+          error instanceof Error
+            ? `Failed to initialize database service: ${error.message}`
+            : 'Failed to initialize database service: Unknown error',
+      };
+    }
+  }
+
+  /**
    * Checks the status of all configured services.
    * This method will automatically check all available services.
    *
@@ -227,6 +258,9 @@ export class StatusService {
     // Check database service (demonstrates extensibility)
     const databaseStatus = await this.checkDatabaseStatus();
     services.push(databaseStatus);
+
+    const billingStatus = await this.checkBillingStatus();
+    services.push(billingStatus);
 
     return services;
   }

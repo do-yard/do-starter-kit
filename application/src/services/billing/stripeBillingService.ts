@@ -1,3 +1,4 @@
+import { ServiceConfigStatus } from 'services/status/serviceConfigStatus';
 import { serverConfig } from '../../../settings';
 import { BillingService } from './billing';
 import Stripe from 'stripe';
@@ -6,10 +7,27 @@ import Stripe from 'stripe';
  * StripeBillingService is a service that implements the BillingService interface
  * using the Stripe API for managing billing operations such as customers and subscriptions.
  */
-export class StripeBillingService implements BillingService {
+export class StripeBillingService extends BillingService {
   private stripe: Stripe;
+  private static readonly serviceName = 'Billing (Stripe)';
+  private description: string = 'The following features are impacted: singup, billing plans';
+
+  // Required config items with their corresponding env var names and descriptions
+  private static requiredConfig = {
+    stripeSecretKey: { envVar: 'STRIPE_SECRET_KEY', description: 'Stripe secret key' },
+    freePriceId: { envVar: 'NEXT_PUBLIC_STRIPE_FREE_PRICE_ID', description: 'Free price id' },
+    proPriceId: { envVar: 'NEXT_PUBLIC_STRIPE_PRO_PRICE_ID', description: 'Pro price id' },
+    proGiftPriceId: { envVar: 'STRIPE_PRO_GIFT_PRICE_ID', description: 'Pro (Gift) id' },
+    webhookSecret: {
+      envVar: 'STRIPE_WEBHOOK_SECRET',
+      description: 'Secret to authenticate stripe webhooks',
+    },
+    portalConfigId: { envVar: 'STRIPE_PORTAL_CONFIG_ID', description: 'Checkout portal id' },
+  };
+  private lastConnectionError: string = '';
 
   constructor() {
+    super();
     if (!serverConfig.Stripe.stripeSecretKey) {
       throw new Error('Missing Stipe Secret Key');
     }
@@ -180,5 +198,76 @@ export class StripeBillingService implements BillingService {
     );
 
     return plans;
+  }
+
+  /**
+   * Checks if the email service is properly configured and accessible.
+   * Sends a test email to verify the connection.
+   *
+   * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
+   */
+  async checkConnection(): Promise<boolean> {
+    if (!this.stripe) {
+      this.lastConnectionError = 'Stripe client not initialized';
+      return false;
+    }
+
+    try {
+      // Test connection by sending a verification email to ourselves
+      // This is a lightweight way to test the API without actually sending emails
+      await this.stripe.products.list();
+      return true;
+    } catch (connectionError) {
+      const errorMsg =
+        connectionError instanceof Error ? connectionError.message : String(connectionError);
+
+      console.error('Email connection test failed:', {
+        error: errorMsg,
+      });
+
+      this.lastConnectionError = `Connection error: ${errorMsg}`;
+      return false;
+    }
+  }
+
+  /**
+   * Checks if the email service configuration is valid and tests connection when configuration is complete.
+   */
+  async checkConfiguration(): Promise<ServiceConfigStatus> {
+    // Check for missing configuration
+    const missingConfig = Object.entries(StripeBillingService.requiredConfig)
+      .filter(([key]) => !serverConfig.Stripe[key as keyof typeof serverConfig.Stripe])
+      .map(([, value]) => value.envVar);
+
+    if (missingConfig.length > 0) {
+      return {
+        name: StripeBillingService.serviceName,
+        configured: false,
+        connected: undefined, // Don't test connection when configuration is missing
+        configToReview: missingConfig,
+        error: 'Configuration missing',
+        description: this.description,
+      };
+    }
+
+    // If configured, test the connection
+    const isConnected = await this.checkConnection();
+    if (!isConnected) {
+      return {
+        name: StripeBillingService.serviceName,
+        configured: true,
+        connected: false,
+        configToReview: Object.values(StripeBillingService.requiredConfig).map(
+          (config) => config.envVar
+        ),
+        error: this.lastConnectionError || 'Connection failed',
+        description: this.description,
+      };
+    }
+    return {
+      name: StripeBillingService.serviceName,
+      configured: true,
+      connected: true,
+    };
   }
 }

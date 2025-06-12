@@ -13,10 +13,11 @@ jest.mock('services/database/databaseFactory', () => ({
   }),
 }));
 
-jest.mock('services/billing/billing', () => ({
-  createBillingService: () => ({
-    manageSubscription: mockManageSubscription,
-  }),
+jest.mock('services/billing/billingFactory', () => ({
+  createBillingService: () =>
+    Promise.resolve({
+      manageSubscription: mockManageSubscription,
+    }),
 }));
 
 let proPriceId: string | undefined = 'pro_123';

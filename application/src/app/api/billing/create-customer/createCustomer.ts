@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
-import { createBillingService } from 'services/billing/billing';
+import { createBillingService } from 'services/billing/billingFactory';
 import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
@@ -13,7 +13,7 @@ export const createCustomer = async (
   user: { id: string; role: string; email: string }
 ): Promise<Response> => {
   try {
-    const billingService = createBillingService();
+    const billingService = await createBillingService();
 
     const customers = await billingService.listCustomer(user.email);
 

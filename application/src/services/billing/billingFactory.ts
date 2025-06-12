@@ -1,0 +1,20 @@
+import { serverConfig } from '../../../settings';
+import { BillingService } from './billing';
+
+/**
+ * Factory function to create and return the appropriate billing client based on the configured provider.
+ */
+export async function createBillingService(): Promise<BillingService> {
+  const storageProvider = serverConfig.billingProvider;
+
+  switch (storageProvider) {
+    // Add more providers here in the future
+    // case 'AZURE':
+    //   return new AzureStorageService();
+    case 'Stripe':
+    default: {
+      const { StripeBillingService } = await import('./stripeBillingService');
+      return new StripeBillingService();
+    }
+  }
+}

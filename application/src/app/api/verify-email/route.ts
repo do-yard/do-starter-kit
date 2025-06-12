@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseClient } from 'services/database/database';
 import { HTTP_STATUS } from 'lib/api/http';
-import { createBillingService } from 'services/billing/billing';
 import { serverConfig } from '../../../../settings';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum, User } from 'types';
 import { createDatabaseService } from 'services/database/databaseFactory';
+import { createBillingService } from 'services/billing/billingFactory';
 
 const createSubscription = async (db: DatabaseClient, user: User) => {
-  const billingService = createBillingService();
+  const billingService = await createBillingService();
 
   if (!serverConfig.Stripe.freePriceId) {
     throw new Error('Free price Id is not set');

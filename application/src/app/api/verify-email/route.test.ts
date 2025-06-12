@@ -5,7 +5,7 @@ import { HTTP_STATUS } from 'lib/api/http';
 jest.mock('services/database/databaseFactory', () => ({
   createDatabaseService: jest.fn(),
 }));
-jest.mock('services/billing/billing', () => ({
+jest.mock('services/billing/billingFactory', () => ({
   createBillingService: jest.fn(),
 }));
 
@@ -31,9 +31,9 @@ const mockBillingService = {
   createSubscription: jest.fn(),
 };
 
-import * as billingModule from 'services/billing/billing';
+import * as billingModule from 'services/billing/billingFactory';
 
-(billingModule.createBillingService as jest.Mock).mockReturnValue(mockBillingService);
+(billingModule.createBillingService as jest.Mock).mockResolvedValue(mockBillingService);
 
 jest.mock('../../../services/database/databaseFactory', () => ({
   createDatabaseService: () => Promise.resolve(mockDb),
