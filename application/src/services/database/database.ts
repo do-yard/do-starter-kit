@@ -46,7 +46,8 @@ export interface DatabaseClient {
       skip: number;
       take: number;
       orderBy: {
-        createdAt: 'desc' | 'asc';
+        createdAt?: 'desc' | 'asc';
+        title?: 'asc';
       };
     }) => Promise<Note[]>;
     count: (userId: string, search?: string) => Promise<number>;

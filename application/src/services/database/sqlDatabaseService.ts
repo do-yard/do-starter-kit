@@ -118,7 +118,8 @@ export class SqlDatabaseService implements DatabaseClient {
       skip: number;
       take: number;
       orderBy: {
-        createdAt: 'desc' | 'asc';
+        createdAt?: 'desc' | 'asc';
+        title?: 'asc';
       };
     }) => {
       const { userId, search, skip, take, orderBy } = args;

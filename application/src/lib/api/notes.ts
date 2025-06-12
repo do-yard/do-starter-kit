@@ -33,13 +33,15 @@ export class NotesApiClient {
     page?: number;
     pageSize?: number;
     search?: string;
+    sortBy?: string;
   }): Promise<PaginatedNotes> {
     let url = `${this.baseURL}`;
-    if (params && (params.page || params.pageSize || params.search)) {
+    if (params && (params.page || params.pageSize || params.search || params.sortBy)) {
       const query = new URLSearchParams();
       if (params.page) query.append('page', params.page.toString());
       if (params.pageSize) query.append('pageSize', params.pageSize.toString());
       if (params.search) query.append('search', params.search);
+      if (params.sortBy) query.append('sortBy', params.sortBy);
       url += `?${query.toString()}`;
     }
     const res = await fetch(url);

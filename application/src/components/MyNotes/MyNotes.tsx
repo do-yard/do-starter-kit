@@ -46,7 +46,12 @@ const MyNotes: React.FC = () => {
   const fetchNotes = async () => {
     try {
       setIsLoading(true);
-      const { notes, total } = await apiClient.getNotes({ page, pageSize, search: searchQuery });
+      const { notes, total } = await apiClient.getNotes({
+        page,
+        pageSize,
+        search: searchQuery,
+        sortBy,
+      });
       setNotes(notes);
       setTotalNotes(total);
       setError(null);
@@ -59,26 +64,9 @@ const MyNotes: React.FC = () => {
 
   useEffect(() => {
     fetchNotes();
-  }, [page, pageSize, searchQuery]);
+  }, [page, pageSize, searchQuery, sortBy]);
 
   const totalPages = Math.ceil(totalNotes / pageSize);
-
-  const sortedNotes = React.useMemo(() => {
-    if (!notes) return [];
-    const notesCopy = [...notes];
-    if (sortBy === 'newest') {
-      return notesCopy.sort(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
-    } else if (sortBy === 'oldest') {
-      return notesCopy.sort(
-        (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      );
-    } else if (sortBy === 'title') {
-      return notesCopy.sort((a, b) => a.title.localeCompare(b.title));
-    }
-    return notesCopy;
-  }, [notes, sortBy]);
 
   const handleSortChange = (
     event: ChangeEvent<HTMLInputElement> | (Event & { target: { value: unknown; name: string } }),
@@ -211,7 +199,7 @@ const MyNotes: React.FC = () => {
       {/* Notes Display */}
       {viewMode === 'list' ? (
         <NotesListView
-          notes={sortedNotes}
+          notes={notes}
           isLoading={isLoading}
           error={error}
           onViewNote={handleViewNote}
@@ -220,7 +208,7 @@ const MyNotes: React.FC = () => {
         />
       ) : (
         <NotesGridView
-          notes={sortedNotes}
+          notes={notes}
           isLoading={isLoading}
           error={error}
           onViewNote={handleViewNote}

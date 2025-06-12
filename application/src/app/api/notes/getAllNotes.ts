@@ -21,6 +21,7 @@ export const getAllNotes = async (
     const page = parseInt(searchParams.get('page') || '1', 10);
     const pageSize = parseInt(searchParams.get('pageSize') || '10', 10);
     const search = searchParams.get('search')?.trim();
+    const sortBy = searchParams.get('sortBy') || 'newest';
 
     // Get all notes for the user
     const [notes, total] = await Promise.all([
@@ -29,7 +30,12 @@ export const getAllNotes = async (
         search,
         skip: (page - 1) * pageSize,
         take: pageSize,
-        orderBy: { createdAt: 'desc' },
+        orderBy:
+          sortBy === 'title'
+            ? { title: 'asc' as const }
+            : sortBy === 'oldest'
+              ? { createdAt: 'asc' as const }
+              : { createdAt: 'desc' as const },
       }),
       dbClient.note.count(userId, search),
     ]);

@@ -65,6 +65,44 @@ describe('getAllNotes', () => {
     expect(await res.json()).toEqual({ notes, total: 1 });
   });
 
+  it('calls findMany and count with sortBy=oldest if provided', async () => {
+    const notes = [
+      { id: 'n1', userId: 'user-1', title: 'meeting', content: 'notes', createdAt: 'now' },
+    ];
+    mockFindMany.mockResolvedValue(notes);
+    mockCount.mockResolvedValue(1);
+    const req = makeRequest('http://localhost/api/notes?page=1&pageSize=10&sortBy=oldest');
+    const res = await getAllNotes(req, user);
+    expect(mockFindMany).toHaveBeenCalledWith({
+      userId: 'user-1',
+      skip: 0,
+      take: 10,
+      orderBy: { createdAt: 'asc' },
+    });
+    expect(mockCount).toHaveBeenCalledWith('user-1', undefined);
+    expect(res.status).toBe(HTTP_STATUS.OK);
+    expect(await res.json()).toEqual({ notes, total: 1 });
+  });
+
+  it('calls findMany and count with sortBy=title if provided', async () => {
+    const notes = [
+      { id: 'n1', userId: 'user-1', title: 'Alpha', content: 'notes', createdAt: 'now' },
+    ];
+    mockFindMany.mockResolvedValue(notes);
+    mockCount.mockResolvedValue(1);
+    const req = makeRequest('http://localhost/api/notes?page=1&pageSize=10&sortBy=title');
+    const res = await getAllNotes(req, user);
+    expect(mockFindMany).toHaveBeenCalledWith({
+      userId: 'user-1',
+      skip: 0,
+      take: 10,
+      orderBy: { title: 'asc' },
+    });
+    expect(mockCount).toHaveBeenCalledWith('user-1', undefined);
+    expect(res.status).toBe(HTTP_STATUS.OK);
+    expect(await res.json()).toEqual({ notes, total: 1 });
+  });
+
   it('returns 500 on db error', async () => {
     mockFindMany.mockRejectedValue(new Error('fail'));
     mockCount.mockResolvedValue(0);
