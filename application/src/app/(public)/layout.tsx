@@ -23,7 +23,7 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <PublicThemeProvider>
       <Box display="flex" flexDirection="column" minHeight="100vh">
-        <NavBar bgcolor="background.default" />
+        <NavBar />
         <Box component="main" flexGrow={1}>
           {children}
         </Box>
