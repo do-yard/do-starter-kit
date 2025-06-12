@@ -40,8 +40,9 @@ describe('MagicLinkVerifyPage', () => {
   });
 
   describe('when token or email is missing', () => {
-    let originalUseSearchParams: any;
-    let originalUseRouter: any;
+    // Use correct types for hooks from next/navigation
+    let originalUseSearchParams: () => URLSearchParams;
+    let originalUseRouter: () => { replace: (url: string) => void };
     beforeAll(() => {
       jest.resetModules();
       originalUseSearchParams = jest.requireActual('next/navigation').useSearchParams;
