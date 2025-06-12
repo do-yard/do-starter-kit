@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import MagicLinkVerifier from 'components/MagicLinkVerifier/MagicLinkVerifier';
 
 /**
@@ -5,7 +6,11 @@ import MagicLinkVerifier from 'components/MagicLinkVerifier/MagicLinkVerifier';
  * Render the magic link verification component with the corresponding layout.
  */
 const MagicLinkVerifyPage: React.FC = () => {
-  return <MagicLinkVerifier />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MagicLinkVerifier />
+    </Suspense>
+  );
 };
 
 export default MagicLinkVerifyPage;
