@@ -2,6 +2,8 @@
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { serverConfig } from '../../../../settings';
 import { createDatabaseService } from 'services/database/databaseFactory';
+import { createEmailService } from 'services/email/emailFactory';
+import { emailTemplate } from 'services/email/emailTemplate';
 
 const PLAN_MAP: Record<string, SubscriptionPlanEnum> = {
   [serverConfig.Stripe.proPriceId!]: SubscriptionPlanEnum.PRO,
@@ -35,4 +37,28 @@ export const handleSubscriptionUpdated = async (json: any) => {
     status: SubscriptionStatusEnum.ACTIVE,
     plan,
   });
+
+  try {
+    const user = await db.user.findById(customerId);
+
+    if (!user) {
+      console.warn(`⚠️ User not found for customer ID: ${customerId}`);
+      return;
+    }
+
+    const emailClient = await createEmailService();
+    await emailClient.sendEmail(
+      user.email,
+      'Your subscription was updated',
+      emailTemplate({
+        title: 'Your subscription was updated',
+        content: `<p>Your subscription was updated.</p>
+            <p style="text-align:center; margin: 32px 0;">
+              Your subscription plan is now <strong>${plan}</strong>. Thank you for using our service!
+            </p>`,
+      })
+    );
+  } catch (error) {
+    console.error('Error sending subscription update email:', error);
+  }
 };
