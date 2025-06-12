@@ -10,7 +10,7 @@ import Stripe from 'stripe';
 export class StripeBillingService extends BillingService {
   private stripe: Stripe;
   private static readonly serviceName = 'Billing (Stripe)';
-  private description: string = 'The following features are impacted: singup, billing plans';
+  private description: string = 'The following features are impacted: signup, billing plans';
 
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
