@@ -182,7 +182,7 @@ function writeEnvFile(vars, stripeSecret, portalConfigId) {
     `STRIPE_PORTAL_CONFIG_ID=${portalConfigId}`,
     ...Object.entries(vars).map(([k, v]) => `${k}=${v}`),
   ];
-  return fs.writeFile(path.resolve('./.env'), lines.join('\n'), 'utf8');
+  return fs.writeFile(path.resolve('./.env-stripe'), lines.join('\n'), 'utf8');
 }
 
 async function rollback(stripe) {
@@ -222,7 +222,7 @@ async function rollback(stripe) {
  * Main entry point for Stripe Billing Setup.
  * This function guides the user through setting up Stripe billing products, features, and portal configuration.
  */
-export default async function main() {
+async function main() {
   console.log('🚀 Stripe Billing Setup');
   console.log('This script assumes a clean Stripe account with no existing billing setup.\n');
 
@@ -261,7 +261,7 @@ export default async function main() {
     const portalConfigId = await configureBillingPortal(stripe, created.products);
     await writeEnvFile(priceEnvVars, secretKey, portalConfigId);
 
-    console.log('📄 .env file created successfully.\n');
+    console.log('📄 .env-stripe file created successfully.\n');
   } catch (err) {
     console.error('❌ Setup failed:');
     console.error(err.message || err);
@@ -271,3 +271,5 @@ export default async function main() {
 
   rl.close();
 }
+
+main();

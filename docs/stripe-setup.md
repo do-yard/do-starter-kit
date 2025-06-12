@@ -1,37 +1,111 @@
-# Setting up Stripe
+# Stripe Setup
 
-This sample application uses Stripe to manage user subscriptions. The subscription is made of two products and two prices (Free and Pro). We offer two scripts to create these resources automatically but first, you will need to generate the required Stripe credentials. Follow these steps:
+This guide explains how to configure your Stripe account and automatically generate all required billing products, features, and environment variables for this project.
 
-1. Create a [Stripe](https://stripe.com/) account or log in if you already have one.
-2. Go to your dashboard and locate the API keys card shown there.
-3. Copy the **Secret key** and store it in a safe place.
+## 1. Create a Stripe Account & Obtain API Keys
 
-## Create Stripe resources
+1. Go to [Stripe](https://dashboard.stripe.com/register) and create a new account, or log in to your existing one.
+2. Once logged in, switch to **Test mode** (toggle in the sidebar).
+3. In the dashboard, go to **Developers** > **API keys**.
+4. Copy the **Secret Key** (`sk_test_...`). You will use this key in the setup script.
 
-This sample provides scripts to automatically create the required resources in Stripe. Follow these steps:
+## 2. Run the Stripe Setup Script
 
-1. Open a terminal and navigate to the `./scripts` directory:
+This project includes an automated script to create all required products, prices, features, and the billing portal configuration in Stripe.
 
-   - **Windows**: Open a `powershell` terminal
-   - **Linux/Mac**: Open a `bash` terminal
+### Prerequisites
 
-2. Run the setup script:
-   - **Windows**: `./stripe_setup.ps1`
-   - **Linux/Mac**: `./stripe_setup.sh`
+- Ensure you have installed project dependencies:
 
-The script will ask you for the Stripe key you created before:
+```bash
+npm install
+```
 
-1. Enter your Stripe secret key and press enter.
-2. Enter a name for your free product and press enter.
-3. Enter a name for your pro product and press enter.
+### Running the Setup
 
-After this, the script will create two products with your specified names and two prices (one free and one paid), linked to those products.
-In the script outputs, you will see the respective IDs for the products and the prices. _Use these IDs in the deployment templates as the required environment variables_:
+From your project root, run:
 
-- NEXT_PUBLIC_STRIPE_FREE_PRICE_ID
-- NEXT_PUBLIC_STRIPE_PRO_PRICE_ID
-- STRIPE_PRO_GIFT_PRICE_ID
+```bash
+npm run setup:stripe
+```
 
-Also add the following environment variable, using the secret you obtained in step **3** of [Setting up Stripe](#setting-up-stripe).
+The script will:
 
-- STRIPE_SECRET_KEY
+- Prompt you for your **Stripe Secret Key** (it must start with `sk_test_`).
+- Validate the key and automatically create products, prices, and features.
+- Generate a `.env-stripe` file with all necessary environment variables.
+
+#### Example `.env-stripe` Output
+
+```env
+BILLING_PROVIDER=Stripe
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_PORTAL_CONFIG_ID=...
+NEXT_PUBLIC_STRIPE_FREE_PRICE_ID=...
+NEXT_PUBLIC_STRIPE_PRO_PRICE_ID=...
+STRIPE_PRO_GIFT_PRICE_ID=...
+```
+
+> **Note:** The `STRIPE_PORTAL_CONFIG_ID` is used to configure the customer billing portal in checkout flow.
+
+---
+
+## 3. Apply the Generated Environment Variables
+
+After the script completes, manually **copy the contents of `.env-stripe` into your main `.env` file** at the project root.
+
+```bash
+cat .env-stripe >> .env
+```
+
+Or open `.env-stripe`, copy all lines, and paste them at the end of your `.env` file.
+
+---
+
+## 4. (Next Steps) Configure Stripe Webhooks
+
+To enable real-time billing updates, you need to [configure Stripe webhooks](./stripe-webhooks.md) and set `STRIPE_WEBHOOK_SECRET` in your `.env` file.  
+**Follow [these instructions](./stripe-webhooks.md) after this setup.**
+
+---
+
+## FAQ
+
+**Q: What does the setup script do?**  
+A: It automates the creation of all products, features, and pricing required for this SaaS, and outputs the environment variables needed for your backend and frontend.
+
+**Q: Can I re-run the script?**  
+A: Yes, the script is idempotent. It detects and re-uses existing products/features by name/lookup key.
+
+**Q: What if I get errors or want to roll back?**  
+A: If an error occurs, the script attempts to deactivate any Stripe objects it created in that run, leaving your Stripe account clean.
+
+**Q: Do I need to edit `stripe-config.json`?**  
+A: No. Only do so if you want to change the default products/features for this starter kit.
+
+---
+
+## Troubleshooting
+
+- **Invalid key format:** Ensure you use a Stripe secret key (`sk_test_...`), not a publishable key.
+- **Script errors out:** Check that your Stripe account is in test mode and has no naming conflicts with existing products/features.
+- **.env-stripe not generated:** Fix any script errors shown in the console, then re-run the script.
+
+---
+
+## Need more help?
+
+- [Stripe Dashboard](https://dashboard.stripe.com)
+- [Stripe API Keys Documentation](https://stripe.com/docs/keys)
+- [Project README](../README.md)
+- [Webhook setup guide](./stripe-webhooks.md)
+
+---
+
+## Advanced: How the script works (for maintainers)
+
+- Uses the official [stripe](https://www.npmjs.com/package/stripe) npm package.
+- Reads `./setup/stripe-config.json` for products/features to provision.
+- Creates each Feature, Product, Price, and associates features to products using the Stripe Entitlements API.
+- Configures a Billing Portal and outputs all required IDs to `.env-stripe`.
+- On error, disables created objects for a clean rollback.
