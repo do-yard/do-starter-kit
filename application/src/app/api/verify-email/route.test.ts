@@ -2,8 +2,8 @@ import { GET } from './route';
 import { NextRequest } from 'next/server';
 import { HTTP_STATUS } from 'lib/api/http';
 
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: jest.fn(),
+jest.mock('services/database/databaseFactory', () => ({
+  createDatabaseService: jest.fn(),
 }));
 jest.mock('services/billing/billing', () => ({
   createBillingService: jest.fn(),

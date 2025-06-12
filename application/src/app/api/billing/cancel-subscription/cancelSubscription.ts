@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
-import { createDatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { serverConfig } from '../../../../../settings';
 import { HTTP_STATUS } from 'lib/api/http';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Cancel an active subscription for a user.
@@ -16,7 +16,7 @@ export const cancelSubscription = async (
 ): Promise<Response> => {
   try {
     const billingService = createBillingService();
-    const db = createDatabaseClient();
+    const db = await createDatabaseService();
 
     const customer = await billingService.listCustomer(user.email);
 

@@ -5,8 +5,8 @@ import { NextRequest } from 'next/server';
 const mockFindByUserId = jest.fn();
 const mockManageSubscription = jest.fn();
 
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: () => ({
+jest.mock('services/database/databaseFactory', () => ({
+  createDatabaseService: () => ({
     subscription: {
       findByUserId: mockFindByUserId,
     },

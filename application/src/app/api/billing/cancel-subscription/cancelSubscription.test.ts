@@ -17,8 +17,8 @@ jest.mock('services/billing/billing', () => ({
     updateSubscription: mockStripeUpdateSubscription,
   }),
 }));
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: () => ({
+jest.mock('services/database/databaseFactory', () => ({
+  createDatabaseService: () => ({
     subscription: {
       update: mockUpdateSubscription,
       findByUserId: mockFindByUserId,

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { serverConfig } from '../../../../../settings';
 import { createBillingService } from 'services/billing/billing';
-import { createDatabaseClient } from 'services/database/database';
 import { HTTP_STATUS } from 'lib/api/http';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Initiates a checkout session for upgrading to Pro.
@@ -23,7 +23,7 @@ export const checkout = async (
     );
   }
 
-  const db = createDatabaseClient();
+  const db = await createDatabaseService();
 
   const subscription = await db.subscription.findByUserId(user.id);
 

@@ -1,5 +1,5 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 import { SubscriptionStatusEnum } from 'types';
 
 /**
@@ -16,7 +16,7 @@ export const handleSubscriptionDeleted = async (json: any) => {
     throw new Error('Customer ID is required');
   }
 
-  const db = createDatabaseClient();
+  const db = await createDatabaseService();
 
   db.subscription.updateByCustomerId(customerId, {
     status: SubscriptionStatusEnum.CANCELED,

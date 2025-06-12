@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-import { createDatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { serverConfig } from '../../../../settings';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 const PLAN_MAP: Record<string, SubscriptionPlanEnum> = {
   [serverConfig.Stripe.proPriceId!]: SubscriptionPlanEnum.PRO,
@@ -29,7 +29,7 @@ export const handleSubscriptionUpdated = async (json: any) => {
     return;
   }
 
-  const db = createDatabaseClient();
+  const db = await createDatabaseService();
 
   await db.subscription.updateByCustomerId(customerId, {
     status: SubscriptionStatusEnum.ACTIVE,

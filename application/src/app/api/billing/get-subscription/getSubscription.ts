@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Fetches the active subscription for a user.
@@ -12,7 +12,7 @@ export const getSubscription = async (
   user: { id: string; role: string; email: string }
 ): Promise<Response> => {
   try {
-    const db = createDatabaseClient();
+    const db = await createDatabaseService();
     const subscription = await db.subscription.findByUserId(user.id);
 
     return NextResponse.json({ subscription: subscription });

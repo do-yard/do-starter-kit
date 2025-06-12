@@ -1,16 +1,16 @@
 import { handleSubscriptionUpdated } from './handleSubscriptionUpdated';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
-import * as dbModule from 'services/database/database';
+import * as dbModule from 'services/database/databaseFactory';
 
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: jest.fn(),
+jest.mock('services/database/databaseFactory', () => ({
+  createDatabaseService: jest.fn(),
 }));
 
 const mockUpdateByCustomerId = jest.fn();
 
 beforeEach(() => {
   jest.clearAllMocks();
-  (dbModule.createDatabaseClient as jest.Mock).mockReturnValue({
+  (dbModule.createDatabaseService as jest.Mock).mockReturnValue({
     subscription: { updateByCustomerId: mockUpdateByCustomerId },
   });
 });

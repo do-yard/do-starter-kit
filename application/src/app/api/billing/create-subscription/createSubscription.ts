@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
-import { createDatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { serverConfig } from '../../../../../settings';
 import { HTTP_STATUS } from 'lib/api/http';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Creates a subscription for a user. Free or Pro plans are supported.
@@ -28,7 +28,7 @@ export const createSubscription = async (
 
     let customerId;
 
-    const db = createDatabaseClient();
+    const db = await createDatabaseService();
 
     const subscription = await db.subscription.findByUserId(user.id);
 

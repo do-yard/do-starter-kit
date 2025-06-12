@@ -14,8 +14,8 @@ jest.mock('services/billing/billing', () => ({
     createSubscription: mockCreateSubscription,
   }),
 }));
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: () => ({
+jest.mock('services/database/databaseFactory', () => ({
+  createDatabaseService: () => ({
     subscription: {
       create: mockDbCreate,
       update: mockDbUpdate,
