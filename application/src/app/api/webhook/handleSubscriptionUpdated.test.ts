@@ -2,21 +2,18 @@ import { handleSubscriptionUpdated } from './handleSubscriptionUpdated';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import * as dbModule from 'services/database/database';
 
-// Mocks para base de datos
 jest.mock('services/database/database', () => ({
   createDatabaseClient: jest.fn(),
 }));
 
 const mockUpdateByCustomerId = jest.fn();
 
-// Mock de StripeBillingService y su método setInvoicesActive
 jest.mock('services/billing/stripeBillingService', () => ({
   StripeBillingService: jest.fn().mockImplementation(() => ({
     setInvoicesActive: jest.fn().mockResolvedValue(undefined),
   })),
 }));
 
-// Mock global de Stripe SDK para evitar requests reales
 jest.mock('stripe', () => {
   return jest.fn().mockImplementation(() => ({
     subscriptions: {
@@ -25,7 +22,6 @@ jest.mock('stripe', () => {
   }));
 });
 
-// Helper para crear eventos de prueba
 const makeEvent = (
   customer: string | undefined,
   priceId: string | undefined,

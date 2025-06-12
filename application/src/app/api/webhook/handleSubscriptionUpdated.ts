@@ -2,8 +2,7 @@
 import { createDatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { serverConfig } from '../../../../settings';
-import { StripeBillingService } from 'services/billing/stripeBillingService'; // Ajusta el import según tu estructura
-
+import { StripeBillingService } from 'services/billing/stripeBillingService';
 const PLAN_MAP: Record<string, SubscriptionPlanEnum> = {
   [serverConfig.Stripe.proPriceId!]: SubscriptionPlanEnum.PRO,
   [serverConfig.Stripe.freePriceId!]: SubscriptionPlanEnum.FREE,
