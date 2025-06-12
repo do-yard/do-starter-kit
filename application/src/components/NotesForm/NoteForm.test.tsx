@@ -83,8 +83,8 @@ describe('NoteForm', () => {
     expect(screen.getByDisplayValue('Test Content')).toBeInTheDocument();
 
     // Both save and cancel buttons should be present
-    expect(screen.getByRole('button', { name: /Save Changes/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Cancel/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Save Changes' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument();
   });
   it('calls onSave when form is submitted', async () => {
     render(<NoteForm mode="create" onSave={mockOnSave} onCancel={mockOnCancel} />);
