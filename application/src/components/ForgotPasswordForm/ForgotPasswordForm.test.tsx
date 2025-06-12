@@ -4,7 +4,7 @@ import ForgotPasswordForm from './ForgotPasswordForm';
 
 // Mock useNavigating
 jest.mock('hooks/navigation', () => ({
-  useNavigating: () => ({ setNavigating: jest.fn() })
+  useNavigating: () => ({ setNavigating: jest.fn() }),
 }));
 
 describe('ForgotPasswordForm', () => {
@@ -27,7 +27,7 @@ describe('ForgotPasswordForm', () => {
   it('shows success message when magic link is sent', async () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
-      json: async () => ({ ok: true })
+      json: async () => ({ ok: true }),
     }) as jest.Mock;
     render(<ForgotPasswordForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');
@@ -38,7 +38,7 @@ describe('ForgotPasswordForm', () => {
   it('shows error message when backend returns error', async () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
-      json: async () => ({ error: 'User not found' })
+      json: async () => ({ error: 'User not found' }),
     }) as jest.Mock;
     render(<ForgotPasswordForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'fail@example.com');

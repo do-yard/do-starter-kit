@@ -36,7 +36,10 @@ const LoginForm: React.FC = () => {
         setSuccess('Magic link sent! Please check your email inbox.');
       }
     } catch (err) {
-      setError('Something went wrong, please try again later later.' + (err instanceof Error ? `: ${err.message}` : ''));
+      setError(
+        'Something went wrong, please try again later later.' +
+          (err instanceof Error ? `: ${err.message}` : '')
+      );
     } finally {
       setNavigating(false);
     }
@@ -59,7 +62,8 @@ const LoginForm: React.FC = () => {
               Passwordless authentication
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Forgot your password? No problem! Enter your email and we will send you a magic link to log in.
+              Forgot your password? No problem! Enter your email and we will send you a magic link
+              to log in.
             </Typography>
           </Box>
           <CardContent sx={{ p: 3, pt: 0, pb: 1 }}>

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 interface MagicLinkVerifyPageProps {
   token?: string;
@@ -20,15 +20,18 @@ interface MagicLinkVerifyPageProps {
  * @param {string} [props.token] - The magic link token (optional, falls back to URL query param)
  * @param {string} [props.email] - The user's email (optional, falls back to URL query param)
  */
-export default function MagicLinkVerifyPage({ token: propToken, email: propEmail }: MagicLinkVerifyPageProps) {
+export default function MagicLinkVerifyPage({
+  token: propToken,
+  email: propEmail,
+}: MagicLinkVerifyPageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = propToken ?? searchParams.get("token");
-    const email = propEmail ?? searchParams.get("email");
+    const token = propToken ?? searchParams.get('token');
+    const email = propEmail ?? searchParams.get('email');
     if (!token || !email) {
       setStatus('error');
       setError('Missing token or email in the URL.');
@@ -37,21 +40,22 @@ export default function MagicLinkVerifyPage({ token: propToken, email: propEmail
 
     const verifyMagicLink = async () => {
       try {
-        await signIn("credentials", { email, magicLinkToken: token, redirect: false });
+        await signIn('credentials', { email, magicLinkToken: token, redirect: false });
         setStatus('success');
-        router.replace("/");
+        router.replace('/');
       } catch (err) {
         setStatus('error');
-        setError('Failed to verify magic link. ' + (err instanceof Error ? err.message : 'Unknown error'));
+        setError(
+          'Failed to verify magic link. ' + (err instanceof Error ? err.message : 'Unknown error')
+        );
       }
     };
 
     verifyMagicLink();
-
   }, [router, searchParams, propToken, propEmail]);
 
   return (
-    <div style={{ maxWidth: 400, margin: "0 auto", padding: 32 }}>
+    <div style={{ maxWidth: 400, margin: '0 auto', padding: 32 }}>
       {status === 'verifying' && <div>Verifying magic link...</div>}
       {status === 'success' && <div>Login successful! Redirecting...</div>}
       {status === 'error' && <div style={{ color: 'red' }}>Error: {error}</div>}

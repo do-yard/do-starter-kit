@@ -44,9 +44,12 @@ export abstract class DatabaseClient implements ConfigurableService {
     update: (id: string, note: Partial<Omit<Note, 'id' | 'createdAt'>>) => Promise<Note>;
     delete: (id: string) => Promise<void>;
   };
-  verificationToken: {
+  abstract verificationToken: {
     create: (data: { identifier: string; token: string; expires: Date }) => Promise<void>;
-    find: (identifier: string, token: string) => Promise<{ identifier: string; token: string; expires: Date } | null>;
+    find: (
+      identifier: string,
+      token: string
+    ) => Promise<{ identifier: string; token: string; expires: Date } | null>;
     delete: (identifier: string, token: string) => Promise<void>;
     deleteExpired: (now: Date) => Promise<void>;
   };

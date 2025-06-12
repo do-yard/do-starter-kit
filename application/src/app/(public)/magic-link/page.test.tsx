@@ -9,7 +9,9 @@ const mockSignIn = signIn as jest.Mock;
 let originalFetch: jest.Mock;
 beforeAll(() => {
   if (!globalThis.fetch) {
-    globalThis.fetch = jest.fn(() => Promise.resolve({ ok: true, json: async () => ({}) })) as unknown as jest.Mock;
+    globalThis.fetch = jest.fn(() =>
+      Promise.resolve({ ok: true, json: async () => ({}) })
+    ) as unknown as jest.Mock;
   }
 });
 afterAll(() => {
@@ -20,11 +22,16 @@ function setup({ email = 'test@example.com', signInSuccess = true } = {}) {
   jest.resetAllMocks();
   globalThis.fetch = jest.fn((url: RequestInfo | URL) => {
     if (url.toString().includes('/api/auth/magic-link')) {
-      return Promise.resolve({ ok: true, json: async () => ({ success: true, user: { id: '1', email, name: 'Test' } }) });
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ success: true, user: { id: '1', email, name: 'Test' } }),
+      });
     }
     return Promise.reject(new Error('Unknown endpoint'));
   }) as unknown as jest.Mock;
-  mockSignIn.mockImplementation(() => signInSuccess ? Promise.resolve({ ok: true }) : Promise.reject(new Error('Sign in failed')));
+  mockSignIn.mockImplementation(() =>
+    signInSuccess ? Promise.resolve({ ok: true }) : Promise.reject(new Error('Sign in failed'))
+  );
   return render(<MagicLinkVerifyPage />);
 }
 
@@ -68,6 +75,8 @@ describe('MagicLinkVerifyPage', () => {
 
   it('shows error if signIn fails', async () => {
     setup({ signInSuccess: false });
-    await waitFor(() => expect(screen.getByText(/failed to verify magic link/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/failed to verify magic link/i)).toBeInTheDocument()
+    );
   });
 });

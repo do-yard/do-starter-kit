@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 import { HTTP_STATUS } from 'lib/api/http';
-import { createEmailClient } from 'services/email/email';
+import { createEmailService } from 'services/email/emailFactory';
 import { v4 as uuidv4 } from 'uuid';
 import { emailTemplate } from 'services/email/emailTemplate';
 
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email is required' }, { status: HTTP_STATUS.BAD_REQUEST });
     }
 
-    const db = createDatabaseClient();
+    const db = await createDatabaseService();
     const user = await db.user.findByEmail(email);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: HTTP_STATUS.NOT_FOUND });
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     // Store the token in the verificationToken table
     await db.verificationToken.create({ identifier: email, token, expires });
 
-    const emailClient = createEmailClient();
+    const emailClient = await createEmailService();
     const verifyUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/magic-link?token=${token}&email=${encodeURIComponent(email)}`;
     await emailClient.sendEmail(
       user.email,
@@ -62,6 +62,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true, token });
   } catch (error) {
-    return NextResponse.json({ error: (error as Error).message || 'Internal server error' }, { status: HTTP_STATUS.INTERNAL_SERVER_ERROR });
+    return NextResponse.json(
+      { error: (error as Error).message || 'Internal server error' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 }

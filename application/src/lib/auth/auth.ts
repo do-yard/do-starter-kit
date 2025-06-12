@@ -13,7 +13,7 @@ const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
 };
 
 const verifyMagicLinkToken = async (token: string, email: string) => {
-  const db = createDatabaseClient();
+  const db = await createDatabaseService();
 
   const verification = await db.verificationToken.find(email, token);
   if (!verification || verification.expires < new Date()) {
@@ -25,32 +25,35 @@ const verifyMagicLinkToken = async (token: string, email: string) => {
   }
 
   await db.verificationToken.delete(email, token);
-  
+
   return true;
-}
+};
 
 const providers: Provider[] = [
   Credentials({
     credentials: {
       email: {},
       password: {},
-      magicLinkToken: {}
+      magicLinkToken: {},
     },
     authorize: async (credentials) => {
       try {
-      const dbClient = await createDatabaseService();
-      if (credentials.magicLinkToken && credentials.email) {
-        await verifyMagicLinkToken(credentials.magicLinkToken as string, credentials.email as string);
-        const user = await dbClient.user.findByEmail(credentials.email as string);
-        if (!user) {
-          throw new Error('User not found');
+        const dbClient = await createDatabaseService();
+        if (credentials.magicLinkToken && credentials.email) {
+          await verifyMagicLinkToken(
+            credentials.magicLinkToken as string,
+            credentials.email as string
+          );
+          const user = await dbClient.user.findByEmail(credentials.email as string);
+          if (!user) {
+            throw new Error('User not found');
+          }
+          return user;
         }
-        return user;
-      }
 
-      if (!credentials.email || !credentials.password) {
-        throw new Error('Email and password are required');
-      }
+        if (!credentials.email || !credentials.password) {
+          throw new Error('Email and password are required');
+        }
 
         const user = await dbClient.user.findByEmail(credentials.email as string);
         if (!user || !user.passwordHash) {
