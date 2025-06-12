@@ -21,25 +21,35 @@ describe('MagicLinkVerifier', () => {
   });
 
   it('shows loading state initially', () => {
-    (useSearchParams as jest.Mock).mockReturnValue({ get: (key: string) => key === 'token' ? 'abc' : 'test@example.com' });
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: (key: string) => (key === 'token' ? 'abc' : 'test@example.com'),
+    });
     render(<MagicLinkVerifier />);
     expect(screen.getByText(/Verifying magic link/i)).toBeInTheDocument();
   });
 
   it('calls signIn and redirects on success', async () => {
-    (useSearchParams as jest.Mock).mockReturnValue({ get: (key: string) => key === 'token' ? 'abc' : 'test@example.com' });
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: (key: string) => (key === 'token' ? 'abc' : 'test@example.com'),
+    });
     (signIn as jest.Mock).mockResolvedValue({});
     render(<MagicLinkVerifier />);
     expect(screen.getByText(/Verifying magic link/i)).toBeInTheDocument();
     await waitFor(() => {
-      expect(signIn).toHaveBeenCalledWith('credentials', { email: 'test@example.com', magicLinkToken: 'abc', redirect: false });
+      expect(signIn).toHaveBeenCalledWith('credentials', {
+        email: 'test@example.com',
+        magicLinkToken: 'abc',
+        redirect: false,
+      });
       expect(mockReplace).toHaveBeenCalledWith('/');
       expect(screen.getByText(/Login successful/i)).toBeInTheDocument();
     });
   });
 
   it('shows error if signIn fails', async () => {
-    (useSearchParams as jest.Mock).mockReturnValue({ get: (key: string) => key === 'token' ? 'abc' : 'test@example.com' });
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: (key: string) => (key === 'token' ? 'abc' : 'test@example.com'),
+    });
     (signIn as jest.Mock).mockRejectedValue(new Error('Invalid token'));
     render(<MagicLinkVerifier />);
     await waitFor(() => {
