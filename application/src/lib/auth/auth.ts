@@ -24,7 +24,7 @@ const providers: Provider[] = [
           throw new Error('Email and password are required');
         }
 
-      const dbClient = await createDatabaseService();
+        const dbClient = await createDatabaseService();
 
         const user = await dbClient.user.findByEmail(credentials.email as string);
         if (!user || !user.passwordHash) {
