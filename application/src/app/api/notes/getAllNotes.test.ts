@@ -4,12 +4,8 @@ import { NextRequest } from 'next/server';
 import { HTTP_STATUS } from 'lib/api/http';
 
 const mockFindByUserId = jest.fn();
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: () => ({
-    note: {
-      findByUserId: mockFindByUserId,
-    },
-  }),
+jest.mock('../../../services/database/databaseFactory', () => ({
+  createDatabaseService: () => Promise.resolve({ note: { findByUserId: mockFindByUserId } }),
 }));
 
 describe('getAllNotes', () => {

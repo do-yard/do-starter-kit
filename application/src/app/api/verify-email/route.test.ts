@@ -31,11 +31,13 @@ const mockBillingService = {
   createSubscription: jest.fn(),
 };
 
-import * as dbModule from 'services/database/database';
 import * as billingModule from 'services/billing/billing';
 
-(dbModule.createDatabaseClient as jest.Mock).mockReturnValue(mockDb);
 (billingModule.createBillingService as jest.Mock).mockReturnValue(mockBillingService);
+
+jest.mock('../../../services/database/databaseFactory', () => ({
+  createDatabaseService: () => Promise.resolve(mockDb),
+}));
 
 import { serverConfig } from '../../../../settings';
 serverConfig.Stripe = { freePriceId: 'free-price-id' };

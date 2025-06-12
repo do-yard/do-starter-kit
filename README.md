@@ -14,6 +14,8 @@ The architecture diagram above shows the complete structure of the SaaS Starter 
 
 The DigitalOcean SaaS Starter Kit can be run [locally](#running-locally) or in [DigitalOcean platform](#deploy-to-digitalocean-platform). Follow the steps for each case below.
 
+> **Important**: the steps below are for running the app and navigating to the landing page. To signup, [Resend](#resend-setup) and Stripe must be configured. For using the profile picture feature, [Spaces](#configure-digitalocean-spaces-storage) must be configured.
+
 ## Running locally
 
 1. Download/clone the repo.
@@ -131,6 +133,29 @@ Defaults used:
 npm run dev
 ```
 
+**Step 5: Check system status**
+Navigate to the `/system-status` page to see if all the required services are correctly configured.
+
+## Resend setup
+
+Resend is required for using the app beyond the landing page. The configuration has two values, a Resend API key and a sender address. To configure them, create an account or login and follow these steps:
+
+**Configure sender address**
+
+There are two options for the sender address:
+
+- **Use Resend test address**: delivered@resend.dev, which allows to send emails only to the account that created the API key being used. Sending emails to other accounts won't work.
+- **Use your own domain**: which is configured under 'Domains' in the Resend page. Currently, the free account allows up to one domain to be configured. The general process to add a domain is to enter the domain that will be used as sender for the emails and Resend will generate DNS records for configuring them in the registrar or provider.
+
+Once you have the sender address, add it to the `RESEND_EMAIL_SENDER` environment variable in your `.env` file or DigitalOcean setting in your app.
+
+**Create API key**
+
+1. Go to API keys and click 'Create API Key'
+1. Fill the form with a name, full access permissions and a domain if you have one or select all domains. Click add.
+1. Copy the API key secret and store it in a secure location
+1. Set the API key as value for the `RESEND_API_KEY` environment variable in your `.env` file or DigitalOcean setting in your app.
+
 ## Deploy from local environment
 
 If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
@@ -148,8 +173,8 @@ If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
    - [ ] **SPACES_REGION**: bucket region.
    - [ ] **NEXTAUTH_SECRET**: arbitrary string for Auth.js.
    - [ ] **APP_URL**: URL of the site, can be obtained after the site is deployed. You can leave it blank before deployment.
-   - [ ] **RESEND_API_KEY**: Your Resend API key. This feature is WIP.
-   - [ ] **RESEND_EMAIL_SENDER**: Sender address for the emails that the app will send. This feature is WIP.
+   - [ ] **RESEND_API_KEY**: Your Resend API key.
+   - [ ] **RESEND_EMAIL_SENDER**: Sender address for the emails that the app will send.
    - [ ] **CLUSTER_NAME**: arbitrary name for the DB cluster.
 1. Download and install [DigitalOcean doctl](https://docs.digitalocean.com/reference/doctl/how-to/install/).
 1. Create and API key in [DigitalOcean](https://cloud.digitalocean.com/account/api/tokens) and store it securely.

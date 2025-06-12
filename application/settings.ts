@@ -4,6 +4,9 @@ export interface ServerConfig {
   emailProvider: string;
   billingProvider: string;
   baseURL: string;
+  Database: {
+    url?: string;
+  };
   Spaces: {
     SPACES_KEY_ID?: string;
     SPACES_KEY_SECRET?: string;
@@ -30,6 +33,9 @@ export const serverConfig: ServerConfig = {
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
   billingProvider: process.env.BILLING_PROVIDER || 'Stripe',
   baseURL: process.env.BASE_URL || 'http://localhost:3000',
+  Database: {
+    url: process.env.DATABASE_URL,
+  },
   Spaces: {
     SPACES_KEY_ID: process.env.SPACES_KEY_ID,
     SPACES_KEY_SECRET: process.env.SPACES_KEY_SECRET,

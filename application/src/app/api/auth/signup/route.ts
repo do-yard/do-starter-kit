@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
 import { hashPassword } from 'helpers/hash';
 import { USER_ROLES } from 'lib/auth/roles';
 import { v4 as uuidv4 } from 'uuid';
-import { createEmailClient } from 'services/email/email';
 import { emailTemplate } from 'services/email/emailTemplate';
 import { HTTP_STATUS } from 'lib/api/http';
+import { createDatabaseService } from 'services/database/databaseFactory';
+import { createEmailService } from 'services/email/emailFactory';
 
 /**
  * API endpoint for user registration. Creates a new user, sends a verification email with a secure token,
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const dbClient = createDatabaseClient();
+    const dbClient = await createDatabaseService();
     const userCount = await dbClient.user.count();
     const isFirstUser = userCount === 0;
 
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       emailVerified: false,
     });
 
-    const emailClient = createEmailClient();
+    const emailClient = await createEmailService();
     const verifyUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
     await emailClient.sendEmail(
       user.email,

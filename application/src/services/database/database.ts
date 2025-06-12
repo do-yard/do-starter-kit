@@ -1,13 +1,16 @@
-import { serverConfig } from '../../../settings';
 import { Note, Subscription, User, UserWithSubscriptions, SubscriptionStatus } from 'types';
-import { SqlDatabaseService } from './sqlDatabaseService';
+import { ServiceConfigStatus, ConfigurableService } from '../status/serviceConfigStatus';
 
 export type DatabaseProvider = 'Postgres';
 
 export type QueryParams = unknown[];
 
-export interface DatabaseClient {
-  user: {
+/**
+ * Abstract base class for database clients.
+ * Provides a common interface for database operations across different database providers.
+ */
+export abstract class DatabaseClient implements ConfigurableService {
+  abstract user: {
     findById: (id: string) => Promise<User | null>;
     findByEmail: (email: string) => Promise<User | null>;
     findByEmailAndPassword: (email: string, passwordHash: string) => Promise<User | null>;
@@ -24,7 +27,7 @@ export interface DatabaseClient {
     delete: (id: string) => Promise<void>;
     count: () => Promise<number>;
   };
-  subscription: {
+  abstract subscription: {
     findByUserAndStatus: (
       userId: string,
       status: SubscriptionStatus
@@ -42,27 +45,22 @@ export interface DatabaseClient {
     ) => Promise<Subscription>;
     delete: (id: string) => Promise<void>;
   };
-  note: {
+  abstract note: {
     findById: (id: string) => Promise<Note | null>;
     findByUserId: (userId: string) => Promise<Note[]>;
     create: (note: Omit<Note, 'id' | 'createdAt'>) => Promise<Note>;
     update: (id: string, note: Partial<Omit<Note, 'id' | 'createdAt'>>) => Promise<Note>;
     delete: (id: string) => Promise<void>;
   };
-}
+  abstract checkConnection(): Promise<boolean>;
 
-/**
- * Factory function to create and return the appropriate database client based on the configured provider.
- */
-export function createDatabaseClient(): DatabaseClient {
-  const databaseProvider = serverConfig.databaseProvider;
+  abstract checkConfiguration(): Promise<ServiceConfigStatus>;
 
-  switch (databaseProvider) {
-    // Add more providers here in the future
-    // case 'MySQL':
-    //   return new MySqlDbService();
-    case 'Postgres':
-    default:
-      return new SqlDatabaseService();
+  /**
+   * Default implementation: database services are required by default.
+   * Override this method if a specific database implementation should be optional.
+   */
+  isRequired(): boolean {
+    return true;
   }
 }

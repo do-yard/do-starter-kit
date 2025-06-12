@@ -2,9 +2,9 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
-import { createDatabaseClient } from 'services/database/database';
 import { SubscriptionPlanEnum } from 'types';
 import { serverConfig } from '../../../../settings';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Function to update subscriptions
@@ -14,7 +14,7 @@ import { serverConfig } from '../../../../settings';
  */
 const updateSubscription = async (sub: any, id: string) => {
   const billing = createBillingService();
-  const dbClient = createDatabaseClient();
+  const dbClient = await createDatabaseService();
 
   if (sub.plan === SubscriptionPlanEnum.PRO) {
     if (!serverConfig.Stripe.proGiftPriceId) {
@@ -83,7 +83,6 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
   try {
     const body = await request.json();
     const { id, ...updateData } = body;
-
     if (!id) {
       return NextResponse.json(
         { error: 'User ID is required' },
@@ -100,7 +99,6 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
         delete updateData[key];
       }
     });
-
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
         { error: 'No valid fields to update' },
@@ -108,7 +106,7 @@ export const updateUser = async (request: NextRequest): Promise<NextResponse> =>
       );
     }
 
-    const dbClient = createDatabaseClient();
+    const dbClient = await createDatabaseService();
     const updatedUser = await dbClient.user.update(id, {
       name: updateData.name,
       role: updateData.role,

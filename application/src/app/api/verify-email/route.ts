@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient, DatabaseClient } from 'services/database/database';
+import { DatabaseClient } from 'services/database/database';
 import { HTTP_STATUS } from 'lib/api/http';
 import { createBillingService } from 'services/billing/billing';
 import { serverConfig } from '../../../../settings';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum, User } from 'types';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 const createSubscription = async (db: DatabaseClient, user: User) => {
   const billingService = createBillingService();
@@ -58,7 +59,7 @@ export async function GET(request: NextRequest) {
   if (!token) {
     return NextResponse.json({ error: 'Missing token' }, { status: HTTP_STATUS.BAD_REQUEST });
   }
-  const db = createDatabaseClient();
+  const db = await createDatabaseService();
   // Find user by verification token
   const user = await db.user.findByVerificationToken(token);
   if (!user) {

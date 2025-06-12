@@ -2,6 +2,7 @@ import { HTTP_STATUS } from 'lib/api/http';
 import { USER_ROLES } from 'lib/auth/roles';
 import { updateUser } from './updateUser';
 import { NextRequest } from 'next/server';
+import { SubscriptionPlanEnum } from 'types';
 
 const mockDbClient = {
   user: { update: jest.fn() },
@@ -15,11 +16,8 @@ const mockBilling = {
 let mockGiftPriceId: string | undefined = 'pro_gift';
 let mockFreePriceId: string | undefined = 'free';
 
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: jest.fn(() => mockDbClient),
-}));
 jest.mock('services/billing/billing', () => ({
-  createBillingService: jest.fn(() => mockBilling),
+  createBillingService: () => mockBilling,
 }));
 jest.mock('../../../../settings', () => ({
   serverConfig: {
@@ -34,9 +32,13 @@ jest.mock('../../../../settings', () => ({
   },
 }));
 
+jest.mock('../../../services/database/databaseFactory', () => ({
+  createDatabaseService: () => Promise.resolve(mockDbClient),
+}));
+
 describe('updateUser', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
     mockGiftPriceId = 'pro_gift';
     mockFreePriceId = 'free';
   });
@@ -66,32 +68,35 @@ describe('updateUser', () => {
     mockDbClient.user.update.mockResolvedValue(updatedUser);
     const req = makeRequest({ id: 1, name: 'New', role: USER_ROLES.ADMIN });
     const res = await updateUser(req);
-    expect(mockDbClient.user.update).toHaveBeenCalledWith(1, { name: 'New', role: 'ADMIN' });
+    expect(mockDbClient.user.update).toHaveBeenCalledWith(1, {
+      name: 'New',
+      role: USER_ROLES.ADMIN,
+    });
     expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ user: updatedUser });
   });
 
   it('updates subscription to PRO (gift) if provided', async () => {
-    mockDbClient.user.update.mockResolvedValue({ id: 1 });
+    mockDbClient.user.update.mockResolvedValue({ id: '1' });
     mockDbClient.subscription.findByUserId.mockResolvedValue([{ customerId: 'cus_1' }]);
     mockBilling.listSubscription.mockResolvedValue([{ id: 'sub_1', items: [{ id: 'item_1' }] }]);
     mockBilling.updateSubscription.mockResolvedValue({});
-    const req = makeRequest({ id: 1, subscription: { plan: 'PRO' } });
+    const req = makeRequest({ id: '1', subscription: { plan: SubscriptionPlanEnum.PRO } });
     const res = await updateUser(req);
-    expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith(1);
+    expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith('1');
     expect(mockBilling.listSubscription).toHaveBeenCalledWith('cus_1');
     expect(mockBilling.updateSubscription).toHaveBeenCalledWith('sub_1', 'item_1', 'pro_gift');
     expect(res.status).toBe(HTTP_STATUS.OK);
   });
 
   it('updates subscription to FREE if provided', async () => {
-    mockDbClient.user.update.mockResolvedValue({ id: 1 });
+    mockDbClient.user.update.mockResolvedValue({ id: '1' });
     mockDbClient.subscription.findByUserId.mockResolvedValue([{ customerId: 'cus_1' }]);
     mockBilling.listSubscription.mockResolvedValue([{ id: 'sub_1', items: [{ id: 'item_1' }] }]);
     mockBilling.updateSubscription.mockResolvedValue({});
-    const req = makeRequest({ id: 1, subscription: { plan: 'FREE' } });
+    const req = makeRequest({ id: '1', subscription: { plan: SubscriptionPlanEnum.FREE } });
     const res = await updateUser(req);
-    expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith(1);
+    expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith('1');
     expect(mockBilling.listSubscription).toHaveBeenCalledWith('cus_1');
     expect(mockBilling.updateSubscription).toHaveBeenCalledWith('sub_1', 'item_1', 'free');
     expect(res.status).toBe(HTTP_STATUS.OK);
