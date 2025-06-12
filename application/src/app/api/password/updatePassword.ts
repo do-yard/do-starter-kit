@@ -1,15 +1,6 @@
-import {} from 'services/database/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { hashPassword, verifyPassword } from 'helpers/hash';
 import { HTTP_STATUS } from 'lib/api/http';
-import {
-  EmptyCurrentPasswordError,
-  EmptyNewPasswordError,
-  EmptyConfirmNewPasswordError,
-  NewPasswordsDoNotMatchError,
-  UserDoesNotExistError,
-  IncorrectCurrentPasswordError,
-} from 'lib/auth/errors';
 import { emailTemplate } from 'services/email/emailTemplate';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createEmailService } from 'services/email/emailFactory';
@@ -31,28 +22,28 @@ export const updatePassword = async (
 
     if (currentPassword === '') {
       return NextResponse.json(
-        { error: new EmptyCurrentPasswordError().code },
+        { error: 'Current password cannot be empty' },
         { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 
     if (newPassword === '') {
       return NextResponse.json(
-        { error: new EmptyNewPasswordError().code },
+        { error: 'New password cannot be empty' },
         { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 
     if (confirmNewPassword === '') {
       return NextResponse.json(
-        { error: new EmptyConfirmNewPasswordError().code },
+        { error: 'Confirm new password cannot be empty' },
         { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
 
     if (newPassword !== confirmNewPassword) {
       return NextResponse.json(
-        { error: new NewPasswordsDoNotMatchError().code },
+        { error: 'New passwords do not match' },
         { status: HTTP_STATUS.BAD_REQUEST }
       );
     }
@@ -61,16 +52,13 @@ export const updatePassword = async (
     const dbUser = await db.user.findById(user.id);
 
     if (!dbUser) {
-      return NextResponse.json(
-        { error: new UserDoesNotExistError().code },
-        { status: HTTP_STATUS.NOT_FOUND }
-      );
+      return NextResponse.json({ error: "User doesn't exist" }, { status: HTTP_STATUS.NOT_FOUND });
     }
 
     const isValid = await verifyPassword(currentPassword as string, dbUser.passwordHash);
     if (!isValid) {
       return NextResponse.json(
-        { error: new IncorrectCurrentPasswordError().code },
+        { error: 'Current password is incorrect' },
         { status: HTTP_STATUS.UNAUTHORIZED }
       );
     }
