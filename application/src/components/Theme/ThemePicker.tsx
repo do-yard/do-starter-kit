@@ -3,17 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   IconButton,
   Tooltip,
-  SelectChangeEvent,
   useMediaQuery,
   useTheme,
   Fab,
   Menu,
+  MenuItem, // Added MenuItem import
   ListItemIcon,
   ListItemText,
   Divider,
@@ -57,10 +53,6 @@ export function ThemePicker() {
     }
   }, []);
 
-  const handleThemeChange = (event: SelectChangeEvent<string>) => {
-    setCurrentTheme(event.target.value);
-  };
-
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -87,6 +79,7 @@ export function ThemePicker() {
           color="primary"
           size="small"
           onClick={handleMenuOpen}
+          aria-label="Select theme"
           sx={{
             position: 'fixed',
             top: 16,
@@ -123,7 +116,7 @@ export function ThemePicker() {
           }}
         >
           {/* Light/Dark Mode Toggle */}
-          <MenuItem onClick={handleModeToggle}>
+          <MenuItem onClick={handleModeToggle} aria-label={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}>
             <ListItemIcon>
               {mode === 'dark' ? <LightMode fontSize="small" /> : <DarkMode fontSize="small" />}
             </ListItemIcon>
@@ -138,6 +131,7 @@ export function ThemePicker() {
               key={theme.name}
               onClick={() => handleThemeSelect(theme.name)}
               selected={currentTheme === theme.name}
+              aria-label={`Select ${theme.displayName} theme`}
             >
               <ListItemIcon>
                 <PaletteIcon fontSize="small" />
@@ -173,6 +167,7 @@ export function ThemePicker() {
             key={theme.name}
             onClick={() => handleThemeSelect(theme.name)}
             selected={currentTheme === theme.name}
+            aria-label={`Select ${theme.displayName} theme`}
           >
             <ListItemIcon>
               <PaletteIcon fontSize="small" />
@@ -184,7 +179,7 @@ export function ThemePicker() {
 
       {/* Light/Dark Mode Toggle */}
       <Tooltip title={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}>
-        <IconButton onClick={toggleMode} color="inherit" size="small">
+        <IconButton onClick={toggleMode} color="inherit" size="small" aria-label={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}>
           {mode === 'dark' ? <LightMode fontSize="small" /> : <DarkMode fontSize="small" />}
         </IconButton>
       </Tooltip>
