@@ -46,7 +46,7 @@ const MyNotes: React.FC = () => {
   const fetchNotes = async () => {
     try {
       setIsLoading(true);
-      const { notes, total } = await apiClient.getNotes({ page, pageSize });
+      const { notes, total } = await apiClient.getNotes({ page, pageSize, search: searchQuery });
       setNotes(notes);
       setTotalNotes(total);
       setError(null);
@@ -59,7 +59,7 @@ const MyNotes: React.FC = () => {
 
   useEffect(() => {
     fetchNotes();
-  }, [page, pageSize]);
+  }, [page, pageSize, searchQuery]);
 
   const totalPages = Math.ceil(totalNotes / pageSize);
 

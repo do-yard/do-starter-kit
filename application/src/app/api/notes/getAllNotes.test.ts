@@ -35,14 +35,34 @@ describe('getAllNotes', () => {
     const req = makeRequest();
     const res = await getAllNotes(req, user);
     expect(mockFindMany).toHaveBeenCalledWith({
-      where: { userId: 'user-1' },
+      userId: 'user-1',
       skip: 0,
       take: 10,
       orderBy: { createdAt: 'desc' },
     });
-    expect(mockCount).toHaveBeenCalledWith({ where: { userId: 'user-1' } });
+    expect(mockCount).toHaveBeenCalledWith('user-1', undefined);
     expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ notes, total: 5 });
+  });
+
+  it('calls findMany and count with search param if provided', async () => {
+    const notes = [
+      { id: 'n1', userId: 'user-1', title: 'meeting', content: 'notes', createdAt: 'now' },
+    ];
+    mockFindMany.mockResolvedValue(notes);
+    mockCount.mockResolvedValue(1);
+    const req = makeRequest('http://localhost/api/notes?page=1&pageSize=10&search=meet');
+    const res = await getAllNotes(req, user);
+    expect(mockFindMany).toHaveBeenCalledWith({
+      userId: 'user-1',
+      search: 'meet',
+      skip: 0,
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+    });
+    expect(mockCount).toHaveBeenCalledWith('user-1', 'meet');
+    expect(res.status).toBe(HTTP_STATUS.OK);
+    expect(await res.json()).toEqual({ notes, total: 1 });
   });
 
   it('returns 500 on db error', async () => {

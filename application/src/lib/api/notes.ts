@@ -29,12 +29,17 @@ export class NotesApiClient {
   constructor(private baseURL = '/api/notes') {}
 
   // Fetch all notes
-  async getNotes(params?: { page?: number; pageSize?: number }): Promise<PaginatedNotes> {
+  async getNotes(params?: {
+    page?: number;
+    pageSize?: number;
+    search?: string;
+  }): Promise<PaginatedNotes> {
     let url = `${this.baseURL}`;
-    if (params && (params.page || params.pageSize)) {
+    if (params && (params.page || params.pageSize || params.search)) {
       const query = new URLSearchParams();
       if (params.page) query.append('page', params.page.toString());
       if (params.pageSize) query.append('pageSize', params.pageSize.toString());
+      if (params.search) query.append('search', params.search);
       url += `?${query.toString()}`;
     }
     const res = await fetch(url);

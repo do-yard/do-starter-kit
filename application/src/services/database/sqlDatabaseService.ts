@@ -1,7 +1,6 @@
 import { DatabaseClient } from './database';
 import { prisma } from '../../lib/prisma';
 import { Subscription, Note, User, UserWithSubscriptions } from 'types';
-import { Prisma } from '@prisma/client';
 
 /**
  * Service for interacting with the SQL database using Prisma.
@@ -113,11 +112,47 @@ export class SqlDatabaseService implements DatabaseClient {
     delete: async (id: string): Promise<void> => {
       await prisma.note.delete({ where: { id } });
     },
-    findMany: async (args: Prisma.NoteFindManyArgs) => {
-      return prisma.note.findMany(args);
+    findMany: async (args: {
+      userId: string;
+      search?: string;
+      skip: number;
+      take: number;
+      orderBy: {
+        createdAt: 'desc' | 'asc';
+      };
+    }) => {
+      const { userId, search, skip, take, orderBy } = args;
+      return prisma.note.findMany({
+        where: {
+          userId,
+          ...(search
+            ? {
+                OR: [
+                  { title: { contains: search, mode: 'insensitive' } },
+                  { content: { contains: search, mode: 'insensitive' } },
+                ],
+              }
+            : {}),
+        },
+        skip,
+        take,
+        orderBy,
+      });
     },
-    count: async (args: Prisma.NoteCountArgs) => {
-      return prisma.note.count(args);
+    count: async (userId: string, search?: string) => {
+      return prisma.note.count({
+        where: {
+          userId,
+          ...(search
+            ? {
+                OR: [
+                  { title: { contains: search, mode: 'insensitive' } },
+                  { content: { contains: search, mode: 'insensitive' } },
+                ],
+              }
+            : {}),
+        },
+      });
     },
   };
 }

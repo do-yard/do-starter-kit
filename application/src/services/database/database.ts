@@ -41,14 +41,15 @@ export interface DatabaseClient {
     update: (id: string, note: Partial<Omit<Note, 'id' | 'createdAt'>>) => Promise<Note>;
     delete: (id: string) => Promise<void>;
     findMany: (args: {
-      where: Record<string, string | number>;
+      search?: string;
+      userId: string;
       skip: number;
       take: number;
       orderBy: {
         createdAt: 'desc' | 'asc';
       };
     }) => Promise<Note[]>;
-    count: (args: { where: Record<string, string | number> }) => Promise<number>;
+    count: (userId: string, search?: string) => Promise<number>;
   };
 }
 
