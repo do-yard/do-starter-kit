@@ -3,7 +3,9 @@ import MagicLinkVerifier from './MagicLinkVerifier';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-jest.mock('next-auth/react');
+jest.mock('next-auth/react', () => ({
+  signIn: jest.fn(),
+}));
 jest.mock('next/navigation');
 
 const mockReplace = jest.fn();
