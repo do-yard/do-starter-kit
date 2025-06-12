@@ -1,21 +1,21 @@
-import { serverConfig } from '../../../settings';
-import { ResendEmailService } from './resendEmailService';
-
-export interface EmailService {
-  sendEmail: (to: string, subject: string, body: string) => Promise<void>;
-}
+import { ServiceConfigStatus, ConfigurableService } from '../status/serviceConfigStatus';
 
 /**
- * Interface and factory for email service clients.
+ * Abstract base class for all email providers.
+ * Provides a common interface for email operations across different email services.
  */
-// Factory function to create the appropriate email service
-export function createEmailClient(): EmailService {
-  const emailProvider = serverConfig.emailProvider;
+export abstract class EmailService implements ConfigurableService {
+  abstract sendEmail(to: string, subject: string, body: string): Promise<void>;
 
-  switch (emailProvider) {
-    // Add more providers here in the future
-    case 'Resend':
-    default:
-      return new ResendEmailService();
+  abstract checkConnection(): Promise<boolean>;
+
+  abstract checkConfiguration(): Promise<ServiceConfigStatus>;
+
+  /**
+   * Default implementation: email services are required by default.
+   * Override this method if a specific email implementation should be optional.
+   */
+  isRequired(): boolean {
+    return false;
   }
 }

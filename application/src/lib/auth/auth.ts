@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import type { Provider } from 'next-auth/providers';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '../prisma';
 import { verifyPassword } from 'helpers/hash';
@@ -24,7 +24,7 @@ const providers: Provider[] = [
           throw new Error('Email and password are required');
         }
 
-        const dbClient = createDatabaseClient();
+      const dbClient = await createDatabaseService();
 
         const user = await dbClient.user.findByEmail(credentials.email as string);
         if (!user || !user.passwordHash) {

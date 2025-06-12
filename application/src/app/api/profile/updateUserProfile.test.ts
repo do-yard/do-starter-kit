@@ -7,12 +7,13 @@ jest.mock('uuid', () => ({
 const mockUploadFile = jest.fn();
 const mockGetFileUrl = jest.fn();
 const mockDeleteFile = jest.fn();
-jest.mock('../../../services/storage/storage', () => ({
-  createStorageService: () => ({
-    uploadFile: mockUploadFile,
-    getFileUrl: mockGetFileUrl,
-    deleteFile: mockDeleteFile,
-  }),
+jest.mock('../../../services/storage/storageFactory', () => ({
+  createStorageService: () =>
+    Promise.resolve({
+      uploadFile: mockUploadFile,
+      getFileUrl: mockGetFileUrl,
+      deleteFile: mockDeleteFile,
+    }),
 }));
 
 // Mock auth
@@ -30,17 +31,18 @@ jest.mock('../../../helpers/fileName', () => ({
 // Mock database client
 const mockFindById = jest.fn();
 const mockUpdate = jest.fn();
-jest.mock('../../../services/database/database', () => ({
-  createDatabaseClient: () => ({
-    user: {
-      findById: mockFindById,
-      update: mockUpdate,
-    },
-  }),
+jest.mock('../../../services/database/databaseFactory', () => ({
+  createDatabaseService: () =>
+    Promise.resolve({
+      user: {
+        findById: mockFindById,
+        update: mockUpdate,
+      },
+    }),
 }));
 
-import { NextRequest } from 'next/server';
 // Import the handler after mocks
+import { NextRequest } from 'next/server';
 import { updateUserProfile } from './updateUserProfile';
 import { USER_ROLES } from 'lib/auth/roles';
 import { HTTP_STATUS } from 'lib/api/http';
@@ -94,7 +96,6 @@ describe('upload picture should', () => {
     expect(json).toEqual({ error: 'File size must be 5MB or less' });
     expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
   });
-
   it('return error if upload fails', async () => {
     // auth is mocked as authenticated
     mockUploadFile.mockRejectedValueOnce(new Error('Upload failed'));
@@ -102,7 +103,7 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toEqual({ error: 'Internal server error' });
+    expect(json).toEqual({ error: 'Upload failed' });
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
 
@@ -130,7 +131,6 @@ describe('upload picture should', () => {
     expect(json).toEqual({ error: "User doesn't exist" });
     expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
   });
-
   it('return error if db update fails', async () => {
     // auth is mocked as authenticated
     mockUploadFile.mockResolvedValueOnce('mock-uuid.jpg');
@@ -140,10 +140,9 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toEqual({ error: 'Internal server error' });
+    expect(json).toEqual({ error: 'DB update failed' });
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
-
   it('return error if db delete fails', async () => {
     // auth is mocked as authenticated
     mockDeleteFile.mockRejectedValueOnce(new Error('DB update failed'));
@@ -151,7 +150,7 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toEqual({ error: 'Internal server error' });
+    expect(json).toEqual({ error: 'DB update failed' });
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
 

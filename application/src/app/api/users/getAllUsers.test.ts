@@ -1,12 +1,11 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { getAllUsers } from './getAllUsers';
 import { NextRequest } from 'next/server';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: jest.fn(),
+jest.mock('services/database/databaseFactory', () => ({
+  createDatabaseService: jest.fn(),
 }));
-
-import { createDatabaseClient } from 'services/database/database';
 
 type MockDbClient = {
   user: {
@@ -23,7 +22,7 @@ describe('getAllUsers', () => {
         findAll: jest.fn(),
       },
     };
-    (createDatabaseClient as jest.Mock).mockReturnValue(mockDbClient);
+    (createDatabaseService as jest.Mock).mockResolvedValue(mockDbClient);
   });
 
   afterEach(() => {

@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * Fetches a note by its ID for the authenticated user.
@@ -17,7 +17,7 @@ export const getNote = async (
   try {
     const { id: noteId } = await params;
     const userId = user.id;
-    const dbClient = createDatabaseClient();
+    const dbClient = await createDatabaseService();
 
     const note = await dbClient.note.findById(noteId);
 

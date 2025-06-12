@@ -1,7 +1,9 @@
-import { createDatabaseClient } from 'services/database/database';
 import { NextRequest, NextResponse } from 'next/server';
 import { hashPassword, verifyPassword } from 'helpers/hash';
 import { HTTP_STATUS } from 'lib/api/http';
+import { emailTemplate } from 'services/email/emailTemplate';
+import { createDatabaseService } from 'services/database/databaseFactory';
+import { createEmailService } from 'services/email/emailFactory';
 
 /**
  * Updates the user's password.
@@ -46,7 +48,7 @@ export const updatePassword = async (
       );
     }
 
-    const db = createDatabaseClient();
+    const db = await createDatabaseService();
     const dbUser = await db.user.findById(user.id);
 
     if (!dbUser) {
@@ -65,6 +67,24 @@ export const updatePassword = async (
     dbUser.passwordHash = hashedPassword;
 
     await db.user.update(dbUser.id, dbUser);
+
+    try {
+      const emailClient = await createEmailService();
+      await emailClient.sendEmail(
+        dbUser.email,
+        'Your password has been updated',
+        emailTemplate({
+          title: 'Your password has been updated',
+          content: `<p>Your password has been updated successfully and you can use it to log into your account.</p>
+            <p style="font-size:13px; color:#888; text-align:center;">If you didn't request this change, please contact us immediately.</p>`,
+        })
+      );
+    } catch (error) {
+      console.error(
+        'Error sending email notification:',
+        error instanceof Error ? `${error.name}: ${error.message}` : error
+      );
+    }
 
     return NextResponse.json(
       { name: dbUser.name, image: dbUser.image },

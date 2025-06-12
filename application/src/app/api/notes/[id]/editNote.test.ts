@@ -5,8 +5,8 @@ import { HTTP_STATUS } from 'lib/api/http';
 
 const mockFindById = jest.fn();
 const mockUpdate = jest.fn();
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: () => ({
+jest.mock('../../../../services/database/databaseFactory', () => ({
+  createDatabaseService: () => ({
     note: {
       findById: mockFindById,
       update: mockUpdate,
