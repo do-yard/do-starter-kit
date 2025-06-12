@@ -13,7 +13,7 @@ async function ask(question, defaultValue = '') {
 }
 
 function validateSlug(value) {
-  return /^[a-z][a-z0-9-]{0,30}[a-z0-9]$/.test(value);
+  return /^[a-z][a-z0-9-\/]{0,30}[a-z0-9]$/.test(value);
 }
 
 async function askAndValidate(question, defaultValue = '') {
