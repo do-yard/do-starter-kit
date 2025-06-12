@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createDatabaseClient } from 'services/database/database';
 import { HTTP_STATUS } from 'lib/api/http';
+import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**
  * API endpoint to verify a user's email address using a verification token.
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   if (!token) {
     return NextResponse.json({ error: 'Missing token' }, { status: HTTP_STATUS.BAD_REQUEST });
   }
-  const db = createDatabaseClient();
+  const db = await createDatabaseService();
   // Find user by verification token
   const user = await db.user.findByVerificationToken(token);
   if (!user) {

@@ -1,12 +1,12 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import type { Provider } from 'next-auth/providers';
-import { createDatabaseClient } from 'services/database/database';
+import { createDatabaseService } from 'services/database/databaseFactory';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '../prisma';
 import { verifyPassword } from 'helpers/hash';
 import { User, UserRole } from 'types';
-import { MissingCredentialsError, InvalidCredentialsError, EmailNotVerifiedError } from './errors';
+import { InvalidCredentialsError } from './errors';
 
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
@@ -15,32 +15,35 @@ const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
 const providers: Provider[] = [
   Credentials({
     credentials: {
-      name: {},
       email: {},
       password: {},
     },
     authorize: async (credentials) => {
-      if (!credentials.email || !credentials.password) {
-        throw new MissingCredentialsError();
+      try {
+        if (!credentials.email || !credentials.password) {
+          throw new Error('Email and password are required');
+        }
+
+        const dbClient = await createDatabaseService();
+
+        const user = await dbClient.user.findByEmail(credentials.email as string);
+        if (!user || !user.passwordHash) {
+          throw new Error('User not found or password hash is missing');
+        }
+
+        if (user.emailVerified === false) {
+          throw new Error('Email not verified');
+        }
+
+        const isValid = await verifyPassword(credentials.password as string, user.passwordHash);
+        if (!isValid) {
+          throw new Error('Invalid credentials');
+        }
+
+        return user;
+      } catch (error) {
+        throw new InvalidCredentialsError((error as Error).message);
       }
-
-      const dbClient = createDatabaseClient();
-
-      const user = await dbClient.user.findByEmail(credentials.email as string);
-      if (!user || !user.passwordHash) {
-        throw new InvalidCredentialsError();
-      }
-
-      if (user.emailVerified === false) {
-        throw new EmailNotVerifiedError();
-      }
-
-      const isValid = await verifyPassword(credentials.password as string, user.passwordHash);
-      if (!isValid) {
-        throw new InvalidCredentialsError();
-      }
-
-      return user;
     },
   }),
 ];

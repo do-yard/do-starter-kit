@@ -5,13 +5,10 @@ import { HTTP_STATUS } from 'lib/api/http';
 
 const mockFindMany = jest.fn();
 const mockCount = jest.fn();
-jest.mock('services/database/database', () => ({
-  createDatabaseClient: () => ({
-    note: {
-      findMany: mockFindMany,
-      count: mockCount,
-    },
-  }),
+
+jest.mock('../../../services/database/databaseFactory', () => ({
+  createDatabaseService: () =>
+    Promise.resolve({ note: { findMany: mockFindMany, count: mockCount } }),
 }));
 
 describe('getAllNotes', () => {
