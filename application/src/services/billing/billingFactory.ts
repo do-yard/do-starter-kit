@@ -5,9 +5,9 @@ import { BillingService } from './billing';
  * Factory function to create and return the appropriate billing client based on the configured provider.
  */
 export async function createBillingService(): Promise<BillingService> {
-  const storageProvider = serverConfig.billingProvider;
+  const billingProvider = serverConfig.billingProvider;
 
-  switch (storageProvider) {
+  switch (billingProvider) {
     // Add more providers here in the future
     // case 'AZURE':
     //   return new AzureStorageService();

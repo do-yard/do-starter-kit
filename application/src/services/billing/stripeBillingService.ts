@@ -29,7 +29,7 @@ export class StripeBillingService extends BillingService {
   constructor() {
     super();
     if (!serverConfig.Stripe.stripeSecretKey) {
-      throw new Error('Missing Stipe Secret Key');
+      throw new Error('Missing Stripe Secret Key');
     }
 
     this.stripe = new Stripe(serverConfig.Stripe.stripeSecretKey!, {
@@ -201,8 +201,8 @@ export class StripeBillingService extends BillingService {
   }
 
   /**
-   * Checks if the email service is properly configured and accessible.
-   * Sends a test email to verify the connection.
+   * Checks if the billing service is properly configured and accessible.
+   * List products to check connection.
    *
    * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
    */
@@ -221,7 +221,7 @@ export class StripeBillingService extends BillingService {
       const errorMsg =
         connectionError instanceof Error ? connectionError.message : String(connectionError);
 
-      console.error('Email connection test failed:', {
+      console.error('Billing connection test failed:', {
         error: errorMsg,
       });
 

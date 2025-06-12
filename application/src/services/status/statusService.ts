@@ -212,7 +212,7 @@ export class StatusService {
    * Checks the configuration and connectivity status of the billing service.
    * Uses the BillingService interface to check the current billing provider.
    *
-   * @returns {Promise<ServiceStatus>} The status of the database service.
+   * @returns {Promise<ServiceStatus>} The status of the billing service.
    */
   static async checkBillingStatus(): Promise<ServiceStatus> {
     try {
