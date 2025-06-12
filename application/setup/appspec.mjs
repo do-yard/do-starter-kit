@@ -159,9 +159,11 @@ databases:
 
   const deployNow = await ask('Do you want to proceed with deployment to DigitalOcean? (y/n)', 'n');
   if (deployNow.toLowerCase() === 'y') {
-    console.log('🚀 Launching DigitalOcean deployment (not implemented in this script)...');
+    console.log('🚀 Launching DigitalOcean deployment...');
+    await import('./deploy.mjs');
   } else {
-    console.log('Setup complete. You can deploy later by running your deploy script.\n');
+    console.log('Setup complete. You can deploy later by running:');
+    console.log('  npm run deploy\n');
   }
   rl.close();
 }
