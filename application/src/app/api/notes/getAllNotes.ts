@@ -4,7 +4,7 @@ import { createDatabaseClient } from 'services/database/database';
 
 /**
  * Fetches all notes for the authenticated user.
- * @param request - The request object
+ * @param request - The request object with pagination
  * @param user - The user object
  * @returns A list of notes for the user
  */
@@ -27,7 +27,7 @@ export const getAllNotes = async (
         where: { userId },
         skip: (page - 1) * pageSize,
         take: pageSize,
-        orderBy: { createdAt: 'desc' }, // or your preferred order
+        orderBy: { createdAt: 'desc' },
       }),
       dbClient.note.count({ where: { userId } }),
     ]);
