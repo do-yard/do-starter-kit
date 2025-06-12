@@ -92,13 +92,15 @@ export function ThemePicker() {
             top: 16,
             right: 16,
             zIndex: 1300,
-            width: 48,
-            height: 48,
+            width: 40,
+            height: 40,
+            '& .MuiSvgIcon-root': {
+              fontSize: '1.25rem',
+            },
           }}
         >
-          <ThemeIcon />
+          <ThemeIcon fontSize="small" />
         </Fab>
-
         <Menu
           anchorEl={anchorEl}
           open={isMenuOpen}
@@ -147,35 +149,43 @@ export function ThemePicker() {
       </>
     );
   }
-
-  // Desktop version with Select and IconButton
+  // Desktop version with compact design
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      {/* Theme Selector */}
-      <FormControl size="small" sx={{ minWidth: 120 }}>
-        <InputLabel id="theme-select-label">Theme</InputLabel>
-        <Select
-          labelId="theme-select-label"
-          value={currentTheme}
-          label="Theme"
-          onChange={handleThemeChange}
-          sx={{ fontSize: '0.875rem' }}
-        >
-          {availableThemes.map((theme) => (
-            <MenuItem key={theme.name} value={theme.name}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <PaletteIcon sx={{ fontSize: 16 }} />
-                {theme.displayName}
-              </Box>
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+      {/* Theme Selector - More compact */}
+      <Tooltip title="Change theme">
+        <IconButton onClick={handleMenuOpen} color="inherit" size="small" aria-label="Select theme">
+          <PaletteIcon fontSize="small" />
+        </IconButton>
+      </Tooltip>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={isMenuOpen}
+        onClose={handleMenuClose}
+        TransitionComponent={Fade}
+        PaperProps={{
+          sx: { mt: 1, minWidth: 180 },
+        }}
+      >
+        {availableThemes.map((theme) => (
+          <MenuItem
+            key={theme.name}
+            onClick={() => handleThemeSelect(theme.name)}
+            selected={currentTheme === theme.name}
+          >
+            <ListItemIcon>
+              <PaletteIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>{theme.displayName}</ListItemText>
+          </MenuItem>
+        ))}
+      </Menu>
 
       {/* Light/Dark Mode Toggle */}
       <Tooltip title={`Switch to ${mode === 'light' ? 'dark' : 'light'} mode`}>
         <IconButton onClick={toggleMode} color="inherit" size="small">
-          {mode === 'dark' ? <LightMode /> : <DarkMode />}
+          {mode === 'dark' ? <LightMode fontSize="small" /> : <DarkMode fontSize="small" />}
         </IconButton>
       </Tooltip>
     </Box>
