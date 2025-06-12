@@ -16,8 +16,8 @@ const mockBilling = {
 let mockGiftPriceId: string | undefined = 'pro_gift';
 let mockFreePriceId: string | undefined = 'free';
 
-jest.mock('services/billing/billing', () => ({
-  createBillingService: () => mockBilling,
+jest.mock('services/billing/billingFactory', () => ({
+  createBillingService: () => Promise.resolve(mockBilling),
 }));
 jest.mock('../../../../settings', () => ({
   serverConfig: {
