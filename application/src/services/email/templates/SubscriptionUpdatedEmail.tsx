@@ -39,40 +39,38 @@ export function SubscriptionUpdatedEmail({ plan }: SubscriptionUpdatedEmailProps
             <br />
             Thank you for using our service!
           </Text>
-          {plan && (
-            <Section
-              style={{
-                background: '#f4f8ff',
-                border: '1px solid #dbeafe',
-                borderRadius: 8,
-                margin: '24px 0',
-                padding: 16,
-              }}
+          <Section
+            style={{
+              background: '#f4f8ff',
+              border: '1px solid #dbeafe',
+              borderRadius: 8,
+              margin: '24px 0',
+              padding: 16,
+            }}
+          >
+            <Text
+              style={{ color: '#0061EB', fontWeight: 'bold', fontSize: 18, margin: '0 0 12px 0' }}
             >
-              <Text
-                style={{ color: '#0061EB', fontWeight: 'bold', fontSize: 18, margin: '0 0 12px 0' }}
-              >
-                Plan Details
+              Plan Details
+            </Text>
+            <Text>
+              <b>Name:</b> {plan.name}
+            </Text>
+            <Text>
+              <b>Description:</b> {plan.description}
+            </Text>
+            <Text>
+              <b>Price:</b> ${plan.amount} / {plan.interval ?? 'one-time'}
+            </Text>
+            <Text style={{ marginBottom: 0 }}>
+              <b>Features:</b>
+            </Text>
+            {plan.features.map((f, i) => (
+              <Text key={i} style={{ margin: '0 0 0 16px', padding: 0 }}>
+                • {f}
               </Text>
-              <Text>
-                <b>Name:</b> {plan.name}
-              </Text>
-              <Text>
-                <b>Description:</b> {plan.description}
-              </Text>
-              <Text>
-                <b>Price:</b> ${plan.amount} / {plan.interval ?? 'one-time'}
-              </Text>
-              <Text style={{ marginBottom: 0 }}>
-                <b>Features:</b>
-              </Text>
-              {plan.features.map((f, i) => (
-                <Text key={i} style={{ margin: '0 0 0 16px', padding: 0 }}>
-                  • {f}
-                </Text>
-              ))}
-            </Section>
-          )}
+            ))}
+          </Section>
         </Section>
       </Container>
     </EmailLayout>
