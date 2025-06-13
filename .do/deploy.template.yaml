@@ -18,7 +18,7 @@ spec:
         repo_clone_url: https://github.com/do-yard/do-starter-kit # Repository URL
       source_dir: ./application # Directory containing the service source code
       build_command: "npm install && npm run build" # Command to build the service
-      run_command: "npm run start" # Command to run the service
+      run_command: "npx prisma migrate deploy; npm run start" # Command to run the service
       http_port: 3000 # Port the service listens on
       instance_count: 1 # Number of instances to deploy
       instance_size_slug: apps-s-1vcpu-0.5gb # Instance size
