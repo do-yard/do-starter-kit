@@ -72,7 +72,6 @@ async function main() {
   }
 
   let DATABASE_URL = '';
-  let databasesBlock = '';
   const envVars = [
     'SPACES_KEY_ID',
     'SPACES_KEY_SECRET',
@@ -92,16 +91,8 @@ async function main() {
 
   if (useDevDb) {
     DATABASE_URL = '${' + appName + '-db.DATABASE_URL}';
-    databasesBlock = `
-databases:
-  - name: ${appName}-db
-    engine: PG
-    version: "15"
-    production: false
-    cluster_name: ${appName}-cluster`;
   } else {
     envVars.unshift('DATABASE_URL');
-    databasesBlock = '';
   }
 
   let validated = false;
@@ -144,13 +135,12 @@ databases:
     STRIPE_PORTAL_CONFIG_ID: envValues.STRIPE_PORTAL_CONFIG_ID,
     RESEND_API_KEY: envValues.RESEND_API_KEY,
     RESEND_EMAIL_SENDER: envValues.RESEND_EMAIL_SENDER,
-    DATABASES_BLOCK: databasesBlock,
   };
 
   let finalYaml = getYamlWithReplacements(yamlTemplate, replacements);
 
   if (!useDevDb) {
-    finalYaml = finalYaml.replace(/databases:.*\n(\s*-.*\n)+/g, '');
+    finalYaml = finalYaml.replace(/^databases:[\s\S]*$/m, '');
   }
 
   const outPath = path.resolve('./app.yaml');
