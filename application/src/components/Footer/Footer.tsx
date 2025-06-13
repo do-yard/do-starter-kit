@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Box, Container, Typography, List, ListItem, ListItemText } from '@mui/material';
+import { Box, Container, Typography, List, ListItem, ListItemText, useTheme } from '@mui/material';
 
 const footerSections = [
   {
@@ -25,13 +25,22 @@ const footerSections = [
  * Displays sections with links organized by categories and copyright.
  */
 export default function Footer() {
+  const theme = useTheme();
+
   return (
-    <Box component="footer" bgcolor="#1a202c" color="white" py={8}>
+    <Box
+      component="footer"
+      sx={{
+        backgroundColor: 'background.paper',
+        py: 8,
+        borderTop: `1px solid ${theme.palette.divider}`,
+      }}
+    >
       <Container maxWidth="lg">
         <Box display="flex" flexWrap="wrap" gap={4}>
           {footerSections.map((section) => (
             <Box key={section.title} flex="1 1 200px" minWidth={180} mb={4}>
-              <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+              <Typography fontWeight={600} sx={{ color: 'text.primary' }} gutterBottom>
                 {section.title}
               </Typography>
               <List dense>
@@ -42,9 +51,12 @@ export default function Footer() {
                         component={Link}
                         href="#"
                         sx={{
-                          color: 'inherit',
+                          color: 'text.primary',
                           textDecoration: 'none',
-                          '&:hover': { color: '#60a5fa' },
+                          '&:hover': {
+                            color: 'text.secondary',
+                            textDecoration: 'underline',
+                          },
                         }}
                       >
                         {link}
@@ -56,7 +68,7 @@ export default function Footer() {
             </Box>
           ))}
         </Box>
-        <Box mt={8} textAlign="center" fontSize={14}>
+        <Box mt={2} textAlign="center" fontSize={14}>
           <Typography variant="body2">© 2025 DO Starter Kit. All rights reserved.</Typography>
         </Box>
       </Container>

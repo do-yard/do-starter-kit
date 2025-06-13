@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import { Dialog, DialogContent } from '@mui/material';
+import React, { useState, useEffect, useCallback, ChangeEvent } from 'react';
+import { Dialog, DialogContent, MenuItem, TextField } from '@mui/material';
 import { Note, NotesApiClient } from 'lib/api/notes';
 import NoteForm from '../NotesForm/NoteForm';
 import NotesGridView from '../NotesGridView/NotesGridView';
@@ -10,6 +10,7 @@ import NotesHeader from '../NotesHeader/NotesHeader';
 import PageContainer from '../PageContainer/PageContainer';
 import ConfirmationDialog from '../ConfirmationDialog/ConfirmationDialog';
 import Toast from '../Toast/Toast';
+import { Pagination, Box } from '@mui/material';
 
 // Create an instance of the ApiClient
 const apiClient = new NotesApiClient();
@@ -22,7 +23,6 @@ const MyNotes: React.FC = () => {
   const [viewMode, setViewMode] = useState('list');
   const [sortBy, setSortBy] = useState('newest');
   const [searchQuery, setSearchQuery] = useState('');
-  const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -37,41 +37,35 @@ const MyNotes: React.FC = () => {
   const [toastSeverity, setToastSeverity] = useState<'success' | 'error' | 'info' | 'warning'>(
     'success'
   );
-
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [totalNotes, setTotalNotes] = useState(0);
   // Fetch notes from API
-  const fetchNotes = async () => {
+  const fetchNotes = useCallback(async () => {
     try {
       setIsLoading(true);
-      const data = await apiClient.getNotes();
-      setNotes(data);
+      const { notes, total } = await apiClient.getNotes({
+        page,
+        pageSize,
+        search: searchQuery,
+        sortBy,
+      });
+      setNotes(notes);
+      setTotalNotes(total);
       setError(null);
-    } catch (err) {
-      console.error('Error fetching notes:', err);
+    } catch {
       setError('Failed to load notes. Please try again later.');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [page, pageSize, searchQuery, sortBy]);
 
   useEffect(() => {
     fetchNotes();
-  }, []);
+  }, [fetchNotes]);
 
-  const filteredNotes = notes
-    .filter((note) => {
-      const query = searchQuery.toLowerCase();
-      return note.title.toLowerCase().includes(query) || note.content.toLowerCase().includes(query);
-    })
-    .sort((a, b) => {
-      if (sortBy === 'newest') {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      } else if (sortBy === 'oldest') {
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      } else if (sortBy === 'title') {
-        return a.title.localeCompare(b.title);
-      }
-      return 0;
-    });
+  const totalPages = Math.ceil(totalNotes / pageSize);
 
   const handleSortChange = (
     event: ChangeEvent<HTMLInputElement> | (Event & { target: { value: unknown; name: string } }),
@@ -84,11 +78,21 @@ const MyNotes: React.FC = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
+
   const handleCreateNote = async (noteData: { title: string; content: string }) => {
     try {
-      const newNote = await apiClient.createNote(noteData);
-      setNotes([newNote, ...notes]);
+      await apiClient.createNote(noteData);
       setIsCreateModalOpen(false);
+
+      // Navigate to page 1 to see the new note (newest first)
+      if (page !== 1) {
+        setPage(1);
+        // fetchNotes() will be called automatically by useEffect when page changes
+      } else {
+        // Already on page 1, manually fetch to see the new note
+        await fetchNotes();
+      }
+
       // Show success toast
       setToastMessage('Note created successfully');
       setToastSeverity('success');
@@ -106,10 +110,14 @@ const MyNotes: React.FC = () => {
     if (!selectedNoteId) return;
 
     try {
-      const updatedNote = await apiClient.updateNote(selectedNoteId, noteData);
-      setNotes(notes.map((note) => (note.id === selectedNoteId ? updatedNote : note)));
+      await apiClient.updateNote(selectedNoteId, noteData);
       setIsEditModalOpen(false);
       setSelectedNoteId(null);
+
+      // Refetch current page to ensure data consistency
+      // (note might no longer match current search/sort criteria)
+      await fetchNotes();
+
       // Show success toast
       setToastMessage('Note updated successfully');
       setToastSeverity('success');
@@ -131,7 +139,18 @@ const MyNotes: React.FC = () => {
     if (noteToDelete) {
       try {
         await apiClient.deleteNote(noteToDelete);
-        setNotes(notes.filter((note) => note.id !== noteToDelete));
+
+        // Refetch current page to handle cases where:
+        // 1. Page becomes empty and should show previous page
+        // 2. Notes from next page should fill current page
+        await fetchNotes();
+
+        // Check if current page is now empty and we're not on page 1
+        const newTotalPages = Math.ceil((totalNotes - 1) / pageSize);
+        if (page > newTotalPages && newTotalPages > 0) {
+          setPage(newTotalPages);
+        }
+
         // Show success toast
         setToastMessage('Note deleted successfully');
         setToastSeverity('success');
@@ -204,7 +223,7 @@ const MyNotes: React.FC = () => {
       {/* Notes Display */}
       {viewMode === 'list' ? (
         <NotesListView
-          notes={filteredNotes}
+          notes={notes}
           isLoading={isLoading}
           error={error}
           onViewNote={handleViewNote}
@@ -213,13 +232,50 @@ const MyNotes: React.FC = () => {
         />
       ) : (
         <NotesGridView
-          notes={filteredNotes}
+          notes={notes}
           isLoading={isLoading}
           error={error}
           onViewNote={handleViewNote}
           onEditNote={handleEditNote}
           onDeleteNote={handleDeleteNote}
         />
+      )}
+
+      {/* Only show pagination controls when there are notes and not loading */}
+      {!isLoading && totalNotes > 0 && (
+        <Box display="flex" justifyContent="flex-end" alignItems="center" mt={4}>
+          <TextField
+            select
+            label="Rows per page"
+            size="small"
+            sx={{
+              minWidth: 120,
+              maxWidth: 120,
+              mr: 2,
+              '& .MuiFormLabel-root': { color: 'text.medium' },
+            }}
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPage(1);
+            }}
+          >
+            <MenuItem value={5}>5</MenuItem>
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={20}>20</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+          </TextField>
+          <Pagination
+            count={totalPages || 1}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+            color="primary"
+            shape="rounded"
+            showFirstButton
+            showLastButton
+            sx={{ ml: 2 }}
+          />
+        </Box>
       )}
 
       {/* Create Note Modal */}

@@ -51,6 +51,26 @@ export abstract class DatabaseClient implements ConfigurableService {
     create: (note: Omit<Note, 'id' | 'createdAt'>) => Promise<Note>;
     update: (id: string, note: Partial<Omit<Note, 'id' | 'createdAt'>>) => Promise<Note>;
     delete: (id: string) => Promise<void>;
+    findMany: (args: {
+      search?: string;
+      userId: string;
+      skip: number;
+      take: number;
+      orderBy: {
+        createdAt?: 'desc' | 'asc';
+        title?: 'asc';
+      };
+    }) => Promise<Note[]>;
+    count: (userId: string, search?: string) => Promise<number>;
+  };
+  abstract verificationToken: {
+    create: (data: { identifier: string; token: string; expires: Date }) => Promise<void>;
+    find: (
+      identifier: string,
+      token: string
+    ) => Promise<{ identifier: string; token: string; expires: Date } | null>;
+    delete: (identifier: string, token: string) => Promise<void>;
+    deleteExpired: (now: Date) => Promise<void>;
   };
   abstract checkConnection(): Promise<boolean>;
 
