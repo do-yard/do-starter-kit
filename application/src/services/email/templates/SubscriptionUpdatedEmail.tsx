@@ -13,6 +13,11 @@ interface SubscriptionUpdatedEmailProps {
   };
 }
 
+/**
+ * SubscriptionUpdatedEmail React email template.
+ * Renders a transactional email for notifying users about subscription plan updates.
+ * Uses @react-email/components for compatibility with email clients.
+ */
 export function SubscriptionUpdatedEmail({ plan, currentPlan }: SubscriptionUpdatedEmailProps) {
   return (
     <Html>
