@@ -23,6 +23,7 @@ export class StripeBillingService extends BillingService {
       description: 'Secret to authenticate stripe webhooks',
     },
     portalConfigId: { envVar: 'STRIPE_PORTAL_CONFIG_ID', description: 'Checkout portal id' },
+    baseURL: { envVar: 'BASE_URL', description: 'Site base url' },
   };
   private lastConnectionError: string = '';
 
@@ -230,7 +231,7 @@ export class StripeBillingService extends BillingService {
   }
 
   /**
-   * Checks if the email service configuration is valid and tests connection when configuration is complete.
+   * Checks if the billing service configuration is valid and tests connection when configuration is complete.
    */
   async checkConfiguration(): Promise<ServiceConfigStatus> {
     // Check for missing configuration
