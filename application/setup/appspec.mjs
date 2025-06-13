@@ -48,7 +48,7 @@ function getEnvVars(requiredVars) {
 function getYamlWithReplacements(yamlString, replacements) {
   let content = yamlString;
   for (const [key, value] of Object.entries(replacements)) {
-    content = content.replaceAll(`{{${key}}}`, value);
+    content = content.replaceAll(`\${${key}}`, value);
   }
   return content;
 }
@@ -62,7 +62,7 @@ async function main() {
   let dbAnswer = await ask('Provision a dev Postgres DB on DO? (y/n)', 'y');
   useDevDb = dbAnswer.toLowerCase().startsWith('y');
 
-  const templatePath = path.resolve('./setup/app-base.yaml');
+  const templatePath = path.resolve('../.do/app.template.yaml');
   let yamlTemplate = '';
   try {
     yamlTemplate = await fs.readFile(templatePath, 'utf8');
@@ -71,7 +71,6 @@ async function main() {
     process.exit(1);
   }
 
-  let DATABASE_URL = '';
   const envVars = [
     'SPACES_KEY_ID',
     'SPACES_KEY_SECRET',
@@ -89,9 +88,7 @@ async function main() {
     'RESEND_EMAIL_SENDER',
   ];
 
-  if (useDevDb) {
-    DATABASE_URL = '${' + appName + '-db.DATABASE_URL}';
-  } else {
+  if (!useDevDb) {
     envVars.unshift('DATABASE_URL');
   }
 
@@ -113,15 +110,10 @@ async function main() {
     validated = true;
   }
 
-  if (!useDevDb) {
-    DATABASE_URL = envValues.DATABASE_URL;
-  }
-
   const replacements = {
     APP_NAME: appName,
     GITHUB_REPO: githubRepo,
     GITHUB_BRANCH: githubBranch,
-    DATABASE_URL,
     SPACES_KEY_ID: envValues.SPACES_KEY_ID,
     SPACES_KEY_SECRET: envValues.SPACES_KEY_SECRET,
     SPACES_BUCKET_NAME: envValues.SPACES_BUCKET_NAME,
@@ -135,12 +127,16 @@ async function main() {
     STRIPE_PORTAL_CONFIG_ID: envValues.STRIPE_PORTAL_CONFIG_ID,
     RESEND_API_KEY: envValues.RESEND_API_KEY,
     RESEND_EMAIL_SENDER: envValues.RESEND_EMAIL_SENDER,
+    DB_NAME: useDevDb ? `${appName}-db` : '',
+    CLUSTER_NAME: useDevDb ? `${appName}-cluster` : '',
   };
 
   let finalYaml = getYamlWithReplacements(yamlTemplate, replacements);
 
   if (!useDevDb) {
-    finalYaml = finalYaml.replace(/^databases:[\s\S]*$/m, '');
+    finalYaml = finalYaml
+      .replace(/\$\{\.DATABASE_URL\}/g, envValues.DATABASE_URL)
+      .replace(/^databases:[\s\S]*$/m, '');
   }
 
   const outPath = path.resolve('./app.yaml');
