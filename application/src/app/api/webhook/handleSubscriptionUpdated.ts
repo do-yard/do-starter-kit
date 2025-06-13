@@ -64,7 +64,7 @@ export const handleSubscriptionUpdated = async (json: any) => {
           ${
             currentPlan
               ? `
-          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:400px;margin:24px auto 0 auto;padding:0;background:#f4f8ff;border:1px solid #dbeafe;border-radius:8px;box-shadow:0 2px 8px #e0e7ef;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="text-align:center; max-width:400px;margin:32px auto 0 auto;padding:0;background:#f4f8ff;border:1px solid #dbeafe;border-radius:8px;box-shadow:0 2px 8px #e0e7ef;">
             <tr>
               <td style="padding: 24px 20px 12px 20px;">
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -90,10 +90,6 @@ export const handleSubscriptionUpdated = async (json: any) => {
                         ${(currentPlan.features || []).map((f) => `<tr><td style='padding:2px 0;'>• ${f}</td></tr>`).join('')}
                       </table>
                     </td>
-                  </tr>
-                  <tr>
-                    <td style="font-size:12px;color:#888;padding-top:8px;">Price ID:</td>
-                    <td style="font-size:12px;color:#888;padding-top:8px;">${currentPlan.priceId}</td>
                   </tr>
                 </table>
               </td>
