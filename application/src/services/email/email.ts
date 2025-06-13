@@ -16,6 +16,6 @@ export abstract class EmailService implements ConfigurableService {
    * Override this method if a specific email implementation should be optional.
    */
   isRequired(): boolean {
-    return false;
+    return true;
   }
 }

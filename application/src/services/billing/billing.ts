@@ -50,6 +50,6 @@ export abstract class BillingService implements ConfigurableService {
    * Default implementation: billing services are not required by default.
    */
   isRequired(): boolean {
-    return false;
+    return true;
   }
 }
