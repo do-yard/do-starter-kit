@@ -33,7 +33,8 @@ const ServiceWarningIndicator: React.FC = () => {
           setHasErrors(issues.length > 0);
           setErrorCount(issues.length);
         }
-      } catch {
+      } catch (error) {
+        console.error('Failed to check service status:', error);
         setHasErrors(false);
       }
     };
