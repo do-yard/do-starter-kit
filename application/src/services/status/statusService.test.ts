@@ -287,6 +287,9 @@ describe('StatusService', () => {
       // Set environment variables for email service
       process.env.RESEND_API_KEY = 'test-api-key';
       process.env.SMTP_HOST = 'test-smtp-host';
+      process.env.NEXAUTH_URL = 'test-url';
+      process.env.NEXTAUTH_SECRET = 'test-secret';
+      process.env.BASE_URL = 'test-url';
 
       mockStorageService.checkConnection.mockResolvedValue(true);
       mockStorageService.checkConfiguration.mockResolvedValue({
