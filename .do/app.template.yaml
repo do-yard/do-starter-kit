@@ -9,7 +9,7 @@ services:
       branch: ${GITHUB_BRANCH}
       deploy_on_push: false
     build_command: "npm install && npm run build"
-    run_command: "npm run start"
+    run_command: "npx prisma migrate deploy; npm run start"
     http_port: 3000
     routes:
       - path: /
