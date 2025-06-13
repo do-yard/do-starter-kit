@@ -76,7 +76,8 @@ export class StatusService {
   /**
    * Force a fresh health check (bypasses cache).
    * Use this for the system status page refresh button.
-   */ static async forceHealthCheck(): Promise<HealthState> {
+   */
+  static async forceHealthCheck(): Promise<HealthState> {
     await this.performHealthCheck();
     return this.cachedHealthState!;
   }
@@ -230,7 +231,7 @@ export class StatusService {
         name: 'Billing Service',
         configured: false,
         connected: false,
-        required: false,
+        required: true,
         error:
           error instanceof Error
             ? `Failed to initialize billing service: ${error.message}`
