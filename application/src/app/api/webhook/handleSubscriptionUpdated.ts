@@ -60,7 +60,7 @@ export const handleSubscriptionUpdated = async (json: any) => {
         title: 'Your subscription was updated',
         content: `<p style="text-align:center; margin: 32px 0;">
             Your subscription plan was updated to <strong>${plan}</strong> plan.</p>
-            <p>Thank you for using our service!</p>
+            <p style="text-align:center; margin: 32px 0;">Thank you for using our service!</p>
           ${
             currentPlan
               ? `
@@ -69,7 +69,7 @@ export const handleSubscriptionUpdated = async (json: any) => {
               <td style="padding: 24px 20px 12px 20px;">
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                   <tr>
-                    <td colspan="2" style="font-size:1.2rem;color:#0061EB;font-weight:bold;padding-bottom:12px;">Plan Details</td>
+                    <td colspan="2" style="font-size:1.2rem;color:#0061EB;font-weight:bold;padding-bottom:12px;text-align:center;">Plan Details</td>
                   </tr>
                   <tr>
                     <td style="font-weight:bold;padding:4px 0;">Description:</td>
