@@ -4,6 +4,15 @@ import { createDatabaseService } from 'services/database/databaseFactory';
 import { v4 as uuidv4 } from 'uuid';
 import { ResetPasswordEmail } from 'services/email/templates/ResetPasswordEmail';
 
+/**
+ * API route handler for requesting a password reset email.
+ *
+ * Expects a POST request with a JSON body containing:
+ *   - email: The user's email address
+ *
+ * If the user exists, generates a reset token, stores it, and sends a reset email.
+ * Always returns success for security, even if the user does not exist.
+ */
 export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();

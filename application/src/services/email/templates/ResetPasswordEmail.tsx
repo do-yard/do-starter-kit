@@ -7,6 +7,10 @@ interface ResetPasswordEmailProps {
   userEmail: string;
 }
 
+/**
+ * ResetPasswordEmail renders a password reset email using react-email components.
+ * The content includes a button and a fallback link for users to reset their password.
+ */
 export const ResetPasswordEmail: React.FC<ResetPasswordEmailProps> = ({ resetUrl, userEmail }) => (
   <EmailLayout title="Password Reset Request">
     <Container

@@ -4,6 +4,10 @@ import React, { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Box, Card, CardContent, Typography, TextField, Stack, Button } from '@mui/material';
 
+/**
+ * ResetPasswordForm renders a form for users to reset their password using a token from the URL.
+ * Handles validation, API request, and displays success or error messages.
+ */
 const ResetPasswordForm: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();

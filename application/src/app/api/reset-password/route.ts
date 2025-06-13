@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { createDatabaseService } from 'services/database/databaseFactory';
 
+/**
+ * API route handler for resetting a user's password using a token.
+ *
+ * Expects a POST request with a JSON body containing:
+ *   - token: The password reset token
+ *   - password: The new password
+ *
+ * Validates the token, updates the user's password, deletes the token, and returns a JSON response.
+ */
 export async function POST(req: NextRequest) {
   try {
     const { token, password } = await req.json();

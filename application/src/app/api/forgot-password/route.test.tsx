@@ -1,5 +1,7 @@
 import { POST } from './route';
 import { NextRequest } from 'next/server';
+import { createDatabaseService } from 'services/database/databaseFactory';
+import { createEmailService } from 'services/email/emailFactory';
 
 jest.mock('services/database/databaseFactory');
 jest.mock('services/email/emailFactory');
@@ -12,8 +14,8 @@ const mockEmailService = { sendReactEmail: jest.fn() };
 
 beforeEach(() => {
   jest.resetAllMocks();
-  require('services/database/databaseFactory').createDatabaseService.mockResolvedValue(mockDb);
-  require('services/email/emailFactory').createEmailService.mockResolvedValue(mockEmailService);
+  (createDatabaseService as jest.Mock).mockResolvedValue(mockDb);
+  (createEmailService as jest.Mock).mockResolvedValue(mockEmailService);
 });
 
 describe('POST /api/forgot-password', () => {

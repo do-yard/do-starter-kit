@@ -2,6 +2,7 @@ import { POST } from './route';
 import { NextRequest } from 'next/server';
 
 jest.mock('services/database/databaseFactory');
+import { createDatabaseService } from 'services/database/databaseFactory';
 import bcrypt from 'bcryptjs';
 jest.mock('bcryptjs');
 
@@ -17,7 +18,7 @@ const mockDb = {
 
 beforeEach(() => {
   jest.resetAllMocks();
-  require('services/database/databaseFactory').createDatabaseService.mockResolvedValue(mockDb);
+  (createDatabaseService as jest.Mock).mockResolvedValue(mockDb);
   (bcrypt.hash as jest.Mock).mockResolvedValue('hashed');
 });
 
