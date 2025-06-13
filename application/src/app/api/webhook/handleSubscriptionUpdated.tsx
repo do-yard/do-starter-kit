@@ -4,8 +4,8 @@ import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { serverConfig } from '../../../../settings';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createEmailService } from 'services/email/emailFactory';
-import { createBillingService } from 'services/billing/billing';
 import { SubscriptionUpdatedEmail } from 'services/email/templates/SubscriptionUpdatedEmail';
+import { createBillingService } from 'services/billing/billingFactory';
 
 const PLAN_MAP: Record<string, SubscriptionPlanEnum> = {
   [serverConfig.Stripe.proPriceId!]: SubscriptionPlanEnum.PRO,
@@ -48,7 +48,7 @@ export const handleSubscriptionUpdated = async (json: any) => {
       return;
     }
 
-    const billingService = createBillingService();
+    const billingService = await createBillingService();
     const plans = await billingService.getProducts();
 
     const currentPlan = plans.find((p) => p.priceId === priceId);
