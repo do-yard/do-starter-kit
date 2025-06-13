@@ -68,7 +68,6 @@ npm run setup:deploy
 - The script will prompt you for:
 
   - App name
-  - GitHub repository (e.g. `user/repo`)
   - Branch to deploy (default: `main`)
   - Whether to provision a dev database in DigitalOcean or use an existing database
 
@@ -100,7 +99,7 @@ npm run deploy
 ```
 
 - The script will check that `doctl` is installed and authenticated
-- It will deploy your app using the generated `app.yaml`
+- It will create or update your app using the generated `app.yaml` and run the pending migrations
 - Deployment output will be shown in your terminal
 
 **That’s it! Your application will be deployed to DigitalOcean App Platform using your custom app spec and environment.**
