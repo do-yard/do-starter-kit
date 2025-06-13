@@ -1,18 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, CardContent, TextField, Typography, Box } from '@mui/material';
+import { Card, CardContent, TextField, Typography, Box, Button } from '@mui/material';
 import FormButton from 'components/FormButton/FormButton';
 import { useNavigating } from 'hooks/navigation';
 
 /**
  * Forgot Password form.
- * Handles sending email for passwordless authentication.
+ * Handles sending email for password reset and passwordless authentication.
  */
-const LoginForm: React.FC = () => {
+const ForgotPasswordForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [magicLinkSuccess, setMagicLinkSuccess] = useState<string | null>(null);
+  const [magicLinkError, setMagicLinkError] = useState<string | null>(null);
   const { setNavigating } = useNavigating();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,7 +24,7 @@ const LoginForm: React.FC = () => {
     setSuccess(null);
 
     try {
-      const res = await fetch('/api/auth/magic-link', {
+      const res = await fetch('/api/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -31,11 +33,38 @@ const LoginForm: React.FC = () => {
       if (!res.ok || data.error) {
         setError(data.error || 'Something went wrong, please try again later.');
       } else {
-        setSuccess('Magic link sent! Please check your email inbox.');
+        setSuccess('If your email exists in our system, a reset link has been sent.');
       }
     } catch (err) {
       setError(
-        'Something went wrong, please try again later later.' +
+        'Something went wrong, please try again later.' +
+          (err instanceof Error ? `: ${err.message}` : '')
+      );
+    } finally {
+      setNavigating(false);
+    }
+  };
+
+  const handleMagicLink = async (e: React.FormEvent) => {
+    setNavigating(true);
+    e.preventDefault();
+    setMagicLinkError(null);
+    setMagicLinkSuccess(null);
+    try {
+      const res = await fetch('/api/auth/magic-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setMagicLinkError(data.error || 'Something went wrong, please try again later.');
+      } else {
+        setMagicLinkSuccess('Magic link sent! Please check your email inbox.');
+      }
+    } catch (err) {
+      setMagicLinkError(
+        'Something went wrong, please try again later.' +
           (err instanceof Error ? `: ${err.message}` : '')
       );
     } finally {
@@ -44,26 +73,18 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <Box
-      display="flex"
-      flexGrow={1}
-      minHeight="100vh"
-      justifyContent="center"
-      alignItems="center"
-      bgcolor="#f3f4f6"
-    >
+    <Box display="flex" flexGrow={1} minHeight="100vh" justifyContent="center" alignItems="center">
       <Card sx={{ width: '100%', maxWidth: 400 }}>
         <Box display="flex" flexDirection="column" gap={1.5} p={3}>
           <Typography fontWeight="bold" variant="h5">
-            Passwordless authentication
+            Forgot your password?
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Forgot your password? No problem! Enter your email and we will send you a magic link to
-            log in.
+            Enter your email and we will send you a link to reset your password.
           </Typography>
         </Box>
         <CardContent sx={{ p: 3, pt: 0, pb: 1 }}>
-          <form onSubmit={handleSubmit} data-testid="login-form">
+          <form onSubmit={handleSubmit} data-testid="forgot-password-form">
             <Box display="grid" gap={2}>
               <Box display="flex" flexDirection="column" gap={1}>
                 <label htmlFor="email" style={{ fontSize: 14, lineHeight: 1.5 }}>
@@ -92,9 +113,29 @@ const LoginForm: React.FC = () => {
                 {success}
               </Typography>
             )}
+            {magicLinkError && (
+              <Typography color="error" fontSize={14} mt={2}>
+                {magicLinkError}
+              </Typography>
+            )}
+            {magicLinkSuccess && (
+              <Typography color="success" fontSize={14} mt={2}>
+                {magicLinkSuccess}
+              </Typography>
+            )}
 
-            <Box mt={3}>
-              <FormButton>Send magic link</FormButton>
+            <Box mt={3} display="flex" flexDirection="column" gap={2}>
+              <FormButton>Reset Password</FormButton>
+              <Button
+                type="button"
+                onClick={handleMagicLink}
+                variant="outlined"
+                fullWidth
+                size="large"
+                sx={{ textTransform: 'none' }}
+              >
+                Send Magic Link
+              </Button>
             </Box>
           </form>
         </CardContent>
@@ -103,4 +144,4 @@ const LoginForm: React.FC = () => {
   );
 };
 
-export default LoginForm;
+export default ForgotPasswordForm;
