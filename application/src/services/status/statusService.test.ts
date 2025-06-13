@@ -47,11 +47,19 @@ const mockBillingService = {
   isRequired: jest.fn().mockReturnValue(false),
 } as jest.Mocked<BillingService>;
 
+const mockAuthService = {
+  checkConfiguration: jest.fn(),
+  checkConnection: jest.fn(),
+  isRequired: jest.fn().mockReturnValue(true),
+} as jest.Mocked<AuthService>;
+
 // Mock the factory functions - fix hoisting issue by putting mocks after declarations
 jest.mock('../storage/storageFactory');
 jest.mock('../email/emailFactory');
 jest.mock('../database/databaseFactory');
 jest.mock('../billing/billingFactory');
+jest.mock('../billing/billingFactory');
+jest.mock('../auth/authFactory');
 
 // Import the mocked functions
 import { createStorageService } from '../storage/storageFactory';
@@ -59,6 +67,8 @@ import { createEmailService } from '../email/emailFactory';
 import { createDatabaseService } from '../database/databaseFactory';
 import { createBillingService } from 'services/billing/billingFactory';
 import { BillingService } from 'services/billing/billing';
+import { AuthService } from 'services/auth/auth';
+import { createAuthService } from 'services/auth/authFactory';
 
 // Cast to jest mocks
 const mockCreateStorageService = createStorageService as jest.MockedFunction<
@@ -71,6 +81,8 @@ const mockCreateDatabaseService = createDatabaseService as jest.MockedFunction<
 const mockCreateBillingService = createBillingService as jest.MockedFunction<
   typeof createBillingService
 >;
+
+const mockCreateAuthService = createAuthService as jest.MockedFunction<typeof createAuthService>;
 
 describe('StatusService', () => {
   const originalConfig = {
@@ -89,6 +101,7 @@ describe('StatusService', () => {
     mockCreateEmailService.mockResolvedValue(mockEmailService);
     mockCreateDatabaseService.mockResolvedValue(mockDatabaseService);
     mockCreateBillingService.mockResolvedValue(mockBillingService);
+    mockCreateAuthService.mockResolvedValue(mockAuthService);
 
     // Reset static state using proper type casting (since we don't have resetForTesting method)
     (StatusService as any).cachedHealthState = null;
@@ -129,6 +142,14 @@ describe('StatusService', () => {
 
     mockBillingService.checkConfiguration.mockResolvedValue({
       name: 'Billing Service',
+      configured: true,
+      connected: true,
+      error: undefined,
+      configToReview: undefined,
+    });
+
+    mockAuthService.checkConfiguration.mockResolvedValue({
+      name: 'Auth Service',
       configured: true,
       connected: true,
       error: undefined,
@@ -232,7 +253,7 @@ describe('StatusService', () => {
     });
   });
   describe('checkAllServices', () => {
-    it('should return an array with storage, email, database and billing services status', async () => {
+    it('should return an array with storage, email, database, billing and auth services status', async () => {
       // Arrange
       mockStorageService.checkConnection.mockResolvedValue(true);
 
@@ -241,11 +262,12 @@ describe('StatusService', () => {
 
       // Assert
       expect(Array.isArray(results)).toBe(true);
-      expect(results.length).toBe(4); // Storage + Email + Database + Billing
+      expect(results.length).toBe(5); // Storage + Email + Database + Billing + Auth
       expect(results.some((r) => r.name.includes('Storage'))).toBe(true);
       expect(results.some((r) => r.name.includes('Email'))).toBe(true);
       expect(results.some((r) => r.name.includes('Database'))).toBe(true);
       expect(results.some((r) => r.name.includes('Billing'))).toBe(true);
+      expect(results.some((r) => r.name.includes('Auth'))).toBe(true);
     });
   });
   describe('Health State Management', () => {
@@ -280,7 +302,7 @@ describe('StatusService', () => {
         await StatusService.initialize();
         const healthState = StatusService.getHealthState(); // Assert
         expect(healthState).toBeDefined();
-        expect(healthState?.services).toHaveLength(4); // Storage + Email + Database + Billing
+        expect(healthState?.services).toHaveLength(5); // Storage + Email + Database + Billing + Auth
         expect(healthState?.isHealthy).toBe(true);
         expect(StatusService.isApplicationHealthy()).toBe(true);
       } finally {
