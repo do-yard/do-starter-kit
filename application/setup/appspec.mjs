@@ -1,8 +1,10 @@
 import { createInterface } from 'readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
+import { execSync } from 'node:child_process';
 import fs from 'fs/promises';
 import path from 'path';
 import dotenv from 'dotenv';
+import yaml from 'js-yaml';
 
 const rl = createInterface({ input, output });
 
@@ -32,6 +34,41 @@ async function askAndValidate(question, defaultValue = '') {
   return answer;
 }
 
+function getGithubRepoFromGit() {
+  try {
+    const url = execSync('git remote get-url origin', { encoding: 'utf8' }).trim();
+
+    let match = url.match(/[:\/]([^\/:]+\/[^\/.]+)(\.git)?$/);
+    if (match) {
+      return match[1];
+    } else {
+      console.warn('⚠️  Could not parse repository from git URL:', url);
+      return '';
+    }
+  } catch (e) {
+    console.warn('⚠️  Could not get repository URL from git:', e.message);
+    return '';
+  }
+}
+
+function extractEnvVarsFromTemplate(yamlTemplate, { useDevDb }) {
+  const doc = yaml.load(yamlTemplate);
+  const envSet = new Set();
+
+  const envs = doc.services?.[0]?.envs || [];
+  for (const env of envs) {
+    if (env.key) envSet.add(env.key);
+    const matches = env.value?.match(/\${([A-Z0-9_]+)}/g) || [];
+    matches.forEach((m) => envSet.add(m.replace(/\${|}/g, '')));
+  }
+
+  envSet.delete('DB_NAME');
+  envSet.delete('AUTH_TRUST_HOST');
+  if (useDevDb) envSet.delete('DATABASE_URL');
+
+  return Array.from(envSet).sort();
+}
+
 function getEnvVars(requiredVars) {
   dotenv.config();
   const env = process.env;
@@ -55,7 +92,8 @@ function getYamlWithReplacements(yamlString, replacements) {
 
 async function main() {
   const appName = await askAndValidate('Enter the app name');
-  const githubRepo = await askAndValidate('Enter the GitHub repository (e.g. user/repo)');
+  const githubRepo = getGithubRepoFromGit();
+  console.log(`Using GitHub repository: ${githubRepo}`);
   const githubBranch = await askAndValidate('Enter the branch to deploy', 'main');
 
   let useDevDb = false;
@@ -67,30 +105,11 @@ async function main() {
   try {
     yamlTemplate = await fs.readFile(templatePath, 'utf8');
   } catch (err) {
-    console.error(`❌ Could not read app-base.yaml:`, err.message);
+    console.error(`❌ Could not read app.template.yaml:`, err.message);
     process.exit(1);
   }
 
-  const envVars = [
-    'SPACES_KEY_ID',
-    'SPACES_KEY_SECRET',
-    'SPACES_BUCKET_NAME',
-    'SPACES_REGION',
-    'NEXTAUTH_SECRET',
-    'APP_URL',
-    'STRIPE_WEBHOOK_SECRET',
-    'STRIPE_SECRET_KEY',
-    'NEXT_PUBLIC_STRIPE_FREE_PRICE_ID',
-    'NEXT_PUBLIC_STRIPE_PRO_PRICE_ID',
-    'STRIPE_PRO_GIFT_PRICE_ID',
-    'STRIPE_PORTAL_CONFIG_ID',
-    'RESEND_API_KEY',
-    'RESEND_EMAIL_SENDER',
-  ];
-
-  if (!useDevDb) {
-    envVars.unshift('DATABASE_URL');
-  }
+  const envVars = extractEnvVarsFromTemplate(yamlTemplate, { useDevDb });
 
   let validated = false;
   let envValues = {};
@@ -114,21 +133,9 @@ async function main() {
     APP_NAME: appName,
     GITHUB_REPO: githubRepo,
     GITHUB_BRANCH: githubBranch,
-    SPACES_KEY_ID: envValues.SPACES_KEY_ID,
-    SPACES_KEY_SECRET: envValues.SPACES_KEY_SECRET,
-    SPACES_BUCKET_NAME: envValues.SPACES_BUCKET_NAME,
-    SPACES_REGION: envValues.SPACES_REGION,
-    NEXTAUTH_SECRET: envValues.NEXTAUTH_SECRET,
-    STRIPE_WEBHOOK_SECRET: envValues.STRIPE_WEBHOOK_SECRET,
-    STRIPE_SECRET_KEY: envValues.STRIPE_SECRET_KEY,
-    NEXT_PUBLIC_STRIPE_FREE_PRICE_ID: envValues.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
-    NEXT_PUBLIC_STRIPE_PRO_PRICE_ID: envValues.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
-    STRIPE_PRO_GIFT_PRICE_ID: envValues.STRIPE_PRO_GIFT_PRICE_ID,
-    STRIPE_PORTAL_CONFIG_ID: envValues.STRIPE_PORTAL_CONFIG_ID,
-    RESEND_API_KEY: envValues.RESEND_API_KEY,
-    RESEND_EMAIL_SENDER: envValues.RESEND_EMAIL_SENDER,
     DB_NAME: useDevDb ? `${appName}-db` : '',
     CLUSTER_NAME: useDevDb ? `${appName}-cluster` : '',
+    ...envValues,
   };
 
   let finalYaml = getYamlWithReplacements(yamlTemplate, replacements);
