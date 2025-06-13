@@ -59,8 +59,8 @@ export const handleSubscriptionUpdated = async (json: any) => {
       emailTemplate({
         title: 'Your subscription was updated',
         content: `<p style="text-align:center; margin: 32px 0;">
-            Your subscription plan was updated to <strong>${plan}</strong> plan. Thank you for using our service!
-          </p>
+            Your subscription plan was updated to <strong>${plan}</strong> plan.</p>
+            <p>Thank you for using our service!</p>
           ${
             currentPlan
               ? `
@@ -70,10 +70,6 @@ export const handleSubscriptionUpdated = async (json: any) => {
                 <table width="100%" cellpadding="0" cellspacing="0" border="0">
                   <tr>
                     <td colspan="2" style="font-size:1.2rem;color:#0061EB;font-weight:bold;padding-bottom:12px;">Plan Details</td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight:bold;padding:4px 0;width:100px;">Name:</td>
-                    <td style="padding:4px 0;">${currentPlan.name}</td>
                   </tr>
                   <tr>
                     <td style="font-weight:bold;padding:4px 0;">Description:</td>
