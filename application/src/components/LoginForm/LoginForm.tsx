@@ -1,13 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  TextField,
+  Typography,
+  Box,
+  Container,
+  Stack,
+  Link as MuiLink,
+} from '@mui/material';
 import Link from 'next/link';
 import FormButton from 'components/FormButton/FormButton';
 import { signIn } from 'next-auth/react';
 import { useNavigating, usePrefetchRouter } from 'hooks/navigation';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 
 /**
  * Login form.
@@ -39,97 +46,110 @@ const LoginForm: React.FC = () => {
       navigate('/');
     }
   };
-
   return (
-    <ThemeProvider theme={createTheme({ palette: { mode: 'light' } })}>
-      <CssBaseline />
+    <Container maxWidth="sm">
       <Box
         display="flex"
-        flexGrow={1}
         minHeight="100vh"
-        justifyContent="center"
         alignItems="center"
-        bgcolor="#f3f4f6"
+        justifyContent="center"
+        px={2}
+        py={4}
       >
-        <Card sx={{ width: '100%', maxWidth: 400 }}>
-          <Box display="flex" flexDirection="column" gap={1.5} p={3}>
-            <Typography fontWeight="bold" variant="h5">
-              Log In
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Welcome back! Please log in to your account
-            </Typography>
-          </Box>
-          <CardContent sx={{ p: 3, pt: 0, pb: 1 }}>
-            <form onSubmit={handleSubmit} data-testid="login-form">
-              <Box display="grid" gap={2}>
-                <Box display="flex" flexDirection="column" gap={1}>
-                  <label htmlFor="email" style={{ fontSize: 14, lineHeight: 1.5 }}>
-                    Email
-                  </label>
-                  <TextField
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    fullWidth
-                    size="small"
-                  />
-                </Box>
-
-                <Box display="flex" flexDirection="column" gap={1}>
-                  <label htmlFor="password" style={{ fontSize: 14, lineHeight: 1.5 }}>
-                    Password
-                  </label>
-                  <TextField
-                    id="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    size="small"
-                  />
-                </Box>
-              </Box>
-
-              {error && (
-                <Typography color="error" fontSize={14} mt={2}>
-                  {error}
+        <Card sx={{ width: '100%', maxWidth: 400, mx: 'auto' }}>
+          <CardContent>
+            <Stack spacing={4}>
+              {/* Header */}
+              <Stack spacing={1.5} textAlign="center">
+                <Typography variant="h4" component="h1">
+                  Welcome Back
                 </Typography>
-              )}
-
-              <Box mt={3}>
-                <FormButton>Log In with Email</FormButton>
-              </Box>
-            </form>
-
-            <Divider sx={{ my: 2 }} />
-          </CardContent>
-
-          <Box display="flex" justifyContent="space-between" alignItems="center" p={3} pt={0}>
-            <Link
-              href="/forgot-password"
-              style={{ fontSize: 14, color: '#6b7280', textDecoration: 'none' }}
-            >
-              Forgot password?
-            </Link>
-            <Typography variant="body2" color="text.secondary">
-              Don&apos;t have an account?
-              <Link
-                href="/signup"
-                style={{ marginLeft: 4, color: 'black', textDecoration: 'none', fontWeight: 500 }}
+                <Typography variant="body1" color="text.secondary">
+                  Sign in to your account to continue
+                </Typography>
+              </Stack>{' '}
+              {/* Form */}
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                data-testid="login-form"
+                autoComplete="on"
               >
-                Sign up
-              </Link>
-            </Typography>
-          </Box>
+                <Stack spacing={3}>
+                  <Stack spacing={1}>
+                    <Typography variant="body2" fontWeight={500} color="text.primary">
+                      Email
+                    </Typography>
+                    <TextField
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      fullWidth
+                      autoComplete="email"
+                      variant="outlined"
+                    />
+                  </Stack>
+
+                  <Stack spacing={1}>
+                    <Typography variant="body2" fontWeight={500} color="text.primary">
+                      Password
+                    </Typography>
+                    <TextField
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="Enter your password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      fullWidth
+                      autoComplete="current-password"
+                      variant="outlined"
+                    />
+                  </Stack>
+
+                  {error && (
+                    <Typography color="error" variant="body2" textAlign="center">
+                      {error}
+                    </Typography>
+                  )}
+
+                  <Box mt={1}>
+                    <FormButton>Sign In</FormButton>
+                  </Box>
+                </Stack>
+              </Box>
+              {/* Links */}
+              <Stack spacing={2} alignItems="center">
+                <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">
+                  {' '}
+                  <Typography variant="body2" color="text.secondary">
+                    Don&apos;t have an account?
+                  </Typography>
+                  <MuiLink component={Link} href="/signup" variant="body2" sx={{ fontWeight: 600 }}>
+                    Sign up
+                  </MuiLink>
+                </Stack>
+
+                <MuiLink
+                  component={Link}
+                  href="/forgot-password"
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ textDecoration: 'underline' }}
+                >
+                  Forgot your password?
+                </MuiLink>
+              </Stack>
+            </Stack>
+          </CardContent>
         </Card>
       </Box>
-    </ThemeProvider>
+    </Container>
   );
 };
 

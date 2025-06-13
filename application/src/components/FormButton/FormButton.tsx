@@ -7,17 +7,7 @@ import Button from '@mui/material/Button';
  * @param children - Button text or content.
  */
 const FormButton: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Button
-    type="submit"
-    variant="contained"
-    fullWidth
-    sx={{
-      fontWeight: 500,
-      boxShadow: 'none',
-      '&:hover': { bgcolor: '#185EA5', boxShadow: 'none' },
-      textTransform: 'none',
-    }}
-  >
+  <Button type="submit" variant="contained" fullWidth size="large" sx={{ textTransform: 'none' }}>
     {children}
   </Button>
 );

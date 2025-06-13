@@ -78,9 +78,9 @@ describe('SignUpForm', () => {
     }) as unknown as jest.Mock;
 
     render(<SignUpForm />);
-    await userEvent.type(screen.getByLabelText(/email/i), 'exists@example.com');
-    await userEvent.type(screen.getByLabelText(/^password$/i), 'abc12345');
-    await userEvent.type(screen.getByLabelText(/confirm password/i), 'abc12345');
+    await userEvent.type(screen.getByTestId('signup-email-input'), 'exists@example.com');
+    await userEvent.type(screen.getByTestId('signup-password-input'), 'abc12345');
+    await userEvent.type(screen.getByTestId('signup-confirm-password-input'), 'abc12345');
 
     fireEvent.submit(screen.getByTestId('signup-form'));
 

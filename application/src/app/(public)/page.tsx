@@ -1,11 +1,11 @@
 import React from 'react';
 import CloudQueueIcon from '@mui/icons-material/CloudQueue';
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
-import LockOutlineIcon from '@mui/icons-material/LockOutline';
+import LockOutlineIcon from '@mui/icons-material/LockOutlined';
 import DnsIcon from '@mui/icons-material/Dns';
 import RampLeftIcon from '@mui/icons-material/RampLeft';
 import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
-import { Button, Card, CardContent, Typography, Box } from '@mui/material';
+import { Button, Card, CardContent, Typography, Box, Container, Stack } from '@mui/material';
 import Link from 'next/link';
 
 interface FeatureCardProps {
@@ -18,61 +18,58 @@ interface FeatureCardProps {
  * FeatureCard component to display individual feature cards.
  */
 const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
-  <Card sx={{ backgroundColor: 'white' }}>
+  <Card>
     <CardContent>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: 16,
-        }}
-      >
-        {React.isValidElement(icon)
-          ? React.cloneElement(icon as React.ReactElement<unknown>)
-          : icon}
-      </div>
-      <Typography variant="h5" align="center" color="black" fontWeight={600} gutterBottom>
-        {title}
-      </Typography>
-      <Typography align="center" color="grey.700">
-        {description}
-      </Typography>
+      <Stack alignItems="center" textAlign="center">
+        <Box color="primary.main">
+          {React.isValidElement(icon)
+            ? React.cloneElement(icon as React.ReactElement<{ style?: React.CSSProperties }>, {
+                style: { fontSize: 36 },
+              })
+            : icon}
+        </Box>
+        <Typography variant="h6" component="h3" fontWeight="bold">
+          {title}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {description}
+        </Typography>
+      </Stack>
     </CardContent>
   </Card>
 );
 
 const features: FeatureCardProps[] = [
   {
-    icon: <CloudQueueIcon sx={{ color: '#2563eb' }} fontSize="large" />,
+    icon: <CloudQueueIcon sx={{ color: '#0ea5e9' }} fontSize="large" />, // Sky blue for cloud
     title: 'DigitalOcean Integration',
     description:
       "Seamlessly deploy your application to DigitalOcean's robust cloud infrastructure.",
   },
   {
-    icon: <LockOutlineIcon sx={{ color: '#2563eb' }} fontSize="large" />,
+    icon: <LockOutlineIcon sx={{ color: '#dc2626' }} fontSize="large" />, // Red for security/lock
     title: 'Secure Authentication',
     description: 'Built-in authentication system with email, Google, and GitHub login options.',
   },
   {
-    icon: <ElectricBoltIcon sx={{ color: '#2563eb' }} fontSize="large" />,
+    icon: <ElectricBoltIcon sx={{ color: '#f59e0b' }} fontSize="large" />, // Golden/amber for lightning/energy
     title: 'Optimized Performance',
     description:
       "Leverage DigitalOcean's global network for lightning-fast load times and reliability.",
   },
   {
-    icon: <DnsIcon sx={{ color: '#2563eb' }} fontSize="large" />,
+    icon: <DnsIcon sx={{ color: '#16a34a' }} fontSize="large" />, // Green for growth/scalability
     title: 'Scalable Architecture',
     description:
       "Easily scale your application as your user base grows with DigitalOcean's flexible resources.",
   },
   {
-    icon: <RampLeftIcon sx={{ color: '#2563eb' }} fontSize="large" />,
+    icon: <RampLeftIcon sx={{ color: '#7c3aed' }} fontSize="large" />, // Purple for automation/pipeline
     title: 'CI/CD Pipeline',
     description: 'Integrated continuous integration and deployment pipeline for smooth updates.',
   },
   {
-    icon: <CloudQueueIcon sx={{ color: '#2563eb' }} fontSize="large" />,
+    icon: <CloudQueueIcon sx={{ color: '#0ea5e9' }} fontSize="large" />, // Sky blue for cloud storage
     title: 'DigitalOcean Spaces',
     description: 'Efficient file storage and CDN integration using DigitalOcean Spaces.',
   },
@@ -82,74 +79,116 @@ const features: FeatureCardProps[] = [
  * Home page component for the DigitalOcean SaaS starter kit.
  */
 const Home = () => (
-  <Box sx={{ flexGrow: 1 }}>
-    <Box
-      sx={{
-        background: 'linear-gradient(to right, #2563eb, #1e40af)',
-        color: 'white',
-        padding: '80px 0',
-        margin: '0 auto',
-        textAlign: 'center',
-      }}
-    >
-      <Typography variant="h1">Launch Your SaaS on DigitalOcean</Typography>
-      <Typography variant="subtitle1" sx={{ color: 'white' }}>
-        A complete starter kit for building and deploying your SaaS application with ease.
-      </Typography>
-      <Button
-        component={Link}
-        href="/signup"
-        prefetch={true}
-        variant="contained"
-        sx={{ borderRadius: 16, color: '#2563eb', bgcolor: 'white' }}
-        endIcon={<TrendingFlatIcon sx={{ fontSize: 18 }} />}
-      >
-        Get Started
-      </Button>
+  <Box>
+    {/* Hero Section */}
+    <Box bgcolor="background.default" py={4}>
+      <Container maxWidth="md">
+        <Stack spacing={3} textAlign="center">
+          <Typography variant="h1" component="h1" fontWeight="bold">
+            Launch Your SaaS on DigitalOcean
+          </Typography>
+          <Typography variant="h5" component="p">
+            A complete starter kit for building and deploying your SaaS application with ease.
+          </Typography>
+          <Box>
+            <Button
+              component={Link}
+              href="/signup"
+              prefetch={true}
+              variant="contained"
+              size="large"
+              endIcon={<TrendingFlatIcon />}
+              sx={{
+                backgroundColor: '#000000',
+                color: '#ffffff',
+                '&:hover': {
+                  backgroundColor: '#333333',
+                },
+              }}
+            >
+              Get Started Free
+            </Button>
+          </Box>
+        </Stack>
+      </Container>
     </Box>
 
-    <Box sx={{ padding: '80px 0', backgroundColor: 'black' }}>
-      <Box sx={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px', backgroundColor: 'black' }}>
-        <Typography variant="h2" align="center">
-          Key Features
-        </Typography>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: 32,
-          }}
-        >
-          {features.map((feature, idx) => (
-            <FeatureCard key={feature.title + idx} {...feature} />
-          ))}
-        </div>
-      </Box>
+    {/* Features Section */}
+    <Box py={6} bgcolor="background.default">
+      <Container maxWidth="lg">
+        <Stack spacing={6}>
+          <Stack spacing={2} textAlign="center">
+            <Typography variant="h2" component="h2" fontWeight="bold">
+              Key Features
+            </Typography>
+          </Stack>
+
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                sm: 'repeat(2, 1fr)',
+                md: 'repeat(3, 1fr)',
+              },
+              gap: 3,
+            }}
+          >
+            {features.map((feature, idx) => (
+              <FeatureCard key={feature.title + idx} {...feature} />
+            ))}
+          </Box>
+        </Stack>
+      </Container>
     </Box>
 
-    <Box sx={{ background: '#f3f4f6', padding: '80px 0' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px', textAlign: 'center' }}>
-        <Typography variant="h2" sx={{ color: '#374151', marginBottom: 2 }}>
-          Ready to Launch Your SaaS?
-        </Typography>
-        <Typography variant="subtitle1" color="text.light">
-          Get started with our DigitalOcean Starter Kit and bring your ideas to life.
-        </Typography>
-        <Button
-          variant="contained"
-          href="/signup"
-          component={Link}
-          prefetch={true}
-          sx={{
-            color: 'black',
-            borderRadius: 16,
-            bgcolor: 'white',
-            '&:hover': { bgcolor: '#E9EAEF' },
-          }}
-        >
-          Start Your Free Trial
-        </Button>
-      </div>
+    {/* CTA Section */}
+    <Box py={8} bgcolor="background.default">
+      <Container maxWidth="lg">
+        <Box display="flex" justifyContent="center">
+          <Card
+            sx={{
+              maxWidth: 800,
+              width: '100%',
+              py: 6,
+              px: 4,
+              textAlign: 'center',
+              boxShadow: 3,
+            }}
+          >
+            <CardContent>
+              <Stack spacing={4}>
+                <Typography variant="h2" component="h2" fontWeight="bold">
+                  Ready to Launch Your SaaS?
+                </Typography>
+                <Typography variant="h6" color="text.secondary">
+                  Get started with our DigitalOcean Starter Kit and bring your ideas to life.
+                </Typography>
+                <Box>
+                  <Button
+                    variant="contained"
+                    href="/signup"
+                    component={Link}
+                    prefetch={true}
+                    size="large"
+                    sx={{
+                      backgroundColor: '#000000',
+                      color: '#ffffff',
+                      '&:hover': {
+                        backgroundColor: '#333333',
+                      },
+                      py: 2,
+                      px: 4,
+                    }}
+                  >
+                    Start Taking Notes Today
+                  </Button>
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Box>
+      </Container>
     </Box>
   </Box>
 );
