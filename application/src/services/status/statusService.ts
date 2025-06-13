@@ -258,7 +258,7 @@ export class StatusService {
       };
     } catch (error) {
       return {
-        name: 'Billing Service',
+        name: 'Auth Service',
         configured: false,
         connected: false,
         required: false,
