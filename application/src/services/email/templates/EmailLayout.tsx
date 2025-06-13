@@ -16,7 +16,6 @@ export function EmailLayout({ title, children }: { title: string; children: Reac
         </Text>
       </Section>
       {children}
-      <Hr />
     </Html>
   );
 }

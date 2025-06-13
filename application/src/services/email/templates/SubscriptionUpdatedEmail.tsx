@@ -35,7 +35,7 @@ export function SubscriptionUpdatedEmail({ plan }: SubscriptionUpdatedEmailProps
       >
         <Section style={{ padding: '32px 24px' }}>
           <Text style={{ textAlign: 'center', margin: '0 0 24px 0' }}>
-            Your subscription plan was updated to <b>{plan.name}</b> plan.
+            Your subscription plan was updated to <b>{plan.name}</b>.
             <br />
             Thank you for using our service!
           </Text>
@@ -63,7 +63,7 @@ export function SubscriptionUpdatedEmail({ plan }: SubscriptionUpdatedEmailProps
               <Text>
                 <b>Price:</b> ${plan.amount} / {plan.interval ?? 'one-time'}
               </Text>
-              <Text>
+              <Text style={{ marginBottom: 0 }}>
                 <b>Features:</b>
               </Text>
               {plan.features.map((f, i) => (
