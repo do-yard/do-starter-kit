@@ -79,6 +79,12 @@ export class SqlDatabaseService extends DatabaseClient {
     update: async (id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>): Promise<User> => {
       return prisma.user.update({ where: { id }, data: user });
     },
+    updateByEmail: async (
+      email: string,
+      user: Partial<Omit<User, 'id' | 'createdAt'>>
+    ): Promise<User> => {
+      return prisma.user.update({ where: { email }, data: user });
+    },
     delete: async (id: string): Promise<void> => {
       await prisma.user.delete({ where: { id } });
     },
@@ -147,6 +153,9 @@ export class SqlDatabaseService extends DatabaseClient {
       return prisma.verificationToken.findUnique({
         where: { identifier_token: { identifier, token } },
       });
+    },
+    findByToken: async (token: string) => {
+      return prisma.verificationToken.findFirst({ where: { token } });
     },
     delete: async (identifier: string, token: string) => {
       await prisma.verificationToken.delete({

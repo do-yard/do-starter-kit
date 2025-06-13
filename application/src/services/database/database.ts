@@ -26,6 +26,7 @@ export abstract class DatabaseClient implements ConfigurableService {
     update: (id: string, user: Partial<Omit<User, 'id' | 'createdAt'>>) => Promise<User>;
     delete: (id: string) => Promise<void>;
     count: () => Promise<number>;
+    updateByEmail: (email: string, user: Partial<Omit<User, 'id' | 'createdAt'>>) => Promise<User>;
   };
   abstract subscription: {
     findByUserAndStatus: (
@@ -56,6 +57,9 @@ export abstract class DatabaseClient implements ConfigurableService {
     create: (data: { identifier: string; token: string; expires: Date }) => Promise<void>;
     find: (
       identifier: string,
+      token: string
+    ) => Promise<{ identifier: string; token: string; expires: Date } | null>;
+    findByToken: (
       token: string
     ) => Promise<{ identifier: string; token: string; expires: Date } | null>;
     delete: (identifier: string, token: string) => Promise<void>;
