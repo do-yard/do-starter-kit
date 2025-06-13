@@ -26,6 +26,7 @@ The DigitalOcean SaaS Starter Kit can be run [locally](#running-locally) or in [
 6. Run Prisma generate: `npx prisma generate`
 7. Run Prisma migration: `npx prisma migrate deploy`
 8. Start the site: `npm run dev`
+9. Navigate to the `/system-status` page to see if all the required services are correctly configured.
 
 > To generate the required stripe products automatically follow [these steps](docs/stripe-setup.md). The instructions to get configure Stripe events webhook are available [here](docs/stripe-webhooks.md).
 
@@ -132,9 +133,6 @@ Defaults used:
 ```bash
 npm run dev
 ```
-
-**Step 5: Check system status**
-Navigate to the `/system-status` page to see if all the required services are correctly configured.
 
 ## Resend setup
 

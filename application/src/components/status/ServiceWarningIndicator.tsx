@@ -18,8 +18,8 @@ interface ServiceStatus {
  * Only displays when there are optional service failures but no required service failures.
  */
 const ServiceWarningIndicator: React.FC = () => {
-  const [hasOptionalIssues, setHasOptionalIssues] = useState(false);
-  const [optionalIssuesCount, setOptionalIssuesCount] = useState(0);
+  const [hasErrors, setHasErrors] = useState(false);
+  const [errorCount, setErrorCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,35 +29,17 @@ const ServiceWarningIndicator: React.FC = () => {
         if (response.ok) {
           const data = await response.json();
           const services: ServiceStatus[] = data.services || [];
-
-          // Check for issues in required vs optional services
-          const requiredServices = services.filter((service) => service.required);
-          const optionalServices = services.filter((service) => !service.required);
-
-          const hasRequiredIssues = requiredServices.some(
-            (service) => !service.configured || !service.connected
-          );
-          const optionalIssues = optionalServices.filter(
-            (service) => !service.configured || !service.connected
-          );
-
-          // Only show warning if there are optional issues but no required issues
-          setHasOptionalIssues(!hasRequiredIssues && optionalIssues.length > 0);
-          setOptionalIssuesCount(optionalIssues.length);
+          const issues = services.filter((service) => !service.configured || !service.connected);
+          setHasErrors(issues.length > 0);
+          setErrorCount(issues.length);
         }
       } catch (error) {
         console.error('Failed to check service status:', error);
-        // Don't show warning if we can't check status
-        setHasOptionalIssues(false);
+        setHasErrors(false);
       }
     };
-
-    // Check immediately
     checkServiceStatus();
-
-    // Check every 5 minutes
     const interval = setInterval(checkServiceStatus, 5 * 60 * 1000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -65,13 +47,13 @@ const ServiceWarningIndicator: React.FC = () => {
     router.push('/system-status');
   };
 
-  if (!hasOptionalIssues) {
+  if (!hasErrors) {
     return null;
   }
 
   return (
     <Tooltip
-      title={`${optionalIssuesCount} optional service${optionalIssuesCount !== 1 ? 's' : ''} have configuration issues. Click to view details.`}
+      title={`${errorCount} optional service${errorCount !== 1 ? 's' : ''} have configuration issues. Click to view details.`}
       data-testid="ServiceWarningIndicator"
     >
       <IconButton
@@ -84,7 +66,7 @@ const ServiceWarningIndicator: React.FC = () => {
           },
         }}
       >
-        <Badge badgeContent={optionalIssuesCount} color="warning">
+        <Badge badgeContent={errorCount} color="warning">
           <WarningIcon />
         </Badge>
       </IconButton>

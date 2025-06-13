@@ -7,15 +7,17 @@ import { ServiceConfigStatus, ConfigurableService } from '../status/serviceConfi
 export abstract class EmailService implements ConfigurableService {
   abstract sendEmail(to: string, subject: string, body: string): Promise<void>;
 
+  abstract sendReactEmail(
+    to: string,
+    subject: string,
+    contentComponent: React.ReactNode
+  ): Promise<void>;
+
   abstract checkConnection(): Promise<boolean>;
 
   abstract checkConfiguration(): Promise<ServiceConfigStatus>;
 
-  /**
-   * Default implementation: email services are required by default.
-   * Override this method if a specific email implementation should be optional.
-   */
   isRequired(): boolean {
-    return false;
+    return true;
   }
 }

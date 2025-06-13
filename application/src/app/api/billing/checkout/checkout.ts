@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { serverConfig } from '../../../../../settings';
-import { createBillingService } from 'services/billing/billing';
 import { HTTP_STATUS } from 'lib/api/http';
 import { createDatabaseService } from 'services/database/databaseFactory';
+import { createBillingService } from 'services/billing/billingFactory';
 
 /**
  * Initiates a checkout session for upgrading to Pro.
@@ -33,12 +33,12 @@ export const checkout = async (
   }
 
   try {
-    const billingService = createBillingService();
+    const billingService = await createBillingService();
 
     const url = await billingService.manageSubscription(
       serverConfig.Stripe.proPriceId,
       subscription[0].customerId,
-      `${serverConfig.baseURL}/dashboard/subscription`
+      `${serverConfig.Stripe.baseURL}/dashboard/subscription`
     );
 
     if (!url) {
