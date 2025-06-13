@@ -138,6 +138,49 @@ export class SqlDatabaseService extends DatabaseClient {
     delete: async (id: string): Promise<void> => {
       await prisma.note.delete({ where: { id } });
     },
+    findMany: async (args: {
+      userId: string;
+      search?: string;
+      skip: number;
+      take: number;
+      orderBy: {
+        createdAt?: 'desc' | 'asc';
+        title?: 'asc';
+      };
+    }) => {
+      const { userId, search, skip, take, orderBy } = args;
+      return prisma.note.findMany({
+        where: {
+          userId,
+          ...(search
+            ? {
+                OR: [
+                  { title: { contains: search, mode: 'insensitive' } },
+                  { content: { contains: search, mode: 'insensitive' } },
+                ],
+              }
+            : {}),
+        },
+        skip,
+        take,
+        orderBy,
+      });
+    },
+    count: async (userId: string, search?: string) => {
+      return prisma.note.count({
+        where: {
+          userId,
+          ...(search
+            ? {
+                OR: [
+                  { title: { contains: search, mode: 'insensitive' } },
+                  { content: { contains: search, mode: 'insensitive' } },
+                ],
+              }
+            : {}),
+        },
+      });
+    },
   };
   verificationToken = {
     create: async (data: { identifier: string; token: string; expires: Date }) => {
