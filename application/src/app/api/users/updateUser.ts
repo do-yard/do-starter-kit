@@ -3,7 +3,7 @@ import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createBillingService } from 'services/billing/billing';
 import { SubscriptionPlanEnum } from 'types';
-import { serverConfig } from '../../../../settings';
+import { serverConfig } from 'settings';
 import { createDatabaseService } from 'services/database/databaseFactory';
 
 /**

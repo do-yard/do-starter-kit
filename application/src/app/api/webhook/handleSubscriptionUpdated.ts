@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
-import { serverConfig } from '../../../../settings';
+import { serverConfig } from 'settings';
 import { createDatabaseService } from 'services/database/databaseFactory';
 
 const PLAN_MAP: Record<string, SubscriptionPlanEnum> = {

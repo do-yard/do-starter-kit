@@ -39,7 +39,7 @@ jest.mock('../../../services/database/databaseFactory', () => ({
   createDatabaseService: () => Promise.resolve(mockDb),
 }));
 
-import { serverConfig } from '../../../../settings';
+import { serverConfig } from 'settings';
 serverConfig.Stripe = { freePriceId: 'free-price-id' };
 
 const createRequest = (token?: string) => {

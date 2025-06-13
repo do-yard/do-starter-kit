@@ -25,7 +25,7 @@ jest.mock('services/database/databaseFactory', () => ({
     },
   }),
 }));
-jest.mock('../../../../../settings', () => ({
+jest.mock('settings', () => ({
   serverConfig: {
     Stripe: { freePriceId: 'free_price_id' },
   },
