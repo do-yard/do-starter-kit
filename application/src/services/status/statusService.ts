@@ -3,7 +3,7 @@ import { createEmailService } from '../email/emailFactory';
 import { createDatabaseService } from '../database/databaseFactory';
 import { ServiceStatus } from './serviceConfigStatus';
 import { createBillingService } from 'services/billing/billingFactory';
-import { NextAuthService } from 'services/auth/nextAuthService';
+import { createAuthService } from 'services/auth/authFactory';
 
 /**
  * Interface for application health state.
@@ -247,7 +247,7 @@ export class StatusService {
    */
   static async checkAuthStatus(): Promise<ServiceStatus> {
     try {
-      const authService = new NextAuthService();
+      const authService = await createAuthService();
 
       // Get configuration status from the service and add required classification
       const configStatus = await authService.checkConfiguration();
