@@ -27,7 +27,6 @@ export interface PaginatedNotes {
  */
 export class NotesApiClient {
   constructor(private baseURL = '/api/notes') {}
-
   // Fetch all notes
   async getNotes(params?: {
     page?: number;
@@ -36,12 +35,18 @@ export class NotesApiClient {
     sortBy?: string;
   }): Promise<PaginatedNotes> {
     let url = `${this.baseURL}`;
-    if (params && (params.page || params.pageSize || params.search || params.sortBy)) {
+    if (
+      params &&
+      (params.page !== undefined ||
+        params.pageSize !== undefined ||
+        params.search !== undefined ||
+        params.sortBy !== undefined)
+    ) {
       const query = new URLSearchParams();
-      if (params.page) query.append('page', params.page.toString());
-      if (params.pageSize) query.append('pageSize', params.pageSize.toString());
-      if (params.search) query.append('search', params.search);
-      if (params.sortBy) query.append('sortBy', params.sortBy);
+      if (params.page !== undefined) query.append('page', params.page.toString());
+      if (params.pageSize !== undefined) query.append('pageSize', params.pageSize.toString());
+      if (params.search !== undefined) query.append('search', params.search);
+      if (params.sortBy !== undefined) query.append('sortBy', params.sortBy);
       url += `?${query.toString()}`;
     }
     const res = await fetch(url);
