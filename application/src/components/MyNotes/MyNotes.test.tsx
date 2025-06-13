@@ -135,7 +135,7 @@ beforeAll(() => {
   ];
 
   mockGetNotes.mockResolvedValue({ notes: mockNotes, total: mockNotes.length });
-  mockCreateNote.mockImplementation((data: any) =>
+  mockCreateNote.mockImplementation((data: { title: string; content: string }) =>
     Promise.resolve({
       id: '3',
       userId: 'user1',
@@ -143,7 +143,7 @@ beforeAll(() => {
       createdAt: new Date().toISOString(),
     })
   );
-  mockUpdateNote.mockImplementation((id: string, data: any) =>
+  mockUpdateNote.mockImplementation((id: string, data: { title: string; content: string }) =>
     Promise.resolve({
       id,
       userId: 'user1',

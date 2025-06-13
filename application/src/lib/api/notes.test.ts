@@ -22,7 +22,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes();
 
@@ -34,7 +34,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ page: 2 });
 
@@ -46,7 +46,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ pageSize: 20 });
 
@@ -58,7 +58,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ search: 'meeting' });
 
@@ -70,7 +70,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ sortBy: 'oldest' });
 
@@ -82,7 +82,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({
         page: 3,
@@ -101,7 +101,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ search: 'meeting notes & project' });
 
@@ -128,7 +128,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue(mockNotesResponse),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       const result = await apiClient.getNotes({ page: 1, pageSize: 10 });
 
@@ -142,7 +142,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: false,
         status: 500,
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await expect(apiClient.getNotes({ page: 1 })).rejects.toThrow('Failed to fetch notes');
     });
@@ -160,7 +160,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ page: 0 });
 
@@ -172,7 +172,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ page: -1 });
 
@@ -184,7 +184,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ pageSize: 1000 });
 
@@ -196,7 +196,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ search: '' });
 
@@ -208,7 +208,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
       await apiClient.getNotes({ search: '!@#$%^&*()' });
 
       expect(mockFetch).toHaveBeenCalledWith('/api/notes?search=%21%40%23%24%25%5E%26*%28%29');
@@ -221,7 +221,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ page: 5 });
 
@@ -233,7 +233,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ page: 2, pageSize: 15 });
 
@@ -245,7 +245,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({ search: 'test', sortBy: 'title' });
 
@@ -257,7 +257,7 @@ describe('NotesApiClient - Pagination', () => {
         ok: true,
         json: jest.fn().mockResolvedValue({ notes: [], total: 0 }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as unknown as Response);
 
       await apiClient.getNotes({
         page: 1,

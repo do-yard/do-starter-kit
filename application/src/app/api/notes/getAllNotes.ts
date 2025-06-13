@@ -1,7 +1,6 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { createDatabaseService } from 'services/database/databaseFactory';
-import type { GetNotesResponse } from '../../../types/api-responses';
 
 /**
  * Fetches all notes for the authenticated user.
@@ -21,7 +20,7 @@ export const getAllNotes = async (
     const pageSize = parseInt(searchParams.get('pageSize') || '10', 10);
     const searchParam = searchParams.get('search')?.trim();
     const search = searchParam && searchParam.length > 0 ? searchParam : undefined;
-    const sortBy = searchParams.get('sortBy') || 'newest';    // Build findMany parameters conditionally
+    const sortBy = searchParams.get('sortBy') || 'newest'; // Build findMany parameters conditionally
     const skip = page === 1 ? 0 : (page - 1) * pageSize;
     const findManyParams: {
       userId: string;

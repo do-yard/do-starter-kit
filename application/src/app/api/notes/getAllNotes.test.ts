@@ -6,6 +6,8 @@ import { HTTP_STATUS } from 'lib/api/http';
 const mockFindMany = jest.fn();
 const mockCount = jest.fn();
 
+type TestNote = { id: string; userId: string; title: string; content: string; createdAt: string };
+
 jest.mock('../../../services/database/databaseFactory', () => ({
   createDatabaseService: () =>
     Promise.resolve({ note: { findMany: mockFindMany, count: mockCount } }),
@@ -23,7 +25,7 @@ describe('getAllNotes', () => {
   const user = { id: 'user-1', role: USER_ROLES.USER };
 
   it('returns paginated notes and total for user and status 200', async () => {
-    const notes = [
+    const notes: TestNote[] = [
       { id: 'n1', userId: 'user-1', title: 't1', content: 'c1', createdAt: 'now' },
       { id: 'n2', userId: 'user-1', title: 't2', content: 'c2', createdAt: 'now' },
     ];
@@ -43,7 +45,7 @@ describe('getAllNotes', () => {
   });
 
   it('calls findMany and count with search param if provided', async () => {
-    const notes = [
+    const notes: TestNote[] = [
       { id: 'n1', userId: 'user-1', title: 'meeting', content: 'notes', createdAt: 'now' },
     ];
     mockFindMany.mockResolvedValue(notes);
@@ -63,7 +65,7 @@ describe('getAllNotes', () => {
   });
 
   it('calls findMany and count with sortBy=oldest if provided', async () => {
-    const notes = [
+    const notes: TestNote[] = [
       { id: 'n1', userId: 'user-1', title: 'meeting', content: 'notes', createdAt: 'now' },
     ];
     mockFindMany.mockResolvedValue(notes);
@@ -82,7 +84,7 @@ describe('getAllNotes', () => {
   });
 
   it('calls findMany and count with sortBy=title if provided', async () => {
-    const notes = [
+    const notes: TestNote[] = [
       { id: 'n1', userId: 'user-1', title: 'Alpha', content: 'notes', createdAt: 'now' },
     ];
     mockFindMany.mockResolvedValue(notes);
@@ -111,7 +113,9 @@ describe('getAllNotes', () => {
 
   describe('Pagination Edge Cases', () => {
     it('handles page 0 by treating it as page 1', async () => {
-      const notes = [{ id: 'n1', userId: 'user-1', title: 't1', content: 'c1', createdAt: 'now' }];
+      const notes: TestNote[] = [
+        { id: 'n1', userId: 'user-1', title: 't1', content: 'c1', createdAt: 'now' },
+      ];
       mockFindMany.mockResolvedValue(notes);
       mockCount.mockResolvedValue(1);
       const req = makeRequest('http://localhost/api/notes?page=0&pageSize=10');
@@ -126,7 +130,7 @@ describe('getAllNotes', () => {
     });
 
     it('handles negative page number', async () => {
-      const notes: any[] = [];
+      const notes: TestNote[] = [];
       mockFindMany.mockResolvedValue(notes);
       mockCount.mockResolvedValue(0);
       const req = makeRequest('http://localhost/api/notes?page=-5&pageSize=10');
@@ -141,7 +145,7 @@ describe('getAllNotes', () => {
     });
 
     it('handles very large page number', async () => {
-      const notes: any[] = [];
+      const notes: TestNote[] = [];
       mockFindMany.mockResolvedValue(notes);
       mockCount.mockResolvedValue(0);
       const req = makeRequest('http://localhost/api/notes?page=999999&pageSize=10');
@@ -155,7 +159,7 @@ describe('getAllNotes', () => {
       expect(res.status).toBe(HTTP_STATUS.OK);
     });
     it('handles zero pageSize by using default', async () => {
-      const notes: any[] = [];
+      const notes: TestNote[] = [];
       mockFindMany.mockResolvedValue(notes);
       mockCount.mockResolvedValue(0);
       const req = makeRequest('http://localhost/api/notes?page=1&pageSize=0');
@@ -170,7 +174,7 @@ describe('getAllNotes', () => {
     });
 
     it('handles very large pageSize', async () => {
-      const notes: any[] = [];
+      const notes: TestNote[] = [];
       mockFindMany.mockResolvedValue(notes);
       mockCount.mockResolvedValue(0);
       const req = makeRequest('http://localhost/api/notes?page=1&pageSize=1000');
@@ -185,7 +189,7 @@ describe('getAllNotes', () => {
     });
 
     it('handles non-numeric page parameter', async () => {
-      const notes: any[] = [];
+      const notes: TestNote[] = [];
       mockFindMany.mockResolvedValue(notes);
       mockCount.mockResolvedValue(0);
       const req = makeRequest('http://localhost/api/notes?page=abc&pageSize=10');
@@ -200,7 +204,7 @@ describe('getAllNotes', () => {
     });
 
     it('handles non-numeric pageSize parameter', async () => {
-      const notes: any[] = [];
+      const notes: TestNote[] = [];
       mockFindMany.mockResolvedValue(notes);
       mockCount.mockResolvedValue(0);
       const req = makeRequest('http://localhost/api/notes?page=1&pageSize=xyz');
@@ -225,7 +229,7 @@ describe('getAllNotes', () => {
         { page: 10, pageSize: 5, expectedSkip: 45 },
       ];
       for (const testCase of testCases) {
-        mockFindMany.mockResolvedValue([] as any[]);
+        mockFindMany.mockResolvedValue([] as TestNote[]);
         mockCount.mockResolvedValue(0);
 
         const req = makeRequest(
@@ -243,7 +247,9 @@ describe('getAllNotes', () => {
     });
 
     it('returns consistent total count regardless of page', async () => {
-      const notes = [{ id: 'n1', userId: 'user-1', title: 't1', content: 'c1', createdAt: 'now' }];
+      const notes: TestNote[] = [
+        { id: 'n1', userId: 'user-1', title: 't1', content: 'c1', createdAt: 'now' },
+      ];
 
       mockFindMany.mockResolvedValue(notes);
       mockCount.mockResolvedValue(50); // Total of 50 notes
@@ -260,7 +266,7 @@ describe('getAllNotes', () => {
     });
 
     it('handles search parameter correctly with pagination', async () => {
-      const notes = [
+      const notes: TestNote[] = [
         {
           id: 'n1',
           userId: 'user-1',
@@ -293,7 +299,7 @@ describe('getAllNotes', () => {
 
   describe('Query Parameter Parsing', () => {
     it('uses default values when parameters are missing', async () => {
-      mockFindMany.mockResolvedValue([] as any[]);
+      mockFindMany.mockResolvedValue([] as TestNote[]);
       mockCount.mockResolvedValue(0);
 
       const req = makeRequest('http://localhost/api/notes'); // No query params
@@ -310,7 +316,7 @@ describe('getAllNotes', () => {
     });
 
     it('ignores unknown query parameters', async () => {
-      mockFindMany.mockResolvedValue([] as any[]);
+      mockFindMany.mockResolvedValue([] as TestNote[]);
       mockCount.mockResolvedValue(0);
 
       const req = makeRequest(
@@ -327,7 +333,7 @@ describe('getAllNotes', () => {
     });
 
     it('handles URL-encoded search parameters', async () => {
-      mockFindMany.mockResolvedValue([] as any[]);
+      mockFindMany.mockResolvedValue([] as TestNote[]);
       mockCount.mockResolvedValue(0);
 
       const req = makeRequest('http://localhost/api/notes?search=meeting%20notes%20%26%20tasks');
@@ -345,7 +351,7 @@ describe('getAllNotes', () => {
     });
 
     it('trims whitespace from search parameter', async () => {
-      mockFindMany.mockResolvedValue([] as any[]);
+      mockFindMany.mockResolvedValue([] as TestNote[]);
       mockCount.mockResolvedValue(0);
 
       const req = makeRequest('http://localhost/api/notes?search=%20%20meeting%20%20');
@@ -363,7 +369,7 @@ describe('getAllNotes', () => {
     });
 
     it('handles empty search parameter correctly', async () => {
-      mockFindMany.mockResolvedValue([] as any[]);
+      mockFindMany.mockResolvedValue([] as TestNote[]);
       mockCount.mockResolvedValue(0);
 
       const req = makeRequest('http://localhost/api/notes?search=');
