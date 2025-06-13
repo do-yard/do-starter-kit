@@ -41,7 +41,10 @@ const ResetPasswordForm: React.FC = () => {
         setSuccess(true);
       }
     } catch (err) {
-      setError('Something went wrong. Please try again.');
+      setError(
+        'Something went wrong. Please try again later. ' +
+          (err instanceof Error ? `: ${err.message}` : '')
+      );
     }
   };
 
