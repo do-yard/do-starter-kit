@@ -300,6 +300,14 @@ describe('StatusService', () => {
         error: undefined,
       });
 
+      mockAuthService.checkConfiguration.mockResolvedValue({
+        name: 'Auth Service',
+        configured: true,
+        connected: true,
+        error: undefined,
+        configToReview: undefined,
+      });
+
       try {
         // Act
         await StatusService.initialize();
