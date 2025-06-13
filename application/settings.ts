@@ -3,7 +3,6 @@ export interface ServerConfig {
   storageProvider: string;
   emailProvider: string;
   billingProvider: string;
-  baseURL: string;
   Database: {
     url?: string;
   };
@@ -18,6 +17,7 @@ export interface ServerConfig {
     fromEmail?: string;
   };
   Stripe: {
+    baseURL: string;
     stripeSecretKey?: string;
     freePriceId?: string;
     proPriceId?: string;
@@ -32,7 +32,6 @@ export const serverConfig: ServerConfig = {
   storageProvider: process.env.STORAGE_PROVIDER || 'Spaces',
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
   billingProvider: process.env.BILLING_PROVIDER || 'Stripe',
-  baseURL: process.env.BASE_URL || 'http://localhost:3000',
   Database: {
     url: process.env.DATABASE_URL,
   },
@@ -47,6 +46,7 @@ export const serverConfig: ServerConfig = {
     fromEmail: process.env.RESEND_EMAIL_SENDER,
   },
   Stripe: {
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
     stripeSecretKey: process.env.STRIPE_SECRET_KEY,
     freePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
     proPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,

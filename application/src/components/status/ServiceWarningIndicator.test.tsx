@@ -36,7 +36,7 @@ describe('ServiceWarningIndicator', () => {
     jest.useRealTimers();
   });
 
-  it('does not render when there are no optional issues', async () => {
+  it('does not render when there are no issues', async () => {
     const servicesWithoutOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
       { name: 'Cache', configured: true, connected: true, required: false },
@@ -58,29 +58,7 @@ describe('ServiceWarningIndicator', () => {
     });
   });
 
-  it('does not render when there are required issues (even with optional issues)', async () => {
-    const servicesWithRequiredIssues = [
-      { name: 'Database', configured: false, connected: false, required: true },
-      { name: 'Email', configured: false, connected: false, required: false },
-    ];
-
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ services: servicesWithRequiredIssues }),
-    });
-
-    const { container } = render(
-      <TestWrapper>
-        <ServiceWarningIndicator />
-      </TestWrapper>
-    );
-
-    await waitFor(() => {
-      expect(container.firstChild).toBeNull();
-    });
-  });
-
-  it('renders warning indicator when only optional services have issues', async () => {
+  it('renders warning indicator when optional and required services have issues', async () => {
     const servicesWithOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
       { name: 'Email', configured: false, connected: false, required: false },
@@ -103,7 +81,7 @@ describe('ServiceWarningIndicator', () => {
     });
   });
 
-  it('displays correct badge count for optional issues', async () => {
+  it('displays correct badge count for issues', async () => {
     const servicesWithTwoOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
       { name: 'Email', configured: false, connected: false, required: false },
@@ -126,7 +104,7 @@ describe('ServiceWarningIndicator', () => {
     });
   });
 
-  it('shows correct tooltip text for single optional service issue', async () => {
+  it('shows correct tooltip text for single service issue', async () => {
     const servicesWithOneOptionalIssue = [
       { name: 'Database', configured: true, connected: true, required: true },
       { name: 'Email', configured: false, connected: false, required: false },
@@ -155,7 +133,7 @@ describe('ServiceWarningIndicator', () => {
     });
   });
 
-  it('shows correct tooltip text for multiple optional service issues', async () => {
+  it('shows correct tooltip text for multiple service issues', async () => {
     const servicesWithMultipleOptionalIssues = [
       { name: 'Database', configured: true, connected: true, required: true },
       { name: 'Email', configured: false, connected: false, required: false },

@@ -1,3 +1,4 @@
+import { ServiceConfigStatus } from 'services/status/serviceConfigStatus';
 import { serverConfig } from '../../../settings';
 import { BillingService } from './billing';
 import Stripe from 'stripe';
@@ -6,12 +7,40 @@ import Stripe from 'stripe';
  * StripeBillingService is a service that implements the BillingService interface
  * using the Stripe API for managing billing operations such as customers and subscriptions.
  */
-export class StripeBillingService implements BillingService {
-  private stripe: Stripe;
+export class StripeBillingService extends BillingService {
+  private stripe: Stripe | null = null;
+  private static readonly serviceName = 'Billing (Stripe)';
+  private isConfigured: boolean = false;
+  private description: string = 'The following features are impacted: signup, billing plans';
+
+  // Required config items with their corresponding env var names and descriptions
+  private static requiredConfig = {
+    stripeSecretKey: { envVar: 'STRIPE_SECRET_KEY', description: 'Stripe secret key' },
+    freePriceId: { envVar: 'NEXT_PUBLIC_STRIPE_FREE_PRICE_ID', description: 'Free price id' },
+    proPriceId: { envVar: 'NEXT_PUBLIC_STRIPE_PRO_PRICE_ID', description: 'Pro price id' },
+    proGiftPriceId: { envVar: 'STRIPE_PRO_GIFT_PRICE_ID', description: 'Pro (Gift) id' },
+    webhookSecret: {
+      envVar: 'STRIPE_WEBHOOK_SECRET',
+      description: 'Secret to authenticate stripe webhooks',
+    },
+    portalConfigId: { envVar: 'STRIPE_PORTAL_CONFIG_ID', description: 'Checkout portal id' },
+    baseURL: { envVar: 'BASE_URL', description: 'Site base url' },
+  };
+  private lastConnectionError: string = '';
 
   constructor() {
-    if (!serverConfig.Stripe.stripeSecretKey) {
-      throw new Error('Missing Stipe Secret Key');
+    super();
+    this.initialize();
+  }
+
+  private initialize() {
+    const missingConfig = Object.entries(StripeBillingService.requiredConfig)
+      .filter(([key]) => !serverConfig.Stripe[key as keyof typeof serverConfig.Stripe])
+      .map(([, value]) => value.envVar);
+
+    if (missingConfig.length > 0) {
+      this.isConfigured = false;
+      return;
     }
 
     this.stripe = new Stripe(serverConfig.Stripe.stripeSecretKey!, {
@@ -20,6 +49,10 @@ export class StripeBillingService implements BillingService {
   }
 
   async listCustomer(email: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     const result = await this.stripe.customers.list({
       email: email,
       limit: 1,
@@ -29,6 +62,10 @@ export class StripeBillingService implements BillingService {
   }
 
   async createCustomer(email: string, metadata?: Record<string, string>) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     return await this.stripe.customers.create({
       email: email,
       metadata: metadata,
@@ -36,6 +73,10 @@ export class StripeBillingService implements BillingService {
   }
 
   async createSubscription(customerId: string, priceId: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     const result = await this.stripe.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
@@ -66,6 +107,10 @@ export class StripeBillingService implements BillingService {
   }
 
   async listSubscription(customerId: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     const result = await this.stripe.subscriptions.list({
       customer: customerId,
       limit: 1,
@@ -79,10 +124,18 @@ export class StripeBillingService implements BillingService {
   }
 
   async cancelSubscription(subscriptionId: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     await this.stripe.subscriptions.cancel(subscriptionId);
   }
 
   async updateSubscription(id: string, itemId: string, priceId: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     const result = await this.stripe.subscriptions.update(id, {
       items: [
         {
@@ -113,6 +166,10 @@ export class StripeBillingService implements BillingService {
   }
 
   async manageSubscription(priceId: string, customerId: string, returnUrl: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     const result = await this.stripe.subscriptions.list({
       customer: customerId,
       limit: 1,
@@ -159,6 +216,10 @@ export class StripeBillingService implements BillingService {
 
     const plans = await Promise.all(
       priceIds.map(async (priceId) => {
+        if (!this.stripe) {
+          throw new Error('Stripe client not initialized. Check Configuration');
+        }
+
         const price = await this.stripe.prices.retrieve(priceId, {
           expand: ['product'],
         });
@@ -180,5 +241,76 @@ export class StripeBillingService implements BillingService {
     );
 
     return plans;
+  }
+
+  /**
+   * Checks if the billing service is properly configured and accessible.
+   * List products to check connection.
+   *
+   * @returns {Promise<boolean>} True if the connection is successful, false otherwise.
+   */
+  async checkConnection(): Promise<boolean> {
+    if (!this.stripe) {
+      this.lastConnectionError = 'Stripe client not initialized';
+      return false;
+    }
+
+    try {
+      // Test connection by listing products
+      await this.stripe.products.list();
+      return true;
+    } catch (connectionError) {
+      const errorMsg =
+        connectionError instanceof Error ? connectionError.message : String(connectionError);
+
+      console.error('Billing connection test failed:', {
+        error: errorMsg,
+      });
+
+      this.lastConnectionError = `Connection error: ${errorMsg}`;
+      return false;
+    }
+  }
+
+  /**
+   * Checks if the billing service configuration is valid and tests connection when configuration is complete.
+   */
+  async checkConfiguration(): Promise<ServiceConfigStatus> {
+    // Check for missing configuration
+    const missingConfig = Object.entries(StripeBillingService.requiredConfig)
+      .filter(([key]) => !serverConfig.Stripe[key as keyof typeof serverConfig.Stripe])
+      .map(([, value]) => value.envVar);
+
+    if (missingConfig.length > 0) {
+      return {
+        name: StripeBillingService.serviceName,
+        configured: false,
+        connected: undefined, // Don't test connection when configuration is missing
+        configToReview: missingConfig,
+        error: 'Configuration missing',
+        description: this.description,
+      };
+    }
+
+    // If configured, test the connection
+    const isConnected = await this.checkConnection();
+    if (!isConnected) {
+      return {
+        name: StripeBillingService.serviceName,
+        configured: true,
+        connected: false,
+        configToReview: Object.values(StripeBillingService.requiredConfig).map(
+          (config) => config.envVar
+        ),
+        error: this.lastConnectionError || 'Connection failed',
+        description: this.description,
+      };
+    }
+    return {
+      name: StripeBillingService.serviceName,
+      configured: true,
+      connected: true,
+      description: this.description,
+    };
   }
 }

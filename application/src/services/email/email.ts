@@ -17,11 +17,7 @@ export abstract class EmailService implements ConfigurableService {
 
   abstract checkConfiguration(): Promise<ServiceConfigStatus>;
 
-  /**
-   * Default implementation: email services are required by default.
-   * Override this method if a specific email implementation should be optional.
-   */
   isRequired(): boolean {
-    return false;
+    return true;
   }
 }
