@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Html, Head, Preview, Section, Text, Hr } from '@react-email/components';
+import { Html, Head, Preview, Section, Text } from '@react-email/components';
 
 /**
  * Parent email layout component for transactional emails.
