@@ -3,6 +3,7 @@ import { createEmailService } from '../email/emailFactory';
 import { createDatabaseService } from '../database/databaseFactory';
 import { ServiceStatus } from './serviceConfigStatus';
 import { createBillingService } from 'services/billing/billingFactory';
+import { NextAuthService } from 'services/auth/nextAuthService';
 
 /**
  * Interface for application health state.
@@ -239,6 +240,36 @@ export class StatusService {
   }
 
   /**
+   * Checks the configuration and connectivity status of the auth service.
+   * Uses the AuthService interface to check the current auth provider.
+   *
+   * @returns {Promise<ServiceStatus>} The status of the auth service.
+   */
+  static async checkAuthStatus(): Promise<ServiceStatus> {
+    try {
+      const authService = new NextAuthService();
+
+      // Get configuration status from the service and add required classification
+      const configStatus = await authService.checkConfiguration();
+      return {
+        ...configStatus,
+        required: authService.isRequired(),
+      };
+    } catch (error) {
+      return {
+        name: 'Billing Service',
+        configured: false,
+        connected: false,
+        required: false,
+        error:
+          error instanceof Error
+            ? `Failed to initialize billing service: ${error.message}`
+            : 'Failed to initialize billing service: Unknown error',
+      };
+    }
+  }
+
+  /**
    * Checks the status of all configured services.
    * This method will automatically check all available services.
    *
@@ -261,6 +292,9 @@ export class StatusService {
 
     const billingStatus = await this.checkBillingStatus();
     services.push(billingStatus);
+
+    const authStatus = await this.checkAuthStatus();
+    services.push(authStatus);
 
     return services;
   }

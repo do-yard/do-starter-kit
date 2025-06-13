@@ -46,9 +46,6 @@ export abstract class BillingService implements ConfigurableService {
 
   abstract checkConfiguration(): Promise<ServiceConfigStatus>;
 
-  /**
-   * Default implementation: billing services are not required by default.
-   */
   isRequired(): boolean {
     return true;
   }
