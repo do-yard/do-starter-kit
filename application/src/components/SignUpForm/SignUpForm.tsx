@@ -1,12 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, CardContent, TextField, Typography, Box, Divider } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  TextField,
+  Typography,
+  Box,
+  Container,
+  Stack,
+  Link as MuiLink,
+} from '@mui/material';
 import Link from 'next/link';
 import FormButton from 'components/FormButton/FormButton';
 import { useNavigating } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 /**
  * User registration form.
@@ -50,113 +58,133 @@ const SignUpForm: React.FC = () => {
     }
     setNavigating(false);
   };
-
   return (
-    <ThemeProvider theme={createTheme({ palette: { mode: 'light' } })}>
+    <Container maxWidth="sm">
       <Box
         display="flex"
-        flexGrow={1}
         minHeight="100vh"
-        justifyContent="center"
         alignItems="center"
-        bgcolor="#f3f4f6"
+        justifyContent="center"
+        px={2}
+        py={4}
       >
-        <Card sx={{ width: '100%', maxWidth: 400 }}>
-          <Box display="flex" flexDirection="column" gap={1.5} p={3}>
-            <Typography fontWeight="bold" variant="h5">
-              Sign Up
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Create an account to get started
-            </Typography>
-          </Box>
-
-          <CardContent sx={{ p: 3, pt: 0, pb: 1 }}>
-            <form onSubmit={handleSubmit} data-testid="signup-form">
-              <Box display="grid" gap={2}>
-                <Box display="flex" flexDirection="column" gap={1}>
-                  <label htmlFor="email" style={{ fontSize: 14, lineHeight: 1.5 }}>
-                    Email
-                  </label>
-                  <TextField
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    fullWidth
-                    size="small"
-                    inputProps={{ 'data-testid': 'signup-email-input' }}
-                  />
-                </Box>
-
-                <Box display="flex" flexDirection="column" gap={1}>
-                  <label htmlFor="password" style={{ fontSize: 14 }}>
-                    Password
-                  </label>
-                  <TextField
-                    id="password"
-                    type="password"
-                    required
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                    size="small"
-                    inputProps={{ 'data-testid': 'signup-password-input' }}
-                  />
-                </Box>
-
-                <Box display="flex" flexDirection="column" gap={1}>
-                  <label htmlFor="confirm-password" style={{ fontSize: 14 }}>
-                    Confirm Password
-                  </label>
-                  <TextField
-                    id="confirm-password"
-                    type="password"
-                    placeholder="Confirm your password"
-                    required
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    fullWidth
-                    size="small"
-                    inputProps={{ 'data-testid': 'signup-confirm-password-input' }}
-                  />
-                </Box>
-              </Box>
-              {error && (
-                <Typography color="error" fontSize={14} mt={2} data-testid="signup-error-message">
-                  {error}
+        <Card sx={{ width: '100%', maxWidth: 400, mx: 'auto' }}>
+          <CardContent>
+            <Stack spacing={4}>
+              {/* Header */}
+              <Stack spacing={1.5} textAlign="center">
+                <Typography variant="h4" component="h1">
+                  Create Account
                 </Typography>
-              )}
-              {success && (
-                <Typography color="success" fontSize={14} mt={2}>
-                  {success}
+                <Typography variant="body1" color="text.secondary">
+                  Sign up to get started with your account
                 </Typography>
-              )}
+              </Stack>
 
-              <Box mt={3}>
-                <FormButton>Sign Up</FormButton>
-              </Box>
-            </form>
-            <Divider sx={{ my: 2 }} />
-          </CardContent>
-
-          <Box display="flex" justifyContent="center" alignItems="center" p={3} pt={0}>
-            <Typography variant="body2" color="text.secondary">
-              Already have an account?
-              <Link
-                href="/login"
-                style={{ marginLeft: 4, color: 'black', textDecoration: 'none', fontWeight: 500 }}
+              {/* Form */}
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                data-testid="signup-form"
+                autoComplete="on"
               >
-                Log in
-              </Link>
-            </Typography>
-          </Box>
+                <Stack spacing={3}>
+                  <Stack spacing={1}>
+                    <Typography variant="body2" fontWeight={500} color="text.primary">
+                      Email
+                    </Typography>
+                    <TextField
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      fullWidth
+                      autoComplete="email"
+                      variant="outlined"
+                      inputProps={{ 'data-testid': 'signup-email-input' }}
+                    />
+                  </Stack>
+
+                  <Stack spacing={1}>
+                    <Typography variant="body2" fontWeight={500} color="text.primary">
+                      Password
+                    </Typography>
+                    <TextField
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="Enter your password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      fullWidth
+                      autoComplete="new-password"
+                      variant="outlined"
+                      inputProps={{ 'data-testid': 'signup-password-input' }}
+                    />
+                  </Stack>
+
+                  <Stack spacing={1}>
+                    <Typography variant="body2" fontWeight={500} color="text.primary">
+                      Confirm Password
+                    </Typography>
+                    <TextField
+                      id="confirm-password"
+                      name="confirmPassword"
+                      type="password"
+                      placeholder="Confirm your password"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      fullWidth
+                      autoComplete="new-password"
+                      variant="outlined"
+                      inputProps={{ 'data-testid': 'signup-confirm-password-input' }}
+                    />
+                  </Stack>
+
+                  {error && (
+                    <Typography
+                      color="error"
+                      variant="body2"
+                      textAlign="center"
+                      data-testid="signup-error-message"
+                    >
+                      {error}
+                    </Typography>
+                  )}
+
+                  {success && (
+                    <Typography color="success.main" variant="body2" textAlign="center">
+                      {success}
+                    </Typography>
+                  )}
+
+                  <Box mt={1}>
+                    <FormButton>Create Account</FormButton>
+                  </Box>
+                </Stack>
+              </Box>
+
+              {/* Links */}
+              <Stack spacing={2} alignItems="center">
+                <Stack direction="row" spacing={0.5} alignItems="center" justifyContent="center">
+                  <Typography variant="body2" color="text.secondary">
+                    Already have an account?
+                  </Typography>
+                  <MuiLink component={Link} href="/login" variant="body2" sx={{ fontWeight: 600 }}>
+                    Sign in
+                  </MuiLink>
+                </Stack>
+              </Stack>
+            </Stack>
+          </CardContent>
         </Card>
       </Box>
-    </ThemeProvider>
+    </Container>
   );
 };
 

@@ -46,17 +46,6 @@ If you made changes to the repo and want to deploy them to DigitalOcean, navigat
 
 3. Navigate to the site
 
-## Deploy to DigitalOcean App Platform with DOCTL
-
-To deploy your application to [DigitalOcean App Platform](https://www.digitalocean.com/products/app-platform) using `doctl`, follow these steps:
-
-### 1. Prepare your environment variables
-
-Before running any deployment script, **make sure you have a valid `.env` file in your project root**.
-This file should include all required environment variables for your app.
-
-> **Tip:** You can use `.env-example` as a template.
-
 ## Configure DigitalOcean Spaces storage
 
 DigitalOcean Spaces Storage is necessary to upload profile pictures. If you want to use this feature, you can find the configuration steps in the [DigitalOcean Spaces Storage Setup](./docs/storage.md) article.

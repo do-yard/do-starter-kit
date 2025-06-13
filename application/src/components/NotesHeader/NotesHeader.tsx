@@ -45,6 +45,7 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
           variant="contained"
           startIcon={<Add />}
           onClick={onCreateNote}
+          size="small"
           data-testid="notes-create-button"
         >
           Create Note
@@ -86,11 +87,6 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
             variant={viewMode === 'list' ? 'contained' : 'outlined'}
             onClick={() => onViewModeChange('list')}
             size="small"
-            sx={{
-              minWidth: '40px',
-              width: '40px',
-              padding: 0,
-            }}
             data-testid="notes-list-view-button"
           >
             <List fontSize="small" />
@@ -99,11 +95,6 @@ const NotesHeader: React.FC<NotesHeaderProps> = ({
             variant={viewMode === 'grid' ? 'contained' : 'outlined'}
             onClick={() => onViewModeChange('grid')}
             size="small"
-            sx={{
-              minWidth: '40px',
-              width: '40px',
-              padding: 0,
-            }}
             data-testid="notes-grid-view-button"
           >
             <GridView fontSize="small" />

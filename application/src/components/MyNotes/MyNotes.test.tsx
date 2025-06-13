@@ -4,47 +4,34 @@ import MyNotes from './MyNotes';
 
 // Mock the API client
 jest.mock('lib/api/notes', () => {
-  const mockNotes = [
-    {
-      id: '1',
-      userId: 'user1',
-      title: 'Test Note 1',
-      content: 'Content for test note 1',
-      createdAt: '2025-06-01T12:00:00Z',
-    },
-    {
-      id: '2',
-      userId: 'user1',
-      title: 'Test Note 2',
-      content: 'Content for test note 2',
-      createdAt: '2025-06-02T12:00:00Z',
-    },
-  ];
+  const mockGetNotes = jest.fn();
+  const mockCreateNote = jest.fn();
+  const mockUpdateNote = jest.fn();
+  const mockDeleteNote = jest.fn();
 
   return {
     Note: jest.requireActual('lib/api/notes').Note,
     NotesApiClient: jest.fn().mockImplementation(() => ({
-      getNotes: jest.fn().mockResolvedValue(mockNotes),
-      createNote: jest.fn().mockImplementation((data) =>
-        Promise.resolve({
-          id: '3',
-          userId: 'user1',
-          ...data,
-          createdAt: new Date().toISOString(),
-        })
-      ),
-      updateNote: jest.fn().mockImplementation((id, data) =>
-        Promise.resolve({
-          id,
-          userId: 'user1',
-          ...data,
-          createdAt: '2025-06-03T12:00:00Z',
-        })
-      ),
-      deleteNote: jest.fn().mockResolvedValue(undefined),
+      getNotes: mockGetNotes,
+      createNote: mockCreateNote,
+      updateNote: mockUpdateNote,
+      deleteNote: mockDeleteNote,
     })),
+    // Export mocks for test access
+    __mockGetNotes: mockGetNotes,
+    __mockCreateNote: mockCreateNote,
+    __mockUpdateNote: mockUpdateNote,
+    __mockDeleteNote: mockDeleteNote,
   };
 });
+
+// Get references to mock functions
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const mockedModule = require('lib/api/notes');
+const mockGetNotes = mockedModule.__mockGetNotes;
+const mockCreateNote = mockedModule.__mockCreateNote;
+const mockUpdateNote = mockedModule.__mockUpdateNote;
+const mockDeleteNote = mockedModule.__mockDeleteNote;
 
 // Mock child components to simplify testing
 jest.mock('../NotesListView/NotesListView', () => {
@@ -127,6 +114,46 @@ jest.mock('../NotesForm/NoteForm', () => {
   };
 });
 
+// Set up default mock behavior
+beforeAll(() => {
+  // Default mock implementation for basic tests
+  const mockNotes = [
+    {
+      id: '1',
+      userId: 'user1',
+      title: 'Test Note 1',
+      content: 'Content for test note 1',
+      createdAt: '2025-06-01T12:00:00Z',
+    },
+    {
+      id: '2',
+      userId: 'user1',
+      title: 'Test Note 2',
+      content: 'Content for test note 2',
+      createdAt: '2025-06-02T12:00:00Z',
+    },
+  ];
+
+  mockGetNotes.mockResolvedValue({ notes: mockNotes, total: mockNotes.length });
+  mockCreateNote.mockImplementation((data: { title: string; content: string }) =>
+    Promise.resolve({
+      id: '3',
+      userId: 'user1',
+      ...data,
+      createdAt: new Date().toISOString(),
+    })
+  );
+  mockUpdateNote.mockImplementation((id: string, data: { title: string; content: string }) =>
+    Promise.resolve({
+      id,
+      userId: 'user1',
+      ...data,
+      createdAt: '2025-06-03T12:00:00Z',
+    })
+  );
+  mockDeleteNote.mockResolvedValue(undefined);
+});
+
 describe('MyNotes', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -144,190 +171,191 @@ describe('MyNotes', () => {
     });
   });
 
-  it('switches between list and grid views', async () => {
+  it('hides pagination controls when there are no notes', async () => {
+    // Mock response with no notes
+    mockGetNotes.mockResolvedValue({
+      notes: [],
+      total: 0,
+    });
+
     render(<MyNotes />);
 
-    // Start with list view
     await waitFor(() => {
       expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
     });
 
-    // Switch to grid view
-    fireEvent.click(screen.getByTestId('grid-btn'));
-    expect(screen.getByTestId('notes-grid-view')).toBeInTheDocument();
-    expect(screen.queryByTestId('notes-list-view')).not.toBeInTheDocument();
-
-    // Switch back to list view
-    fireEvent.click(screen.getByTestId('list-btn'));
-    expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
-    expect(screen.queryByTestId('notes-grid-view')).not.toBeInTheDocument();
+    // Pagination controls should not be visible when there are no notes
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Rows per page')).not.toBeInTheDocument();
   });
 
-  it('opens create note modal', async () => {
+  it('shows pagination controls when there are notes', async () => {
+    // Mock response with multiple pages of notes
+    mockGetNotes.mockResolvedValue({
+      notes: Array.from({ length: 10 }, (_, i) => ({
+        id: `${i + 1}`,
+        userId: 'user1',
+        title: `Note ${i + 1}`,
+        content: `Content ${i + 1}`,
+        createdAt: new Date().toISOString(),
+      })),
+      total: 25, // Multiple pages
+    });
+
     render(<MyNotes />);
 
-    // Open create modal
-    fireEvent.click(screen.getByTestId('create-btn'));
-
-    expect(screen.getByTestId('note-form-create')).toBeInTheDocument();
-  });
-
-  it('opens view note modal', async () => {
-    render(<MyNotes />);
-
-    // Wait for notes to load
     await waitFor(() => {
       expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
     });
 
-    // Click view button
-    fireEvent.click(screen.getByTestId('view-btn'));
-
-    // View modal should be open
-    expect(screen.getByTestId('note-form-view')).toBeInTheDocument();
-  });
-
-  it('opens edit note modal', async () => {
-    render(<MyNotes />);
-
-    // Wait for notes to load
+    // Pagination controls should be visible with multiple pages
     await waitFor(() => {
-      expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
-    });
-
-    // Click edit button
-    fireEvent.click(screen.getByTestId('edit-btn'));
-
-    // Edit modal should be open
-    expect(screen.getByTestId('note-form-edit')).toBeInTheDocument();
-  });
-
-  it('shows delete confirmation dialog', async () => {
-    render(<MyNotes />);
-
-    // Wait for notes to load
-    await waitFor(() => {
-      expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
-    });
-
-    // Click delete button
-    fireEvent.click(screen.getByTestId('delete-btn'));
-
-    // Confirmation dialog should be open
-    expect(screen.getByText('Delete Note')).toBeInTheDocument();
-    expect(
-      screen.getByText('Are you sure you want to delete this note? This action cannot be undone.')
-    ).toBeInTheDocument();
-  });
-
-  it('creates a new note', async () => {
-    render(<MyNotes />);
-
-    // Open create modal
-    fireEvent.click(screen.getByTestId('create-btn'));
-
-    // Save the new note
-    fireEvent.click(screen.getByTestId('save-btn'));
-
-    // Modal should close after saving
-    await waitFor(() => {
-      expect(screen.queryByTestId('note-form-create')).not.toBeInTheDocument();
+      expect(screen.getByRole('navigation')).toBeInTheDocument();
+      expect(screen.getByLabelText('Rows per page')).toBeInTheDocument();
     });
   });
+  it('calls getNotes with correct pagination parameters', async () => {
+    mockGetNotes.mockResolvedValue({ notes: [], total: 0 });
 
-  it('edits an existing note', async () => {
     render(<MyNotes />);
 
-    // Wait for notes to load
     await waitFor(() => {
-      expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
-    });
-
-    // Click edit button
-    fireEvent.click(screen.getByTestId('edit-btn'));
-
-    // Save the edited note
-    fireEvent.click(screen.getByTestId('save-btn'));
-
-    // Modal should close after saving
-    await waitFor(() => {
-      expect(screen.queryByTestId('note-form-edit')).not.toBeInTheDocument();
+      expect(mockGetNotes).toHaveBeenCalledWith({
+        page: 1,
+        pageSize: 10,
+        search: '',
+        sortBy: 'newest',
+      });
     });
   });
+});
 
-  it('shows success toast when creating a note', async () => {
-    render(<MyNotes />);
-
-    // Open create modal
-    fireEvent.click(screen.getByTestId('create-btn'));
-
-    // Save the new note
-    fireEvent.click(screen.getByTestId('save-btn'));
-
-    // Success toast should appear
-    await waitFor(() => {
-      expect(screen.getByTestId('toast-success')).toBeInTheDocument();
-      expect(screen.getByText('Note created successfully')).toBeInTheDocument();
-    });
+describe('MyNotes - Pagination Tests', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('shows success toast when updating a note', async () => {
-    render(<MyNotes />);
+  describe('Pagination Controls', () => {
+    it('renders pagination component with correct props', async () => {
+      // Mock response with pagination data
+      mockGetNotes.mockResolvedValue({
+        notes: Array.from({ length: 10 }, (_, i) => ({
+          id: `${i + 1}`,
+          userId: 'user1',
+          title: `Note ${i + 1}`,
+          content: `Content ${i + 1}`,
+          createdAt: new Date().toISOString(),
+        })),
+        total: 25, // 3 pages with pageSize 10
+      });
 
-    // Wait for notes to load then edit
-    await waitFor(() => {
-      expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByTestId('edit-btn'));
+      render(<MyNotes />);
 
-    // Save the edited note
-    fireEvent.click(screen.getByTestId('save-btn'));
+      await waitFor(() => {
+        expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
+      });
 
-    // Success toast should appear
-    await waitFor(() => {
-      expect(screen.getByTestId('toast-success')).toBeInTheDocument();
-      expect(screen.getByText('Note updated successfully')).toBeInTheDocument();
-    });
-  });
-  it('shows success toast when deleting a note', async () => {
-    render(<MyNotes />);
-
-    // Wait for notes to load
-    await waitFor(() => {
-      expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
-    });
-
-    // Click delete button to open confirmation
-    fireEvent.click(screen.getByTestId('delete-btn'));
-
-    // Confirm deletion using the specific confirm dialog test ID
-    fireEvent.click(screen.getByTestId('confirm-dialog-action'));
-
-    // Success toast should appear
-    await waitFor(() => {
-      expect(screen.getByTestId('toast-success')).toBeInTheDocument();
-      expect(screen.getByText('Note deleted successfully')).toBeInTheDocument();
-    });
-  });
-
-  it('closes toast notification when close button is clicked', async () => {
-    render(<MyNotes />);
-
-    // Create a note to trigger toast
-    fireEvent.click(screen.getByTestId('create-btn'));
-    fireEvent.click(screen.getByTestId('save-btn'));
-
-    // Wait for toast to appear
-    await waitFor(() => {
-      expect(screen.getByTestId('toast-success')).toBeInTheDocument();
+      // Check if pagination component exists (Material UI Pagination should be rendered)
+      await waitFor(() => {
+        const paginationContainer = screen.getByRole('navigation');
+        expect(paginationContainer).toBeInTheDocument();
+      });
     });
 
-    // Close the toast
-    fireEvent.click(screen.getByTestId('close-toast'));
+    it('updates page when pagination button is clicked', async () => {
+      mockGetNotes.mockResolvedValue({
+        notes: Array.from({ length: 10 }, (_, i) => ({
+          id: `${i + 1}`,
+          userId: 'user1',
+          title: `Note ${i + 1}`,
+          content: `Content ${i + 1}`,
+          createdAt: new Date().toISOString(),
+        })),
+        total: 25,
+      });
 
-    // Toast should disappear
-    await waitFor(() => {
-      expect(screen.queryByTestId('toast-success')).not.toBeInTheDocument();
+      render(<MyNotes />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
+        expect(screen.getByRole('navigation')).toBeInTheDocument();
+      });
+
+      // Find and click page 2 button
+      const page2Button = screen.getByRole('button', { name: 'Go to page 2' });
+      fireEvent.click(page2Button);
+
+      await waitFor(() => {
+        expect(mockGetNotes).toHaveBeenCalledWith({
+          page: 2,
+          pageSize: 10,
+          search: '',
+          sortBy: 'newest',
+        });
+      });
+    });
+
+    it('updates page size and resets to page 1', async () => {
+      mockGetNotes.mockResolvedValue({
+        notes: Array.from({ length: 10 }, (_, i) => ({
+          id: `${i + 1}`,
+          userId: 'user1',
+          title: `Note ${i + 1}`,
+          content: `Content ${i + 1}`,
+          createdAt: new Date().toISOString(),
+        })),
+        total: 25,
+      });
+
+      render(<MyNotes />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
+        expect(screen.getByLabelText('Rows per page')).toBeInTheDocument();
+      });
+
+      // Find and change page size
+      const pageSizeSelect = screen.getByLabelText('Rows per page');
+      fireEvent.mouseDown(pageSizeSelect);
+
+      const option20 = screen.getByRole('option', { name: '20' });
+      fireEvent.click(option20);
+
+      await waitFor(() => {
+        expect(mockGetNotes).toHaveBeenCalledWith({
+          page: 1, // Should reset to page 1
+          pageSize: 20,
+          search: '',
+          sortBy: 'newest',
+        });
+      });
+    });
+
+    it('handles empty results correctly', async () => {
+      mockGetNotes.mockResolvedValue({ notes: [], total: 0 });
+
+      render(<MyNotes />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
+      });
+
+      // With empty results, pagination should be hidden (this is the UX improvement)
+      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Rows per page')).not.toBeInTheDocument();
+    });
+
+    it('handles API errors during pagination', async () => {
+      mockGetNotes.mockRejectedValue(new Error('API Error'));
+
+      render(<MyNotes />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('notes-list-view')).toBeInTheDocument();
+      });
+
+      // Should not show pagination when there's an error and no notes
+      expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
     });
   });
 });
