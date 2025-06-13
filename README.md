@@ -179,6 +179,7 @@ If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
    - **NEXT_PUBLIC_STRIPE_PRO_PRICE_ID**: The pro price Id created with the stripe script
    - **STRIPE_PRO_GIFT_PRICE_ID**: The pro gift price Id created with the stripe script
    - **STRIPE_PORTAL_CONFIG_ID**: The Stripe portal configuration ID
+   - **BASE_URL**:SS The URL of the application, used for Stripe callbacks
 3. Download and install [DigitalOcean doctl](https://docs.digitalocean.com/reference/doctl/how-to/install/).
 4. Create and API key in [DigitalOcean](https://cloud.digitalocean.com/account/api/tokens) and store it securely.
 5. Authenticate locally using `doctl auth init`
@@ -202,7 +203,7 @@ npm run deploy
 
 **That’s it! Your application will be deployed to DigitalOcean App Platform using your custom app spec and environment.**
 
-8. Once the app is deployed. Configure the `NEXTAUTH_URL` environment variable with the generated app URL.
+8. Once the app is deployed. Configure `NEXTAUTH_URL` and `BASE_URL` environment variables with the generated app URL.
 
 ### Best practices when working with secrets and environment variables
 
