@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { StripeClient } from 'lib/api/stripe';
 import { SubscriptionPlan, SubscriptionPlanEnum } from 'types';
 import Button from '@mui/material/Button';
@@ -23,19 +23,18 @@ const Subscription = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [upgrading, setUpgrading] = useState(false);
-  const stripeApi = new StripeClient();
+  const stripeApi = useMemo(() => new StripeClient(), []);
 
-  const fetchSubscription = async () => {
+  const fetchSubscription = useCallback(async () => {
     try {
       const { subscription } = await stripeApi.getSubscription();
       setSubscription(subscription[0]);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+    } catch {
       setError('Error loading subscription');
     } finally {
       setLoading(false);
     }
-  };
+  }, [stripeApi]);
 
   const handleCancel = async () => {
     setLoading(true);
@@ -63,7 +62,7 @@ const Subscription = () => {
 
   useEffect(() => {
     fetchSubscription();
-  }, []);
+  }, [fetchSubscription]);
 
   const currentPlan = subscription?.plan;
 
