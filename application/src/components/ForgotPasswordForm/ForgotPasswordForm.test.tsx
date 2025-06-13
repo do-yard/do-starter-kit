@@ -20,7 +20,7 @@ describe('ForgotPasswordForm', () => {
 
   it('shows error if email is empty and form is submitted', async () => {
     render(<ForgotPasswordForm />);
-    fireEvent.submit(screen.getByTestId('login-form'));
+    fireEvent.submit(screen.getByTestId('forgot-password-form'));
     expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument();
   });
 
@@ -31,7 +31,7 @@ describe('ForgotPasswordForm', () => {
     }) as jest.Mock;
     render(<ForgotPasswordForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');
-    fireEvent.submit(screen.getByTestId('login-form'));
+    fireEvent.click(screen.getByRole('button', { name: /send magic link/i }));
     expect(await screen.findByText(/magic link sent/i)).toBeInTheDocument();
   });
 
@@ -42,7 +42,7 @@ describe('ForgotPasswordForm', () => {
     }) as jest.Mock;
     render(<ForgotPasswordForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'fail@example.com');
-    fireEvent.submit(screen.getByTestId('login-form'));
+    fireEvent.submit(screen.getByTestId('forgot-password-form'));
     expect(await screen.findByText(/user not found/i)).toBeInTheDocument();
   });
 
@@ -50,7 +50,7 @@ describe('ForgotPasswordForm', () => {
     global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
     render(<ForgotPasswordForm />);
     await userEvent.type(screen.getByLabelText(/email/i), 'fail2@example.com');
-    fireEvent.submit(screen.getByTestId('login-form'));
+    fireEvent.submit(screen.getByTestId('forgot-password-form'));
     expect(await screen.findByText(/something went wrong/i)).toBeInTheDocument();
   });
 });
