@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { Html, Head, Preview, Section, Text, Container, Hr } from '@react-email/components';
+import { Section, Text, Container } from '@react-email/components';
+import { EmailLayout } from './EmailLayout';
 
-interface SubscriptionUpdatedEmailProps {
-  plan: string;
-  currentPlan?: {
+/**
+ * Props for the SubscriptionUpdatedEmail component.
+ */
+export interface SubscriptionUpdatedEmailProps {
+  plan: {
     name: string;
     description: string;
     amount: number;
@@ -18,16 +21,9 @@ interface SubscriptionUpdatedEmailProps {
  * Renders a transactional email for notifying users about subscription plan updates.
  * Uses @react-email/components for compatibility with email clients.
  */
-export function SubscriptionUpdatedEmail({ plan, currentPlan }: SubscriptionUpdatedEmailProps) {
+export function SubscriptionUpdatedEmail({ plan }: SubscriptionUpdatedEmailProps) {
   return (
-    <Html>
-      <Head />
-      <Preview>Your subscription was updated</Preview>
-      <Section style={{ background: '#0061EB', padding: '32px 0' }}>
-        <Text style={{ color: '#fff', fontSize: '24px', textAlign: 'center', margin: 0 }}>
-          DO Starter Kit - Your subscription was updated
-        </Text>
-      </Section>
+    <EmailLayout title="Your subscription was updated">
       <Container
         style={{
           background: '#fff',
@@ -39,11 +35,11 @@ export function SubscriptionUpdatedEmail({ plan, currentPlan }: SubscriptionUpda
       >
         <Section style={{ padding: '32px 24px' }}>
           <Text style={{ textAlign: 'center', margin: '0 0 24px 0' }}>
-            Your subscription plan was updated to <b>{plan}</b> plan.
+            Your subscription plan was updated to <b>{plan.name}</b> plan.
             <br />
             Thank you for using our service!
           </Text>
-          {currentPlan && (
+          {plan && (
             <Section
               style={{
                 background: '#f4f8ff',
@@ -59,28 +55,26 @@ export function SubscriptionUpdatedEmail({ plan, currentPlan }: SubscriptionUpda
                 Plan Details
               </Text>
               <Text>
-                <b>Name:</b> {currentPlan.name}
+                <b>Name:</b> {plan.name}
               </Text>
               <Text>
-                <b>Description:</b> {currentPlan.description}
+                <b>Description:</b> {plan.description}
               </Text>
               <Text>
-                <b>Price:</b> ${currentPlan.amount} / {currentPlan.interval ?? 'one-time'}
+                <b>Price:</b> ${plan.amount} / {plan.interval ?? 'one-time'}
               </Text>
               <Text>
                 <b>Features:</b>
               </Text>
-              <ul style={{ margin: '4px 0 0 16px', padding: 0 }}>
-                {currentPlan.features.map((f, i) => (
-                  <li key={i}>{f}</li>
-                ))}
-              </ul>
-              <Text style={{ fontSize: 12, color: '#888' }}>Price ID: {currentPlan.priceId}</Text>
+              {plan.features.map((f, i) => (
+                <Text key={i} style={{ margin: '0 0 0 16px', padding: 0 }}>
+                  • {f}
+                </Text>
+              ))}
             </Section>
           )}
         </Section>
       </Container>
-      <Hr />
-    </Html>
+    </EmailLayout>
   );
 }

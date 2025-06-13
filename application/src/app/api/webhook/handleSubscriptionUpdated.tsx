@@ -55,24 +55,24 @@ export const handleSubscriptionUpdated = async (json: any) => {
 
     const emailClient = await createEmailService();
 
+    if (!currentPlan) {
+      console.warn(`⚠️ Plan not found for price ID: ${priceId}. Email not sent.`);
+      return;
+    }
+
     // Use the new React email component for Resend
     await emailClient.sendReactEmail(
       user.email,
       'Your subscription was updated',
       <SubscriptionUpdatedEmail
-        plan={plan}
-        currentPlan={
-          currentPlan
-            ? {
-                name: currentPlan.name,
-                description: currentPlan.description,
-                amount: currentPlan.amount,
-                interval: currentPlan.interval,
-                features: currentPlan.features,
-                priceId: currentPlan.priceId,
-              }
-            : undefined
-        }
+        plan={{
+          name: currentPlan.name,
+          description: currentPlan.description,
+          amount: currentPlan.amount,
+          interval: currentPlan.interval,
+          features: currentPlan.features,
+          priceId: currentPlan.priceId,
+        }}
       />
     );
 
