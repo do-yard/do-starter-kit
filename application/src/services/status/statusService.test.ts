@@ -284,7 +284,7 @@ describe('StatusService', () => {
       const originalResendApiKey = process.env.RESEND_API_KEY;
       const originalSmtpHost = process.env.SMTP_HOST;
 
-      // Set environment variables for email service
+      // Set environment variables
       process.env.RESEND_API_KEY = 'test-api-key';
       process.env.SMTP_HOST = 'test-smtp-host';
       process.env.NEXTAUTH_URL = 'test-url';
