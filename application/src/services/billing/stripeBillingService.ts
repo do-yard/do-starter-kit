@@ -8,8 +8,9 @@ import Stripe from 'stripe';
  * using the Stripe API for managing billing operations such as customers and subscriptions.
  */
 export class StripeBillingService extends BillingService {
-  private stripe: Stripe;
+  private stripe: Stripe | null = null;
   private static readonly serviceName = 'Billing (Stripe)';
+  private isConfigured: boolean = false;
   private description: string = 'The following features are impacted: signup, billing plans';
 
   // Required config items with their corresponding env var names and descriptions
@@ -29,8 +30,17 @@ export class StripeBillingService extends BillingService {
 
   constructor() {
     super();
-    if (!serverConfig.Stripe.stripeSecretKey) {
-      throw new Error('Missing Stripe Secret Key');
+    this.initialize();
+  }
+
+  private initialize() {
+    const missingConfig = Object.entries(StripeBillingService.requiredConfig)
+      .filter(([key]) => !serverConfig.Stripe[key as keyof typeof serverConfig.Stripe])
+      .map(([, value]) => value.envVar);
+
+    if (missingConfig.length > 0) {
+      this.isConfigured = false;
+      return;
     }
 
     this.stripe = new Stripe(serverConfig.Stripe.stripeSecretKey!, {
@@ -39,6 +49,10 @@ export class StripeBillingService extends BillingService {
   }
 
   async listCustomer(email: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     const result = await this.stripe.customers.list({
       email: email,
       limit: 1,
@@ -48,6 +62,10 @@ export class StripeBillingService extends BillingService {
   }
 
   async createCustomer(email: string, metadata?: Record<string, string>) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     return await this.stripe.customers.create({
       email: email,
       metadata: metadata,
@@ -55,6 +73,10 @@ export class StripeBillingService extends BillingService {
   }
 
   async createSubscription(customerId: string, priceId: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     const result = await this.stripe.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
@@ -85,6 +107,10 @@ export class StripeBillingService extends BillingService {
   }
 
   async listSubscription(customerId: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     const result = await this.stripe.subscriptions.list({
       customer: customerId,
       limit: 1,
@@ -98,10 +124,18 @@ export class StripeBillingService extends BillingService {
   }
 
   async cancelSubscription(subscriptionId: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     await this.stripe.subscriptions.cancel(subscriptionId);
   }
 
   async updateSubscription(id: string, itemId: string, priceId: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     const result = await this.stripe.subscriptions.update(id, {
       items: [
         {
@@ -132,6 +166,10 @@ export class StripeBillingService extends BillingService {
   }
 
   async manageSubscription(priceId: string, customerId: string, returnUrl: string) {
+    if (!this.stripe) {
+      throw new Error('Stripe client not initialized. Check Configuration');
+    }
+
     const result = await this.stripe.subscriptions.list({
       customer: customerId,
       limit: 1,
@@ -178,6 +216,10 @@ export class StripeBillingService extends BillingService {
 
     const plans = await Promise.all(
       priceIds.map(async (priceId) => {
+        if (!this.stripe) {
+          throw new Error('Stripe client not initialized. Check Configuration');
+        }
+
         const price = await this.stripe.prices.retrieve(priceId, {
           expand: ['product'],
         });
@@ -268,6 +310,7 @@ export class StripeBillingService extends BillingService {
       name: StripeBillingService.serviceName,
       configured: true,
       connected: true,
+      description: this.description,
     };
   }
 }
