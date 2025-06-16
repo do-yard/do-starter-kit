@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { hashPassword, verifyPassword } from 'helpers/hash';
 import { HTTP_STATUS } from 'lib/api/http';
-import { emailTemplate } from 'services/email/emailTemplate';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createEmailService } from 'services/email/emailFactory';
 import { InformationEmailTemplate } from 'services/email/templates/InformationEmail';
