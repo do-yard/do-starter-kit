@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { middleware } from './middleware';
 import { USER_ROLES } from 'lib/auth/roles';
+import { HTTP_STATUS } from 'lib/api/http';
 
 const mockAuth = jest.fn();
 
@@ -33,10 +34,9 @@ describe('middleware', () => {
 
       const request = createMockRequest('/');
       const response = await middleware(request);
-
       expect(response).toEqual(
         expect.objectContaining({
-          status: 307, // NextResponse.redirect returns a 307 status
+          status: HTTP_STATUS.TEMPORARY_REDIRECT, // NextResponse.redirect returns a 307 status
           headers: expect.objectContaining({
             get: expect.any(Function),
           }),
@@ -56,7 +56,7 @@ describe('middleware', () => {
       const request = createMockRequest('/');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/dashboard');
     });
@@ -68,7 +68,7 @@ describe('middleware', () => {
       const response = await middleware(request);
 
       // NextResponse.next() returns a response without redirect
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
 
     it('allows users without role to stay on root', async () => {
@@ -79,7 +79,7 @@ describe('middleware', () => {
       const request = createMockRequest('/');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
   });
 
@@ -90,7 +90,7 @@ describe('middleware', () => {
       const request = createMockRequest('/dashboard');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/login');
     });
@@ -101,7 +101,7 @@ describe('middleware', () => {
       const request = createMockRequest('/dashboard/account');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/login');
     });
@@ -114,7 +114,7 @@ describe('middleware', () => {
       const request = createMockRequest('/dashboard');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
 
     it('allows authenticated users to access nested dashboard routes', async () => {
@@ -125,7 +125,7 @@ describe('middleware', () => {
       const request = createMockRequest('/dashboard/my-notes');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
   });
 
@@ -136,7 +136,7 @@ describe('middleware', () => {
       const request = createMockRequest('/admin/dashboard');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/login');
     });
@@ -149,7 +149,7 @@ describe('middleware', () => {
       const request = createMockRequest('/admin/dashboard');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/');
     });
@@ -162,7 +162,7 @@ describe('middleware', () => {
       const request = createMockRequest('/admin/dashboard');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
 
     it('redirects authenticated users without role to /', async () => {
@@ -173,7 +173,7 @@ describe('middleware', () => {
       const request = createMockRequest('/admin/dashboard');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/');
     });
@@ -186,7 +186,7 @@ describe('middleware', () => {
       const request = createMockRequest('/admin/users/manage');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
 
     it('handles nested admin routes correctly for non-admin users', async () => {
@@ -197,7 +197,7 @@ describe('middleware', () => {
       const request = createMockRequest('/admin/users/manage');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/');
     });
@@ -212,7 +212,7 @@ describe('middleware', () => {
       const request = createMockRequest('/login');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/dashboard');
     });
@@ -225,7 +225,7 @@ describe('middleware', () => {
       const request = createMockRequest('/login');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/dashboard');
     });
@@ -238,7 +238,7 @@ describe('middleware', () => {
       const request = createMockRequest('/signup');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/dashboard');
     });
@@ -251,7 +251,7 @@ describe('middleware', () => {
       const request = createMockRequest('/signup');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/dashboard');
     });
@@ -262,7 +262,7 @@ describe('middleware', () => {
       const request = createMockRequest('/login');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
 
     it('allows unauthenticated users to access /signup', async () => {
@@ -271,7 +271,7 @@ describe('middleware', () => {
       const request = createMockRequest('/signup');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
 
     it('allows authenticated users without role to access /login', async () => {
@@ -282,7 +282,7 @@ describe('middleware', () => {
       const request = createMockRequest('/login');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
   });
 
@@ -293,7 +293,7 @@ describe('middleware', () => {
       const request = createMockRequest('/system-status');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
 
     it('allows access to api routes', async () => {
@@ -302,7 +302,7 @@ describe('middleware', () => {
       const request = createMockRequest('/api/health');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
 
     it('allows access to public routes not in matcher', async () => {
@@ -311,7 +311,7 @@ describe('middleware', () => {
       const request = createMockRequest('/pricing');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
   });
 
@@ -324,7 +324,7 @@ describe('middleware', () => {
       const request = createMockRequest('/dashboard');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/login');
     });
@@ -337,7 +337,7 @@ describe('middleware', () => {
       const request = createMockRequest('/dashboard', 'https://example.com');
       const response = await middleware(request);
 
-      expect(response.status).not.toBe(307);
+      expect(response.status).not.toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
     });
     it('handles middleware with undefined role gracefully', async () => {
       mockAuth.mockResolvedValue({
@@ -347,7 +347,7 @@ describe('middleware', () => {
       const request = createMockRequest('/admin/dashboard');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/');
     });
@@ -360,7 +360,7 @@ describe('middleware', () => {
       const request = createMockRequest('/admin/dashboard');
       const response = await middleware(request);
 
-      expect(response.status).toBe(307);
+      expect(response.status).toBe(HTTP_STATUS.TEMPORARY_REDIRECT);
       const location = response.headers.get('location');
       expect(location).toBe('http://localhost:3000/');
     });
