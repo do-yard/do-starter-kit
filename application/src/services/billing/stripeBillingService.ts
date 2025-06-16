@@ -1,5 +1,5 @@
+import { serverConfig } from 'settings';
 import { ServiceConfigStatus } from 'services/status/serviceConfigStatus';
-import { serverConfig } from '../../../settings';
 import { BillingService } from './billing';
 import Stripe from 'stripe';
 

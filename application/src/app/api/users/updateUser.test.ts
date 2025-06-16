@@ -19,7 +19,7 @@ let mockFreePriceId: string | undefined = 'free';
 jest.mock('services/billing/billingFactory', () => ({
   createBillingService: () => Promise.resolve(mockBilling),
 }));
-jest.mock('../../../../settings', () => ({
+jest.mock('settings', () => ({
   serverConfig: {
     Stripe: {
       get proGiftPriceId() {

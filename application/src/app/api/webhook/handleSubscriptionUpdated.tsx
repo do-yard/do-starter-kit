@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
-import { serverConfig } from '../../../../settings';
+import { serverConfig } from 'settings';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createEmailService } from 'services/email/emailFactory';
 import { SubscriptionUpdatedEmail } from 'services/email/templates/SubscriptionUpdatedEmail';

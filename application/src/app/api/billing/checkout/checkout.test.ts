@@ -22,7 +22,7 @@ jest.mock('services/billing/billingFactory', () => ({
 
 let proPriceId: string | undefined = 'pro_123';
 let baseURL: string = 'http://localhost';
-jest.mock('../../../../../settings', () => ({
+jest.mock('settings', () => ({
   serverConfig: {
     Stripe: {
       get proPriceId() {

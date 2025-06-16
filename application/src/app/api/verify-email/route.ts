@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseClient } from 'services/database/database';
 import { HTTP_STATUS } from 'lib/api/http';
-import { serverConfig } from '../../../../settings';
+import { serverConfig } from 'settings';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum, User } from 'types';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createBillingService } from 'services/billing/billingFactory';
