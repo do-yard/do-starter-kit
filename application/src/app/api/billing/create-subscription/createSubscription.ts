@@ -18,6 +18,10 @@ export const createSubscription = async (
 
     const { plan }: { plan: SubscriptionPlan } = await request.json();
 
+    if (!plan) {
+      return NextResponse.json({ error: 'Plan is required' }, { status: HTTP_STATUS.BAD_REQUEST });
+    }
+
     let customerId;
 
     const db = await createDatabaseService();
