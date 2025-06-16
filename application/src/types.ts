@@ -38,7 +38,7 @@ export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 
 export type SubscriptionStatus = 'ACTIVE' | 'CANCELED' | 'PENDING';
 
-export type SubscriptionPlan = 'FREE' | 'PRO' | 'GIFT';
+export type SubscriptionPlan = 'FREE' | 'PRO';
 
 export interface UserWithSubscriptions extends User {
   subscription: Subscription | null;
@@ -53,5 +53,4 @@ export enum SubscriptionStatusEnum {
 export enum SubscriptionPlanEnum {
   FREE = 'FREE',
   PRO = 'PRO',
-  GIFT = 'GIFT',
 }

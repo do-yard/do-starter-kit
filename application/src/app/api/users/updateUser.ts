@@ -33,7 +33,7 @@ const updateSubscription = async (sub: any, id: string) => {
     await billing.updateSubscription(
       existingStripeSubscription[0].id,
       existingStripeSubscription[0].items[0].id,
-      SubscriptionPlanEnum.GIFT
+      'GIFT'
     );
   }
 

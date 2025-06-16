@@ -49,12 +49,12 @@ export class StripeBillingService extends BillingService {
     });
   }
 
-  private async getPriceId(plan: SubscriptionPlan): Promise<string> {
+  private async getPriceId(plan: SubscriptionPlan | 'GIFT'): Promise<string> {
     if (!this.stripe) {
       throw new Error('Stripe client not initialized. Check configuration.');
     }
 
-    const priceIdMap: Record<SubscriptionPlan, string | undefined> = {
+    const priceIdMap: Record<SubscriptionPlan | 'GIFT', string | undefined> = {
       FREE: serverConfig.Stripe.freePriceId,
       PRO: serverConfig.Stripe.proPriceId,
       GIFT: serverConfig.Stripe.proGiftPriceId,
@@ -152,7 +152,7 @@ export class StripeBillingService extends BillingService {
     await this.stripe.subscriptions.cancel(subscriptionId);
   }
 
-  async updateSubscription(id: string, itemId: string, plan: SubscriptionPlan) {
+  async updateSubscription(id: string, itemId: string, plan: SubscriptionPlan | 'GIFT') {
     if (!this.stripe) {
       throw new Error('Stripe client not initialized. Check Configuration');
     }

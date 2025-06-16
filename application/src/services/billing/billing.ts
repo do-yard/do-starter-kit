@@ -25,7 +25,7 @@ export abstract class BillingService implements ConfigurableService {
   abstract updateSubscription(
     id: string,
     itemId: string,
-    plan: SubscriptionPlan
+    plan: SubscriptionPlan | 'GIFT'
   ): Promise<{ clientSecret: string | undefined }>;
   abstract manageSubscription(plan: SubscriptionPlan, customerId: string): Promise<string | null>;
   abstract getProducts(): Promise<
