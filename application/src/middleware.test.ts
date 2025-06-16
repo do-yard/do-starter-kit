@@ -1,13 +1,4 @@
-// Polyfill Edge Runtime globals for middleware tests
-import { NextRequest, NextResponse } from 'next/server';
-
-// Mock Request and Response for Edge Runtime
-global.Request = global.Request || class MockRequest {};
-global.Response = global.Response || class MockResponse {};
-
-// Mock crypto if needed
-(global as any).crypto = global.crypto || require('crypto').webcrypto;
-
+import { NextRequest } from 'next/server';
 import { middleware } from './middleware';
 import { USER_ROLES } from 'lib/auth/roles';
 
