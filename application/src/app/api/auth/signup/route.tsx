@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { hashPassword } from 'helpers/hash';
 import { USER_ROLES } from 'lib/auth/roles';
 import { v4 as uuidv4 } from 'uuid';
-import { emailTemplate } from 'services/email/emailTemplate';
 import { HTTP_STATUS } from 'lib/api/http';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createEmailService } from 'services/email/emailFactory';
@@ -59,7 +58,7 @@ export async function POST(req: NextRequest) {
     const emailService = await createEmailService();
     const verifyUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
     await emailService.sendReactEmail(
-      email,
+      user.email,
       'Verify your email address',
       <ActionButtonEmailTemplate
         title="Verify your email address"
