@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
-import { serverConfig } from '../../../../../settings';
 import { HTTP_STATUS } from 'lib/api/http';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createBillingService } from 'services/billing/billingFactory';
@@ -47,7 +46,7 @@ export const cancelSubscription = async (
     await billingService.updateSubscription(
       stripeSub.id,
       stripeSub.items[0].id,
-      serverConfig.Stripe.freePriceId!
+      SubscriptionPlanEnum.FREE
     );
     await db.subscription.update(user.id, {
       plan: SubscriptionPlanEnum.FREE,

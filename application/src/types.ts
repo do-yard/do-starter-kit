@@ -36,13 +36,13 @@ export interface Note {
 
 export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 
-export type SubscriptionStatus = 'ACTIVE' | 'CANCELED' | 'PENDING';
-
-export type SubscriptionPlan = 'FREE' | 'PRO';
-
-export interface UserWithSubscriptions extends User {
-  subscription: Subscription | null;
+export enum SubscriptionPlanEnum {
+  FREE = 'FREE',
+  PRO = 'PRO',
+  GIFT = 'GIFT',
 }
+
+export type SubscriptionPlan = (typeof SubscriptionPlanEnum)[keyof typeof SubscriptionPlanEnum];
 
 export enum SubscriptionStatusEnum {
   ACTIVE = 'ACTIVE',
@@ -50,7 +50,8 @@ export enum SubscriptionStatusEnum {
   PENDING = 'PENDING',
 }
 
-export enum SubscriptionPlanEnum {
-  FREE = 'FREE',
-  PRO = 'PRO',
+export type SubscriptionStatus =
+  (typeof SubscriptionStatusEnum)[keyof typeof SubscriptionStatusEnum];
+export interface UserWithSubscriptions extends User {
+  subscription: Subscription | null;
 }

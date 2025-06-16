@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
-import { serverConfig } from '../../../../../settings';
+import { SubscriptionPlan, SubscriptionStatusEnum } from 'types';
 import { HTTP_STATUS } from 'lib/api/http';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createBillingService } from 'services/billing/billingFactory';
@@ -17,14 +16,7 @@ export const createSubscription = async (
   try {
     const billingService = await createBillingService();
 
-    const { priceId }: { priceId: string } = await request.json();
-
-    if (!priceId) {
-      return NextResponse.json(
-        { error: 'Price ID is required' },
-        { status: HTTP_STATUS.BAD_REQUEST }
-      );
-    }
+    const { plan }: { plan: SubscriptionPlan } = await request.json();
 
     let customerId;
 
@@ -49,14 +41,11 @@ export const createSubscription = async (
       });
     }
 
-    const { clientSecret } = await billingService.createSubscription(customerId, priceId);
+    const { clientSecret } = await billingService.createSubscription(customerId, plan);
 
     await db.subscription.update(user.id, {
       status: SubscriptionStatusEnum.PENDING,
-      plan:
-        priceId === serverConfig.Stripe.proPriceId
-          ? SubscriptionPlanEnum.PRO
-          : SubscriptionPlanEnum.FREE,
+      plan,
     });
 
     return NextResponse.json({ clientSecret });

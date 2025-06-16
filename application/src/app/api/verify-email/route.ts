@@ -1,17 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DatabaseClient } from 'services/database/database';
 import { HTTP_STATUS } from 'lib/api/http';
-import { serverConfig } from '../../../../settings';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum, User } from 'types';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createBillingService } from 'services/billing/billingFactory';
 
 const createSubscription = async (db: DatabaseClient, user: User) => {
   const billingService = await createBillingService();
-
-  if (!serverConfig.Stripe.freePriceId) {
-    throw new Error('Free price Id is not set');
-  }
 
   let customerId;
 
@@ -34,7 +29,7 @@ const createSubscription = async (db: DatabaseClient, user: User) => {
     });
   }
 
-  await billingService.createSubscription(customerId, serverConfig.Stripe.freePriceId);
+  await billingService.createSubscription(customerId, SubscriptionPlanEnum.FREE);
 
   await db.subscription.update(user.id, {
     status: SubscriptionStatusEnum.PENDING,

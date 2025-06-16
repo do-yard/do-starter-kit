@@ -40,7 +40,7 @@ jest.mock('../../../services/database/databaseFactory', () => ({
 }));
 
 import { serverConfig } from '../../../../settings';
-serverConfig.Stripe = { freePriceId: 'free-price-id' };
+serverConfig.Stripe = { freePriceId: 'free-price-id', baseURL: 'http://localhost' };
 
 const createRequest = (token?: string) => {
   const url = new URL('http://localhost/api/verify-email');
