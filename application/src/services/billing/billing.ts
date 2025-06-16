@@ -1,32 +1,37 @@
-import { serverConfig } from 'settings';
-import { StripeBillingService } from './stripeBillingService';
+import { ConfigurableService, ServiceConfigStatus } from 'services/status/serviceConfigStatus';
 
 // Billing provider types
 export type BillingProvider = 'Stripe';
 
-// Common interface for all billing providers
-export interface BillingService {
-  listCustomer: (email: string) => Promise<{ id: string }[]>;
-  createCustomer: (email: string, metadata?: Record<string, string>) => Promise<{ id: string }>;
-  listSubscription: (
+/**
+ * Abstract base class for billing clients.
+ * Provides a common interface for billing operations across different billing providers.
+ */
+export abstract class BillingService implements ConfigurableService {
+  abstract listCustomer(email: string): Promise<{ id: string }[]>;
+  abstract createCustomer(
+    email: string,
+    metadata?: Record<string, string>
+  ): Promise<{ id: string }>;
+  abstract listSubscription(
     customerId: string
-  ) => Promise<{ id: string; status: string; items: { id: string }[] }[]>;
-  createSubscription: (
+  ): Promise<{ id: string; status: string; items: { id: string }[] }[]>;
+  abstract createSubscription(
     customerId: string,
     priceId: string
-  ) => Promise<{ clientSecret: string | undefined }>;
-  cancelSubscription: (subscriptionId: string) => Promise<void>;
-  updateSubscription: (
+  ): Promise<{ clientSecret: string | undefined }>;
+  abstract cancelSubscription(subscriptionId: string): Promise<void>;
+  abstract updateSubscription(
     id: string,
     itemId: string,
     priceId: string
-  ) => Promise<{ clientSecret: string | undefined }>;
-  manageSubscription: (
+  ): Promise<{ clientSecret: string | undefined }>;
+  abstract manageSubscription(
     priceId: string,
     customerId: string,
     returnUrl: string
-  ) => Promise<string | null>;
-  getProducts: () => Promise<
+  ): Promise<string | null>;
+  abstract getProducts(): Promise<
     {
       priceId: string;
       amount: number;
@@ -36,20 +41,12 @@ export interface BillingService {
       features: string[];
     }[]
   >;
-}
 
-/**
- * Factory function to create and return the appropriate billing client based on the configured provider.
- */
-export function createBillingService(): BillingService {
-  const storageProvider = serverConfig.billingProvider;
+  abstract checkConnection(): Promise<boolean>;
 
-  switch (storageProvider) {
-    // Add more providers here in the future
-    // case 'AZURE':
-    //   return new AzureStorageService();
-    case 'Stripe':
-    default:
-      return new StripeBillingService();
+  abstract checkConfiguration(): Promise<ServiceConfigStatus>;
+
+  isRequired(): boolean {
+    return true;
   }
 }

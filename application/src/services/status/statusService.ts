@@ -2,6 +2,8 @@ import { createStorageService } from '../storage/storageFactory';
 import { createEmailService } from '../email/emailFactory';
 import { createDatabaseService } from '../database/databaseFactory';
 import { ServiceStatus } from './serviceConfigStatus';
+import { createBillingService } from 'services/billing/billingFactory';
+import { createAuthService } from 'services/auth/authFactory';
 
 /**
  * Interface for application health state.
@@ -74,7 +76,8 @@ export class StatusService {
   /**
    * Force a fresh health check (bypasses cache).
    * Use this for the system status page refresh button.
-   */ static async forceHealthCheck(): Promise<HealthState> {
+   */
+  static async forceHealthCheck(): Promise<HealthState> {
     await this.performHealthCheck();
     return this.cachedHealthState!;
   }
@@ -208,6 +211,66 @@ export class StatusService {
   }
 
   /**
+   * Checks the configuration and connectivity status of the billing service.
+   * Uses the BillingService interface to check the current billing provider.
+   *
+   * @returns {Promise<ServiceStatus>} The status of the billing service.
+   */
+  static async checkBillingStatus(): Promise<ServiceStatus> {
+    try {
+      const billingService = await createBillingService();
+
+      // Get configuration status from the service and add required classification
+      const configStatus = await billingService.checkConfiguration();
+      return {
+        ...configStatus,
+        required: billingService.isRequired(),
+      };
+    } catch (error) {
+      return {
+        name: 'Billing Service',
+        configured: false,
+        connected: false,
+        required: true,
+        error:
+          error instanceof Error
+            ? `Failed to initialize billing service: ${error.message}`
+            : 'Failed to initialize billing service: Unknown error',
+      };
+    }
+  }
+
+  /**
+   * Checks the configuration and connectivity status of the auth service.
+   * Uses the AuthService interface to check the current auth provider.
+   *
+   * @returns {Promise<ServiceStatus>} The status of the auth service.
+   */
+  static async checkAuthStatus(): Promise<ServiceStatus> {
+    try {
+      const authService = await createAuthService();
+
+      // Get configuration status from the service and add required classification
+      const configStatus = await authService.checkConfiguration();
+      return {
+        ...configStatus,
+        required: authService.isRequired(),
+      };
+    } catch (error) {
+      return {
+        name: 'Auth Service',
+        configured: false,
+        connected: false,
+        required: false,
+        error:
+          error instanceof Error
+            ? `Failed to initialize billing service: ${error.message}`
+            : 'Failed to initialize billing service: Unknown error',
+      };
+    }
+  }
+
+  /**
    * Checks the status of all configured services.
    * This method will automatically check all available services.
    *
@@ -227,6 +290,12 @@ export class StatusService {
     // Check database service (demonstrates extensibility)
     const databaseStatus = await this.checkDatabaseStatus();
     services.push(databaseStatus);
+
+    const billingStatus = await this.checkBillingStatus();
+    services.push(billingStatus);
+
+    const authStatus = await this.checkAuthStatus();
+    services.push(authStatus);
 
     return services;
   }

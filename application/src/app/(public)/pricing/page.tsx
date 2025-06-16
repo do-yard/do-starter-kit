@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardContent, Typography, List, ListItem } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
-import { createBillingService } from 'services/billing/billing';
 import Link from 'next/link';
+import { createBillingService } from 'services/billing/billingFactory';
 
 export const dynamic = 'force-dynamic'; // Ensure this page is always revalidated
 
@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'; // Ensure this page is always revalidate
  * Renders the pricing page with available subscription plans.
  */
 export default async function PricingPage() {
-  const billingService = createBillingService();
+  const billingService = await createBillingService();
   const plans = await billingService.getProducts();
 
   return (

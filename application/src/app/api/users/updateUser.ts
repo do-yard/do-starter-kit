@@ -1,10 +1,10 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
-import { createBillingService } from 'services/billing/billing';
 import { SubscriptionPlanEnum } from 'types';
 import { serverConfig } from 'settings';
 import { createDatabaseService } from 'services/database/databaseFactory';
+import { createBillingService } from 'services/billing/billingFactory';
 
 /**
  * Function to update subscriptions
@@ -13,7 +13,7 @@ import { createDatabaseService } from 'services/database/databaseFactory';
  * @returns void or NextResponse in case of error
  */
 const updateSubscription = async (sub: any, id: string) => {
-  const billing = createBillingService();
+  const billing = await createBillingService();
   const dbClient = await createDatabaseService();
 
   if (sub.plan === SubscriptionPlanEnum.PRO) {

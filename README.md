@@ -26,12 +26,13 @@ The DigitalOcean SaaS Starter Kit can be run [locally](#running-locally) or in [
 6. Run Prisma generate: `npx prisma generate`
 7. Run Prisma migration: `npx prisma migrate deploy`
 8. Start the site: `npm run dev`
+9. Navigate to the `/system-status` page to see if all the required services are correctly configured.
 
 > To generate the required stripe products automatically follow [these steps](docs/stripe-setup.md). The instructions to get configure Stripe events webhook are available [here](docs/stripe-webhooks.md).
 
 If you made changes to the repo and want to deploy them to DigitalOcean, navigate to the [Deploy from local environment](#deploy-from-local-environment) section.
 
-## Deploy to DigitalOcean platform
+## Deploy to DigitalOcean platform with one-click deployment button
 
 1. Click on the one-click deployment button below. If you are not currently logged in with your DigitalOcean account, this button prompts you to log in.
 
@@ -41,10 +42,10 @@ If you made changes to the repo and want to deploy them to DigitalOcean, navigat
    - DATABASE_URL: is automatically populated, but if you want to use a DigitalOcean Managed DB, replace the connection string value.
    - NEXTAUTH_URL: URL of the site
    - NEXTAUTH_SECRET: random string for authentication. After setting a value, check the encrypt box.
-3. Run Prisma migrations:
-   - Go to Console, in the DigitalOcean dashboard
-   - Run `npx prisma migrate deploy` command
-4. Navigate to the site
+
+> Note Prisma migrations will run automatically
+
+3. Navigate to the site
 
 ## Configure DigitalOcean Spaces storage
 
@@ -133,9 +134,6 @@ Defaults used:
 npm run dev
 ```
 
-**Step 5: Check system status**
-Navigate to the `/system-status` page to see if all the required services are correctly configured.
-
 ## Resend setup
 
 Resend is required for using the app beyond the landing page. The configuration has two values, a Resend API key and a sender address. To configure them, create an account or login and follow these steps:
@@ -161,27 +159,49 @@ Once you have the sender address, add it to the `RESEND_EMAIL_SENDER` environmen
 If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
 
 1. Upload the repo to GitHub or push the changes if created a fork of the original DigitalOcean repo.
-1. Create an **app.yaml** file by copying **app.template.yaml**.
-1. **Important**: settings from .env file do not transfer automatically to the **app.yaml**, they have to be copied manually. Also, there are a few other values to complete in the YAML. The following is a checklist with all placeholders:
-   - [ ] **APP_NAME**: arbitrary name for your app.
-   - [ ] **repo**: replace _do-yard/do-starter-kit_ with your GitHub username and repo name.
-   - [ ] **GITHUB_BRANCH**: the branch you want to deploy.
-   - [ ] **DB_NAME**: arbitrary name for your database.
-   - [ ] **SPACES_KEY_ID**: id of an existing Spaces storage key.
-   - [ ] **SPACES_KEY_SECRET**: secret of an existing Spaces storage key.
-   - [ ] **SPACES_BUCKET_NAME**: name of an existing bucket.
-   - [ ] **SPACES_REGION**: bucket region.
-   - [ ] **NEXTAUTH_SECRET**: arbitrary string for Auth.js.
-   - [ ] **APP_URL**: URL of the site, can be obtained after the site is deployed. You can leave it blank before deployment.
-   - [ ] **RESEND_API_KEY**: Your Resend API key.
-   - [ ] **RESEND_EMAIL_SENDER**: Sender address for the emails that the app will send.
-   - [ ] **CLUSTER_NAME**: arbitrary name for the DB cluster.
-1. Download and install [DigitalOcean doctl](https://docs.digitalocean.com/reference/doctl/how-to/install/).
-1. Create and API key in [DigitalOcean](https://cloud.digitalocean.com/account/api/tokens) and store it securely.
-1. Authenticate locally using `doctl auth init`
-1. From the root directory of the repo, deploy the app using `doctl apps create --spec .do\app.yaml`
-1. Once the app is deployed. Configure the `NEXTAUTH_URL` with the app URL.
-1. Run Prisma migrations from the DigitalOcean console `npx prisma migrate deploy`
+2. **Important**: settings from .env file transfer automatically to the app spec file:
+   - **APP_NAME**: arbitrary name for your app.
+   - **SPACES_KEY_ID**: id of an existing Spaces storage key.
+   - **SPACES_KEY_SECRET**: secret of an existing Spaces storage key.
+   - **SPACES_BUCKET_NAME**: name of an existing bucket.
+   - **SPACES_REGION**: bucket region.
+   - **NEXTAUTH_SECRET**: arbitrary string for Auth.js.
+   - **APP_URL**: URL of the site, can be obtained after the site is deployed. You can leave it blank before deployment.
+   - **RESEND_API_KEY**: Your Resend API key.
+   - **RESEND_EMAIL_SENDER**: Sender address for the emails that the app will send.
+   - **CLUSTER_NAME**: arbitrary name for the DB cluster.
+   - **BILLING_PROVIDER**: Stripe
+   - **STRIPE_SECRET_KEY**: Stripe secret key
+   - **STRIPE_WEBHOOK_SECRET**: Secret to verify payloads authenticity
+   - **NEXT_PUBLIC_STRIPE_FREE_PRICE_ID**: The free price Id created with the stripe script
+   - **NEXT_PUBLIC_STRIPE_PRO_PRICE_ID**: The pro price Id created with the stripe script
+   - **STRIPE_PRO_GIFT_PRICE_ID**: The pro gift price Id created with the stripe script
+   - **STRIPE_PORTAL_CONFIG_ID**: The Stripe portal configuration ID
+   - **BASE_URL**:SS The URL of the application, used for Stripe callbacks
+3. Download and install [DigitalOcean doctl](https://docs.digitalocean.com/reference/doctl/how-to/install/).
+4. Create and API key in [DigitalOcean](https://cloud.digitalocean.com/account/api/tokens) and store it securely.
+5. Authenticate locally using `doctl auth init`
+6. Generate your DigitalOcean App Spec:
+
+- The script step will create an `app.yaml` file tailored to your configuration and environment:
+
+```bash
+npm run setup:deploy
+```
+
+7. Deploy using DOCTL
+
+- The script will check that `doctl` is installed and authenticated
+- It will create or update your app using the generated `app.yaml` and run the pending migrations
+- Deployment output will be shown in your terminal
+
+```bash
+npm run deploy
+```
+
+**That’s it! Your application will be deployed to DigitalOcean App Platform using your custom app spec and environment.**
+
+8. Once the app is deployed. Configure `NEXTAUTH_URL` and `BASE_URL` environment variables with the generated app URL.
 
 ### Best practices when working with secrets and environment variables
 

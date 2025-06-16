@@ -9,13 +9,14 @@ const mockUpdateSubscription = jest.fn();
 const mockFindByUserId = jest.fn();
 const mockStripeUpdateSubscription = jest.fn();
 
-jest.mock('services/billing/billing', () => ({
-  createBillingService: () => ({
-    listCustomer: mockListCustomer,
-    listSubscription: mockListSubscription,
-    cancelSubscription: mockCancelSubscription,
-    updateSubscription: mockStripeUpdateSubscription,
-  }),
+jest.mock('services/billing/billingFactory', () => ({
+  createBillingService: () =>
+    Promise.resolve({
+      listCustomer: mockListCustomer,
+      listSubscription: mockListSubscription,
+      cancelSubscription: mockCancelSubscription,
+      updateSubscription: mockStripeUpdateSubscription,
+    }),
 }));
 jest.mock('services/database/databaseFactory', () => ({
   createDatabaseService: () => ({
