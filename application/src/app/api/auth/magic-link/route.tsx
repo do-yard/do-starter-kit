@@ -47,7 +47,6 @@ export async function POST(request: NextRequest) {
         buttonUrl={verifyUrl}
         buttonText="Login"
         greetingText="Hi, You can login to your DigitalOcean Starter Kit account by clicking the button below:"
-        infoText=""
         fallbackText="If the button above does not work, copy and paste the following link into your browser:"
         fallbackUrlLabel={verifyUrl}
       />

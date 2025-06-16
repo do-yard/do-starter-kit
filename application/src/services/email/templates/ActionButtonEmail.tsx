@@ -7,7 +7,7 @@ interface ActionButtonEmailTemplateProps {
   buttonUrl: string;
   buttonText: string;
   greetingText: string;
-  infoText: string;
+  infoText?: string;
   fallbackText: string;
   fallbackUrlLabel: string;
 }
@@ -54,7 +54,7 @@ export const ActionButtonEmailTemplate: React.FC<ActionButtonEmailTemplateProps>
         >
           {buttonText}
         </Button>
-        <Text style={{ textAlign: 'center' }}>{infoText}</Text>
+        {infoText && <Text style={{ textAlign: 'center' }}>{infoText}</Text>}
         <Text style={{ fontSize: 14, color: '#555', margin: '32px 0 0 0', textAlign: 'center' }}>
           {fallbackText}
         </Text>

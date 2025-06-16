@@ -15,7 +15,7 @@ const mockDb = {
     create: jest.fn(),
   },
 };
-const mockEmailClient = { sendEmail: jest.fn() };
+const mockEmailClient = { sendReactEmail: jest.fn() };
 
 (createDatabaseService as jest.Mock).mockReturnValue(mockDb);
 (createEmailService as jest.Mock).mockReturnValue(mockEmailClient);
@@ -51,7 +51,7 @@ describe('POST /api/auth/magic-link', () => {
   it('returns 200 and sends email if user exists', async () => {
     mockDb.user.findByEmail.mockResolvedValue({ email: 'test@example.com' });
     mockDb.verificationToken.create.mockResolvedValue(undefined);
-    mockEmailClient.sendEmail.mockResolvedValue(undefined);
+    mockEmailClient.sendReactEmail = jest.fn().mockResolvedValue(undefined);
     const req = makeRequest('test@example.com');
     const res = await POST(req);
     expect(res.status).toBe(200);
@@ -59,7 +59,11 @@ describe('POST /api/auth/magic-link', () => {
     expect(json.ok).toBe(true);
     expect(mockDb.user.findByEmail).toHaveBeenCalledWith('test@example.com');
     expect(mockDb.verificationToken.create).toHaveBeenCalled();
-    expect(mockEmailClient.sendEmail).toHaveBeenCalled();
+    expect(mockEmailClient.sendReactEmail).toHaveBeenCalledWith(
+      'test@example.com',
+      'Login to your account',
+      expect.any(Object)
+    );
   });
 
   it('returns 500 if an error is thrown', async () => {
