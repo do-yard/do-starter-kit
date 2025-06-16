@@ -32,7 +32,11 @@ export async function middleware(request: NextRequest) {
   }
 
   if (pathname.startsWith('/admin') && role !== USER_ROLES.ADMIN) {
-    return NextResponse.redirect(new URL('/', request.url));
+    if (!isLoggedIn) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    } else {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
   }
 
   return NextResponse.next();
@@ -45,6 +49,8 @@ export const config = {
     '/signup',
     '/dashboard',
     '/dashboard/:path*',
+    '/admin',
+    '/admin/:path*',
     '/system-status',
     '/api/system-status',
     '/api/health',

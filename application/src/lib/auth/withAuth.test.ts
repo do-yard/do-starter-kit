@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const mockAuth = jest.fn();
 
-jest.mock('lib/auth', () => ({
+jest.mock('lib/auth/auth', () => ({
   auth: () => mockAuth(),
 }));
 
