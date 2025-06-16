@@ -4,6 +4,7 @@ import { HTTP_STATUS } from 'lib/api/http';
 import { emailTemplate } from 'services/email/emailTemplate';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createEmailService } from 'services/email/emailFactory';
+import { InformationEmailTemplate } from 'services/email/templates/InformationEmail';
 
 /**
  * Updates the user's password.
@@ -69,15 +70,16 @@ export const updatePassword = async (
     await db.user.update(dbUser.id, dbUser);
 
     try {
-      const emailClient = await createEmailService();
-      await emailClient.sendEmail(
+      const emailService = await createEmailService();
+      await emailService.sendReactEmail(
         dbUser.email,
         'Your password has been updated',
-        emailTemplate({
-          title: 'Your password has been updated',
-          content: `<p>Your password has been updated successfully and you can use it to log into your account.</p>
-            <p style="font-size:13px; color:#888; text-align:center;">If you didn't request this change, please contact us immediately.</p>`,
-        })
+        <InformationEmailTemplate
+          title="Your password has been updated"
+          greetingText="Your password has been updated successfully."
+          infoText="Your password has been updated successfully and you can use it to log into your account."
+          secondInfoText="If you didn't request this change, please contact us immediately."
+        />
       );
     } catch (error) {
       console.error(
