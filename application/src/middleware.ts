@@ -45,6 +45,8 @@ export const config = {
     '/signup',
     '/dashboard',
     '/dashboard/:path*',
+    '/admin',
+    '/admin/:path*',
     '/system-status',
     '/api/system-status',
     '/api/health',
