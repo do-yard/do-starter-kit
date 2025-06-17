@@ -54,8 +54,8 @@ ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
 
 3. API client changes:
 
-   - Update the API client to send/receive the `favorite` field.
-   - Add a method to toggle favorite status (e.g., `toggleFavorite(noteId, isFavorite)`).
+   - If you plan to use the existing PATCH endpoint to update the favorite status, update the type `UpdateNoteData` to use the favorite field.
+   - If you add a separate endpoint to manage the favorite state, you can add a method to toggle favorite status (e.g., `toggleFavorite(noteId, isFavorite)`).
 
 4. State management:
 
