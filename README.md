@@ -186,7 +186,7 @@ npm run setup:deploy
 - **NEXT_PUBLIC_STRIPE_PRO_PRICE_ID**: The pro price Id created with the stripe script.
 - **STRIPE_PRO_GIFT_PRICE_ID**: The pro gift price Id created with the stripe script.
 - **STRIPE_PORTAL_CONFIG_ID**: The Stripe portal configuration ID.
-- **BASE_URL**: The URL of the application, can be obtained after the site is deployed. Used for Stripe callbacks.
+- **BASE_URL**: The URL of the application, which can be obtained after deployment and is Used for Stripe callbacks.
 
 6. Deploy using DOCTL
 
