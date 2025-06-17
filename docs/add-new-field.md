@@ -50,7 +50,7 @@ ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
    - Add a “favorite” icon/button (e.g., a star or a heart) to each note in the list/grid view.
    - Visually indicate if a note is marked as favorite.
    - Allow users to click the icon/button to toggle favorite status.
-   - Update the handleUpdateNote to send favorite in request with the api client or add another handler if you created a separated endpoint to handle favorite toggle.
+   - Update the handleUpdateNote to send favorite in request with the api client or add another handler if you created a separate endpoint to handle favorite toggle.
 
 3. API client changes:
 
