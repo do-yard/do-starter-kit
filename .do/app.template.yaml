@@ -31,8 +31,6 @@ services:
       - key: "AUTH_SECRET"
         value: "${AUTH_SECRET}"
         type: "SECRET"
-      - key: "AUTH_URL"
-        value: "${APP_URL}"
       - key: "BILLING_PROVIDER"
         value: "Stripe"
       - key: "STRIPE_WEBHOOK_SECRET"

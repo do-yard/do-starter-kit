@@ -42,8 +42,6 @@ spec:
           value: "Spaces"
         - key: "AUTH_SECRET"
           value: "your-AUTH-secret"
-        - key: "AUTH_URL"
-          value: "${APP_URL}"
         - key: "BILLING_PROVIDER"
           value: "Stripe"
         - key: "STRIPE_WEBHOOK_SECRET"

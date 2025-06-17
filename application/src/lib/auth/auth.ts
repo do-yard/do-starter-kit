@@ -77,6 +77,8 @@ const providers: Provider[] = [
   }),
 ];
 
+process.env.NEXTAUTH_URL = process.env.BASE_URL;
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
   adapter: PrismaAdapter(prisma),
