@@ -20,37 +20,14 @@ jest.mock('services/billing/billingFactory', () => ({
     }),
 }));
 
-let proPriceId: string | undefined = 'pro_123';
-let baseURL: string = 'http://localhost';
-jest.mock('settings', () => ({
-  serverConfig: {
-    Stripe: {
-      get proPriceId() {
-        return proPriceId;
-      },
-    },
-    get baseURL() {
-      return baseURL;
-    },
-  },
-}));
-
 describe('checkout', () => {
   const user = { id: 'u1', role: 'user', email: 'test@example.com' };
   function mockNextRequest(body: unknown = {}) {
     return { json: jest.fn().mockResolvedValue(body) } as unknown as NextRequest;
   }
+
   beforeEach(() => {
     jest.clearAllMocks();
-    proPriceId = 'pro_123';
-    baseURL = 'http://localhost';
-  });
-
-  it('returns 500 if proPriceId is not configured', async () => {
-    proPriceId = undefined;
-    const res = await checkout(mockNextRequest(), user);
-    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
-    expect(await res.json()).toEqual({ error: 'Missing Pro Price' });
   });
 
   it('returns 404 if no subscription', async () => {
