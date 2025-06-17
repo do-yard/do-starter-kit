@@ -230,6 +230,10 @@ When you no longer need this application running live, you can delete it by foll
 
 **Note**: If you do not delete your app, charges for using DigitalOcean services will continue to accrue.
 
+## Updating the app
+
+Now that you have the app deployed, [here is a guide](./docs/add-new-field.md) on how to update the notes feature.
+
 ## Continues Integration and Development environments
 
 Dedicated workflows to validate code quality and provision development deployments in DigitalOcean App Platform are available. Learn more in [Workflows Documentation](/docs/workflows.md)
