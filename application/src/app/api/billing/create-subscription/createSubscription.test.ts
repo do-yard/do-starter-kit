@@ -1,6 +1,7 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { createSubscription } from './createSubscription';
 import { NextRequest } from 'next/server';
+import { SubscriptionPlanEnum } from 'types';
 
 const mockCreateCustomer = jest.fn();
 const mockCreateSubscription = jest.fn();
@@ -27,7 +28,7 @@ jest.mock('services/database/databaseFactory', () => ({
 
 describe('createSubscription API', () => {
   const user = { id: 'u1', role: 'user', email: 'test@example.com' };
-  const plan = 'FREE';
+  const plan = SubscriptionPlanEnum.FREE;
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   function mockRequest(body: any): NextRequest {

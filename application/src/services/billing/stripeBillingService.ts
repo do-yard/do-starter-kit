@@ -49,11 +49,7 @@ export class StripeBillingService extends BillingService {
     });
   }
 
-  private async getPriceId(plan: SubscriptionPlan | 'GIFT'): Promise<string> {
-    if (!this.stripe) {
-      throw new Error('Stripe client not initialized. Check configuration.');
-    }
-
+  private getPriceId(plan: SubscriptionPlan | 'GIFT'): string {
     const priceIdMap: Record<SubscriptionPlan | 'GIFT', string | undefined> = {
       FREE: serverConfig.Stripe.freePriceId,
       PRO: serverConfig.Stripe.proPriceId,
@@ -96,7 +92,7 @@ export class StripeBillingService extends BillingService {
       throw new Error('Stripe client not initialized. Check Configuration');
     }
 
-    const priceId = await this.getPriceId(plan);
+    const priceId = this.getPriceId(plan);
 
     const result = await this.stripe.subscriptions.create({
       customer: customerId,
@@ -157,7 +153,7 @@ export class StripeBillingService extends BillingService {
       throw new Error('Stripe client not initialized. Check Configuration');
     }
 
-    const priceId = await this.getPriceId(plan);
+    const priceId = this.getPriceId(plan);
 
     const result = await this.stripe.subscriptions.update(id, {
       items: [
@@ -203,7 +199,7 @@ export class StripeBillingService extends BillingService {
       items: subscription.items.data.map((item) => ({ id: item.id, priceId: item.price.id })),
     }));
 
-    const priceId = await this.getPriceId(plan);
+    const priceId = this.getPriceId(plan);
 
     const session = await this.stripe.billingPortal.sessions.create({
       customer: customerId,
