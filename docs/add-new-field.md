@@ -33,7 +33,7 @@ ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
 1. Update the Note type/interface in `src/types.ts` to include `favorite: boolean`.
 2. Update API endpoints:
 
-   - `POST /api/notes`: Add the `favorite` field with default to false in the create db operation.
+   - `POST /api/notes`: Add the `favorite` field with default to false in the create DB operation.
    - `PUT /api/notes/:id`: Read the `favorite` param from request body allowing updating the favorite field. Pass the `favorite` value to the DB operation.
    - (Optional) Add a PATCH or dedicated endpoint: e.g., `PATCH /api/notes/:id/favorite` to toggle favorite status.
    - (Optional) When fetching notes, allow filtering by favorite using a query param (e.g., `?favorite=true`).
