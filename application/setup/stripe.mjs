@@ -175,14 +175,41 @@ async function configureBillingPortal(stripe) {
   return portalConfig.id;
 }
 
-function writeEnvFile(vars, stripeSecret, portalConfigId) {
-  const lines = [
-    `BILLING_PROVIDER=Stripe`,
-    `STRIPE_SECRET_KEY=${stripeSecret}`,
-    `STRIPE_PORTAL_CONFIG_ID=${portalConfigId}`,
-    ...Object.entries(vars).map(([k, v]) => `${k}=${v}`),
-  ];
-  return fs.writeFile(path.resolve('./.env-stripe'), lines.join('\n'), 'utf8');
+async function updateEnvFile(envVars) {
+  const envPath = path.resolve('./.env');
+  let envContent = '';
+
+  try {
+    envContent = await fs.readFile(envPath, 'utf8');
+  } catch {
+    console.warn('⚠️  .env file not found.');
+    const answer = (await rl.question('Do you want to create it? (y/n): ')).trim().toLowerCase();
+    if (answer !== 'y') {
+      console.log('Aborted by user. Exiting.');
+      process.exit(1);
+    }
+    envContent = '';
+  }
+
+  const lines = envContent.split('\n');
+  const lineMap = {};
+  lines.forEach((line, idx) => {
+    const match = line.match(/^([A-Z0-9_]+)\s*=/);
+    if (match) lineMap[match[1]] = idx;
+  });
+
+  for (const [key, value] of Object.entries(envVars)) {
+    if (key in lineMap) {
+      lines[lineMap[key]] = `${key}=${value}`;
+    } else {
+      lines.push(`${key}=${value}`);
+    }
+  }
+
+  while (lines.length && lines[lines.length - 1].trim() === '') lines.pop();
+
+  await fs.writeFile(envPath, lines.join('\n') + '\n', 'utf8');
+  console.log('✅ .env file updated successfully!');
 }
 
 async function rollback(stripe) {
@@ -259,7 +286,12 @@ async function main() {
     console.log('✅ All products and prices created.\n');
 
     const portalConfigId = await configureBillingPortal(stripe, created.products);
-    await writeEnvFile(priceEnvVars, secretKey, portalConfigId);
+    const allVars = {
+      ...priceEnvVars,
+      STRIPE_SECRET_KEY: secretKey,
+      STRIPE_PORTAL_CONFIG_ID: portalConfigId,
+    };
+    await updateEnvFile(allVars);
 
     console.log('📄 .env-stripe file created successfully.\n');
   } catch (err) {
