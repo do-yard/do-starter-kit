@@ -44,7 +44,7 @@ ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
 
 ### **3. Frontend (App)**
 
-1. Update the Note type/interface `src/lib/api/notes.ts` your frontend code to include `favorite: boolean`.
+1. Update the Note type/interface in `src/lib/api/notes.ts` to include `favorite: boolean`.
 2. UI changes:
 
    - Add a “favorite” icon/button (e.g., a star or a heart) to each note in the list/grid view.
