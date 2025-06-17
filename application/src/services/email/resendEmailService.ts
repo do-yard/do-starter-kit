@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { serverConfig } from '../../../settings';
+import { serverConfig } from 'settings';
 import { EmailService } from './email';
 import { ServiceConfigStatus } from '../status/serviceConfigStatus';
 

@@ -14,5 +14,6 @@ module.exports = createJestConfig({
   moduleNameMapper: {
     '^lib/(.*)$': '<rootDir>/src/lib/$1',
     '^services/(.*)$': '<rootDir>/src/services/$1',
+    '^settings$': '<rootDir>/src/settings',
   },
 });
