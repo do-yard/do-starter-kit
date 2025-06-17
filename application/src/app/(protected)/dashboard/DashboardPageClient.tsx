@@ -9,7 +9,6 @@ import { SubscriptionPlanEnum } from 'types';
  * DashboardPageClient renders the dashboard UI and allows the user to send a test email to themselves.
  * @param userEmail - The email address of the logged-in user.
  */
-
 export default function DashboardPageClient({ userEmail }: { userEmail: string }) {
   const [subscription, setSubscription] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
