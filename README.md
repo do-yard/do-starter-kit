@@ -180,15 +180,13 @@ npm run setup:deploy
 - **NEXTAUTH_SECRET**: arbitrary string for Auth.js.
 - **RESEND_API_KEY**: Your Resend API key.
 - **RESEND_EMAIL_SENDER**: Sender address for the emails that the app will send.
-- **CLUSTER_NAME**: arbitrary name for the DB cluster.
-- **BILLING_PROVIDER**: Stripe
-- **STRIPE_SECRET_KEY**: Stripe secret key
-- **STRIPE_WEBHOOK_SECRET**: Secret to verify payloads authenticity
-- **NEXT_PUBLIC_STRIPE_FREE_PRICE_ID**: The free price Id created with the stripe script
-- **NEXT_PUBLIC_STRIPE_PRO_PRICE_ID**: The pro price Id created with the stripe script
-- **STRIPE_PRO_GIFT_PRICE_ID**: The pro gift price Id created with the stripe script
-- **STRIPE_PORTAL_CONFIG_ID**: The Stripe portal configuration ID
-- **BASE_URL**: The URL of the application, can be obtained after the site is deployed. used for Stripe callbacks
+- **STRIPE_SECRET_KEY**: Stripe secret key.
+- **STRIPE_WEBHOOK_SECRET**: Secret to verify payloads authenticity.
+- **NEXT_PUBLIC_STRIPE_FREE_PRICE_ID**: The free price Id created with the stripe script.
+- **NEXT_PUBLIC_STRIPE_PRO_PRICE_ID**: The pro price Id created with the stripe script.
+- **STRIPE_PRO_GIFT_PRICE_ID**: The pro gift price Id created with the stripe script.
+- **STRIPE_PORTAL_CONFIG_ID**: The Stripe portal configuration ID.
+- **BASE_URL**: The URL of the application, can be obtained after the site is deployed. Used for Stripe callbacks.
 
 6. Deploy using DOCTL
 
