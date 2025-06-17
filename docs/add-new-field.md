@@ -19,31 +19,38 @@ Now that you deployed or run locally the app, you may want to make some changes 
    }
    ```
 
-2. Run migrations with `npx prisma migrate deploy`
+2. Create the migration for the field in the migrations folder
+
+```sql
+ALTER TABLE "Note"
+ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
+```
+
+3. Run migrations with `npx prisma migrate deploy`
 
 ### **2. Backend (API)**
 
-1. Update the Note type/interface in your backend TypeScript code to include `favorite: boolean`.
+1. Update the Note type/interface in `src/types.ts` to include `favorite: boolean`.
 2. Update API endpoints:
 
-   - `GET /api/notes`: Include the favorite field in responses.
-   - `POST /api/notes`: Allow setting favorite (optional, default to false).
-   - `PUT /api/notes/:id`: Allow updating the favorite field.
+   - `POST /api/notes`: Add the `favorite` field with default to false in the create db operation.
+   - `PUT /api/notes/:id`: Read the `favorite` param from request body allowing updating the favorite field. Pass the `favorite` value to the db operation.
    - (Optional) Add a PATCH or dedicated endpoint: e.g., `PATCH /api/notes/:id/favorite` to toggle favorite status.
+   - (Optional) When fetching notes, allow filtering by favorite using a query param (e.g., `?favorite=true`).
 
 3. Update database queries:
 
    - When creating or updating a note, handle the `favorite` field.
-   - When fetching notes, allow filtering by favorite (e.g., `?favorite=true`).
 
 ### **3. Frontend (App)**
 
-1. Update the Note type/interface in your frontend code to include `favorite: boolean`.
+1. Update the Note type/interface `src/lib/api/notes.ts` your frontend code to include `favorite: boolean`.
 2. UI changes:
 
-   - Add a “favorite” icon/button (e.g., a star) to each note in the list/grid view.
+   - Add a “favorite” icon/button (e.g., a star or a heart) to each note in the list/grid view.
    - Visually indicate if a note is marked as favorite.
    - Allow users to click the icon/button to toggle favorite status.
+   - Update the handleUpdateNote to send favorite in request with the api client or add another handler if you created a separated endpoint to handle favorite toggle.
 
 3. API client changes:
 
