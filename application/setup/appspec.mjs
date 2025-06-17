@@ -63,7 +63,6 @@ function extractEnvVarsFromTemplate(yamlTemplate, { useDevDb }) {
   }
 
   envSet.delete('DB_NAME');
-  envSet.delete('AUTH_TRUST_HOST');
   if (useDevDb) envSet.delete('DATABASE_URL');
 
   return Array.from(envSet).sort();
