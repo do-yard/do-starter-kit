@@ -63,20 +63,41 @@ function extractEnvVarsFromTemplate(yamlTemplate, { useDevDb }) {
   }
 
   envSet.delete('DB_NAME');
+  envSet.delete('APP_URL');
   if (useDevDb) envSet.delete('DATABASE_URL');
 
   return Array.from(envSet).sort();
 }
 
-function getEnvVars(requiredVars) {
+async function getEnvVars(requiredVars) {
+  const envFilePath = path.resolve('.env');
+  let envFileContent = '';
+  try {
+    envFileContent = await fs.readFile(envFilePath, 'utf8');
+  } catch {
+    console.warn('⚠️  .env file not found:', envFilePath);
+    return { missing: requiredVars, values: {} };
+  }
+
+  const definedKeys = new Set();
+  for (const line of envFileContent.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const match = trimmed.match(/^([A-Z0-9_]+)\s*=/);
+    if (match) definedKeys.add(match[1]);
+  }
+
   dotenv.config();
   const env = process.env;
   let missing = [];
   let values = {};
 
   for (const key of requiredVars) {
-    if (!env[key]) missing.push(key);
-    else values[key] = env[key];
+    if (!definedKeys.has(key)) {
+      missing.push(key);
+    } else {
+      values[key] = env[key] ?? '';
+    }
   }
   return { missing, values };
 }
@@ -114,7 +135,7 @@ async function main() {
   let envValues = {};
   while (!validated) {
     console.log('\nChecking required environment variables from .env...\n');
-    const { missing, values } = getEnvVars(envVars);
+    const { missing, values } = await getEnvVars(envVars);
     if (missing.length) {
       console.warn(`⚠️  Missing variables in .env: ${missing.join(', ')}`);
       const retry = await ask('Retry after fixing .env? (y to retry, n to abort)', 'y');
@@ -136,6 +157,14 @@ async function main() {
     CLUSTER_NAME: useDevDb ? `${appName}-cluster` : '',
     ...envValues,
   };
+
+  const doc = yaml.load(yamlTemplate);
+
+  if (doc?.services?.[0]?.github) {
+    doc.services[0].github.repo = githubRepo;
+  }
+
+  yamlTemplate = yaml.dump(doc, { lineWidth: -1 });
 
   let finalYaml = getYamlWithReplacements(yamlTemplate, replacements);
 
