@@ -19,7 +19,7 @@ Now that you deployed or run locally the app, you may want to make some changes 
    }
    ```
 
-2. Create the migration for the field in the migrations folder
+2. Create the migration for the field in the migrations folder. Create a new folder in `./application/prisma/migrations` following the existing naming convention, and add a `migration.sql` file with the following content:
 
 ```sql
 ALTER TABLE "Note"
@@ -38,10 +38,6 @@ ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
    - (Optional) Add a PATCH or dedicated endpoint: e.g., `PATCH /api/notes/:id/favorite` to toggle favorite status.
    - (Optional) When fetching notes, allow filtering by favorite using a query param (e.g., `?favorite=true`).
 
-3. Update database queries:
-
-   - When creating or updating a note, handle the `favorite` field.
-
 ### **3. Frontend (App)**
 
 1. Update the Note type/interface in `src/lib/api/notes.ts` to include `favorite: boolean`.
@@ -50,7 +46,7 @@ ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
    - Add a “favorite” icon/button (e.g., a star or a heart) to each note in the list/grid view.
    - Visually indicate if a note is marked as favorite.
    - Allow users to click the icon/button to toggle favorite status.
-   - Update the handleUpdateNote to send favorite in request with the api client or add another handler if you created a separate endpoint to handle favorite toggle.
+   - Update the `handleUpdateNote` method to send the favorite field in the request with the api client or add another handler if you created a separate endpoint to handle favorite toggle.
 
 3. API client changes:
 
