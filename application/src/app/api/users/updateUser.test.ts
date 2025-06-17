@@ -13,23 +13,8 @@ const mockBilling = {
   updateSubscription: jest.fn(),
 };
 
-let mockGiftPriceId: string | undefined = 'pro_gift';
-let mockFreePriceId: string | undefined = 'free';
-
 jest.mock('services/billing/billingFactory', () => ({
   createBillingService: () => Promise.resolve(mockBilling),
-}));
-jest.mock('settings', () => ({
-  serverConfig: {
-    Stripe: {
-      get proGiftPriceId() {
-        return mockGiftPriceId;
-      },
-      get freePriceId() {
-        return mockFreePriceId;
-      },
-    },
-  },
 }));
 
 jest.mock('../../../services/database/databaseFactory', () => ({
@@ -39,8 +24,6 @@ jest.mock('../../../services/database/databaseFactory', () => ({
 describe('updateUser', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    mockGiftPriceId = 'pro_gift';
-    mockFreePriceId = 'free';
   });
 
   function makeRequest(body: Record<string, unknown>) {
@@ -85,7 +68,7 @@ describe('updateUser', () => {
     const res = await updateUser(req);
     expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith('1');
     expect(mockBilling.listSubscription).toHaveBeenCalledWith('cus_1');
-    expect(mockBilling.updateSubscription).toHaveBeenCalledWith('sub_1', 'item_1', 'pro_gift');
+    expect(mockBilling.updateSubscription).toHaveBeenCalledWith('sub_1', 'item_1', 'GIFT');
     expect(res.status).toBe(HTTP_STATUS.OK);
   });
 
@@ -98,7 +81,7 @@ describe('updateUser', () => {
     const res = await updateUser(req);
     expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith('1');
     expect(mockBilling.listSubscription).toHaveBeenCalledWith('cus_1');
-    expect(mockBilling.updateSubscription).toHaveBeenCalledWith('sub_1', 'item_1', 'free');
+    expect(mockBilling.updateSubscription).toHaveBeenCalledWith('sub_1', 'item_1', 'FREE');
     expect(res.status).toBe(HTTP_STATUS.OK);
   });
 
@@ -109,22 +92,6 @@ describe('updateUser', () => {
     const res = await updateUser(req);
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'No existing subscription found for user' });
-  });
-
-  it('returns 500 if proGiftPriceId is not configured', async () => {
-    mockGiftPriceId = undefined;
-    const req = makeRequest({ id: 1, subscription: { plan: 'PRO' } });
-    const res = await updateUser(req);
-    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
-    expect(await res.json()).toEqual({ error: 'Pro gift price ID is not configured' });
-  });
-
-  it('returns 500 if freePriceId is not configured', async () => {
-    mockFreePriceId = undefined;
-    const req = makeRequest({ id: 1, subscription: { plan: 'FREE' } });
-    const res = await updateUser(req);
-    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
-    expect(await res.json()).toEqual({ error: 'Free price ID is not configured' });
   });
 
   it('returns 500 on server error', async () => {

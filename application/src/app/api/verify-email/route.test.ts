@@ -35,12 +35,9 @@ import * as billingModule from 'services/billing/billingFactory';
 
 (billingModule.createBillingService as jest.Mock).mockResolvedValue(mockBillingService);
 
-jest.mock('../../../services/database/databaseFactory', () => ({
+jest.mock('services/database/databaseFactory', () => ({
   createDatabaseService: () => Promise.resolve(mockDb),
 }));
-
-import { serverConfig } from 'settings';
-serverConfig.Stripe = { freePriceId: 'free-price-id' };
 
 const createRequest = (token?: string) => {
   const url = new URL('http://localhost/api/verify-email');

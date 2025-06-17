@@ -51,10 +51,12 @@ services:
         value: "${STRIPE_PRO_GIFT_PRICE_ID}"
       - key: "STRIPE_PORTAL_CONFIG_ID"
         value: "${STRIPE_PORTAL_CONFIG_ID}"
+      - key: "EMAIL_PROVIDER"
+        value: "Resend"
       - key: "RESEND_API_KEY"
         value: "${RESEND_API_KEY}"
         type: "SECRET"
-      - key: RESEND_EMAIL_SENDER
+      - key: "RESEND_EMAIL_SENDER"
         value: "${RESEND_EMAIL_SENDER}"
       - key: "BASE_URL"
         value: "${APP_URL}"

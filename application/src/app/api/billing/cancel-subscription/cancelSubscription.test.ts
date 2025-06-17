@@ -26,11 +26,6 @@ jest.mock('services/database/databaseFactory', () => ({
     },
   }),
 }));
-jest.mock('settings', () => ({
-  serverConfig: {
-    Stripe: { freePriceId: 'free_price_id' },
-  },
-}));
 
 describe('cancelSubscription API', () => {
   const user = { id: 'u1', role: 'user', email: 'test@example.com' };
@@ -71,7 +66,7 @@ describe('cancelSubscription API', () => {
     const res = await cancelSubscription({} as NextRequest, user);
     expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ canceled: true });
-    expect(mockStripeUpdateSubscription).toHaveBeenCalledWith('sub1', 'item1', 'free_price_id');
+    expect(mockStripeUpdateSubscription).toHaveBeenCalledWith('sub1', 'item1', 'FREE');
     expect(mockUpdateSubscription).toHaveBeenCalledWith('u1', { plan: 'FREE', status: 'PENDING' });
   });
 
