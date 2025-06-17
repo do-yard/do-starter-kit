@@ -1,6 +1,6 @@
 'use client';
 
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, useTheme } from '@mui/material';
 import { useEffect, useState, useMemo } from 'react';
 import { StripeClient } from 'lib/api/stripe';
 import { SubscriptionPlanEnum } from 'types';
@@ -13,6 +13,7 @@ export default function DashboardPageClient({ userEmail }: { userEmail: string }
   const [subscription, setSubscription] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const stripeApi = useMemo(() => new StripeClient(), []);
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -38,37 +39,50 @@ export default function DashboardPageClient({ userEmail }: { userEmail: string }
       minHeight="80vh"
     >
       <Typography variant="h4">Welcome back, {userEmail}!</Typography>
-      <Typography variant="body1" mt={2}>
+      <Typography variant="h5" mt={2}>
         {loading ? (
           'Loading subscription...'
         ) : subscription === SubscriptionPlanEnum.FREE ? (
-          <span
-            style={{
-              color: '#888',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              letterSpacing: 1.5,
-            }}
-          >
-            {subscription}
-          </span>
+          <>
+            Your current subscription plan is:{' '}
+            <span
+              style={{
+                color: '#888',
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                letterSpacing: 1.5,
+              }}
+            >
+              {subscription}
+            </span>
+          </>
         ) : subscription === SubscriptionPlanEnum.PRO ? (
-          <span
-            style={{
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              letterSpacing: 1.5,
-              background: 'linear-gradient(90deg, #ff512f, #dd2476, #1fa2ff, #12d8fa, #a6ffcb)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              display: 'inline-block',
-            }}
-          >
-            {subscription}
-          </span>
+          <>
+            Your current subscription plan is:{' '}
+            <span
+              style={{
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: 2,
+                fontSize: '1.2rem',
+                padding: '0.25em 0.75em',
+                borderRadius: '1.5em',
+                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                color: '#fff',
+                boxShadow: '0 2px 12px 0 rgba(31,162,255,0.15)',
+                border: 'none',
+                outline: 'none',
+                display: 'inline-block',
+                WebkitBackgroundClip: 'padding-box',
+                backgroundClip: 'padding-box',
+                transition: 'box-shadow 0.2s',
+              }}
+            >
+              {subscription}
+            </span>
+          </>
         ) : (
-          `Your current subscription plan is: None`
+          'Your current subscription plan is: None'
         )}
       </Typography>
     </Box>
