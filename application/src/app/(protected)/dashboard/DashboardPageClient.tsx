@@ -44,7 +44,7 @@ export default function DashboardPageClient({ userEmail }: { userEmail: string }
           'Loading subscription...'
         ) : subscription === SubscriptionPlanEnum.FREE ? (
           <>
-            Your current subscription plan is:{' '}
+            {subscriptionLabel}{' '}
             <span
               style={{
                 color: '#888',
