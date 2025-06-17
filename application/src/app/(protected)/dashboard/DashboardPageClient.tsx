@@ -14,6 +14,7 @@ export default function DashboardPageClient({ userEmail }: { userEmail: string }
   const [loading, setLoading] = useState(true);
   const stripeApi = useMemo(() => new StripeClient(), []);
   const theme = useTheme();
+  const subscriptionLabel = 'Your current subscription plan is: ';
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -58,7 +59,7 @@ export default function DashboardPageClient({ userEmail }: { userEmail: string }
           </>
         ) : subscription === SubscriptionPlanEnum.PRO ? (
           <>
-            Your current subscription plan is:{' '}
+            {subscriptionLabel}{' '}
             <span
               style={{
                 fontWeight: 700,
