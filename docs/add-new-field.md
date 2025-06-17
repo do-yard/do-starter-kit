@@ -34,7 +34,7 @@ ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
 2. Update API endpoints:
 
    - `POST /api/notes`: Add the `favorite` field with default to false in the create db operation.
-   - `PUT /api/notes/:id`: Read the `favorite` param from request body allowing updating the favorite field. Pass the `favorite` value to the db operation.
+   - `PUT /api/notes/:id`: Read the `favorite` param from request body allowing updating the favorite field. Pass the `favorite` value to the DB operation.
    - (Optional) Add a PATCH or dedicated endpoint: e.g., `PATCH /api/notes/:id/favorite` to toggle favorite status.
    - (Optional) When fetching notes, allow filtering by favorite using a query param (e.g., `?favorite=true`).
 
