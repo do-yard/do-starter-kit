@@ -193,10 +193,6 @@ export class StripeBillingService extends BillingService {
       throw new Error('Stripe client not initialized. Check Configuration');
     }
 
-    if (!serverConfig.Stripe.proPriceId) {
-      throw new Error('Stripe Pro Price ID is not configured');
-    }
-
     const result = await this.stripe.subscriptions.list({
       customer: customerId,
       limit: 1,
