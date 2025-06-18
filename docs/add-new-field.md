@@ -68,3 +68,4 @@ ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
    - Creating a note with/without favorite.
    - Updating/toggling favorite status.
    - Filtering notes by favorite.
+   - Run the tests to verify them using these commands: `npm run test` for the client app and `npm run test:server` for API tests. Alternatively, you can run `npm run test:all` that run both suites of tests.
