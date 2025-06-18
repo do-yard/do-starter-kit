@@ -27,6 +27,7 @@ ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
 ```
 
 3. Run migrations with `npx prisma migrate deploy`
+4. Run `npx prisma generate`
 
 ### **2. Backend (API)**
 
