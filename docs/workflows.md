@@ -87,7 +87,7 @@ The following environment variables must be set for each environment you create.
 5. Click on **Configure environment**
 6. Add the secrets and environment variables listed below
 
-> See the env-sample file for description fo each one
+> See the env-sample file for description of each one
 
 #### Secrets
 
