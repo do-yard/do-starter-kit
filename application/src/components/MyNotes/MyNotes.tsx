@@ -65,8 +65,6 @@ const MyNotes: React.FC = () => {
     fetchNotes();
   }, [fetchNotes]);
 
-  const totalPages = Math.ceil(totalNotes / pageSize);
-
   const handleSortChange = (
     event: ChangeEvent<HTMLInputElement> | (Event & { target: { value: unknown; name: string } }),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

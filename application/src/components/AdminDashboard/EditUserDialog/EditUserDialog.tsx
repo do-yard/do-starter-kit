@@ -12,6 +12,7 @@ import {
   Select,
   MenuItem,
   CircularProgress,
+  SelectChangeEvent,
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import {
@@ -25,11 +26,14 @@ interface EditUserDialogProps {
   editForm: Partial<UserWithSubscriptions>;
   isLoadingEdit: boolean;
   handleEditChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleEditSubscriptionChange: (e: React.ChangeEvent<HTMLInputElement> | any) => void;
+  handleEditSubscriptionChange: (e: SelectChangeEvent) => void;
   handleEditButton: () => void;
   handleEditClose: () => void;
 }
 
+/**
+ * EditUserDialog renders a modal dialog for editing user details and subscription.
+ */
 const EditUserDialog: React.FC<EditUserDialogProps> = ({
   open,
   editForm,

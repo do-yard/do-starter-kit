@@ -12,6 +12,9 @@ interface UserFilterControlsProps {
   setPage: (value: number) => void;
 }
 
+/**
+ * UserFilterControls renders filter controls for searching and filtering users by name, plan, and status.
+ */
 const UserFilterControls: React.FC<UserFilterControlsProps> = ({
   searchName,
   setSearchName,

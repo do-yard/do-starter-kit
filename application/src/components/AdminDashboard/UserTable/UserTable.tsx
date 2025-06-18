@@ -38,6 +38,9 @@ const statusColor = (status: string) => {
   }
 };
 
+/**
+ * UserTable displays a table of users with their details, admin toggle, and edit actions.
+ */
 const UserTable: React.FC<UserTableProps> = ({
   users,
   selectedUser,

@@ -11,6 +11,10 @@ interface PaginationProps {
   sx?: object;
 }
 
+/**
+ * PaginationControl renders a pagination component with page size selection.
+ * It allows users to navigate through pages and select the number of items per page.
+ */
 const PaginationControl: React.FC<PaginationProps> = ({
   totalItems,
   pageSize,
