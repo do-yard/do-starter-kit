@@ -50,7 +50,7 @@ const SignUpForm: React.FC = () => {
       if (!res.ok || data.error) {
         setError(data.error || 'Something went wrong');
       } else {
-        setSuccess('Email verification sent. Check your inbox.');
+        setSuccess(data.message || 'Account created successfully.');
       }
     } catch (err) {
       console.error('Signup error:', err);

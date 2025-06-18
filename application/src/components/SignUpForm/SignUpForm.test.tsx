@@ -86,4 +86,36 @@ describe('SignUpForm', () => {
 
     expect(await screen.findByText(/user already exists/i)).toBeInTheDocument();
   });
+
+  it('shows dynamic success message from API response', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true, message: 'Verification email sent.' }),
+    }) as unknown as jest.Mock;
+
+    render(<SignUpForm />);
+    await userEvent.type(screen.getByTestId('signup-email-input'), 'user@example.com');
+    await userEvent.type(screen.getByTestId('signup-password-input'), 'securepass');
+    await userEvent.type(screen.getByTestId('signup-confirm-password-input'), 'securepass');
+
+    fireEvent.submit(screen.getByTestId('signup-form'));
+
+    expect(await screen.findByText('Verification email sent.')).toBeInTheDocument();
+  });
+
+  it('shows fallback success message when API response has no message', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true }),
+    }) as unknown as jest.Mock;
+
+    render(<SignUpForm />);
+    await userEvent.type(screen.getByTestId('signup-email-input'), 'user@example.com');
+    await userEvent.type(screen.getByTestId('signup-password-input'), 'securepass');
+    await userEvent.type(screen.getByTestId('signup-confirm-password-input'), 'securepass');
+
+    fireEvent.submit(screen.getByTestId('signup-form'));
+
+    expect(await screen.findByText('Account created successfully.')).toBeInTheDocument();
+  });
 });

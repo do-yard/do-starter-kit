@@ -7,6 +7,7 @@ import { prisma } from '../prisma';
 import { verifyPassword } from 'helpers/hash';
 import { User, UserRole } from 'types';
 import { InvalidCredentialsError } from './errors';
+import { serverConfig } from '../../../settings';
 
 const hasRole = (user: unknown): user is { id: string; role: UserRole } => {
   return typeof user === 'object' && user !== null && 'role' in user && 'id' in user;
@@ -60,7 +61,7 @@ const providers: Provider[] = [
           throw new Error('User not found or password hash is missing');
         }
 
-        if (user.emailVerified === false) {
+        if (user.emailVerified === false && !serverConfig.disableEmailVerification) {
           throw new Error('Email not verified');
         }
 

@@ -35,6 +35,10 @@ RESEND_EMAIL_SENDER=your-email-sender-address # Email sender address, your-addre
 
 # EMAIL_PROVIDER=... # If using email features
 
+# Development flag to disable email verification for local development
+# Set to true to skip email verification and allow immediate login after signup
+# DISABLE_EMAIL_VERIFICATION=true
+
 # Stripe
 
 BILLING_PROVIDER=Stripe
