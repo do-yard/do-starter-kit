@@ -41,7 +41,6 @@ jobs:
           echo "DB_NAME=do-starter-kit-db-${{ inputs.environment }}" >> $GITHUB_ENV
           echo "CLUSTER_NAME=do-starter-kit-cluster-${{ inputs.environment }}" >> $GITHUB_ENV
           echo "GITHUB_BRANCH=${{ github.ref_name || 'main' }}" >> $GITHUB_ENV
-          echo "APP_URL=${APP_URL}" >> $GITHUB_ENV"
 
       - name: Generate app.yaml from template
         run: envsubst < .do/app.template.yaml > .do/app.yaml
