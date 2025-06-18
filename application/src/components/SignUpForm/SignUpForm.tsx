@@ -81,93 +81,95 @@ const SignUpForm: React.FC = () => {
                 </Typography>
               </Stack>
 
-              {/* Form */}
-              <Box
-                component="form"
-                onSubmit={handleSubmit}
-                data-testid="signup-form"
-                autoComplete="on"
-              >
-                <Stack spacing={3}>
-                  <Stack spacing={1}>
-                    <Typography variant="body2" fontWeight={500} color="text.primary">
-                      Email
-                    </Typography>
-                    <TextField
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      fullWidth
-                      autoComplete="email"
-                      variant="outlined"
-                      inputProps={{ 'data-testid': 'signup-email-input' }}
-                    />
-                  </Stack>
-
-                  <Stack spacing={1}>
-                    <Typography variant="body2" fontWeight={500} color="text.primary">
-                      Password
-                    </Typography>
-                    <TextField
-                      id="password"
-                      name="password"
-                      type="password"
-                      placeholder="Enter your password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      fullWidth
-                      autoComplete="new-password"
-                      variant="outlined"
-                      inputProps={{ 'data-testid': 'signup-password-input' }}
-                    />
-                  </Stack>
-
-                  <Stack spacing={1}>
-                    <Typography variant="body2" fontWeight={500} color="text.primary">
-                      Confirm Password
-                    </Typography>
-                    <TextField
-                      id="confirm-password"
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="Confirm your password"
-                      required
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      fullWidth
-                      autoComplete="new-password"
-                      variant="outlined"
-                      inputProps={{ 'data-testid': 'signup-confirm-password-input' }}
-                    />
-                  </Stack>
-
-                  {error && (
-                    <Typography
-                      color="error"
-                      variant="body2"
-                      textAlign="center"
-                      data-testid="signup-error-message"
-                    >
-                      {error}
-                    </Typography>
-                  )}
-
-                  {success && (
-                    <Typography color="success.main" variant="body2" textAlign="center">
-                      {success}
-                    </Typography>
-                  )}
-
-                  <Box mt={1}>
-                    <FormButton>Create Account</FormButton>
-                  </Box>
+              {/* Show success message OR form, not both */}
+              {success ? (
+                <Stack spacing={3} textAlign="center">
+                  <Typography color="success.main" variant="body1" textAlign="center">
+                    {success}
+                  </Typography>
                 </Stack>
-              </Box>
+              ) : (
+                <Box
+                  component="form"
+                  onSubmit={handleSubmit}
+                  data-testid="signup-form"
+                  autoComplete="on"
+                >
+                  <Stack spacing={3}>
+                    <Stack spacing={1}>
+                      <Typography variant="body2" fontWeight={500} color="text.primary">
+                        Email
+                      </Typography>
+                      <TextField
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        fullWidth
+                        autoComplete="email"
+                        variant="outlined"
+                        inputProps={{ 'data-testid': 'signup-email-input' }}
+                      />
+                    </Stack>
+
+                    <Stack spacing={1}>
+                      <Typography variant="body2" fontWeight={500} color="text.primary">
+                        Password
+                      </Typography>
+                      <TextField
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        fullWidth
+                        autoComplete="new-password"
+                        variant="outlined"
+                        inputProps={{ 'data-testid': 'signup-password-input' }}
+                      />
+                    </Stack>
+
+                    <Stack spacing={1}>
+                      <Typography variant="body2" fontWeight={500} color="text.primary">
+                        Confirm Password
+                      </Typography>
+                      <TextField
+                        id="confirm-password"
+                        name="confirmPassword"
+                        type="password"
+                        placeholder="Confirm your password"
+                        required
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        fullWidth
+                        autoComplete="new-password"
+                        variant="outlined"
+                        inputProps={{ 'data-testid': 'signup-confirm-password-input' }}
+                      />
+                    </Stack>
+
+                    {error && (
+                      <Typography
+                        color="error"
+                        variant="body2"
+                        textAlign="center"
+                        data-testid="signup-error-message"
+                      >
+                        {error}
+                      </Typography>
+                    )}
+
+                    <Box mt={1}>
+                      <FormButton>Create Account</FormButton>
+                    </Box>
+                  </Stack>
+                </Box>
+              )}
 
               {/* Links */}
               <Stack spacing={2} alignItems="center">
