@@ -168,6 +168,8 @@ async function main() {
 
   let finalYaml = getYamlWithReplacements(yamlTemplate, replacements);
 
+  finalYaml = finalYaml.replaceAll('__APP_URL_BIND__', '${APP_URL}');
+
   if (!useDevDb) {
     finalYaml = finalYaml
       .replace(/\$\{\.DATABASE_URL\}/g, envValues.DATABASE_URL)

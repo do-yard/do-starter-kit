@@ -41,9 +41,13 @@ jobs:
           echo "DB_NAME=do-starter-kit-db-${{ inputs.environment }}" >> $GITHUB_ENV
           echo "CLUSTER_NAME=do-starter-kit-cluster-${{ inputs.environment }}" >> $GITHUB_ENV
           echo "GITHUB_BRANCH=${{ github.ref_name || 'main' }}" >> $GITHUB_ENV
+          echo "APP_URL=${APP_URL}" >> $GITHUB_ENV"
 
       - name: Generate app.yaml from template
         run: envsubst < .do/app.template.yaml > .do/app.yaml
+
+      - name: Restore DO bindable refs (APP_URL)
+        run: sed -i 's|__APP_URL_BIND__|${APP_URL}|g' .do/app.yaml
 
       - name: Deploy to DigitalOcean App Platform
         uses: digitalocean/app_action/deploy@v2

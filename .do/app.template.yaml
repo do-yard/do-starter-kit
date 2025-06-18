@@ -55,7 +55,7 @@ services:
       - key: "RESEND_EMAIL_SENDER"
         value: "${RESEND_EMAIL_SENDER}"
       - key: "BASE_URL"
-        value: "${APP_URL}"
+        value: "__APP_URL_BIND__"
 
 databases:
   - name: ${DB_NAME}
