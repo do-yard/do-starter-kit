@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
     });
 
     const emailService = await createEmailService();
-    const resetUrl = `${process.env.NEXTAUTH_URL}/reset-password?token=${token}`;
+    const resetUrl = `${process.env.AUTH_URL}/reset-password?token=${token}`;
     await emailService.sendReactEmail(
       email,
       'Reset your password',
