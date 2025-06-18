@@ -90,7 +90,7 @@ describe('updateUser', () => {
     expect(res.status).toBe(HTTP_STATUS.OK);
   });
 
-  it('returns 404 if no existing subscription for PRO/FREE update', async () => {
+  it('returns 500 if no existing subscription for PRO/FREE update', async () => {
     mockDbClient.user.update.mockResolvedValue({ id: 1 });
     mockDbClient.subscription.findByUserId.mockResolvedValue([]);
     const req = makeRequest({ subscription: { plan: 'PRO' } });
