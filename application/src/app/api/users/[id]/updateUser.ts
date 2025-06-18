@@ -78,7 +78,7 @@ export const updateUser = async (
   try {
     const { id } = await params;
     const body = await request.json();
-    const { ...updateData } = body;
+    const updateData = body;
     if (!id) {
       return NextResponse.json(
         { error: 'User ID is required' },
