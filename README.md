@@ -40,7 +40,6 @@ If you made changes to the repo and want to deploy them to DigitalOcean, navigat
 
 2. After deployment is complete, configure the environment variables under Settings -> saas-application.
    - DATABASE_URL: is automatically populated, but if you want to use a DigitalOcean Managed DB, replace the connection string value.
-   - AUTH_SECRET: random string for authentication. After setting a value, check the encrypt box.
 
 > Note Prisma migrations will run automatically
 
