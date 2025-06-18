@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     await db.verificationToken.create({ identifier: email, token, expires });
 
     const emailService = await createEmailService();
-    const verifyUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/magic-link?token=${token}&email=${encodeURIComponent(email)}`;
+    const verifyUrl = `${process.env.AUTH_URL || 'http://localhost:3000'}/magic-link?token=${token}&email=${encodeURIComponent(email)}`;
     await emailService.sendReactEmail(
       user.email,
       'Login to your account',

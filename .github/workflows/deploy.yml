@@ -45,6 +45,9 @@ jobs:
       - name: Generate app.yaml from template
         run: envsubst < .do/app.template.yaml > .do/app.yaml
 
+      - name: Restore DO bindable refs (APP_URL)
+        run: sed -i 's|__APP_URL_BIND__|${APP_URL}|g' .do/app.yaml
+
       - name: Deploy to DigitalOcean App Platform
         uses: digitalocean/app_action/deploy@v2
         with:
