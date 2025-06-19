@@ -4,6 +4,7 @@ export interface ServerConfig {
   emailProvider: string;
   billingProvider: string;
   disableEmailVerification: boolean;
+  baseURL?: string;
   Database: {
     url?: string;
   };
@@ -18,7 +19,6 @@ export interface ServerConfig {
     fromEmail?: string;
   };
   Stripe: {
-    baseURL: string;
     stripeSecretKey?: string;
     freePriceId?: string;
     proPriceId?: string;
@@ -34,6 +34,7 @@ export const serverConfig: ServerConfig = {
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
   billingProvider: process.env.BILLING_PROVIDER || 'Stripe',
   disableEmailVerification: process.env.DISABLE_EMAIL_VERIFICATION === 'true',
+  baseURL: process.env.BASE_URL,
   Database: {
     url: process.env.DATABASE_URL,
   },
@@ -48,7 +49,6 @@ export const serverConfig: ServerConfig = {
     fromEmail: process.env.RESEND_EMAIL_SENDER,
   },
   Stripe: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
     stripeSecretKey: process.env.STRIPE_SECRET_KEY,
     freePriceId: process.env.STRIPE_FREE_PRICE_ID,
     proPriceId: process.env.STRIPE_PRO_PRICE_ID,

@@ -19,7 +19,7 @@ const mockStorageService = {
 const mockEmailService = {
   checkConfiguration: jest.fn(),
   checkConnection: jest.fn(),
-  sendEmail: jest.fn(),
+  sendReactEmail: jest.fn(),
   isRequired: jest.fn().mockReturnValue(true),
 } as jest.Mocked<EmailService>;
 

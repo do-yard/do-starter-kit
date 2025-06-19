@@ -4,6 +4,7 @@ import { HTTP_STATUS } from 'lib/api/http';
 import { createEmailService } from 'services/email/emailFactory';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButtonEmail';
+import { serverConfig } from 'settings';
 
 /**
  * API endpoint to send a magic link for user login.
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
     await db.verificationToken.create({ identifier: email, token, expires });
 
     const emailService = await createEmailService();
-    const verifyUrl = `${process.env.AUTH_URL || 'http://localhost:3000'}/magic-link?token=${token}&email=${encodeURIComponent(email)}`;
+    const verifyUrl = `${serverConfig.baseURL}/magic-link?token=${token}&email=${encodeURIComponent(email)}`;
     await emailService.sendReactEmail(
       user.email,
       'Login to your account',
