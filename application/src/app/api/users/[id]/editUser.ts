@@ -70,7 +70,7 @@ const updateSubscription = async (sub: any, id: string) => {
  * @param request - The Next.js request object containing user update data.
  * @returns A NextResponse with the updated user or an error message.
  */
-export const updateUser = async (
+export const editUser = async (
   request: NextRequest,
   user: { id: string; role: string },
   params: Promise<{ id: string | undefined }>
