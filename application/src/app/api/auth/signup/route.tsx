@@ -7,6 +7,41 @@ import { createDatabaseService } from 'services/database/databaseFactory';
 import { createEmailService } from 'services/email/emailFactory';
 import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButtonEmail';
 import { serverConfig } from 'settings';
+import { DatabaseClient } from 'services/database/database';
+import { SubscriptionPlanEnum, SubscriptionStatusEnum, User } from 'types';
+import { createBillingService } from 'services/billing/billingFactory';
+
+const createSubscription = async (db: DatabaseClient, user: User) => {
+  const billingService = await createBillingService();
+
+  let customerId;
+
+  const subscription = await db.subscription.findByUserId(user.id);
+
+  if (subscription.length) {
+    customerId = subscription[0].customerId;
+  }
+
+  if (!customerId) {
+    const customer = await billingService.createCustomer(user.email, {
+      userId: user.email,
+    });
+    customerId = customer.id;
+    await db.subscription.create({
+      customerId: customer.id,
+      plan: null,
+      status: null,
+      userId: user.id,
+    });
+  }
+
+  await billingService.createSubscription(customerId, SubscriptionPlanEnum.FREE);
+
+  await db.subscription.update(user.id, {
+    status: SubscriptionStatusEnum.PENDING,
+    plan: SubscriptionPlanEnum.FREE,
+  });
+};
 
 /**
  * API endpoint for user registration. Creates a new user, sends a verification email with a secure token,
@@ -73,6 +108,11 @@ export async function POST(req: NextRequest) {
           fallbackUrlLabel={verifyUrl}
         />
       );
+    }
+
+    // As email verification is disabled, we need to create the subscription for the user here
+    if (serverConfig.disableEmailVerification) {
+      await createSubscription(dbClient, user);
     }
 
     const message = serverConfig.disableEmailVerification
