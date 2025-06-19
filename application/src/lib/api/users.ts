@@ -27,10 +27,10 @@ export class UsersClient {
 
   // Update a user (PATCH /api/users)
   async updateUser(id: string, updateData: Partial<{ name: string; email: string; role: string }>) {
-    const res = await fetch(this.baseURL + '/users', {
+    const res = await fetch(this.baseURL + `/users/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, ...updateData }),
+      body: JSON.stringify({ ...updateData }),
     });
     if (!res.ok) throw new Error('Failed to update user');
     return res.json();

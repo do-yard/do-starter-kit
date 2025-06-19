@@ -70,10 +70,15 @@ const updateSubscription = async (sub: any, id: string) => {
  * @param request - The Next.js request object containing user update data.
  * @returns A NextResponse with the updated user or an error message.
  */
-export const updateUser = async (request: NextRequest): Promise<NextResponse> => {
+export const editUser = async (
+  request: NextRequest,
+  user: { id: string; role: string },
+  params: Promise<{ id: string | undefined }>
+): Promise<NextResponse> => {
   try {
+    const { id } = await params;
     const body = await request.json();
-    const { id, ...updateData } = body;
+    const updateData = body;
     if (!id) {
       return NextResponse.json(
         { error: 'User ID is required' },
