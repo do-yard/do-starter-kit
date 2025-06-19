@@ -40,8 +40,6 @@ If you made changes to the repo and want to deploy them to DigitalOcean, navigat
 
 2. After deployment is complete, configure the environment variables under Settings -> saas-application.
    - DATABASE_URL: is automatically populated, but if you want to use a DigitalOcean Managed DB, replace the connection string value.
-   - NEXTAUTH_URL: URL of the site
-   - NEXTAUTH_SECRET: random string for authentication. After setting a value, check the encrypt box.
 
 > Note Prisma migrations will run automatically
 
@@ -177,13 +175,13 @@ npm run setup:deploy
 - **SPACES_KEY_SECRET**: secret of an existing Spaces storage key.
 - **SPACES_BUCKET_NAME**: name of an existing bucket.
 - **SPACES_REGION**: bucket region.
-- **NEXTAUTH_SECRET**: arbitrary string for Auth.js.
+- **AUTH_SECRET**: arbitrary string for Auth.js.
 - **RESEND_API_KEY**: Your Resend API key.
 - **RESEND_EMAIL_SENDER**: Sender address for the emails that the app will send.
 - **STRIPE_SECRET_KEY**: Stripe secret key.
 - **STRIPE_WEBHOOK_SECRET**: Secret to verify payloads authenticity.
-- **NEXT_PUBLIC_STRIPE_FREE_PRICE_ID**: The free price Id created with the stripe script.
-- **NEXT_PUBLIC_STRIPE_PRO_PRICE_ID**: The pro price Id created with the stripe script.
+- **STRIPE_FREE_PRICE_ID**: The free price Id created with the stripe script.
+- **STRIPE_PRO_PRICE_ID**: The pro price Id created with the stripe script.
 - **STRIPE_PRO_GIFT_PRICE_ID**: The pro gift price Id created with the stripe script.
 - **STRIPE_PORTAL_CONFIG_ID**: The Stripe portal configuration ID.
 - **BASE_URL**: The URL of the application, which can be obtained after deployment and is Used for Stripe callbacks.
@@ -200,7 +198,7 @@ npm run deploy
 
 **That’s it! Your application will be deployed to DigitalOcean App Platform using your custom app spec and environment.**
 
-8. Once the app is deployed. Configure `NEXTAUTH_URL` and `BASE_URL` environment variables with the generated app URL.
+8. Once the app is deployed. Configure `BASE_URL` environment variables with the generated app URL.
 
 ### Best practices when working with secrets and environment variables
 

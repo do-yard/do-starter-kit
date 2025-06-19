@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     });
 
     const emailService = await createEmailService();
-    const verifyUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
+    const verifyUrl = `${process.env.AUTH_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
     await emailService.sendReactEmail(
       user.email,
       'Verify your email address',
