@@ -19,42 +19,42 @@ Now that you deployed or run locally the app, you may want to make some changes 
    }
    ```
 
-2. Run migrations with `npx prisma migrate deploy`
+2. Create the migration for the field in the migrations folder. Create a new folder in `./application/prisma/migrations` following the existing naming convention, and add a `migration.sql` file with the following content:
+
+```sql
+ALTER TABLE "Note"
+ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
+```
+
+3. Run migrations with `npx prisma migrate deploy`
+4. Run `npx prisma generate`
 
 ### **2. Backend (API)**
 
-1. Update the Note type/interface in your backend TypeScript code to include `favorite: boolean`.
+1. Update the Note type/interface in `src/types.ts` to include `favorite: boolean`.
 2. Update API endpoints:
 
-   - `GET /api/notes`: Include the favorite field in responses.
-   - `POST /api/notes`: Allow setting favorite (optional, default to false).
-   - `PUT /api/notes/:id`: Allow updating the favorite field.
+   - `POST /api/notes`: Add the `favorite` field with default to false in the create DB operation.
+   - `PUT /api/notes/:id`: Read the `favorite` param from request body allowing updating the favorite field. Pass the `favorite` value to the DB operation.
    - (Optional) Add a PATCH or dedicated endpoint: e.g., `PATCH /api/notes/:id/favorite` to toggle favorite status.
-
-3. Update database queries:
-
-   - When creating or updating a note, handle the `favorite` field.
-   - When fetching notes, allow filtering by favorite (e.g., `?favorite=true`).
+   - (Optional) When fetching notes, allow filtering by favorite using a query param (e.g., `?favorite=true`).
 
 ### **3. Frontend (App)**
 
-1. Update the Note type/interface in your frontend code to include `favorite: boolean`.
+1. Update the Note type/interface in `src/lib/api/notes.ts` to include `favorite: boolean`.
 2. UI changes:
 
-   - Add a “favorite” icon/button (e.g., a star) to each note in the list/grid view.
+   - Add a “favorite” icon/button (e.g., a star or a heart) to each note in the list/grid view.
    - Visually indicate if a note is marked as favorite.
    - Allow users to click the icon/button to toggle favorite status.
+   - Update the `handleUpdateNote` method to send the favorite field in the request with the api client or add another handler if you created a separate endpoint to handle favorite toggle.
 
 3. API client changes:
 
-   - Update the API client to send/receive the `favorite` field.
-   - Add a method to toggle favorite status (e.g., `toggleFavorite(noteId, isFavorite)`).
+   - If you plan to use the existing PATCH endpoint to update the favorite status, update the type `UpdateNoteData` to use the favorite field.
+   - If you add a separate endpoint to manage the favorite state, you can add a method to toggle favorite status (e.g., `toggleFavorite(noteId, isFavorite)`).
 
-4. State management:
-
-   - Update the local state after toggling favorite, so the UI updates immediately
-
-5. (Optional) Filtering:
+4. (Optional) Filtering:
 
    - Add a filter or tab to show only favorite notes.
 
@@ -65,3 +65,4 @@ Now that you deployed or run locally the app, you may want to make some changes 
    - Creating a note with/without favorite.
    - Updating/toggling favorite status.
    - Filtering notes by favorite.
+   - Run the tests to verify them using these commands: `npm run test` for the client app and `npm run test:server` for API tests. Alternatively, you can run `npm run test:all` that run both suites of tests.
