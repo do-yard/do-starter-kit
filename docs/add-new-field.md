@@ -54,11 +54,7 @@ ADD COLUMN "favorite" BOOLEAN NOT NULL DEFAULT FALSE;
    - If you plan to use the existing PATCH endpoint to update the favorite status, update the type `UpdateNoteData` to use the favorite field.
    - If you add a separate endpoint to manage the favorite state, you can add a method to toggle favorite status (e.g., `toggleFavorite(noteId, isFavorite)`).
 
-4. State management:
-
-   - Update the local state after toggling favorite, so the UI updates immediately
-
-5. (Optional) Filtering:
+4. (Optional) Filtering:
 
    - Add a filter or tab to show only favorite notes.
 
