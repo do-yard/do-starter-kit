@@ -34,7 +34,7 @@ To configure ngrok follow these steps:
 
 1. Install [**ngrok**](https://ngrok.com/)
 2. In a terminal run `ngrok http 3000`
-   > 3000 is the port the nextjs app is running
+   > 3000 is the port the Next.js app is running
 3. Now you can follow the steps from the [Deployed App](#deployed-apps) version, from step 2 onwards. Keep in mind that in step 7 you will need to use the ngrok URL with suffix `/api/webhook`
 
 ### Forward events to a local endpoint
