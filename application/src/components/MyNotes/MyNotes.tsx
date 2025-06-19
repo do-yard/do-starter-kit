@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, ChangeEvent } from 'react';
-import { Dialog, DialogContent, MenuItem, TextField } from '@mui/material';
+import { Dialog, DialogContent } from '@mui/material';
 import { Note, NotesApiClient } from 'lib/api/notes';
 import NoteForm from '../NotesForm/NoteForm';
 import NotesGridView from '../NotesGridView/NotesGridView';
@@ -10,7 +10,7 @@ import NotesHeader from '../NotesHeader/NotesHeader';
 import PageContainer from '../PageContainer/PageContainer';
 import ConfirmationDialog from '../ConfirmationDialog/ConfirmationDialog';
 import Toast from '../Toast/Toast';
-import { Pagination, Box } from '@mui/material';
+import Pagination from '../Common/Pagination/Pagination';
 
 // Create an instance of the ApiClient
 const apiClient = new NotesApiClient();
@@ -64,8 +64,6 @@ const MyNotes: React.FC = () => {
   useEffect(() => {
     fetchNotes();
   }, [fetchNotes]);
-
-  const totalPages = Math.ceil(totalNotes / pageSize);
 
   const handleSortChange = (
     event: ChangeEvent<HTMLInputElement> | (Event & { target: { value: unknown; name: string } }),
@@ -243,39 +241,13 @@ const MyNotes: React.FC = () => {
 
       {/* Only show pagination controls when there are notes and not loading */}
       {!isLoading && totalNotes > 0 && (
-        <Box display="flex" justifyContent="flex-end" alignItems="center" mt={4}>
-          <TextField
-            select
-            label="Rows per page"
-            size="small"
-            sx={{
-              minWidth: 120,
-              maxWidth: 120,
-              mr: 2,
-              '& .MuiFormLabel-root': { color: 'text.medium' },
-            }}
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-              setPage(1);
-            }}
-          >
-            <MenuItem value={5}>5</MenuItem>
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={20}>20</MenuItem>
-            <MenuItem value={50}>50</MenuItem>
-          </TextField>
-          <Pagination
-            count={totalPages || 1}
-            page={page}
-            onChange={(_, value) => setPage(value)}
-            color="primary"
-            shape="rounded"
-            showFirstButton
-            showLastButton
-            sx={{ ml: 2 }}
-          />
-        </Box>
+        <Pagination
+          totalItems={totalNotes}
+          pageSize={pageSize}
+          setPageSize={setPageSize}
+          page={page}
+          setPage={setPage}
+        />
       )}
 
       {/* Create Note Modal */}
