@@ -65,7 +65,7 @@ describe('POST /api/forgot-password', () => {
     expect(res.status).toBe(500);
     expect(consoleSpy).toHaveBeenCalled();
     const data = await res.json();
-    expect(data.error).toBe('An unexpected error occurred.');
+    expect(data.error).toBe('DB error');
     consoleSpy.mockRestore();
   });
 });
