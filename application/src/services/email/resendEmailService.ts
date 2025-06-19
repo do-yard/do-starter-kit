@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { serverConfig } from '../../../settings';
+import { serverConfig } from 'settings';
 import { EmailService } from './email';
 import { ServiceConfigStatus } from '../status/serviceConfigStatus';
 
@@ -109,12 +109,15 @@ export class ResendEmailService extends EmailService {
     try {
       // Test connection by sending a verification email to ourselves
       // This is a lightweight way to test the API without actually sending emails
-      await this.resend.emails.send({
+      const result = await this.resend.emails.send({
         from: this.fromEmail,
         to: [this.fromEmail], // Send to ourselves for testing
         subject: 'Service Health Check',
         html: '<p>This is an automated health check email. Please ignore.</p>',
       });
+
+      if (result.error) throw new Error(result.error.message);
+
       return true;
     } catch (connectionError) {
       const errorMsg =

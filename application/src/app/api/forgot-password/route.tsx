@@ -2,14 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createEmailService } from 'services/email/emailFactory';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { v4 as uuidv4 } from 'uuid';
-import { ResetPasswordEmail } from 'services/email/templates/ResetPasswordEmail';
+import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButtonEmail';
 
 /**
  * API route handler for requesting a password reset email.
- *
- * Expects a POST request with a JSON body containing:
- *   - email: The user's email address
- *
  * If the user exists, generates a reset token, stores it, and sends a reset email.
  * Always returns success for security, even if the user does not exist.
  */
@@ -41,7 +37,15 @@ export async function POST(req: NextRequest) {
     await emailService.sendReactEmail(
       email,
       'Reset your password',
-      <ResetPasswordEmail resetUrl={resetUrl} userEmail={email} />
+      <ActionButtonEmailTemplate
+        title="Reset your password"
+        buttonUrl={resetUrl}
+        buttonText="Reset Password"
+        greetingText="Hello! We received a request to reset the password for your account."
+        infoText="If you did not request this, you can safely ignore this email."
+        fallbackText="If the button above does not work, copy and paste the following link into your browser:"
+        fallbackUrlLabel={resetUrl}
+      />
     );
 
     return NextResponse.json({ success: true });

@@ -8,7 +8,7 @@ import {
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { StorageService } from './storage';
 import { ServiceConfigStatus } from '../status/serviceConfigStatus';
-import { serverConfig } from '../../../settings';
+import { serverConfig } from 'settings';
 
 /**
  * Service for interacting with DigitalOcean Spaces storage using the AWS S3 API.

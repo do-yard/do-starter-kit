@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { hashPassword } from 'helpers/hash';
 import { USER_ROLES } from 'lib/auth/roles';
 import { v4 as uuidv4 } from 'uuid';
-import { emailTemplate } from 'services/email/emailTemplate';
 import { HTTP_STATUS } from 'lib/api/http';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createEmailService } from 'services/email/emailFactory';
-import { serverConfig } from '../../../../../settings';
+import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButtonEmail';
+import { serverConfig } from 'settings';
 
 /**
  * API endpoint for user registration. Creates a new user, sends a verification email with a secure token,
@@ -58,32 +58,25 @@ export async function POST(req: NextRequest) {
 
     // Skip email sending if email verification is disabled
     if (!serverConfig.disableEmailVerification) {
-      const emailClient = await createEmailService();
+      const emailService = await createEmailService();
       const verifyUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
-      await emailClient.sendEmail(
+      await emailService.sendReactEmail(
         user.email,
         'Verify your email address',
-        emailTemplate({
-          title: 'Verify your email address',
-          content: `<p>Thank you for signing up! Please verify your email by clicking the button below:</p>
-            <p style="text-align:center; margin: 32px 0;">
-              <!--[if mso]>
-                <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${verifyUrl}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="12%" stroke="f" fillcolor="#0061EB">
-                  <w:anchorlock/>
-                  <center style="color:#fff;font-family:Arial,sans-serif;font-size:16px;font-weight:600;">Verify Email</center>
-                </v:roundrect>
-              <![endif]-->
-              <!--[if !mso]><!-- -->
-              <a href="${verifyUrl}" style="display:inline-block; padding:14px 32px; background:#0061EB; color:#fff; border-radius:6px; font-size:16px; font-weight:600; text-decoration:none; letter-spacing:0.5px; box-shadow:0 2px 8px rgba(0,0,0,0.04); border: none; mso-padding-alt:0; mso-border-alt:none;">Verify Email</a>
-              <!--<![endif]-->
-            </p>
-            <p style="font-size:13px; color:#888; text-align:center;">If the button doesn't work, copy and paste this link into your browser:<br><span style="word-break:break-all; color:#0061EB;">${verifyUrl}</span></p>`,
-        })
+        <ActionButtonEmailTemplate
+          title="Verify your email address"
+          buttonUrl={verifyUrl}
+          buttonText="Verify Email"
+          greetingText="Hello! Thank you for signing up."
+          infoText="Please verify your email address by clicking the button below:"
+          fallbackText="If the button above does not work, copy and paste the following link into your browser:"
+          fallbackUrlLabel={verifyUrl}
+        />
       );
     }
 
-    const message = serverConfig.disableEmailVerification 
-      ? 'Account created successfully. You can now log in.' 
+    const message = serverConfig.disableEmailVerification
+      ? 'Account created successfully. You can now log in.'
       : 'Verification email sent.';
 
     return NextResponse.json({ ok: true, message });

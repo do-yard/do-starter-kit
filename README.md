@@ -14,7 +14,7 @@ The architecture diagram above shows the complete structure of the SaaS Starter 
 
 The DigitalOcean SaaS Starter Kit can be run [locally](#running-locally) or in [DigitalOcean platform](#deploy-to-digitalocean-platform). Follow the steps for each case below.
 
-> **Important**: the steps below are for running the app and navigating to the landing page. To signup, [Resend](#resend-setup) and Stripe must be configured. For using the profile picture feature, [Spaces](#configure-digitalocean-spaces-storage) must be configured.
+> **Important**: the steps below are for running the app and navigating to the landing page. To signup, [Resend](#resend-setup) and [Stripe](docs/stripe-setup.md) must be configured. For using the profile picture feature, [Spaces](#configure-digitalocean-spaces-storage) must be configured.
 
 ## Running locally
 
@@ -159,29 +159,10 @@ Once you have the sender address, add it to the `RESEND_EMAIL_SENDER` environmen
 If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
 
 1. Upload the repo to GitHub or push the changes if created a fork of the original DigitalOcean repo.
-2. **Important**: settings from .env file transfer automatically to the app spec file:
-   - **APP_NAME**: arbitrary name for your app.
-   - **SPACES_KEY_ID**: id of an existing Spaces storage key.
-   - **SPACES_KEY_SECRET**: secret of an existing Spaces storage key.
-   - **SPACES_BUCKET_NAME**: name of an existing bucket.
-   - **SPACES_REGION**: bucket region.
-   - **NEXTAUTH_SECRET**: arbitrary string for Auth.js.
-   - **APP_URL**: URL of the site, can be obtained after the site is deployed. You can leave it blank before deployment.
-   - **RESEND_API_KEY**: Your Resend API key.
-   - **RESEND_EMAIL_SENDER**: Sender address for the emails that the app will send.
-   - **CLUSTER_NAME**: arbitrary name for the DB cluster.
-   - **BILLING_PROVIDER**: Stripe
-   - **STRIPE_SECRET_KEY**: Stripe secret key
-   - **STRIPE_WEBHOOK_SECRET**: Secret to verify payloads authenticity
-   - **NEXT_PUBLIC_STRIPE_FREE_PRICE_ID**: The free price Id created with the stripe script
-   - **NEXT_PUBLIC_STRIPE_PRO_PRICE_ID**: The pro price Id created with the stripe script
-   - **STRIPE_PRO_GIFT_PRICE_ID**: The pro gift price Id created with the stripe script
-   - **STRIPE_PORTAL_CONFIG_ID**: The Stripe portal configuration ID
-   - **BASE_URL**:SS The URL of the application, used for Stripe callbacks
-3. Download and install [DigitalOcean doctl](https://docs.digitalocean.com/reference/doctl/how-to/install/).
-4. Create and API key in [DigitalOcean](https://cloud.digitalocean.com/account/api/tokens) and store it securely.
-5. Authenticate locally using `doctl auth init`
-6. Generate your DigitalOcean App Spec:
+1. Download and install [DigitalOcean doctl](https://docs.digitalocean.com/reference/doctl/how-to/install/).
+1. Create and API key in [DigitalOcean](https://cloud.digitalocean.com/account/api/tokens) and store it securely.
+1. Authenticate locally using `doctl auth init`
+1. Generate your DigitalOcean App Spec:
 
 - The script step will create an `app.yaml` file tailored to your configuration and environment:
 
@@ -189,7 +170,25 @@ If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
 npm run setup:deploy
 ```
 
-7. Deploy using DOCTL
+**Important**: settings from .env file transfer automatically to the app spec file. Here is a description of each variable:
+
+- **APP_NAME**: arbitrary name for your app.
+- **SPACES_KEY_ID**: id of an existing Spaces storage key.
+- **SPACES_KEY_SECRET**: secret of an existing Spaces storage key.
+- **SPACES_BUCKET_NAME**: name of an existing bucket.
+- **SPACES_REGION**: bucket region.
+- **NEXTAUTH_SECRET**: arbitrary string for Auth.js.
+- **RESEND_API_KEY**: Your Resend API key.
+- **RESEND_EMAIL_SENDER**: Sender address for the emails that the app will send.
+- **STRIPE_SECRET_KEY**: Stripe secret key.
+- **STRIPE_WEBHOOK_SECRET**: Secret to verify payloads authenticity.
+- **NEXT_PUBLIC_STRIPE_FREE_PRICE_ID**: The free price Id created with the stripe script.
+- **NEXT_PUBLIC_STRIPE_PRO_PRICE_ID**: The pro price Id created with the stripe script.
+- **STRIPE_PRO_GIFT_PRICE_ID**: The pro gift price Id created with the stripe script.
+- **STRIPE_PORTAL_CONFIG_ID**: The Stripe portal configuration ID.
+- **BASE_URL**: The URL of the application, which can be obtained after deployment and is Used for Stripe callbacks.
+
+6. Deploy using DOCTL
 
 - The script will check that `doctl` is installed and authenticated
 - It will create or update your app using the generated `app.yaml` and run the pending migrations
@@ -229,6 +228,10 @@ When you no longer need this application running live, you can delete it by foll
 3. In the **Settings** tab, click **Destroy**
 
 **Note**: If you do not delete your app, charges for using DigitalOcean services will continue to accrue.
+
+## Updating the app
+
+Now that you have the app deployed, [here is a guide](./docs/add-new-field.md) on how to update the notes feature.
 
 ## Continues Integration and Development environments
 

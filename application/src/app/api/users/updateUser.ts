@@ -2,7 +2,6 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { NextRequest, NextResponse } from 'next/server';
 import { SubscriptionPlanEnum } from 'types';
-import { serverConfig } from '../../../../settings';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createBillingService } from 'services/billing/billingFactory';
 
@@ -17,10 +16,6 @@ const updateSubscription = async (sub: any, id: string) => {
   const dbClient = await createDatabaseService();
 
   if (sub.plan === SubscriptionPlanEnum.PRO) {
-    if (!serverConfig.Stripe.proGiftPriceId) {
-      console.error('Prop price Id is not configured');
-      throw new Error('Pro gift price ID is not configured');
-    }
     const existingSubscription = await dbClient.subscription.findByUserId(id);
     if (
       !existingSubscription ||
@@ -38,15 +33,11 @@ const updateSubscription = async (sub: any, id: string) => {
     await billing.updateSubscription(
       existingStripeSubscription[0].id,
       existingStripeSubscription[0].items[0].id,
-      serverConfig.Stripe.proGiftPriceId
+      'GIFT'
     );
   }
 
   if (sub.plan === SubscriptionPlanEnum.FREE) {
-    if (!serverConfig.Stripe.freePriceId) {
-      console.error('Free price ID is not configured');
-      throw new Error('Free price ID is not configured');
-    }
     const existingSubscription = await dbClient.subscription.findByUserId(id);
 
     if (
@@ -65,7 +56,7 @@ const updateSubscription = async (sub: any, id: string) => {
     await billing.updateSubscription(
       existingStripeSubscription[0].id,
       existingStripeSubscription[0].items[0].id,
-      serverConfig.Stripe.freePriceId
+      SubscriptionPlanEnum.FREE
     );
   }
 

@@ -28,7 +28,7 @@ const makeEvent = (customer: unknown, priceId: unknown) => ({
 const PRO_ID = 'pro_price_id';
 const FREE_ID = 'free_price_id';
 
-jest.mock('../../../../settings', () => ({
+jest.mock('settings', () => ({
   serverConfig: {
     Stripe: {
       proPriceId: 'pro_price_id',

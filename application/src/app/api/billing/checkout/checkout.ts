@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { serverConfig } from '../../../../../settings';
 import { HTTP_STATUS } from 'lib/api/http';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createBillingService } from 'services/billing/billingFactory';
+import { SubscriptionPlanEnum } from 'types';
 
 /**
  * Initiates a checkout session for upgrading to Pro.
@@ -15,14 +15,6 @@ export const checkout = async (
   request: NextRequest,
   user: { id: string; role: string; email: string }
 ): Promise<NextResponse> => {
-  if (!serverConfig.Stripe.proPriceId) {
-    console.error('Stripe Pro Price ID is not configured');
-    return NextResponse.json(
-      { error: 'Missing Pro Price' },
-      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
-    );
-  }
-
   const db = await createDatabaseService();
 
   const subscription = await db.subscription.findByUserId(user.id);
@@ -36,9 +28,8 @@ export const checkout = async (
     const billingService = await createBillingService();
 
     const url = await billingService.manageSubscription(
-      serverConfig.Stripe.proPriceId,
-      subscription[0].customerId,
-      `${serverConfig.Stripe.baseURL}/dashboard/subscription`
+      SubscriptionPlanEnum.PRO,
+      subscription[0].customerId
     );
 
     if (!url) {
