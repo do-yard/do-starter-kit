@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import AdminDashboard from './AdminDashboard';
+import AdminDashboard from './AdminDashboardPage';
 import { USER_ROLES } from 'lib/auth/roles';
 
 // Mock next-auth/react to avoid ESM import issues in tests

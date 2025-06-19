@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import MyNotes from './MyNotes';
+import MyNotes from './MyNotesPage';
 
 // Mock the API client
 jest.mock('lib/api/notes', () => {
@@ -34,7 +34,7 @@ const mockUpdateNote = mockedModule.__mockUpdateNote;
 const mockDeleteNote = mockedModule.__mockDeleteNote;
 
 // Mock child components to simplify testing
-jest.mock('../NotesListView/NotesListView', () => {
+jest.mock('./NotesListView/NotesListView', () => {
   return {
     __esModule: true,
     default: jest.fn(({ onViewNote, onEditNote, onDeleteNote }) => (
@@ -69,14 +69,14 @@ jest.mock('../Toast/Toast', () => {
   };
 });
 
-jest.mock('../NotesGridView/NotesGridView', () => {
+jest.mock('./NotesGridView/NotesGridView', () => {
   return {
     __esModule: true,
     default: jest.fn(() => <div data-testid="notes-grid-view" />),
   };
 });
 
-jest.mock('../NotesHeader/NotesHeader', () => {
+jest.mock('./NotesHeader/NotesHeader', () => {
   return {
     __esModule: true,
     default: jest.fn(({ onCreateNote, onViewModeChange }) => (
@@ -95,7 +95,7 @@ jest.mock('../NotesHeader/NotesHeader', () => {
   };
 });
 
-jest.mock('../NotesForm/NoteForm', () => {
+jest.mock('./NotesForm/NoteForm', () => {
   return {
     __esModule: true,
     default: jest.fn(({ mode, onSave, onCancel }) => (

@@ -12,7 +12,7 @@ import {
   Link as MuiLink,
 } from '@mui/material';
 import Link from 'next/link';
-import FormButton from 'components/FormButton/FormButton';
+import FormButton from 'components/Public/FormButton/FormButton';
 import { useNavigating } from 'hooks/navigation';
 import { USER_ROLES } from 'lib/auth/roles';
 

@@ -7,7 +7,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import HomeIcon from '@mui/icons-material/Home';
 import ConfigurableServiceCard from './ConfigurableServiceCard';
-import { timeAgo } from './helper';
+import { timeAgo } from '../../helpers/time';
 
 interface ServiceStatus {
   name: string;
