@@ -103,7 +103,7 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toContain({
+    expect(json).toEqual({
       error:
         'Profile update error. Check your DigitalOcean Spaces and DB settings on the system status page. [Error: Upload failed]',
     });
@@ -143,7 +143,7 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toContain({
+    expect(json).toEqual({
       error:
         'Profile update error. Check your DigitalOcean Spaces and DB settings on the system status page. [Error: DB update failed]',
     });
@@ -156,7 +156,7 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toContain({
+    expect(json).toEqual({
       error:
         'Profile update error. Check your DigitalOcean Spaces and DB settings on the system status page. [Error: DB update failed]',
     });
