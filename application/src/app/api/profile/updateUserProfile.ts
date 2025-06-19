@@ -78,7 +78,7 @@ export const updateUserProfile = async (
     );
   } catch (error) {
     const errorText =
-      'Profile update error. Check your DigitalOcean Spaces settings on the system status page. ';
+      'Profile update error. Check your DigitalOcean Spaces and DB settings on the system status page. ';
 
     console.error(errorText, error instanceof Error ? `${error.name}: ${error.message}` : error);
 
