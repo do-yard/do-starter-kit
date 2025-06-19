@@ -76,6 +76,41 @@ Environment: dynamically set via input (`dev`, `staging` or `prod`)
 
 ---
 
+### Environment variables set up
+
+The following environment variables must be set for each environment you create. To set them up follow these steps:
+
+1. In your repo go to **settings**
+2. In the side bar click on **Environments**
+3. Click on **New environment**
+4. Give it a name (`dev`, `staging`, `prod`)
+5. Click on **Configure environment**
+6. Add the secrets and environment variables listed below
+
+> See the env-sample file for description of each one
+
+#### Secrets
+
+- AUTH_SECRET
+- RESEND_API_KEY
+- SPACES_KEY_SECRET
+- STRIPE_SECRET_KEY
+- STRIPE_WEBHOOK_SECRET
+
+#### Environment variables
+
+- RESEND_EMAIL_SENDER
+- SPACES_BUCKET_NAME
+- SPACES_KEY_ID
+- SPACES_REGION
+- STORAGE_PROVIDER
+- STRIPE_FREE_PRICE_ID
+- STRIPE_PORTAL_CONFIG_ID
+- STRIPE_PRO_GIFT_PRICE_ID
+- STRIPE_PRO_PRICE_ID
+
+---
+
 ## 📌 Notes
 
 - All workflows rely on `ubuntu-latest` runners and require Node.js 20.
