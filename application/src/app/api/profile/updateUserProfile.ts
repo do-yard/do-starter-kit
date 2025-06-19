@@ -77,13 +77,15 @@ export const updateUserProfile = async (
       { status: HTTP_STATUS.OK }
     );
   } catch (error) {
-    console.error(
-      'Profile update error:',
-      error instanceof Error ? `${error.name}: ${error.message}` : error
-    );
+    const errorText =
+      'Profile update error. Check your DigitalOcean Spaces settings on the system status page. ';
+
+    console.error(errorText, error instanceof Error ? `${error.name}: ${error.message}` : error);
 
     // Return the actual error message to the user
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+    let errorMessage =
+      error instanceof Error ? `${error.name}: ${error.message}` : 'Internal server error';
+    errorMessage = errorText + '[' + errorMessage + ']';
 
     return NextResponse.json(
       { error: errorMessage },
