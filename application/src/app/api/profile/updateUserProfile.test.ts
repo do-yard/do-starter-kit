@@ -103,7 +103,10 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toContain({ error: 'Profile update error' });
+    expect(json).toContain({
+      error:
+        'Profile update error. Check your DigitalOcean Spaces and DB settings on the system status page. [Error: Upload failed]',
+    });
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
 
@@ -140,7 +143,10 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toContain({ error: 'DB update failed' });
+    expect(json).toContain({
+      error:
+        'Profile update error. Check your DigitalOcean Spaces and DB settings on the system status page. [Error: DB update failed]',
+    });
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
   it('return error if db delete fails', async () => {
@@ -150,7 +156,10 @@ describe('upload picture should', () => {
     const req = createRequestWithFileAndName(file, null);
     const res = await updateUserProfile(req, { id: 'user-123', role: USER_ROLES.USER });
     const json = await res.json();
-    expect(json).toContain({ error: 'DB update failed' });
+    expect(json).toContain({
+      error:
+        'Profile update error. Check your DigitalOcean Spaces and DB settings on the system status page. [Error: DB update failed]',
+    });
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
   });
 
