@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
     }
 
     const message = serverConfig.disableEmailVerification
-      ? 'Account created successfully. You can now log in.'
+      ? 'Account created. You can now log in.'
       : 'Verification email sent.';
 
     return NextResponse.json({ ok: true, message });

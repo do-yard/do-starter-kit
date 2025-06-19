@@ -116,6 +116,6 @@ describe('SignUpForm', () => {
 
     fireEvent.submit(screen.getByTestId('signup-form'));
 
-    expect(await screen.findByText('Account created successfully.')).toBeInTheDocument();
+    expect(await screen.findByText('Account created.')).toBeInTheDocument();
   });
 });
