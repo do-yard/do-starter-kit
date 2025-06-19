@@ -34,13 +34,7 @@ export class StripeBillingService extends BillingService {
   }
 
   private initialize() {
-    const missingConfig = Object.entries(StripeBillingService.requiredConfig)
-      .filter(([key]) => !serverConfig.Stripe[key as keyof typeof serverConfig.Stripe])
-      .map(([, value]) => value.envVar);
-
-    if (!serverConfig.baseURL) {
-      missingConfig.push('BASE_URL');
-    }
+    const missingConfig = this.validateMissingSettings();
 
     if (missingConfig.length > 0) {
       this.isConfigured = false;
@@ -50,6 +44,18 @@ export class StripeBillingService extends BillingService {
     this.stripe = new Stripe(serverConfig.Stripe.stripeSecretKey!, {
       apiVersion: '2025-04-30.basil',
     });
+  }
+
+  private validateMissingSettings() {
+    const missingConfig = Object.entries(StripeBillingService.requiredConfig)
+      .filter(([key]) => !serverConfig.Stripe[key as keyof typeof serverConfig.Stripe])
+      .map(([, value]) => value.envVar);
+
+    if (!serverConfig.baseURL) {
+      missingConfig.push('BASE_URL');
+    }
+
+    return missingConfig;
   }
 
   private getPriceId(plan: SubscriptionPlan | 'GIFT'): string {
@@ -301,13 +307,7 @@ export class StripeBillingService extends BillingService {
    */
   async checkConfiguration(): Promise<ServiceConfigStatus> {
     // Check for missing configuration
-    const missingConfig = Object.entries(StripeBillingService.requiredConfig)
-      .filter(([key]) => !serverConfig.Stripe[key as keyof typeof serverConfig.Stripe])
-      .map(([, value]) => value.envVar);
-
-    if (!serverConfig.baseURL) {
-      missingConfig.push('BASE_URL');
-    }
+    const missingConfig = this.validateMissingSettings();
 
     if (missingConfig.length > 0) {
       return {
