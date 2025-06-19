@@ -1,6 +1,7 @@
 import { HTTP_STATUS } from 'lib/api/http';
 import { cancelSubscription } from './cancelSubscription';
 import { NextRequest } from 'next/server';
+import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 
 const mockListCustomer = jest.fn();
 const mockListSubscription = jest.fn();
@@ -60,20 +61,27 @@ describe('cancelSubscription API', () => {
   it('downgrades subscription to FREE and returns canceled', async () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
-    mockFindByUserId.mockResolvedValue([{ plan: 'PRO' }]);
+    mockFindByUserId.mockResolvedValue([{ plan: SubscriptionPlanEnum.PRO }]);
     mockStripeUpdateSubscription.mockResolvedValue(undefined);
     mockUpdateSubscription.mockResolvedValue({});
     const res = await cancelSubscription({} as NextRequest, user);
     expect(res.status).toBe(HTTP_STATUS.OK);
     expect(await res.json()).toEqual({ canceled: true });
-    expect(mockStripeUpdateSubscription).toHaveBeenCalledWith('sub1', 'item1', 'FREE');
-    expect(mockUpdateSubscription).toHaveBeenCalledWith('u1', { plan: 'FREE', status: 'PENDING' });
+    expect(mockStripeUpdateSubscription).toHaveBeenCalledWith(
+      'sub1',
+      'item1',
+      SubscriptionPlanEnum.FREE
+    );
+    expect(mockUpdateSubscription).toHaveBeenCalledWith('u1', {
+      plan: SubscriptionPlanEnum.FREE,
+      status: SubscriptionStatusEnum.PENDING,
+    });
   });
 
   it('returns 500 if db update fails', async () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
-    mockFindByUserId.mockResolvedValue([{ plan: 'FREE' }]);
+    mockFindByUserId.mockResolvedValue([{ plan: SubscriptionPlanEnum.FREE }]);
     mockCancelSubscription.mockResolvedValue(undefined);
     mockUpdateSubscription.mockRejectedValue(new Error('fail'));
     const res = await cancelSubscription({} as NextRequest, user);
@@ -91,7 +99,7 @@ describe('cancelSubscription API', () => {
   it('returns 500 if cancelSubscription fails', async () => {
     mockListCustomer.mockResolvedValue([{ id: 'cust1' }]);
     mockListSubscription.mockResolvedValue([{ id: 'sub1', items: [{ id: 'item1' }] }]);
-    mockFindByUserId.mockResolvedValue([{ plan: 'FREE' }]);
+    mockFindByUserId.mockResolvedValue([{ plan: SubscriptionPlanEnum.FREE }]);
     mockCancelSubscription.mockRejectedValue(new Error('fail'));
     const res = await cancelSubscription({} as NextRequest, user);
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
