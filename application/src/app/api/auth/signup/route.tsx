@@ -6,6 +6,42 @@ import { HTTP_STATUS } from 'lib/api/http';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createEmailService } from 'services/email/emailFactory';
 import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButtonEmail';
+import { serverConfig } from 'settings';
+import { DatabaseClient } from 'services/database/database';
+import { SubscriptionPlanEnum, SubscriptionStatusEnum, User } from 'types';
+import { createBillingService } from 'services/billing/billingFactory';
+
+const createSubscription = async (db: DatabaseClient, user: User) => {
+  const billingService = await createBillingService();
+
+  let customerId;
+
+  const subscription = await db.subscription.findByUserId(user.id);
+
+  if (subscription.length) {
+    customerId = subscription[0].customerId;
+  }
+
+  if (!customerId) {
+    const customer = await billingService.createCustomer(user.email, {
+      userId: user.email,
+    });
+    customerId = customer.id;
+    await db.subscription.create({
+      customerId: customer.id,
+      plan: null,
+      status: null,
+      userId: user.id,
+    });
+  }
+
+  await billingService.createSubscription(customerId, SubscriptionPlanEnum.FREE);
+
+  await db.subscription.update(user.id, {
+    status: SubscriptionStatusEnum.PENDING,
+    plan: SubscriptionPlanEnum.FREE,
+  });
+};
 
 /**
  * API endpoint for user registration. Creates a new user, sends a verification email with a secure token,
@@ -43,7 +79,7 @@ export async function POST(req: NextRequest) {
     }
 
     const hashedPassword = await hashPassword(password);
-    const verificationToken = uuidv4();
+    const verificationToken = serverConfig.disableEmailVerification ? null : uuidv4();
 
     const user = await dbClient.user.create({
       name,
@@ -52,26 +88,38 @@ export async function POST(req: NextRequest) {
       passwordHash: hashedPassword,
       role: isFirstUser ? USER_ROLES.ADMIN : USER_ROLES.USER,
       verificationToken,
-      emailVerified: false,
+      emailVerified: serverConfig.disableEmailVerification,
     });
 
-    const emailService = await createEmailService();
-    const verifyUrl = `${process.env.AUTH_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
-    await emailService.sendReactEmail(
-      user.email,
-      'Verify your email address',
-      <ActionButtonEmailTemplate
-        title="Verify your email address"
-        buttonUrl={verifyUrl}
-        buttonText="Verify Email"
-        greetingText="Hello! Thank you for signing up."
-        infoText="Please verify your email address by clicking the button below:"
-        fallbackText="If the button above does not work, copy and paste the following link into your browser:"
-        fallbackUrlLabel={verifyUrl}
-      />
-    );
+    // Skip email sending if email verification is disabled
+    if (!serverConfig.disableEmailVerification) {
+      const emailService = await createEmailService();
+      const verifyUrl = `${process.env.AUTH_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
+      await emailService.sendReactEmail(
+        user.email,
+        'Verify your email address',
+        <ActionButtonEmailTemplate
+          title="Verify your email address"
+          buttonUrl={verifyUrl}
+          buttonText="Verify Email"
+          greetingText="Hello! Thank you for signing up."
+          infoText="Please verify your email address by clicking the button below:"
+          fallbackText="If the button above does not work, copy and paste the following link into your browser:"
+          fallbackUrlLabel={verifyUrl}
+        />
+      );
+    }
 
-    return NextResponse.json({ ok: true, message: 'Verification email sent.' });
+    // As email verification is disabled, we need to create the subscription for the user here
+    if (serverConfig.disableEmailVerification) {
+      await createSubscription(dbClient, user);
+    }
+
+    const message = serverConfig.disableEmailVerification
+      ? 'Account created. You can now log in.'
+      : 'Verification email sent.';
+
+    return NextResponse.json({ ok: true, message });
   } catch (error) {
     return NextResponse.json(
       { error: (error as Error).message || 'Internal server error' },
