@@ -3,6 +3,7 @@ import { createEmailService } from 'services/email/emailFactory';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButtonEmail';
+import { HTTP_STATUS } from 'lib/api/http';
 
 /**
  * API route handler for requesting a password reset email.
@@ -51,6 +52,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Forgot password error:', error);
-    return NextResponse.json({ error: 'An unexpected error occurred.' }, { status: 500 });
+    return NextResponse.json(
+      { error: (error as Error).message || 'Internal server error' },
+      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+    );
   }
 }

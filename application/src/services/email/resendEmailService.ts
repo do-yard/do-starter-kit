@@ -60,12 +60,14 @@ export class ResendEmailService extends EmailService {
     }
 
     try {
-      await this.resend.emails.send({
+      const result = await this.resend.emails.send({
         from: this.fromEmail,
         to: [to],
         subject,
         html: body,
       });
+
+      if (result.error) throw new Error(result.error.message);
     } catch (error) {
       console.error('Error sending email:', error);
       throw new Error(
@@ -80,12 +82,14 @@ export class ResendEmailService extends EmailService {
     }
 
     try {
-      await this.resend.emails.send({
+      const result = await this.resend.emails.send({
         from: this.fromEmail,
         to: [to],
         subject,
         react: body,
       });
+
+      if (result.error) throw new Error(result.error.message);
     } catch (error) {
       console.error('Error sending email:', error);
       throw new Error(
