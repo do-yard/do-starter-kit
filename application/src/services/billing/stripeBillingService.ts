@@ -17,8 +17,8 @@ export class StripeBillingService extends BillingService {
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
     stripeSecretKey: { envVar: 'STRIPE_SECRET_KEY', description: 'Stripe secret key' },
-    freePriceId: { envVar: 'NEXT_PUBLIC_STRIPE_FREE_PRICE_ID', description: 'Free price id' },
-    proPriceId: { envVar: 'NEXT_PUBLIC_STRIPE_PRO_PRICE_ID', description: 'Pro price id' },
+    freePriceId: { envVar: 'STRIPE_FREE_PRICE_ID', description: 'Free price id' },
+    proPriceId: { envVar: 'STRIPE_PRO_PRICE_ID', description: 'Pro price id' },
     proGiftPriceId: { envVar: 'STRIPE_PRO_GIFT_PRICE_ID', description: 'Pro (Gift) id' },
     webhookSecret: {
       envVar: 'STRIPE_WEBHOOK_SECRET',

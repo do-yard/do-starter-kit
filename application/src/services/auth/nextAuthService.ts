@@ -12,8 +12,8 @@ export class NextAuthService extends AuthService {
 
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
-    nextAuthUrl: { envVar: 'NEXTAUTH_URL', description: 'Next auth redirection url' },
-    nextAuthSecret: { envVar: 'NEXTAUTH_SECRET', description: 'Next auth secret' },
+    nextAuthUrl: { envVar: 'BASE_URL', description: 'Redirection url' },
+    nextAuthSecret: { envVar: 'AUTH_SECRET', description: 'Next auth secret' },
   };
   private lastConnectionError: string = '';
 

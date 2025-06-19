@@ -50,8 +50,8 @@ export const serverConfig: ServerConfig = {
   Stripe: {
     baseURL: process.env.BASE_URL || 'http://localhost:3000',
     stripeSecretKey: process.env.STRIPE_SECRET_KEY,
-    freePriceId: process.env.NEXT_PUBLIC_STRIPE_FREE_PRICE_ID,
-    proPriceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID,
+    freePriceId: process.env.STRIPE_FREE_PRICE_ID,
+    proPriceId: process.env.STRIPE_PRO_PRICE_ID,
     proGiftPriceId: process.env.STRIPE_PRO_GIFT_PRICE_ID,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
     portalConfigId: process.env.STRIPE_PORTAL_CONFIG_ID,

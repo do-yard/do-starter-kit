@@ -78,9 +78,12 @@ const providers: Provider[] = [
   }),
 ];
 
+process.env.AUTH_URL = process.env.BASE_URL;
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   adapter: PrismaAdapter(prisma),
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
   providers,
   callbacks: {
     async jwt({ token, user, trigger, session }) {
