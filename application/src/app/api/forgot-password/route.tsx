@@ -4,6 +4,7 @@ import { createDatabaseService } from 'services/database/databaseFactory';
 import { v4 as uuidv4 } from 'uuid';
 import { ActionButtonEmailTemplate } from 'services/email/templates/ActionButtonEmail';
 import { HTTP_STATUS } from 'lib/api/http';
+import { serverConfig } from 'settings';
 
 /**
  * API route handler for requesting a password reset email.
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
     });
 
     const emailService = await createEmailService();
-    const resetUrl = `${process.env.AUTH_URL}/reset-password?token=${token}`;
+    const resetUrl = `${serverConfig.baseURL}/reset-password?token=${token}`;
     await emailService.sendReactEmail(
       email,
       'Reset your password',

@@ -51,15 +51,19 @@ export class SqlDatabaseService extends DatabaseClient {
         where.name = { contains: options.searchName, mode: 'insensitive' };
       }
       if (options?.filterPlan || options?.filterStatus) {
-        where.subscriptions = { some: {} };
+        where.subscription = { plan: {}, status: {} };
         if (options.filterPlan) {
-          (where.subscriptions as { some: Record<string, unknown> }).some.plan = options.filterPlan;
+          (where.subscription as { plan: Record<string, unknown> }).plan = {
+            equals: options.filterPlan,
+          };
         }
         if (options.filterStatus) {
-          (where.subscriptions as { some: Record<string, unknown> }).some.status =
-            options.filterStatus;
+          (where.subscription as { status: Record<string, unknown> }).status = {
+            equals: options.filterStatus,
+          };
         }
       }
+
       const [users, total] = await Promise.all([
         prisma.user.findMany({
           where,

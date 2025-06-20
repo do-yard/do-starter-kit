@@ -54,28 +54,6 @@ export class ResendEmailService extends EmailService {
     }
   }
 
-  async sendEmail(to: string, subject: string, body: string): Promise<void> {
-    if (!this.resend) {
-      throw new Error('Email client not initialized. Check configuration.');
-    }
-
-    try {
-      const result = await this.resend.emails.send({
-        from: this.fromEmail,
-        to: [to],
-        subject,
-        html: body,
-      });
-
-      if (result.error) throw new Error(result.error.message);
-    } catch (error) {
-      console.error('Error sending email:', error);
-      throw new Error(
-        `Failed to send email: ${error instanceof Error ? error.message : String(error)}`
-      );
-    }
-  }
-
   async sendReactEmail(to: string, subject: string, body: React.ReactNode): Promise<void> {
     if (!this.resend) {
       throw new Error('Email client not initialized. Check configuration.');
