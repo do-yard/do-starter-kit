@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
     // Skip email sending if email verification is disabled
     if (!serverConfig.disableEmailVerification) {
       const emailService = await createEmailService();
-      const verifyUrl = `${process.env.AUTH_URL || 'http://localhost:3000'}/verify-email?token=${verificationToken}`;
+      const verifyUrl = `${serverConfig.baseURL}/verify-email?token=${verificationToken}`;
       await emailService.sendReactEmail(
         user.email,
         'Verify your email address',

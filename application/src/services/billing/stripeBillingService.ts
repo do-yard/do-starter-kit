@@ -25,7 +25,6 @@ export class StripeBillingService extends BillingService {
       description: 'Secret to authenticate stripe webhooks',
     },
     portalConfigId: { envVar: 'STRIPE_PORTAL_CONFIG_ID', description: 'Checkout portal id' },
-    baseURL: { envVar: 'BASE_URL', description: 'Site base url' },
   };
   private lastConnectionError: string = '';
 
@@ -35,9 +34,7 @@ export class StripeBillingService extends BillingService {
   }
 
   private initialize() {
-    const missingConfig = Object.entries(StripeBillingService.requiredConfig)
-      .filter(([key]) => !serverConfig.Stripe[key as keyof typeof serverConfig.Stripe])
-      .map(([, value]) => value.envVar);
+    const missingConfig = this.validateMissingSettings();
 
     if (missingConfig.length > 0) {
       this.isConfigured = false;
@@ -47,6 +44,18 @@ export class StripeBillingService extends BillingService {
     this.stripe = new Stripe(serverConfig.Stripe.stripeSecretKey!, {
       apiVersion: '2025-04-30.basil',
     });
+  }
+
+  private validateMissingSettings() {
+    const missingConfig = Object.entries(StripeBillingService.requiredConfig)
+      .filter(([key]) => !serverConfig.Stripe[key as keyof typeof serverConfig.Stripe])
+      .map(([, value]) => value.envVar);
+
+    if (!serverConfig.baseURL) {
+      missingConfig.push('BASE_URL');
+    }
+
+    return missingConfig;
   }
 
   private getPriceId(plan: SubscriptionPlan | 'GIFT'): string {
@@ -217,7 +226,7 @@ export class StripeBillingService extends BillingService {
           ],
         },
       },
-      return_url: `${serverConfig.Stripe.baseURL}/dashboard/subscription`,
+      return_url: `${serverConfig.baseURL}/dashboard/subscription`,
     });
 
     return session.url;
@@ -298,9 +307,7 @@ export class StripeBillingService extends BillingService {
    */
   async checkConfiguration(): Promise<ServiceConfigStatus> {
     // Check for missing configuration
-    const missingConfig = Object.entries(StripeBillingService.requiredConfig)
-      .filter(([key]) => !serverConfig.Stripe[key as keyof typeof serverConfig.Stripe])
-      .map(([, value]) => value.envVar);
+    const missingConfig = this.validateMissingSettings();
 
     if (missingConfig.length > 0) {
       return {
