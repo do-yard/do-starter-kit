@@ -41,7 +41,7 @@ The script will:
 - Validate the key and automatically create products, prices, and features.
 - Update the Stripe related environment variables values.
 
-#### Variable Updated in `.env`.
+#### Variables updated in `.env`.
 
 ```env
 BILLING_PROVIDER=Stripe
