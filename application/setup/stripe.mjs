@@ -209,7 +209,7 @@ async function updateEnvFile(envVars) {
   while (lines.length && lines[lines.length - 1].trim() === '') lines.pop();
 
   await fs.writeFile(envPath, lines.join('\n') + '\n', 'utf8');
-  console.log('✅ .env file updated successfully!');
+  console.log('📄 .env file updated successfully!');
 }
 
 async function rollback(stripe) {
@@ -292,8 +292,6 @@ async function main() {
       STRIPE_PORTAL_CONFIG_ID: portalConfigId,
     };
     await updateEnvFile(allVars);
-
-    console.log('📄 .env file updated successfully.\n');
   } catch (err) {
     console.error('❌ Setup failed:');
     console.error(err.message || err);
