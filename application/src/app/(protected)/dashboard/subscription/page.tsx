@@ -1,5 +1,3 @@
-'use client';
-
 import Subscription from 'components/Subscription/SubscriptionPage';
 
 /**
