@@ -117,7 +117,7 @@ const SystemStatusPage: React.FC = () => {
             </Typography>
           )}
         </Stack>
-        {!loading && !error && (
+        {!loading && (
           <Stack direction="row" justifyContent="center" spacing={2}>
             <Button
               variant="contained"
