@@ -21,6 +21,12 @@ This project includes an automated script to create all required products, price
 npm install
 ```
 
+- Ensure you have already created the .env file:
+
+```bash
+cp env-example .env
+```
+
 ### Running the Setup
 
 From your project root, run:
@@ -33,9 +39,9 @@ The script will:
 
 - Prompt you for your **Stripe Secret Key** (it must start with `sk_test_`).
 - Validate the key and automatically create products, prices, and features.
-- Generate a `.env-stripe` file with all necessary environment variables.
+- Update the Stripe related environment variables values.
 
-#### Example `.env-stripe` Output
+#### Variables updated in `.env`.
 
 ```env
 BILLING_PROVIDER=Stripe
@@ -50,19 +56,7 @@ STRIPE_PRO_GIFT_PRICE_ID=...
 
 ---
 
-## 3. Apply the Generated Environment Variables
-
-After the script completes, manually **copy the contents of `.env-stripe` into your main `.env` file** at the project root.
-
-```bash
-cat .env-stripe >> .env
-```
-
-Or open `.env-stripe`, copy all lines, and paste them at the end of your `.env` file.
-
----
-
-## 4. (Next Steps) Configure Stripe Webhooks
+## 3. (Next Steps) Configure Stripe Webhooks
 
 To enable real-time billing updates, you need to [configure Stripe webhooks](./stripe-webhooks.md) and set `STRIPE_WEBHOOK_SECRET` in your `.env` file.
 
