@@ -41,7 +41,7 @@ jest.mock('next/navigation', () => ({
   })),
 }));
 
-jest.mock('components/status/ServiceWarningIndicator', () => ({
+jest.mock('../../Common/ServiceWarningIndicator/ServiceWarningIndicator', () => ({
   __esModule: true,
   default: () => <div data-testid="ServiceWarningIndicator">ServiceWarningIndicator</div>,
 }));

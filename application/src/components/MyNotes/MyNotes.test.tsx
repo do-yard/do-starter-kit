@@ -53,7 +53,7 @@ jest.mock('./NotesListView/NotesListView', () => {
   };
 });
 
-jest.mock('../Toast/Toast', () => {
+jest.mock('../Common/Toast/Toast', () => {
   return {
     __esModule: true,
     default: jest.fn(({ open, message, severity, onClose }) =>

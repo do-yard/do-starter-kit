@@ -17,7 +17,7 @@ jest.mock('next-auth/react', () => ({
   signIn: jest.fn(),
 }));
 
-jest.mock('../../lib/api/stripe', () => ({
+jest.mock('../../../lib/api/stripe', () => ({
   StripeClient: jest.fn().mockImplementation(() => ({
     createSubscription: jest.fn(),
   })),
