@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AdminDashboard from './AdminDashboard';
 import { USER_ROLES } from 'lib/auth/roles';
+import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 
 // Mock next-auth/react to avoid ESM import issues in tests
 jest.mock('next-auth/react', () => ({
@@ -23,7 +24,9 @@ jest.mock('../../lib/api/users', () => {
             email: 'alice@example.com',
             role: USER_ROLES.USER,
             createdAt: new Date().toISOString(),
-            subscriptions: [{ plan: 'FREE', status: 'ACTIVE' }],
+            subscriptions: [
+              { plan: SubscriptionPlanEnum.FREE, status: SubscriptionStatusEnum.ACTIVE },
+            ],
           },
           {
             id: '2',
@@ -31,7 +34,9 @@ jest.mock('../../lib/api/users', () => {
             email: 'bob@example.com',
             role: USER_ROLES.ADMIN,
             createdAt: new Date().toISOString(),
-            subscriptions: [{ plan: 'PRO', status: 'CANCELED' }],
+            subscriptions: [
+              { plan: SubscriptionPlanEnum.PRO, status: SubscriptionStatusEnum.CANCELED },
+            ],
           },
         ];
         // Simulate pagination

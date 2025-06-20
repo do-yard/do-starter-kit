@@ -2,7 +2,11 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import UserTable from './UserTable';
 import { USER_ROLES } from '../../../lib/auth/roles';
-import { UserWithSubscriptions } from '../../../types';
+import {
+  SubscriptionPlanEnum,
+  SubscriptionStatusEnum,
+  UserWithSubscriptions,
+} from '../../../types';
 
 describe('<UserTable />', () => {
   const users: UserWithSubscriptions[] = [
@@ -13,8 +17,8 @@ describe('<UserTable />', () => {
       role: USER_ROLES.USER,
       createdAt: new Date('2023-01-01'),
       subscription: {
-        plan: 'FREE',
-        status: 'ACTIVE',
+        plan: SubscriptionPlanEnum.FREE,
+        status: SubscriptionStatusEnum.ACTIVE,
         id: 'sub1',
         userId: '1',
         customerId: null,
@@ -28,8 +32,8 @@ describe('<UserTable />', () => {
       role: USER_ROLES.ADMIN,
       createdAt: new Date('2023-01-02'),
       subscription: {
-        plan: 'PRO',
-        status: 'CANCELED',
+        plan: SubscriptionPlanEnum.PRO,
+        status: SubscriptionStatusEnum.CANCELED,
         id: 'sub2',
         userId: '2',
         customerId: null,
