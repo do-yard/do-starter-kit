@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { StripeClient } from 'lib/api/stripe';
 import { SubscriptionPlan, SubscriptionPlanEnum } from 'types';
@@ -14,7 +15,7 @@ import CircularProgress from '@mui/material/CircularProgress';
  *
  * @returns Subscription component that displays the user's subscription status and allows them to manage their subscription.
  */
-const Subscription = () => {
+const Subscription: React.FC = () => {
   const [subscription, setSubscription] = useState<{
     id: string | null;
     status: string | null;

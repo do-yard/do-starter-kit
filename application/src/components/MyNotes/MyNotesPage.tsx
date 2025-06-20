@@ -3,13 +3,13 @@
 import React, { useState, useEffect, useCallback, ChangeEvent } from 'react';
 import { Dialog, DialogContent } from '@mui/material';
 import { Note, NotesApiClient } from 'lib/api/notes';
-import NoteForm from '../NotesForm/NoteForm';
-import NotesGridView from '../NotesGridView/NotesGridView';
-import NotesListView from '../NotesListView/NotesListView';
-import NotesHeader from '../NotesHeader/NotesHeader';
-import PageContainer from '../PageContainer/PageContainer';
-import ConfirmationDialog from '../ConfirmationDialog/ConfirmationDialog';
-import Toast from '../Toast/Toast';
+import NoteForm from './NotesForm/NoteForm';
+import NotesGridView from './NotesGridView/NotesGridView';
+import NotesListView from './NotesListView/NotesListView';
+import NotesHeader from './NotesHeader/NotesHeader';
+import PageContainer from '../Common/PageContainer/PageContainer';
+import ConfirmationDialog from './ConfirmationDialog/ConfirmationDialog';
+import Toast from '../Common/Toast/Toast';
 import Pagination from '../Common/Pagination/Pagination';
 
 // Create an instance of the ApiClient

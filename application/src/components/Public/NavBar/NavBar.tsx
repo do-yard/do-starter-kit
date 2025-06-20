@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useSession, signOut } from 'next-auth/react';
-import ServiceWarningIndicator from 'components/status/ServiceWarningIndicator';
+import ServiceWarningIndicator from 'components/Common/ServiceWarningIndicator/ServiceWarningIndicator';
 import { usePathname } from 'next/navigation';
 
 /**

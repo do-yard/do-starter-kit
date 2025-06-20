@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Roboto, Plus_Jakarta_Sans, Inter } from 'next/font/google';
 import { Providers } from 'context/Providers';
-import WithLoadingSpinner from 'components/LoadingSpinner/LoadingSpinner';
+import WithLoadingSpinner from 'components/Common/LoadingSpinner/LoadingSpinner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

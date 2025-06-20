@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { Box } from '@mui/material';
-import UpdatePasswordForm from '../UpdatePasswordForm/UpdatePasswordForm';
-import ProfileUpdateForm from '../ProfileUpdateForm/ProfileUpdateForm';
-import PageContainer from '../PageContainer/PageContainer';
+import UpdatePasswordForm from './UpdatePasswordForm/UpdatePasswordForm';
+import ProfileUpdateForm from './ProfileUpdateForm/ProfileUpdateForm';
+import PageContainer from '../Common/PageContainer/PageContainer';
 
 /**
  * User account configuration page.

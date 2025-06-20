@@ -1,8 +1,8 @@
 'use client';
 
 import { Box } from '@mui/material';
-import NavBar from 'components/NavBar/NavBar';
-import Footer from 'components/Footer/Footer';
+import NavBar from 'components/Public/NavBar/NavBar';
+import Footer from 'components/Public/Footer/Footer';
 import PublicThemeProvider from 'components/Theme/PublicThemeProvider';
 import { useNavigating } from 'hooks/navigation';
 import { useEffect } from 'react';

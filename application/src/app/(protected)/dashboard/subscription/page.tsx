@@ -1,4 +1,4 @@
-import Subscription from 'components/subscription/SubscriptionPage';
+import Subscription from 'components/Subscription/SubscriptionPage';
 
 /**
  * Main Subscription page protected by authentication.\

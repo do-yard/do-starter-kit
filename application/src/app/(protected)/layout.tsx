@@ -1,7 +1,7 @@
 'use client';
 
 import { Box } from '@mui/material';
-import Sidebar from 'components/Sidebar/Sidebar';
+import Sidebar from 'components/Common/Sidebar/Sidebar';
 import MaterialThemeProvider from 'components/Theme/Theme';
 import { ThemePicker } from 'components/Theme/ThemePicker';
 import { useNavigating } from 'hooks/navigation';

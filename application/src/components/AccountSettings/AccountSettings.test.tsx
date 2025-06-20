@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import AccountSettings from './AccountSettings';
+import AccountSettings from './AccountSettingsPage';
 import { useSession } from 'next-auth/react';
 
 // Mocks
@@ -7,13 +7,13 @@ jest.mock('next-auth/react', () => ({
   useSession: jest.fn(),
 }));
 
-jest.mock('../ProfileUpdateForm/ProfileUpdateForm', () => {
+jest.mock('./ProfileUpdateForm/ProfileUpdateForm', () => {
   return function MockProfileUpdateForm() {
     return <div data-testid="profile-update-form">Profile Update Form</div>;
   };
 });
 
-jest.mock('../UpdatePasswordForm/UpdatePasswordForm', () => {
+jest.mock('./UpdatePasswordForm/UpdatePasswordForm', () => {
   return function MockUpdatePasswordForm() {
     return <div data-testid="update-password-form">Update Password Form</div>;
   };

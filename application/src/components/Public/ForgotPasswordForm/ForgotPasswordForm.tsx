@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, TextField, Typography, Box, Button } from '@mui/material';
-import FormButton from 'components/FormButton/FormButton';
+import FormButton from 'components/Public/FormButton/FormButton';
 import { useNavigating } from 'hooks/navigation';
 
 /**

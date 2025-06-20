@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import MagicLinkVerifier from 'components/MagicLinkVerifier/MagicLinkVerifier';
+import MagicLinkVerifier from 'components/Public/MagicLinkVerifier/MagicLinkVerifier';
 
 /**
  * Public magic link verify page.

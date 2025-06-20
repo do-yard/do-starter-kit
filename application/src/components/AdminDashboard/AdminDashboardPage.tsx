@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, CardContent, CardHeader, CircularProgress } from '@mui/material';
-import PageContainer from '../PageContainer/PageContainer';
+import PageContainer from '../Common/PageContainer/PageContainer';
 import { UsersClient } from '../../lib/api/users';
 import { UserWithSubscriptions } from '../../types';
-import Toast from 'components/Toast/Toast';
+import Toast from 'components/Common/Toast/Toast';
 import { USER_ROLES } from '../../lib/auth/roles';
 import { useSession } from 'next-auth/react';
 import UserTable from './UserTable/UserTable';
