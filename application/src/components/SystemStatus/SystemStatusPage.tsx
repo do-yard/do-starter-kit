@@ -117,6 +117,25 @@ const SystemStatusPage: React.FC = () => {
             </Typography>
           )}
         </Stack>
+
+        {/* Refresh Button at Top */}
+        {!loading && !error && (
+          <Stack direction="row" justifyContent="center" spacing={2}>
+            <Button
+              variant="contained"
+              startIcon={<RefreshIcon />}
+              onClick={() => fetchStatus(true)}
+              disabled={loading}
+            >
+              Refresh Status
+            </Button>
+            {!hasRequiredIssues && (
+              <Button variant="outlined" startIcon={<HomeIcon />} href="/" disabled={loading}>
+                Return Home
+              </Button>
+            )}
+          </Stack>
+        )}
         {loading ? (
           <Stack alignItems="center">
             <CircularProgress />
@@ -138,22 +157,6 @@ const SystemStatusPage: React.FC = () => {
               {services.map((service, index) => (
                 <ConfigurableServiceCard key={`${service.name}-${index}`} service={service} />
               ))}
-            </Stack>
-
-            <Stack direction="row" justifyContent="center" spacing={2}>
-              <Button
-                variant="contained"
-                startIcon={<RefreshIcon />}
-                onClick={() => fetchStatus(true)}
-                disabled={loading}
-              >
-                Refresh Status
-              </Button>
-              {!hasRequiredIssues && (
-                <Button variant="outlined" startIcon={<HomeIcon />} href="/" disabled={loading}>
-                  Return Home
-                </Button>
-              )}
             </Stack>
           </Stack>
         )}
