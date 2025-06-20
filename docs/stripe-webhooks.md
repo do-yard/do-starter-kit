@@ -26,9 +26,17 @@ To configure the webhooks in a deployed app, follow this instructions:
 
 ## Running locally
 
-If you plan to run the app locally you will need a tunneling tool like Ngrok to expose your localhost API to the internet. Here is a example using ngrok:
+There are two options to test the webhooks integration locally: use a tunneling tool like [ngrok](#ngrok) or [forward events to a local endpoint](#forward-events-to-a-local-endpoint).
+
+### Ngrok
+
+To configure ngrok follow these steps:
 
 1. Install [**ngrok**](https://ngrok.com/)
 2. In a terminal run `ngrok http 3000`
-   > 3000 is the port the nextjs app is running
+   > 3000 is the port the Next.js app is running
 3. Now you can follow the steps from the [Deployed App](#deployed-apps) version, from step 2 onwards. Keep in mind that in step 7 you will need to use the ngrok URL with suffix `/api/webhook`
+
+### Forward events to a local endpoint
+
+Follow the steps in the [Test your handler](https://docs.stripe.com/webhooks#test-webhook) section in the Stripe documentation.

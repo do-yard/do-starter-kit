@@ -86,14 +86,18 @@ describe('updateUser', () => {
     const res = await editUser(req, mockAuthData, Promise.resolve({ id: '1' }));
     expect(mockDbClient.subscription.findByUserId).toHaveBeenCalledWith('1');
     expect(mockBilling.listSubscription).toHaveBeenCalledWith('cus_1');
-    expect(mockBilling.updateSubscription).toHaveBeenCalledWith('sub_1', 'item_1', 'FREE');
+    expect(mockBilling.updateSubscription).toHaveBeenCalledWith(
+      'sub_1',
+      'item_1',
+      SubscriptionPlanEnum.FREE
+    );
     expect(res.status).toBe(HTTP_STATUS.OK);
   });
 
   it('returns 500 if no existing subscription for PRO/FREE update', async () => {
     mockDbClient.user.update.mockResolvedValue({ id: 1 });
     mockDbClient.subscription.findByUserId.mockResolvedValue([]);
-    const req = makeRequest({ subscription: { plan: 'PRO' } });
+    const req = makeRequest({ subscription: { plan: SubscriptionPlanEnum.PRO } });
     const res = await editUser(req, mockAuthData, Promise.resolve({ id: '1' }));
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(await res.json()).toEqual({ error: 'No existing subscription found for user' });

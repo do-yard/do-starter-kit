@@ -1,4 +1,4 @@
-import { SubscriptionPlanEnum } from 'types';
+import { SubscriptionPlanEnum, SubscriptionStatusEnum } from 'types';
 import { getSubscription } from './getSubscription';
 import { NextRequest } from 'next/server';
 import { HTTP_STATUS } from 'lib/api/http';
@@ -25,7 +25,11 @@ describe('getSubscription API', () => {
   });
 
   it('returns first subscription if found', async () => {
-    const sub = { id: 'sub1', status: 'active', plan: SubscriptionPlanEnum.PRO };
+    const sub = {
+      id: 'sub1',
+      status: SubscriptionStatusEnum.ACTIVE,
+      plan: SubscriptionPlanEnum.PRO,
+    };
     mockFindByUserId.mockResolvedValue(sub);
     const res = await getSubscription({} as NextRequest, user);
     expect(res.status).toBe(HTTP_STATUS.OK);

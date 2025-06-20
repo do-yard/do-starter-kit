@@ -14,7 +14,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { Edit as EditIcon } from '@mui/icons-material';
-import { UserWithSubscriptions } from '../../../types';
+import { SubscriptionStatusEnum, UserWithSubscriptions } from '../../../types';
 import { USER_ROLES } from '../../../lib/auth/roles';
 
 interface UserTableProps {
@@ -27,11 +27,11 @@ interface UserTableProps {
 
 const statusColor = (status: string) => {
   switch (status) {
-    case 'ACTIVE':
+    case SubscriptionStatusEnum.ACTIVE:
       return 'success';
-    case 'PENDING':
+    case SubscriptionStatusEnum.PENDING:
       return 'info';
-    case 'CANCELED':
+    case SubscriptionStatusEnum.CANCELED:
       return 'default';
     default:
       return 'default';
