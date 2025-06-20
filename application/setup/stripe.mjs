@@ -293,7 +293,7 @@ async function main() {
     };
     await updateEnvFile(allVars);
 
-    console.log('📄 .env-stripe file created successfully.\n');
+    console.log('📄 .env file updated successfully.\n');
   } catch (err) {
     console.error('❌ Setup failed:');
     console.error(err.message || err);
