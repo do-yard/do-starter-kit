@@ -117,8 +117,6 @@ const SystemStatusPage: React.FC = () => {
             </Typography>
           )}
         </Stack>
-
-        {/* Refresh Button at Top */}
         {!loading && !error && (
           <Stack direction="row" justifyContent="center" spacing={2}>
             <Button
