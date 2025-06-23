@@ -15,11 +15,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
-import {
-  UserWithSubscriptions,
-  SubscriptionStatusEnum,
-  SubscriptionPlanEnum,
-} from '../../../types';
+import { UserWithSubscriptions, SubscriptionPlanEnum } from '../../../types';
 
 interface EditUserDialogProps {
   open: boolean;
@@ -94,8 +90,8 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
               ))}
             </Select>
             {!editForm.subscription ? (
-              <Typography sx={{ minWidth: 80, color: 'red' }}>
-                User created without subscription
+              <Typography sx={{ minWidth: 80, color: 'red' }} variant="body2">
+                User created without subscription because billing was not configured
               </Typography>
             ) : null}
           </Stack>
