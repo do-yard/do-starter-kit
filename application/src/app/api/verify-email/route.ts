@@ -8,6 +8,15 @@ import { createBillingService } from 'services/billing/billingFactory';
 const createSubscription = async (db: DatabaseClient, user: User) => {
   const billingService = await createBillingService();
 
+  const configurationCheck = await billingService.checkConfiguration();
+
+  if (!configurationCheck.configured || !configurationCheck.connected) {
+    console.error(
+      'Billing service is not properly configured. Please check the system-status page'
+    );
+    return;
+  }
+
   let customerId;
 
   const subscription = await db.subscription.findByUserId(user.id);
@@ -75,5 +84,6 @@ export async function GET(request: NextRequest) {
       { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
     );
   }
+
   return NextResponse.json({ success: true });
 }
