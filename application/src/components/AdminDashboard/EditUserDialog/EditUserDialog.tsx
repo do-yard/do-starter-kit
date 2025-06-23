@@ -77,36 +77,28 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
         </Stack>
         <Stack direction="row" alignItems="center" spacing={2}>
           <Typography sx={{ minWidth: 80 }}>Plan</Typography>
-          <Select
-            margin="dense"
-            name="plan"
-            value={editForm.subscription?.plan ?? ''}
-            onChange={handleEditSubscriptionChange}
-            fullWidth
-            inputProps={{ 'data-testid': 'plan-select' }}
-          >
-            {Object.values(SubscriptionPlanEnum).map((plan) => (
-              <MenuItem key={plan} value={plan}>
-                {plan}
-              </MenuItem>
-            ))}
-          </Select>
-        </Stack>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Typography sx={{ minWidth: 80 }}>Status</Typography>
-          <Select
-            margin="dense"
-            name="status"
-            value={editForm.subscription?.status ?? ''}
-            onChange={handleEditSubscriptionChange}
-            fullWidth
-          >
-            {Object.values(SubscriptionStatusEnum).map((status) => (
-              <MenuItem key={status} value={status}>
-                {status}
-              </MenuItem>
-            ))}
-          </Select>
+          <Stack direction="column">
+            <Select
+              margin="dense"
+              name="plan"
+              value={editForm.subscription?.plan ?? ''}
+              onChange={handleEditSubscriptionChange}
+              fullWidth
+              inputProps={{ 'data-testid': 'plan-select' }}
+              disabled={!editForm.subscription}
+            >
+              {Object.values(SubscriptionPlanEnum).map((plan) => (
+                <MenuItem key={plan} value={plan}>
+                  {plan}
+                </MenuItem>
+              ))}
+            </Select>
+            {!editForm.subscription ? (
+              <Typography sx={{ minWidth: 80, color: 'red' }}>
+                User created without subscription
+              </Typography>
+            ) : null}
+          </Stack>
         </Stack>
       </Stack>
     </DialogContent>
