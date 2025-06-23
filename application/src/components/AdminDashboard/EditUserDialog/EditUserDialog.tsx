@@ -90,12 +90,16 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
               ))}
             </Select>
           </Stack>
-          {!editForm.subscription ? (
-            <Typography sx={{ minWidth: 80, marginTop: 2 }} variant="body2" color="error">
-              Plan is disabled due to user created without subscription. Probably billing was not
-              configured
-            </Typography>
-          ) : null}
+          {
+            // we check for email here as a proof that editForm state is not empty
+            // so when closed and the state is emptied, the message doesn't appear
+            !editForm.subscription && editForm.email ? (
+              <Typography sx={{ minWidth: 80, marginTop: 2 }} variant="body2" color="error">
+                Plan is disabled due to user created without subscription. Probably billing was not
+                configured
+              </Typography>
+            ) : null
+          }
         </Stack>
       </Stack>
     </DialogContent>
