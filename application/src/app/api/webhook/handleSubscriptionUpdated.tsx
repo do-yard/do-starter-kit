@@ -53,30 +53,31 @@ export const handleSubscriptionUpdated = async (json: any) => {
 
     const currentPlan = plans.find((p) => p.priceId === priceId);
 
-    const emailClient = await createEmailService();
-
     if (!currentPlan) {
       console.warn(`⚠️ Plan not found for price ID: ${priceId}. Email not sent.`);
       return;
     }
 
-    // Use the new React email component for Resend
-    await emailClient.sendReactEmail(
-      user.email,
-      'Your subscription was updated',
-      <SubscriptionUpdatedEmail
-        plan={{
-          name: currentPlan.name,
-          description: currentPlan.description,
-          amount: currentPlan.amount,
-          interval: currentPlan.interval,
-          features: currentPlan.features,
-          priceId: currentPlan.priceId,
-        }}
-      />
-    );
+    if (!serverConfig.disableEmailVerification) {
+      const emailClient = await createEmailService();
+      // Use the new React email component for Resend
+      await emailClient.sendReactEmail(
+        user.email,
+        'Your subscription was updated',
+        <SubscriptionUpdatedEmail
+          plan={{
+            name: currentPlan.name,
+            description: currentPlan.description,
+            amount: currentPlan.amount,
+            interval: currentPlan.interval,
+            features: currentPlan.features,
+            priceId: currentPlan.priceId,
+          }}
+        />
+      );
+    }
 
-    console.log(`✅ Subscription updated and email sent to ${user.email}`);
+    console.log('✅ Subscription updated');
   } catch (error) {
     console.error('Error sending subscription update email.', error);
   }

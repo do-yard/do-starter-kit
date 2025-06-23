@@ -21,6 +21,13 @@ import { serverConfig } from 'settings';
  */
 export async function POST(request: NextRequest) {
   try {
+    if (serverConfig.disableEmailVerification) {
+      return NextResponse.json(
+        { error: 'Email feature is disabled' },
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+      );
+    }
+
     const { email } = await request.json();
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: HTTP_STATUS.BAD_REQUEST });
