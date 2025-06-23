@@ -12,10 +12,21 @@ const mockDb = {
 };
 const mockEmailService = { sendReactEmail: jest.fn() };
 
+let mockDisableEmailVerification = false;
+
+jest.mock('settings', () => ({
+  serverConfig: {
+    get disableEmailVerification() {
+      return mockDisableEmailVerification;
+    },
+  },
+}));
+
 beforeEach(() => {
   jest.resetAllMocks();
   (createDatabaseService as jest.Mock).mockResolvedValue(mockDb);
   (createEmailService as jest.Mock).mockResolvedValue(mockEmailService);
+  mockDisableEmailVerification = false;
 });
 
 describe('POST /api/forgot-password', () => {
@@ -67,5 +78,14 @@ describe('POST /api/forgot-password', () => {
     const data = await res.json();
     expect(data.error).toBe('DB error');
     consoleSpy.mockRestore();
+  });
+
+  it('returns 500 if email is missing', async () => {
+    mockDisableEmailVerification = true;
+    const req = { json: async () => ({}) } as unknown as NextRequest;
+    const res = await POST(req);
+    expect(res.status).toBe(500);
+    const data = await res.json();
+    expect(data.error).toBe('Email feature is disabled');
   });
 });

@@ -20,9 +20,20 @@ const mockEmailClient = { sendReactEmail: jest.fn() };
 (createDatabaseService as jest.Mock).mockReturnValue(mockDb);
 (createEmailService as jest.Mock).mockReturnValue(mockEmailClient);
 
+let mockDisableEmailVerification = false;
+
+jest.mock('settings', () => ({
+  serverConfig: {
+    get disableEmailVerification() {
+      return mockDisableEmailVerification;
+    },
+  },
+}));
+
 describe('POST /api/auth/magic-link', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockDisableEmailVerification = false;
   });
 
   function makeRequest(email?: string) {
@@ -73,5 +84,14 @@ describe('POST /api/auth/magic-link', () => {
     expect(res.status).toBe(500);
     const json = await res.json();
     expect(json.error).toMatch(/db error/i);
+  });
+
+  it('returns 500 if email is missing', async () => {
+    mockDisableEmailVerification = true;
+    const req = { json: async () => ({}) } as unknown as NextRequest;
+    const res = await POST(req);
+    expect(res.status).toBe(500);
+    const data = await res.json();
+    expect(data.error).toBe('Email feature is disabled');
   });
 });

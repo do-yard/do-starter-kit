@@ -6,6 +6,11 @@ jest.mock('services/database/databaseFactory', () => ({
   createDatabaseService: jest.fn(),
 }));
 
+const mockSendReactEmail = jest.fn();
+jest.mock('services/email/emailFactory', () => ({
+  createEmailService: () => ({ sendReactEmail: mockSendReactEmail }),
+}));
+
 const mockUpdateByCustomerId = jest.fn();
 
 beforeEach(() => {
@@ -28,16 +33,25 @@ const makeEvent = (customer: unknown, priceId: unknown) => ({
 const PRO_ID = 'pro_price_id';
 const FREE_ID = 'free_price_id';
 
+let disableEmailVerification = false;
+
 jest.mock('settings', () => ({
   serverConfig: {
     Stripe: {
       proPriceId: 'pro_price_id',
       freePriceId: 'free_price_id',
     },
+    get disableEmailVerification() {
+      return disableEmailVerification;
+    },
   },
 }));
 
 describe('handleSubscriptionUpdated', () => {
+  beforeEach(() => {
+    disableEmailVerification = false;
+  });
+
   it('sets plan to PRO if price matches proPriceId', async () => {
     await handleSubscriptionUpdated(makeEvent('cus_123', PRO_ID));
     expect(mockUpdateByCustomerId).toHaveBeenCalledWith('cus_123', {
@@ -75,5 +89,11 @@ describe('handleSubscriptionUpdated', () => {
     expect(mockUpdateByCustomerId).not.toHaveBeenCalled();
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('unknown price ID: unknown_id'));
     warn.mockRestore();
+  });
+
+  it('should not send email when email feature flag is disabled', async () => {
+    disableEmailVerification = true;
+    await handleSubscriptionUpdated(makeEvent('cus_123', PRO_ID));
+    expect(mockSendReactEmail).not.toHaveBeenCalled();
   });
 });
