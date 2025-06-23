@@ -15,11 +15,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
-import {
-  UserWithSubscriptions,
-  SubscriptionStatusEnum,
-  SubscriptionPlanEnum,
-} from '../../../types';
+import { UserWithSubscriptions, SubscriptionPlanEnum } from '../../../types';
 
 interface EditUserDialogProps {
   open: boolean;
@@ -75,38 +71,31 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
             disabled
           />
         </Stack>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Typography sx={{ minWidth: 80 }}>Plan</Typography>
-          <Select
-            margin="dense"
-            name="plan"
-            value={editForm.subscription?.plan ?? ''}
-            onChange={handleEditSubscriptionChange}
-            fullWidth
-            inputProps={{ 'data-testid': 'plan-select' }}
-          >
-            {Object.values(SubscriptionPlanEnum).map((plan) => (
-              <MenuItem key={plan} value={plan}>
-                {plan}
-              </MenuItem>
-            ))}
-          </Select>
-        </Stack>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Typography sx={{ minWidth: 80 }}>Status</Typography>
-          <Select
-            margin="dense"
-            name="status"
-            value={editForm.subscription?.status ?? ''}
-            onChange={handleEditSubscriptionChange}
-            fullWidth
-          >
-            {Object.values(SubscriptionStatusEnum).map((status) => (
-              <MenuItem key={status} value={status}>
-                {status}
-              </MenuItem>
-            ))}
-          </Select>
+        <Stack direction="column">
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Typography sx={{ minWidth: 80 }}>Plan</Typography>
+            <Select
+              margin="dense"
+              name="plan"
+              value={editForm.subscription?.plan ?? ''}
+              onChange={handleEditSubscriptionChange}
+              fullWidth
+              inputProps={{ 'data-testid': 'plan-select' }}
+              disabled={!editForm.subscription}
+            >
+              {Object.values(SubscriptionPlanEnum).map((plan) => (
+                <MenuItem key={plan} value={plan}>
+                  {plan}
+                </MenuItem>
+              ))}
+            </Select>
+          </Stack>
+          {!editForm.subscription ? (
+            <Typography sx={{ minWidth: 80, marginTop: 2 }} variant="body2" color="error">
+              Plan is disabled due to user created without subscription. Probably billing was not
+              configured
+            </Typography>
+          ) : null}
         </Stack>
       </Stack>
     </DialogContent>

@@ -41,7 +41,6 @@ describe('EditUserDialog', () => {
     expect(screen.getByDisplayValue('Alice')).toBeInTheDocument();
     expect(screen.getByDisplayValue('alice@example.com')).toBeInTheDocument();
     expect(screen.getByText('Plan')).toBeInTheDocument();
-    expect(screen.getByText('Status')).toBeInTheDocument();
   });
 
   it('calls handleEditChange when name is changed', () => {
