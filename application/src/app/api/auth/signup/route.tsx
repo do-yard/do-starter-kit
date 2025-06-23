@@ -16,7 +16,7 @@ const createSubscription = async (db: DatabaseClient, user: User) => {
 
   const configurationCheck = await billingService.checkConfiguration();
 
-  if (configurationCheck.configured !== true && configurationCheck.connected !== true) {
+  if (configurationCheck.configured !== true || configurationCheck.connected !== true) {
     console.error(
       'Billing service is not properly configured. Please check the system-status page'
     );
