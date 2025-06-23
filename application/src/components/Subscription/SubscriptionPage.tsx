@@ -9,6 +9,8 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Link as MuiLink } from '@mui/material';
+import Link from 'next/link';
 
 /**
  * Main component for managing user subscriptions.
@@ -124,15 +126,27 @@ const Subscription: React.FC = () => {
         </Box>
       ) : (
         <Box display={'flex'} flexDirection="column" alignItems="flex-start" mt={2}>
-          <Button
-            onClick={handleUpgradeToPro}
-            disabled={loading}
-            variant="contained"
-            color="primary"
-            sx={{ mt: 2, minWidth: 214 }}
-          >
-            Subscribe to {SubscriptionPlanEnum.PRO} Plan
-          </Button>
+          <Typography variant="body1" mb={2}>
+            You currently do not have an active subscription. Your account most likely was created
+            without Stripe being configured.
+          </Typography>
+          <Typography variant="body1" mb={2}>
+            If you configured Stripe, new accounts will automatically be created with the{' '}
+            {SubscriptionPlanEnum.FREE} Plan.
+          </Typography>
+          <Typography variant="body1" mb={2}>
+            Billing configuration status can be checked in the{' '}
+            <MuiLink
+              component={Link}
+              href="/system-status"
+              variant="body1"
+              color="primary"
+              sx={{ textDecoration: 'underline' }}
+            >
+              system status
+            </MuiLink>{' '}
+            page.
+          </Typography>
         </Box>
       )}
     </Box>
