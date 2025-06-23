@@ -29,6 +29,7 @@ const mockDb = {
 const mockBillingService = {
   createCustomer: jest.fn(),
   createSubscription: jest.fn(),
+  checkConfiguration: jest.fn(),
 };
 
 import * as billingModule from 'services/billing/billingFactory';
@@ -72,6 +73,7 @@ describe('GET /api/verify-email', () => {
     mockBillingService.createCustomer.mockResolvedValue({ id: 'cust-1' });
     mockDb.subscription.create.mockResolvedValue({});
     mockBillingService.createSubscription.mockRejectedValue(new Error('fail'));
+    mockBillingService.checkConfiguration.mockResolvedValue({ configured: true, connected: true });
     const req = createRequest('token123');
     const res = await GET(req);
     expect(await res.json()).toEqual({ error: 'Error creating subscription' });
@@ -83,6 +85,7 @@ describe('GET /api/verify-email', () => {
     mockDb.user.update.mockResolvedValue({});
     mockDb.subscription.findByUserId.mockResolvedValue([]);
     mockBillingService.createCustomer.mockResolvedValue({ id: 'cust-1' });
+    mockBillingService.checkConfiguration.mockResolvedValue({ configured: true, connected: true });
     mockDb.subscription.create.mockResolvedValue({});
     mockBillingService.createSubscription.mockResolvedValue({});
     mockDb.subscription.update.mockResolvedValue({});
@@ -97,9 +100,27 @@ describe('GET /api/verify-email', () => {
     mockDb.user.update.mockResolvedValue({});
     mockDb.subscription.findByUserId.mockResolvedValue([{ customerId: 'cust-1' }]);
     mockBillingService.createSubscription.mockResolvedValue({});
+    mockBillingService.checkConfiguration.mockResolvedValue({ configured: true, connected: true });
     mockDb.subscription.update.mockResolvedValue({});
     const req = createRequest('token123');
     const res = await GET(req);
+    expect(await res.json()).toEqual({ success: true });
+    expect(res.status).toBe(HTTP_STATUS.OK);
+  });
+
+  it('returns 200 if billing is not configured', async () => {
+    mockDb.user.findByVerificationToken.mockResolvedValue(mockUser);
+    mockDb.user.update.mockResolvedValue({});
+    mockBillingService.checkConfiguration.mockResolvedValue({
+      configured: false,
+      connected: false,
+    });
+    const req = createRequest('token123');
+    const res = await GET(req);
+    expect(mockBillingService.createCustomer).not.toHaveBeenCalled();
+    expect(mockBillingService.createSubscription).not.toHaveBeenCalled();
+    expect(mockDb.subscription.findByUserId).not.toHaveBeenCalled();
+    expect(mockDb.subscription.update).not.toHaveBeenCalled();
     expect(await res.json()).toEqual({ success: true });
     expect(res.status).toBe(HTTP_STATUS.OK);
   });

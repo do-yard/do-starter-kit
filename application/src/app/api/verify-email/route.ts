@@ -4,10 +4,13 @@ import { HTTP_STATUS } from 'lib/api/http';
 import { SubscriptionPlanEnum, SubscriptionStatusEnum, User } from 'types';
 import { createDatabaseService } from 'services/database/databaseFactory';
 import { createBillingService } from 'services/billing/billingFactory';
+import { BillingService } from 'services/billing/billing';
 
-const createSubscription = async (db: DatabaseClient, user: User) => {
-  const billingService = await createBillingService();
-
+const createSubscription = async (
+  db: DatabaseClient,
+  billingService: BillingService,
+  user: User
+) => {
   let customerId;
 
   const subscription = await db.subscription.findByUserId(user.id);
@@ -66,14 +69,19 @@ export async function GET(request: NextRequest) {
   // Mark email as verified and clear the token
   await db.user.update(user.id, { emailVerified: true, verificationToken: null });
 
-  try {
-    await createSubscription(db, user);
-  } catch (error) {
-    console.error('Error creating subscription', (error as { message: string }).message ?? error);
-    return NextResponse.json(
-      { error: 'Error creating subscription' },
-      { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
-    );
+  const billingService = await createBillingService();
+  const billingStatus = await billingService.checkConfiguration();
+
+  if (billingStatus.configured && billingStatus.connected) {
+    try {
+      await createSubscription(db, billingService, user);
+    } catch (error) {
+      console.error('Error creating subscription', (error as { message: string }).message ?? error);
+      return NextResponse.json(
+        { error: 'Error creating subscription' },
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+      );
+    }
   }
   return NextResponse.json({ success: true });
 }
