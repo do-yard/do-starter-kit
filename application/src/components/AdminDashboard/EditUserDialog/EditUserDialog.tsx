@@ -71,9 +71,9 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
             disabled
           />
         </Stack>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Typography sx={{ minWidth: 80 }}>Plan</Typography>
-          <Stack direction="column">
+        <Stack direction="column">
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Typography sx={{ minWidth: 80 }}>Plan</Typography>
             <Select
               margin="dense"
               name="plan"
@@ -89,12 +89,13 @@ const EditUserDialog: React.FC<EditUserDialogProps> = ({
                 </MenuItem>
               ))}
             </Select>
-            {!editForm.subscription ? (
-              <Typography sx={{ minWidth: 80, color: 'red' }} variant="body2">
-                User created without subscription because billing was not configured
-              </Typography>
-            ) : null}
           </Stack>
+          {!editForm.subscription ? (
+            <Typography sx={{ minWidth: 80, marginTop: 2 }} variant="body2" color="error">
+              Plan is disabled due to user created without subscription. Probably billing was not
+              configured
+            </Typography>
+          ) : null}
         </Stack>
       </Stack>
     </DialogContent>
