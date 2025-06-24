@@ -10,8 +10,8 @@ Before you begin, make sure you have:
 - Your SaaS Starter Kit application code with any customizations you've made
 - A GitHub repository containing your code (either a fork of the original repo or your own)
 - [Stripe setup](./stripe-integration-guide.md) completed (if using billing features)
-- [Resend setup](./README.md#part-3-set-up-email-provider-resend) completed (if using email features)
-- [Spaces setup](./README.md#part-2-set-up-file-storage-digitalocean-spaces) completed (if using file storage)
+- [Resend setup](../README.md#part-2-set-up-email-provider-resend) completed (if using email features)
+- [Spaces setup](../README.md#part-3-set-up-file-storage-digitalocean-spaces) completed (if using file storage)
 
 ## Deployment Steps
 
@@ -36,13 +36,18 @@ Before you begin, make sure you have:
    ```
    - Paste your API token when prompted
 
+### Step 2: Create a GitHub Repository
 
+DigitalOcean App Platform requires a GitHub repository to deploy from. If you don't already have your code in a GitHub repository, create one:
 
-git remote remove origin 
+```bash
+git remote remove origin
+gh repo create GITHUB_REPO_NAME --public --source=. --remote=origin --push
+```
 
-gh repo create my-do-starter-kit --public --source=. --remote=origin --push  
+Replace `GITHUB_REPO_NAME` with your desired repository name (e.g., `my-saas-app`).
 
-### Step 2: Generate Your App Spec and Deploy
+### Step 3: Generate Your App Spec and Deploy
 
 The App Spec is a YAML file that defines how your application should be deployed on DigitalOcean's App Platform.
 
@@ -52,7 +57,7 @@ The App Spec is a YAML file that defines how your application should be deployed
    npm run setup:deploy
    ```
 
-   The script will prompt you for several pieces of information:
+   This interactive script will guide you through the deployment process and automatically generate the `app.yaml` file for you. You'll be asked a few questions:
    
    ```
    Enter the app name: my-saas-app
@@ -74,9 +79,9 @@ The App Spec is a YAML file that defines how your application should be deployed
    - **Postgres DB**: Choose whether to provision a development PostgreSQL database on DigitalOcean
    - **Proceed with deployment**: If you answer "y", the script will immediately deploy your app
 
-![digitalocean_deployment_terminal_output](<images/digitalocean_deployment_terminal_output.png>)
+![digitalocean_deployment_terminal_output](../docs/images/digitalocean_deployment_terminal_output.png)
 
-1. **Review the generated `app.yaml` file** (created in your project root)
+2. **Review the generated `app.yaml` file** (created in your project root)
 
 > **Note:** The script automatically transfers settings from your `.env` file to the app spec, including:
 >
@@ -87,7 +92,7 @@ The App Spec is a YAML file that defines how your application should be deployed
 > - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_FREE_PRICE_ID`, `STRIPE_PRO_PRICE_ID`, `STRIPE_PRO_GIFT_PRICE_ID`, `STRIPE_PORTAL_CONFIG_ID`: Your Stripe configuration
 > - `BASE_URL`: Will be set after deployment (used for callbacks)
 
-### Step 3: For Subsequent Deployments
+### Step 4: For Subsequent Deployments
 
 After your initial deployment, you can use the following command to deploy updates to your application:
 
@@ -106,7 +111,7 @@ After your initial deployment, you can use the following command to deploy updat
    - The deployment may take 3-5 minutes
    - You'll see progress updates in your terminal
 
-### Step 4: Configure Your Deployed Application
+### Step 5: Configure Your Deployed Application
 
 1. **Set the `BASE_URL` environment variable**:
    - After deployment completes, note the URL of your deployed app (e.g., `https://your-app-name.ondigitalocean.app`)
