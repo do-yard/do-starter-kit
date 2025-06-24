@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from 'lib/api/http';
 import { POST } from './route';
 import { NextRequest } from 'next/server';
 import { createDatabaseService } from 'services/database/databaseFactory';
@@ -10,19 +11,25 @@ const mockDb = {
   user: { findByEmail: jest.fn() },
   verificationToken: { create: jest.fn() },
 };
-const mockEmailService = { sendReactEmail: jest.fn() };
+const mockEmailService = {
+  sendReactEmail: jest.fn(),
+  checkConfiguration: jest.fn(),
+  isEmailEnabled: jest.fn(),
+};
 
 beforeEach(() => {
   jest.resetAllMocks();
   (createDatabaseService as jest.Mock).mockResolvedValue(mockDb);
   (createEmailService as jest.Mock).mockResolvedValue(mockEmailService);
+  mockEmailService.isEmailEnabled.mockReturnValue(true);
+  mockEmailService.checkConfiguration.mockResolvedValue({ configured: true, connected: true });
 });
 
 describe('POST /api/forgot-password', () => {
   it('returns 400 if email is missing', async () => {
     const req = { json: async () => ({}) } as unknown as NextRequest;
     const res = await POST(req);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
     const data = await res.json();
     expect(data.error).toBe('Email is required');
   });
@@ -31,7 +38,7 @@ describe('POST /api/forgot-password', () => {
     mockDb.user.findByEmail.mockResolvedValue(null);
     const req = { json: async () => ({ email: 'test@example.com' }) } as unknown as NextRequest;
     const res = await POST(req);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     const data = await res.json();
     expect(data.success).toBe(true);
   });
@@ -40,7 +47,7 @@ describe('POST /api/forgot-password', () => {
     mockDb.user.findByEmail.mockResolvedValue({ id: '1', email: 'test@example.com' });
     const req = { json: async () => ({ email: 'test@example.com' }) } as unknown as NextRequest;
     const res = await POST(req);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     expect(mockDb.verificationToken.create).toHaveBeenCalledWith(
       expect.objectContaining({
         identifier: 'test@example.com',
@@ -62,10 +69,28 @@ describe('POST /api/forgot-password', () => {
     const req = { json: async () => ({ email: 'test@example.com' }) } as unknown as NextRequest;
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
     const res = await POST(req);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(consoleSpy).toHaveBeenCalled();
     const data = await res.json();
     expect(data.error).toBe('DB error');
     consoleSpy.mockRestore();
+  });
+
+  it('returns 500 if email is missing', async () => {
+    mockEmailService.isEmailEnabled.mockReturnValue(false);
+    const req = { json: async () => ({}) } as unknown as NextRequest;
+    const res = await POST(req);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
+    const data = await res.json();
+    expect(data.error).toBe('Email feature is disabled');
+  });
+
+  it('returns 500 if email is not configured', async () => {
+    mockEmailService.checkConfiguration.mockResolvedValue({ configured: false, connected: false });
+    const req = { json: async () => ({}) } as unknown as NextRequest;
+    const res = await POST(req);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
+    const data = await res.json();
+    expect(data.error).toBe('Email not configured or connected. Check System Status page');
   });
 });

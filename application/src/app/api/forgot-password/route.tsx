@@ -13,6 +13,25 @@ import { serverConfig } from 'settings';
  */
 export async function POST(req: NextRequest) {
   try {
+    const emailService = await createEmailService();
+
+    if (!emailService.isEmailEnabled()) {
+      return NextResponse.json(
+        { error: 'Email feature is disabled' },
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+      );
+    }
+
+    const emailStatus = await emailService.checkConfiguration();
+
+    if (!emailStatus.configured || !emailStatus.connected) {
+      console.error('Forgot password email not configured');
+      return NextResponse.json(
+        { error: 'Email not configured or connected. Check System Status page' },
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+      );
+    }
+
     const { email } = await req.json();
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
@@ -34,7 +53,6 @@ export async function POST(req: NextRequest) {
       expires,
     });
 
-    const emailService = await createEmailService();
     const resetUrl = `${serverConfig.baseURL}/reset-password?token=${token}`;
     await emailService.sendReactEmail(
       email,

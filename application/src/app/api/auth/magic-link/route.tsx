@@ -21,6 +21,25 @@ import { serverConfig } from 'settings';
  */
 export async function POST(request: NextRequest) {
   try {
+    const emailService = await createEmailService();
+
+    if (!emailService.isEmailEnabled()) {
+      return NextResponse.json(
+        { error: 'Email feature is disabled' },
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+      );
+    }
+
+    const emailStatus = await emailService.checkConfiguration();
+
+    if (!emailStatus.configured || !emailStatus.connected) {
+      console.error('Magic link email not configured');
+      return NextResponse.json(
+        { error: 'Email not configured or connected. Check System Status page' },
+        { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
+      );
+    }
+
     const { email } = await request.json();
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: HTTP_STATUS.BAD_REQUEST });
@@ -38,7 +57,6 @@ export async function POST(request: NextRequest) {
     // Store the token in the verificationToken table
     await db.verificationToken.create({ identifier: email, token, expires });
 
-    const emailService = await createEmailService();
     const verifyUrl = `${serverConfig.baseURL}/magic-link?token=${token}&email=${encodeURIComponent(email)}`;
     await emailService.sendReactEmail(
       user.email,

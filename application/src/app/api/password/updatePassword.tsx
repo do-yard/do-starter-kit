@@ -68,23 +68,26 @@ export const updatePassword = async (
 
     await db.user.update(dbUser.id, dbUser);
 
-    try {
-      const emailService = await createEmailService();
-      await emailService.sendReactEmail(
-        dbUser.email,
-        'Your password has been updated',
-        <InformationEmailTemplate
-          title="Your password has been updated"
-          greetingText="Your password has been updated successfully."
-          infoText="Your password has been updated successfully and you can use it to log into your account."
-          secondInfoText="If you didn't request this change, please contact us immediately."
-        />
-      );
-    } catch (error) {
-      console.error(
-        'Error sending email notification:',
-        error instanceof Error ? `${error.name}: ${error.message}` : error
-      );
+    const emailService = await createEmailService();
+
+    if (emailService.isEmailEnabled()) {
+      try {
+        await emailService.sendReactEmail(
+          dbUser.email,
+          'Your password has been updated',
+          <InformationEmailTemplate
+            title="Your password has been updated"
+            greetingText="Your password has been updated successfully."
+            infoText="Your password has been updated successfully and you can use it to log into your account."
+            secondInfoText="If you didn't request this change, please contact us immediately."
+          />
+        );
+      } catch (error) {
+        console.error(
+          'Error sending email notification:',
+          error instanceof Error ? `${error.name}: ${error.message}` : error
+        );
+      }
     }
 
     return NextResponse.json(

@@ -87,8 +87,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'User already exists' }, { status: HTTP_STATUS.CONFLICT });
     }
 
+    const emailService = await createEmailService();
+    const isEmailEnabled = emailService.isEmailEnabled();
     const hashedPassword = await hashPassword(password);
-    const verificationToken = serverConfig.disableEmailVerification ? null : uuidv4();
+    const verificationToken = !isEmailEnabled ? null : uuidv4();
 
     const user = await dbClient.user.create({
       name,
@@ -97,12 +99,11 @@ export async function POST(req: NextRequest) {
       passwordHash: hashedPassword,
       role: isFirstUser ? USER_ROLES.ADMIN : USER_ROLES.USER,
       verificationToken,
-      emailVerified: serverConfig.disableEmailVerification,
+      emailVerified: !isEmailEnabled,
     });
 
     // Skip email sending if email verification is disabled
-    if (!serverConfig.disableEmailVerification) {
-      const emailService = await createEmailService();
+    if (isEmailEnabled) {
       const verifyUrl = `${serverConfig.baseURL}/verify-email?token=${verificationToken}`;
       await emailService.sendReactEmail(
         user.email,
@@ -120,13 +121,13 @@ export async function POST(req: NextRequest) {
     }
 
     // As email verification is disabled, we need to create the subscription for the user here
-    if (serverConfig.disableEmailVerification) {
+    if (!isEmailEnabled) {
       await createSubscription(dbClient, user);
     }
 
-    const message = serverConfig.disableEmailVerification
-      ? 'Account created. You can now log in.'
-      : 'Verification email sent.';
+    const message = isEmailEnabled
+      ? 'Verification email sent.'
+      : 'Account created. You can now log in.';
 
     return NextResponse.json({ ok: true, message });
   } catch (error) {

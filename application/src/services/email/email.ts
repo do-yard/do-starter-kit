@@ -15,6 +15,8 @@ export abstract class EmailService implements ConfigurableService {
 
   abstract checkConfiguration(): Promise<ServiceConfigStatus>;
 
+  abstract isEmailEnabled(): boolean;
+
   isRequired(): boolean {
     return true;
   }

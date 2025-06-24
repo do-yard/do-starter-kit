@@ -61,7 +61,7 @@ const providers: Provider[] = [
           throw new Error('User not found or password hash is missing');
         }
 
-        if (user.emailVerified === false && !serverConfig.disableEmailVerification) {
+        if (user.emailVerified === false && serverConfig.enableEmailIntegration) {
           throw new Error('Email not verified');
         }
 
