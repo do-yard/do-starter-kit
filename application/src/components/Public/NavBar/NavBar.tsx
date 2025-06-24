@@ -51,7 +51,7 @@ const NavBar = () => {
       ]
     : [
         { href: '/pricing', label: 'Pricing' },
-        { href: '/faq', label: 'FAQ' },
+        { href: '#', label: 'FAQ' },
         { href: '/login', label: 'Log in' },
         { href: '/signup', label: 'Sign up' },
       ];
