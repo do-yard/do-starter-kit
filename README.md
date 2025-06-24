@@ -110,7 +110,11 @@ POSTGRES_DB=saas_kit_db
 
 > ℹ️ The `DATABASE_URL` is used by your application, while the `POSTGRES_*` variables configure the Docker PostgreSQL instance. Keep them aligned to avoid mismatches.
 
-**Step 2: Start the PostgreSQL Container**
+**Step 2: Start Docker desktop**
+
+Start Docker desktop application. If you don't have it installed, it can be downloaded from the [Docker website](https://www.docker.com/products/docker-desktop/).
+
+**Step 3: Start the PostgreSQL Container**
 
 From the project root, run:
 
