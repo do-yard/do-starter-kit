@@ -134,7 +134,9 @@ npm run dev
 
 ## Resend setup
 
-Resend is required for using the app beyond the landing page. The configuration has two values, a Resend API key and a sender address. To configure them, create an account or login and follow these steps:
+The email feature is disabled by default, but you can still use the application without receiving emails. Keep in mind that some flows, like forgot password or login with a magic link, will not work. To enable it, set the environment variable `ENABLE_EMAIL_INTEGRATION` to 'true'.
+
+The Resend configuration has two values, a Resend API key and a sender address. To configure them, create an account or login and follow these steps:
 
 **Configure sender address**
 
