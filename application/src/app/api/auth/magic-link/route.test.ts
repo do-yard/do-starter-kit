@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from 'lib/api/http';
 import { POST } from './route';
 import { NextRequest } from 'next/server';
 import { createDatabaseService } from 'services/database/databaseFactory';
@@ -15,7 +16,7 @@ const mockDb = {
     create: jest.fn(),
   },
 };
-const mockEmailClient = { sendReactEmail: jest.fn() };
+const mockEmailClient = { sendReactEmail: jest.fn(), checkConfiguration: jest.fn() };
 
 (createDatabaseService as jest.Mock).mockReturnValue(mockDb);
 (createEmailService as jest.Mock).mockReturnValue(mockEmailClient);
@@ -34,6 +35,7 @@ describe('POST /api/auth/magic-link', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockDisableEmailVerification = false;
+    mockEmailClient.checkConfiguration.mockResolvedValue({ configured: true, connected: true });
   });
 
   function makeRequest(email?: string) {
@@ -45,7 +47,7 @@ describe('POST /api/auth/magic-link', () => {
   it('returns 400 if email is missing', async () => {
     const req = makeRequest();
     const res = await POST(req);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
     const json = await res.json();
     expect(json.error).toMatch(/email is required/i);
   });
@@ -54,7 +56,7 @@ describe('POST /api/auth/magic-link', () => {
     mockDb.user.findByEmail.mockResolvedValue(null);
     const req = makeRequest('notfound@example.com');
     const res = await POST(req);
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(HTTP_STATUS.NOT_FOUND);
     const json = await res.json();
     expect(json.error).toMatch(/user not found/i);
   });
@@ -65,7 +67,7 @@ describe('POST /api/auth/magic-link', () => {
     mockEmailClient.sendReactEmail = jest.fn().mockResolvedValue(undefined);
     const req = makeRequest('test@example.com');
     const res = await POST(req);
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(HTTP_STATUS.OK);
     const json = await res.json();
     expect(json.ok).toBe(true);
     expect(mockDb.user.findByEmail).toHaveBeenCalledWith('test@example.com');
@@ -81,7 +83,7 @@ describe('POST /api/auth/magic-link', () => {
     mockDb.user.findByEmail.mockRejectedValue(new Error('db error'));
     const req = makeRequest('fail@example.com');
     const res = await POST(req);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     const json = await res.json();
     expect(json.error).toMatch(/db error/i);
   });
@@ -90,8 +92,17 @@ describe('POST /api/auth/magic-link', () => {
     mockDisableEmailVerification = true;
     const req = { json: async () => ({}) } as unknown as NextRequest;
     const res = await POST(req);
-    expect(res.status).toBe(500);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     const data = await res.json();
     expect(data.error).toBe('Email feature is disabled');
+  });
+
+  it('returns 500 if email is not configured', async () => {
+    mockEmailClient.checkConfiguration.mockResolvedValue({ configured: false, connected: false });
+    const req = { json: async () => ({}) } as unknown as NextRequest;
+    const res = await POST(req);
+    expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
+    const data = await res.json();
+    expect(data.error).toBe('Email not configured or connected. Check System Status page');
   });
 });
