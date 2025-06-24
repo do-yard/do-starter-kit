@@ -46,7 +46,7 @@ const NavBar = () => {
   const navLinks = session
     ? [
         { href: '/pricing', label: 'Pricing' },
-        { href: '/faq', label: 'FAQ' },
+        { href: '#', label: 'FAQ' },
         { href: '#', label: 'Sign out', onClick: handleLogout },
       ]
     : [
