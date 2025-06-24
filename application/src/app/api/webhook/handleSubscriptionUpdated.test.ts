@@ -7,8 +7,12 @@ jest.mock('services/database/databaseFactory', () => ({
 }));
 
 const mockSendReactEmail = jest.fn();
+const mockIsEmailEnabled = jest.fn();
 jest.mock('services/email/emailFactory', () => ({
-  createEmailService: () => ({ sendReactEmail: mockSendReactEmail }),
+  createEmailService: () => ({
+    sendReactEmail: mockSendReactEmail,
+    isEmailEnabled: mockIsEmailEnabled,
+  }),
 }));
 
 const mockUpdateByCustomerId = jest.fn();
@@ -18,6 +22,7 @@ beforeEach(() => {
   (dbModule.createDatabaseService as jest.Mock).mockReturnValue({
     subscription: { updateByCustomerId: mockUpdateByCustomerId },
   });
+  mockIsEmailEnabled.mockReturnValue(true);
 });
 
 // Helper to build minimal Stripe event
@@ -33,25 +38,16 @@ const makeEvent = (customer: unknown, priceId: unknown) => ({
 const PRO_ID = 'pro_price_id';
 const FREE_ID = 'free_price_id';
 
-let disableEmailVerification = false;
-
 jest.mock('settings', () => ({
   serverConfig: {
     Stripe: {
       proPriceId: 'pro_price_id',
       freePriceId: 'free_price_id',
     },
-    get disableEmailVerification() {
-      return disableEmailVerification;
-    },
   },
 }));
 
 describe('handleSubscriptionUpdated', () => {
-  beforeEach(() => {
-    disableEmailVerification = false;
-  });
-
   it('sets plan to PRO if price matches proPriceId', async () => {
     await handleSubscriptionUpdated(makeEvent('cus_123', PRO_ID));
     expect(mockUpdateByCustomerId).toHaveBeenCalledWith('cus_123', {
@@ -92,7 +88,7 @@ describe('handleSubscriptionUpdated', () => {
   });
 
   it('should not send email when email feature flag is disabled', async () => {
-    disableEmailVerification = true;
+    mockIsEmailEnabled.mockReturnValue(false);
     await handleSubscriptionUpdated(makeEvent('cus_123', PRO_ID));
     expect(mockSendReactEmail).not.toHaveBeenCalled();
   });

@@ -21,14 +21,15 @@ import { serverConfig } from 'settings';
  */
 export async function POST(request: NextRequest) {
   try {
-    if (serverConfig.disableEmailVerification) {
+    const emailService = await createEmailService();
+
+    if (!emailService.isEmailEnabled()) {
       return NextResponse.json(
         { error: 'Email feature is disabled' },
         { status: HTTP_STATUS.INTERNAL_SERVER_ERROR }
       );
     }
 
-    const emailService = await createEmailService();
     const emailStatus = await emailService.checkConfiguration();
 
     if (!emailStatus.configured || !emailStatus.connected) {

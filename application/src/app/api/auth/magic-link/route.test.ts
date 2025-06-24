@@ -16,25 +16,19 @@ const mockDb = {
     create: jest.fn(),
   },
 };
-const mockEmailClient = { sendReactEmail: jest.fn(), checkConfiguration: jest.fn() };
+const mockEmailClient = {
+  sendReactEmail: jest.fn(),
+  checkConfiguration: jest.fn(),
+  isEmailEnabled: jest.fn(),
+};
 
 (createDatabaseService as jest.Mock).mockReturnValue(mockDb);
 (createEmailService as jest.Mock).mockReturnValue(mockEmailClient);
 
-let mockDisableEmailVerification = false;
-
-jest.mock('settings', () => ({
-  serverConfig: {
-    get disableEmailVerification() {
-      return mockDisableEmailVerification;
-    },
-  },
-}));
-
 describe('POST /api/auth/magic-link', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockDisableEmailVerification = false;
+    mockEmailClient.isEmailEnabled.mockReturnValue(true);
     mockEmailClient.checkConfiguration.mockResolvedValue({ configured: true, connected: true });
   });
 
@@ -89,7 +83,7 @@ describe('POST /api/auth/magic-link', () => {
   });
 
   it('returns 500 if email is missing', async () => {
-    mockDisableEmailVerification = true;
+    mockEmailClient.isEmailEnabled.mockReturnValue(false);
     const req = { json: async () => ({}) } as unknown as NextRequest;
     const res = await POST(req);
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);

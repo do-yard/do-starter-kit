@@ -58,8 +58,9 @@ export const handleSubscriptionUpdated = async (json: any) => {
       return;
     }
 
-    if (!serverConfig.disableEmailVerification) {
-      const emailClient = await createEmailService();
+    const emailClient = await createEmailService();
+
+    if (emailClient.isEmailEnabled()) {
       // Use the new React email component for Resend
       await emailClient.sendReactEmail(
         user.email,

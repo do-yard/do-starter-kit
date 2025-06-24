@@ -67,6 +67,8 @@ spec:
           value: ""
         - key: "BASE_URL"
           value: ""
+        - key: "ENABLE_EMAIL_INTEGRATION"
+          value: "false"
 
   # Configuration for databases
   databases:

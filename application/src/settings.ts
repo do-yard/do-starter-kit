@@ -3,7 +3,7 @@ export interface ServerConfig {
   storageProvider: string;
   emailProvider: string;
   billingProvider: string;
-  disableEmailVerification: boolean;
+  enableEmailIntegration: boolean;
   baseURL?: string;
   Database: {
     url?: string;
@@ -33,7 +33,9 @@ export const serverConfig: ServerConfig = {
   storageProvider: process.env.STORAGE_PROVIDER || 'Spaces',
   emailProvider: process.env.EMAIL_PROVIDER || 'Resend',
   billingProvider: process.env.BILLING_PROVIDER || 'Stripe',
-  disableEmailVerification: process.env.DISABLE_EMAIL_VERIFICATION === 'true',
+  enableEmailIntegration: process.env.ENABLE_EMAIL_INTEGRATION
+    ? process.env.ENABLE_EMAIL_INTEGRATION === 'true'
+    : false,
   baseURL: process.env.BASE_URL,
   Database: {
     url: process.env.DATABASE_URL,

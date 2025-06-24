@@ -11,23 +11,17 @@ const mockDb = {
   user: { findByEmail: jest.fn() },
   verificationToken: { create: jest.fn() },
 };
-const mockEmailService = { sendReactEmail: jest.fn(), checkConfiguration: jest.fn() };
-
-let mockDisableEmailVerification = false;
-
-jest.mock('settings', () => ({
-  serverConfig: {
-    get disableEmailVerification() {
-      return mockDisableEmailVerification;
-    },
-  },
-}));
+const mockEmailService = {
+  sendReactEmail: jest.fn(),
+  checkConfiguration: jest.fn(),
+  isEmailEnabled: jest.fn(),
+};
 
 beforeEach(() => {
   jest.resetAllMocks();
   (createDatabaseService as jest.Mock).mockResolvedValue(mockDb);
   (createEmailService as jest.Mock).mockResolvedValue(mockEmailService);
-  mockDisableEmailVerification = false;
+  mockEmailService.isEmailEnabled.mockReturnValue(true);
   mockEmailService.checkConfiguration.mockResolvedValue({ configured: true, connected: true });
 });
 
@@ -83,7 +77,7 @@ describe('POST /api/forgot-password', () => {
   });
 
   it('returns 500 if email is missing', async () => {
-    mockDisableEmailVerification = true;
+    mockEmailService.isEmailEnabled.mockReturnValue(false);
     const req = { json: async () => ({}) } as unknown as NextRequest;
     const res = await POST(req);
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);

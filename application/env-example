@@ -29,7 +29,7 @@ RESEND_API_KEY=your-resend-api-key # API key from Resend
 RESEND_EMAIL_SENDER=your-email-sender-address # Email sender address, your-address@your-domain.{com/net/etc}
 # Development flag to disable email verification for local development
 # Set to true to skip email verification and allow immediate login after signup
-# DISABLE_EMAIL_VERIFICATION=true
+ENABLE_EMAIL_INTEGRATION=false
 
 # (Optional) Additional configuration
 

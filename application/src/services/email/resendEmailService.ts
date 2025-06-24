@@ -54,6 +54,10 @@ export class ResendEmailService extends EmailService {
     }
   }
 
+  isEmailEnabled(): boolean {
+    return serverConfig.enableEmailIntegration;
+  }
+
   async sendReactEmail(to: string, subject: string, body: React.ReactNode): Promise<void> {
     if (!this.resend) {
       throw new Error('Email client not initialized. Check configuration.');
