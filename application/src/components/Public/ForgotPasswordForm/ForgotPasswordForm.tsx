@@ -14,7 +14,6 @@ const ForgotPasswordForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [magicLinkSuccess, setMagicLinkSuccess] = useState<string | null>(null);
-  const [magicLinkError, setMagicLinkError] = useState<string | null>(null);
   const { setNavigating } = useNavigating();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,7 +47,6 @@ const ForgotPasswordForm: React.FC = () => {
   const handleMagicLink = async (e: React.FormEvent) => {
     setNavigating(true);
     e.preventDefault();
-    setMagicLinkError(null);
     setMagicLinkSuccess(null);
     try {
       const res = await fetch('/api/auth/magic-link', {
@@ -58,12 +56,12 @@ const ForgotPasswordForm: React.FC = () => {
       });
       const data = await res.json();
       if (!res.ok || data.error) {
-        setMagicLinkError(data.error || 'Something went wrong, please try again later.');
+        setError(data.error || 'Something went wrong, please try again later.');
       } else {
         setMagicLinkSuccess('Magic link sent! Please check your email inbox.');
       }
     } catch (err) {
-      setMagicLinkError(
+      setError(
         'Something went wrong, please try again later.' +
           (err instanceof Error ? `: ${err.message}` : '')
       );
@@ -111,11 +109,6 @@ const ForgotPasswordForm: React.FC = () => {
             {success && (
               <Typography color="success" fontSize={14} mt={2}>
                 {success}
-              </Typography>
-            )}
-            {magicLinkError && (
-              <Typography color="error" fontSize={14} mt={2}>
-                {magicLinkError}
               </Typography>
             )}
             {magicLinkSuccess && (
