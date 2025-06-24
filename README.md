@@ -1,6 +1,29 @@
 # DigitalOcean SaaS Starter Kit
 
-This repository contains a complete SaaS starter kit for building professional SaaS applications on DigitalOcean App Platform.
+This repository contains a complete SaaS Starter Kit for building professional SaaS applications on DigitalOcean App Platform.
+
+## What This Is
+
+This is a production-ready SaaS Starter Kit for developers who want to build and launch real products quickly. It includes:
+
+✅ Auth (email login out of the box)  
+✅ Billing (Stripe integration)  
+✅ File uploads and storage  
+✅ One-click deploy to DigitalOcean  
+
+Developers can use this kit as a clean, flexible starting point for your own SaaS app — or as a reference app to see how all the core pieces fit together on DO.
+
+It shows how real-world features are implemented using DO services. It also works really well with tools like ChatGPT or Claude. You can literally point your LLM at this repo and say:
+
+"Build me something like this, but for [my idea]," and it'll scaffold your app using similar patterns — auth, billing, storage, GenAI, etc., all running on DigitalOcean.
+
+## Who It's For
+
+- Indie hackers
+- Solo devs
+- Early-stage startup teams
+- Developers validating an idea
+- Anyone looking to build fast with best practices baked in
 
 **Note**: Following these steps may result in charges for the use of DigitalOcean services.
 
@@ -14,7 +37,7 @@ The architecture diagram above shows the complete structure of the SaaS Starter 
 
 The DigitalOcean SaaS Starter Kit can be run [locally](#running-locally) or in [DigitalOcean platform](#deploy-to-digitalocean-platform). Follow the steps for each case below.
 
-> **Important**: the steps below are for running the app and navigating to the landing page. To signup, [Resend](#resend-setup) and [Stripe](docs/stripe-setup.md) must be configured. For using the profile picture feature, [Spaces](#configure-digitalocean-spaces-storage) must be configured.
+> **Important**: The app works out of the box with basic authentication and signup (email verification is disabled by default). To enable email verification features like password reset and magic links, you'll need to [configure Resend](#resend-setup). For subscription features, [Stripe](docs/stripe-integration-guide.md) needs to be configured. For profile picture uploads, [Spaces](#configure-digitalocean-spaces-storage) must be configured.
 
 ## Running locally
 
@@ -28,7 +51,7 @@ The DigitalOcean SaaS Starter Kit can be run [locally](#running-locally) or in [
 8. Start the site: `npm run dev`
 9. Navigate to the `/system-status` page to see if all the required services are correctly configured.
 
-> To generate the required stripe products automatically follow [these steps](docs/stripe-setup.md). The instructions to get configure Stripe events webhook are available [here](docs/stripe-webhooks.md).
+> To generate the required stripe products automatically follow [these steps](docs/stripe-integration-guide.md). The instructions to configure Stripe events webhook are also available in the same document.
 
 If you made changes to the repo and want to deploy them to DigitalOcean, navigate to the [Deploy from local environment](#deploy-from-local-environment) section.
 
@@ -45,9 +68,11 @@ If you made changes to the repo and want to deploy them to DigitalOcean, navigat
 
 3. Navigate to the site
 
+For detailed deployment instructions, including setting up your App Spec and configuring your environment, see the [Deploying to DigitalOcean App Platform guide](docs/digitalocean-deployment-guide.md).
+
 ## Configure DigitalOcean Spaces storage
 
-DigitalOcean Spaces Storage is necessary to upload profile pictures. If you want to use this feature, you can find the configuration steps in the [DigitalOcean Spaces Storage Setup](./docs/storage.md) article.
+DigitalOcean Spaces Storage is necessary to upload profile pictures. If you want to use this feature, you can find the configuration steps in the [DigitalOcean Spaces Storage Setup](./docs/README.md#part-2-set-up-file-storage-digitalocean-spaces) article.
 
 ## Postgres DB options
 
@@ -76,7 +101,7 @@ The one-click deploy button automatically creates and configures a development P
 2. **Get Database ID**
 
    - Navigate to your app on the [DigitalOcean App Platform](https://cloud.digitalocean.com/apps)
-   - Find the database under “Settings” > “Components”
+   - Find the database under "Settings" > "Components"
 
 3. **Update Firewall Rules**
 
@@ -158,6 +183,20 @@ Once you have the sender address, add it to the `RESEND_EMAIL_SENDER` environmen
 1. Copy the API key secret and store it in a secure location
 1. Set the API key as value for the `RESEND_API_KEY` environment variable in your `.env` file or DigitalOcean setting in your app.
 
+For more detailed instructions on setting up email, see the [Email Provider Setup guide](./docs/README.md#part-3-set-up-email-provider-resend).
+
+## Stripe Billing Setup
+
+This starter kit includes a complete subscription billing system powered by Stripe. Setting up Stripe allows you to offer free and paid subscription tiers, process payments securely, and handle subscription lifecycle events automatically.
+
+For detailed instructions on setting up Stripe, including:
+- Creating products and pricing tiers
+- Configuring webhooks
+- Testing the integration
+- Adding custom subscription plans
+
+See the [Stripe Setup Guide](docs/2-new-stripe-setup.md).
+
 ## Deploy from local environment
 
 If you made changes to the Starter Kit and want to deploy them to DigitalOcean:
@@ -202,9 +241,11 @@ npm run setup:deploy
 npm run deploy
 ```
 
-**That’s it! Your application will be deployed to DigitalOcean App Platform using your custom app spec and environment.**
+**That's it! Your application will be deployed to DigitalOcean App Platform using your custom app spec and environment.**
 
 8. Once the app is deployed. Configure `BASE_URL` environment variables with the generated app URL.
+
+For more comprehensive deployment instructions, see our [Deploying to DigitalOcean App Platform guide](docs/digitalocean-deployment-guide.md).
 
 ### Best practices when working with secrets and environment variables
 
@@ -235,7 +276,11 @@ When you no longer need this application running live, you can delete it by foll
 
 ## Updating the app
 
-Now that you have the app deployed, [here is a guide](./docs/add-new-field.md) on how to update the notes feature.
+Now that you have the app deployed, you can learn more about extending and customizing the application in our detailed documentation:
+
+- [Stripe Integration Guide](docs/stripe-integration-guide.md) - Complete guide for setting up billing
+- [Deploying to DigitalOcean](docs/digitalocean-deployment-guide.md) - Detailed deployment instructions
+- [Local Development Guide](docs/README.md) - In-depth guide for local development
 
 ## Continues Integration and Development environments
 
