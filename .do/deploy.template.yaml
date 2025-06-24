@@ -66,7 +66,7 @@ spec:
         - key: "RESEND_EMAIL_SENDER"
           value: ""
         - key: "BASE_URL"
-          value: "__APP_URL_BIND__"
+          value: "${APP_URL}"
 
   # Configuration for databases
   databases:
