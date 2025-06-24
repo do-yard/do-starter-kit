@@ -4,6 +4,14 @@ import { updatePassword } from './updatePassword';
 import { NextRequest } from 'next/server';
 import { HTTP_STATUS } from 'lib/api/http';
 
+jest.mock('services/email/emailFactory');
+jest.mock('services/email/emailTemplate', () => ({ emailTemplate: jest.fn(() => 'html') }));
+
+const mockEmailClient = {
+  sendReactEmail: jest.fn(),
+  isEmailEnabled: jest.fn(),
+};
+
 const mockFindById = jest.fn();
 const mockUpdate = jest.fn();
 const mockDb = {
@@ -37,6 +45,10 @@ jest.mock('../../../services/database/databaseFactory', () => ({
   createDatabaseService: () => Promise.resolve(mockDb),
 }));
 
+jest.mock('../../../services/email/emailFactory', () => ({
+  createEmailService: () => Promise.resolve(mockEmailClient),
+}));
+
 const mockUser = { id: 'user1', role: 'user' };
 
 function createRequestWithFormData(fields: Record<string, string>) {
@@ -48,6 +60,7 @@ function createRequestWithFormData(fields: Record<string, string>) {
 describe('updatePassword', () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    mockEmailClient.isEmailEnabled.mockReturnValue(true);
   });
 
   it('returns error if current password is empty', async () => {
@@ -155,5 +168,25 @@ describe('updatePassword', () => {
     const json = await res.json();
     expect(res.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(json.error).toMatch(/internal server error/i);
+  });
+
+  it("don't send email if feature flag is disabled", async () => {
+    mockFindById.mockResolvedValue({
+      id: 'user1',
+      name: 'Test',
+      image: 'img',
+      passwordHash: '$2b$12$iyGm98HPjDxoD74cIbEHz.QVTvoPu5kPhiIuB6chsL6agm1x.KgF.',
+    });
+    mockUpdate.mockResolvedValue(undefined);
+    const req = createRequestWithFormData({
+      currentPassword: '1234',
+      newPassword: 'new',
+      confirmNewPassword: 'new',
+    });
+    mockEmailClient.isEmailEnabled.mockReturnValue(false);
+    const res = await updatePassword(req, mockUser);
+
+    expect(mockEmailClient.sendReactEmail).not.toHaveBeenCalled();
+    expect(res.status).toBe(HTTP_STATUS.OK);
   });
 });
