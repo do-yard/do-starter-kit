@@ -138,7 +138,7 @@ If you prefer using Docker for your database, follow these steps:
 
 If you already have a PostgreSQL database hosted in the cloud, you can use that instead:
 
-- [How to create a DigitalOcean database](creating-database-digitalocean.md)
+- [How to create a DigitalOcean database](./docs/creating-database-digitalocean.md)
 - [How to get your DigitalOcean database connection string](https://docs.digitalocean.com/products/databases/postgresql/how-to/connect/)
 
 ### Step 3: Environment Setup
