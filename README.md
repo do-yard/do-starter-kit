@@ -62,7 +62,7 @@ It shows how real-world features are implemented using DO services. It also work
 
 ## Get Started
 
-The DigitalOcean SaaS Starter Kit can be run [locally](#quick-start-local-development) or on [DigitalOcean App Platform](#deploy-to-digitalocean-app-platform). Follow the steps for each case below.
+The DigitalOcean SaaS Starter Kit can be run [locally](#quick-start-local-development) or on [DigitalOcean App Platform](#part-5-deploy-to-digitalocean-app-platform). Follow the steps for each case below.
 
 > **Important**: The app works out of the box with basic authentication and signup. However, to enable full functionality:
 >
