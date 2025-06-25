@@ -88,7 +88,7 @@ describe('StatusService', () => {
   const originalConfig = {
     storageProvider: serverConfig.storageProvider,
     accessKey: serverConfig.Spaces.SPACES_KEY_ID,
-    secretKey: serverConfig.Spaces.SPACES_KEY_SECRET,
+    secretKey: serverConfig.Spaces.SPACES_SECRET_KEY,
     bucketName: serverConfig.Spaces.SPACES_BUCKET_NAME,
     region: serverConfig.Spaces.SPACES_REGION,
   };
@@ -111,7 +111,7 @@ describe('StatusService', () => {
     // Set default mock values for testing
     serverConfig.storageProvider = 'Spaces';
     serverConfig.Spaces.SPACES_KEY_ID = 'test-access-key';
-    serverConfig.Spaces.SPACES_KEY_SECRET = 'test-secret-key';
+    serverConfig.Spaces.SPACES_SECRET_KEY = 'test-secret-key';
     serverConfig.Spaces.SPACES_BUCKET_NAME = 'test-bucket';
     serverConfig.Spaces.SPACES_REGION = 'test-region';
 
@@ -161,7 +161,7 @@ describe('StatusService', () => {
     // Restore original config
     serverConfig.storageProvider = originalConfig.storageProvider;
     serverConfig.Spaces.SPACES_KEY_ID = originalConfig.accessKey;
-    serverConfig.Spaces.SPACES_KEY_SECRET = originalConfig.secretKey;
+    serverConfig.Spaces.SPACES_SECRET_KEY = originalConfig.secretKey;
     serverConfig.Spaces.SPACES_BUCKET_NAME = originalConfig.bucketName;
     serverConfig.Spaces.SPACES_REGION = originalConfig.region;
   });

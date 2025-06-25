@@ -10,7 +10,7 @@ export interface ServerConfig {
   };
   Spaces: {
     SPACES_KEY_ID?: string;
-    SPACES_KEY_SECRET?: string;
+    SPACES_SECRET_KEY?: string;
     SPACES_BUCKET_NAME?: string;
     SPACES_REGION?: string;
   };
@@ -42,7 +42,7 @@ export const serverConfig: ServerConfig = {
   },
   Spaces: {
     SPACES_KEY_ID: process.env.SPACES_KEY_ID,
-    SPACES_KEY_SECRET: process.env.SPACES_KEY_SECRET,
+    SPACES_SECRET_KEY: process.env.SPACES_SECRET_KEY,
     SPACES_BUCKET_NAME: process.env.SPACES_BUCKET_NAME,
     SPACES_REGION: process.env.SPACES_REGION,
   },
