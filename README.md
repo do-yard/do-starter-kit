@@ -371,7 +371,7 @@ This starter kit includes a complete subscription billing system powered by Stri
    - Test upgrading/downgrading subscriptions
    - Verify subscription status changes are reflected in your app
 
-> **Note:** For detailed instructions, including webhook setup, adding custom products, and troubleshooting, see the [Stripe Integration Guide](stripe-integration-guide.md).
+> **Note:** For detailed instructions, including webhook setup, adding custom products, and troubleshooting, see the [Stripe Integration Guide](./docs/stripe-integration-guide.md).
 
 ## Part 5: Deploy to DigitalOcean App Platform
 
