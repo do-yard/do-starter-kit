@@ -88,7 +88,12 @@ npm install
 
 If you prefer using Docker for your database, follow these steps:
 
-1. **Define Environment Variables**
+1. **Install Docker**
+
+   - If you don't already have Docker installed, download and install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+   - Make sure Docker is running on your system before proceeding
+
+2. **Define Environment Variables**
 
    Create or update your `.env` file inside the `application/` directory:
 
@@ -104,7 +109,7 @@ If you prefer using Docker for your database, follow these steps:
 
    > **Note:** The `DATABASE_URL` is used by your application, while the `POSTGRES_*` variables configure the Docker PostgreSQL instance. Keep them aligned to avoid mismatches.
 
-2. **Start the PostgreSQL Container**
+3. **Start the PostgreSQL Container**
 
    From the project root, run:
 
@@ -120,7 +125,7 @@ If you prefer using Docker for your database, follow these steps:
    - Password: postgres
    - Database: saas_kit_db
 
-3. **Initialize Your Database**
+4. **Initialize Your Database**
 
    With the Docker container running, set up your database tables:
 
@@ -191,7 +196,7 @@ The basic starter kit is now set up locally on your computer! You can start expl
 
 ## Part 2: Set Up Email Provider (Resend)
 
-By default, email verification is turned off for local development, so you can sign up and log in without setting up email. However, email verification is a standard security feature for any SaaS app, and you should enable it before going live.
+By default, email functionality is disabled for local development, allowing you to sign up and log in without setting up an email provider. However, features like password reset and magic links won't work until email is configured.
 
 This starter kit comes with Resend integration built-in. All you need to do is get your API key and a verified sender email address from Resend, and add them to your `.env` file.
 
@@ -226,6 +231,7 @@ This starter kit comes with Resend integration built-in. All you need to do is g
    Add these lines (replace with your actual values):
 
    ```
+   ENABLE_EMAIL_INTEGRATION=true
    RESEND_API_KEY=your-resend-api-key
    RESEND_EMAIL_SENDER=delivered@resend.dev  # Or your verified domain email
    ```
