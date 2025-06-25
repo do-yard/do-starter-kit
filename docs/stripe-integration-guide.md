@@ -388,7 +388,7 @@ const pricingPlans = [
       "Custom integrations",
       "Dedicated account manager",
     ],
-    priceId: settings.stripe.enterprisePriceId,
+    priceId: settings.stripe.enterpriseMonthlyPriceId,
     highlighted: false,
   },
 ];
@@ -446,7 +446,10 @@ async function handleSubscriptionCreated(subscription) {
   let subscriptionType = "free";
   if (priceId === settings.stripe.proPriceId) {
     subscriptionType = "pro";
-  } else if (priceId === settings.stripe.enterprisePriceId) {
+  } else if (
+    priceId === settings.stripe.enterpriseMonthlyPriceId ||
+    priceId === settings.stripe.enterpriseYearlyPriceId
+  ) {
     subscriptionType = "enterprise";
   }
 
