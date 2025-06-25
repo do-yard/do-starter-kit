@@ -19,7 +19,7 @@ AUTH_SECRET=your-AUTH-secret # Generate with `openssl rand -base64 32`
 
 STORAGE_PROVIDER=Spaces # Supported: Spaces
 SPACES_KEY_ID=your-access-key-id-here # DigitalOcean Spaces Access Key Id
-SPACES_KEY_SECRET=your-access-key-secret-here # DigitalOcean Spaces Access Key Secret
+SPACES_SECRET_KEY=your-access-key-secret-here # DigitalOcean Spaces Access Key Secret
 SPACES_REGION=nyc3 # Spaces region
 SPACES_BUCKET_NAME=my-app-bucket # Spaces bucket name
 

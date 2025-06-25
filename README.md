@@ -288,7 +288,7 @@ To enable file uploads, you'll need to set up a DigitalOcean Spaces bucket and a
 
    - **SPACES_KEY_ID**: This is the Access Key ID you received when creating your access key
 
-   - **SPACES_KEY_SECRET**: This is the Secret Access Key you received when creating your access key
+   - **SPACES_SECRET_KEY**: This is the Secret Access Key you received when creating your access key
 
    The image below shows where to find the Access Key ID and Secret Access Key values after creating them:
 
@@ -300,7 +300,7 @@ To enable file uploads, you'll need to set up a DigitalOcean Spaces bucket and a
    ```
    SPACES_REGION=your-space-region (nyc3, sfo2, etc.)
    SPACES_BUCKET_NAME=your-space-name
-   SPACES_KEY_SECRET=your-access-key
+   SPACES_SECRET_KEY=your-access-key
    SPACES_SECRET=your-secret-key
    ```
 

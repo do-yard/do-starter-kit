@@ -31,7 +31,7 @@ spec:
           type: "SECRET"
         - key: "SPACES_KEY_ID"
           value: ""
-        - key: "SPACES_KEY_SECRET"
+        - key: "SPACES_SECRET_KEY"
           value: ""
           type: "SECRET"
         - key: "SPACES_BUCKET_NAME"

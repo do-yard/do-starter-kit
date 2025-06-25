@@ -26,8 +26,8 @@ export class SpacesStorageService extends StorageService {
   // Required config items with their corresponding env var names and descriptions
   private static requiredConfig = {
     SPACES_KEY_ID: { envVar: 'SPACES_KEY_ID', description: 'DigitalOcean Spaces Access Key' },
-    SPACES_KEY_SECRET: {
-      envVar: 'SPACES_KEY_SECRET',
+    SPACES_SECRET_KEY: {
+      envVar: 'SPACES_SECRET_KEY',
       description: 'DigitalOcean Spaces Secret Key',
     },
     SPACES_BUCKET_NAME: { envVar: 'SPACES_BUCKET_NAME', description: 'Name of the Spaces bucket' },
@@ -45,7 +45,7 @@ export class SpacesStorageService extends StorageService {
   private initializeClient(): void {
     try {
       const accessKeyId = serverConfig.Spaces.SPACES_KEY_ID;
-      const secretAccessKey = serverConfig.Spaces.SPACES_KEY_SECRET;
+      const secretAccessKey = serverConfig.Spaces.SPACES_SECRET_KEY;
       const bucketName = serverConfig.Spaces.SPACES_BUCKET_NAME;
       const region = serverConfig.Spaces.SPACES_REGION;
       const endpoint = `https://${region}.digitaloceanspaces.com`;

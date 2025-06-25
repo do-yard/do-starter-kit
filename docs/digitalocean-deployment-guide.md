@@ -18,10 +18,12 @@ Before you begin, make sure you have:
 ### Step 1: Install and Configure `doctl`
 
 1. **Download and install the DigitalOcean CLI tool**:
+
    - Visit the [doctl installation page](https://docs.digitalocean.com/reference/doctl/how-to/install/)
    - Follow the instructions for your operating system
 
 2. **Create an API key**:
+
    - Log in to your [DigitalOcean account](https://cloud.digitalocean.com/)
    - Go to **API** in the left sidebar
    - Click **Generate New Token**
@@ -52,27 +54,28 @@ Replace `GITHUB_REPO_NAME` with your desired repository name (e.g., `my-saas-app
 The App Spec is a YAML file that defines how your application should be deployed on DigitalOcean's App Platform.
 
 1. **Run the deployment setup script**:
+
    ```bash
    cd application
    npm run setup:deploy
    ```
 
    This interactive script will guide you through the deployment process and automatically generate the `app.yaml` file for you. You'll be asked a few questions:
-   
+
    ```
    Enter the app name: my-saas-app
    Using GitHub repository: your-username/your-repo-name
    Enter the branch to deploy (main): main
    Provision a dev Postgres DB on DO? (y/n) (y): y
-   
+
    Checking required environment variables from .env...
-   
+
    ✅ App spec generated as app.yaml!
-   
+
    Do you want to proceed with deployment to DigitalOcean? (y/n) (n): y
    🚀 Launching DigitalOcean deployment...
    ```
-   
+
    - **App name**: Choose a name for your application (e.g., `my-saas-app`)
    - **GitHub repository**: The script will detect your connected GitHub repository
    - **Branch to deploy**: Specify which branch to deploy (defaults to `main`)
@@ -86,7 +89,7 @@ The App Spec is a YAML file that defines how your application should be deployed
 > **Note:** The script automatically transfers settings from your `.env` file to the app spec, including:
 >
 > - `APP_NAME`: Name for your app in DigitalOcean
-> - `SPACES_KEY_ID`, `SPACES_KEY_SECRET`, `SPACES_BUCKET_NAME`, `SPACES_REGION`: Your Spaces storage configuration
+> - `SPACES_KEY_ID`, `SPACES_SECRET_KEY`, `SPACES_BUCKET_NAME`, `SPACES_REGION`: Your Spaces storage configuration
 > - `AUTH_SECRET`: Secret string for Auth.js
 > - `RESEND_API_KEY`, `RESEND_EMAIL_SENDER`: Your email service configuration
 > - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_FREE_PRICE_ID`, `STRIPE_PRO_PRICE_ID`, `STRIPE_PRO_GIFT_PRICE_ID`, `STRIPE_PORTAL_CONFIG_ID`: Your Stripe configuration
@@ -97,11 +100,13 @@ The App Spec is a YAML file that defines how your application should be deployed
 After your initial deployment, you can use the following command to deploy updates to your application:
 
 1. **Run the deployment script**:
+
    ```bash
    npm run deploy
    ```
 
    This script will:
+
    - Verify that `doctl` is installed and authenticated
    - Update your app using the existing `app.yaml` (or create a new one if needed)
    - Run any pending database migrations
@@ -114,6 +119,7 @@ After your initial deployment, you can use the following command to deploy updat
 ### Step 5: Configure Your Deployed Application
 
 1. **Set the `BASE_URL` environment variable**:
+
    - After deployment completes, note the URL of your deployed app (e.g., `https://your-app-name.ondigitalocean.app`)
    - Go to your app in the [DigitalOcean App Platform](https://cloud.digitalocean.com/apps)
    - Click on your app → Settings → Environment Variables
@@ -171,4 +177,4 @@ After successful deployment:
 - Set up monitoring and alerts
 - Consider implementing a CI/CD pipeline for automated deployments
 
-For more information, see the [DigitalOcean App Platform documentation](https://docs.digitalocean.com/products/app-platform/). 
+For more information, see the [DigitalOcean App Platform documentation](https://docs.digitalocean.com/products/app-platform/).
