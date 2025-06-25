@@ -1,6 +1,6 @@
 # Stripe Integration Guide
 
-This guide walks you through setting up Stripe billing for your SaaS application. 
+This guide walks you through setting up Stripe billing for your SaaS application.
 
 ## Overview
 
@@ -27,10 +27,12 @@ This project uses Stripe for subscription billing and includes an automated setu
 ### Step 1: Get Your Stripe API Key
 
 If you don't have a Stripe account yet:
+
 1. Go to [Stripe](https://dashboard.stripe.com/register) and create a new account
 2. Complete the account setup process
 
 Once you have a Stripe account:
+
 1. **Switch to Test mode** - Click your account name in the left sidebar → "Switch to Test mode"
    - Or go directly to: [https://dashboard.stripe.com/test](https://dashboard.stripe.com/test)
 2. **Get your API key** - Go to **Developers** → **API keys**
@@ -54,6 +56,7 @@ npm run setup:stripe
 ```
 
 The script will:
+
 1. **Prompt for your Stripe Secret Key** (paste the `sk_test_...` key from Step 1)
 2. **Validate the key** and connect to your Stripe account
 3. **Create billing products** (Free and Pro plans)
@@ -88,6 +91,7 @@ Now that you have your products and pricing set up, the final step is to configu
 
 **What are webhooks and why do you need them?**
 Webhooks are how Stripe notifies your application when important events happen, such as:
+
 - When a customer's subscription is created
 - When a subscription is updated (e.g., plan changes, payment method updates)
 - When a subscription is canceled
@@ -95,6 +99,7 @@ Webhooks are how Stripe notifies your application when important events happen, 
 Without webhooks, your application won't know when these events occur, leading to inconsistencies between your database and Stripe's records. For example, if a customer cancels their subscription directly in the Stripe customer portal, your application needs to be notified to update their access permissions.
 
 **When do you need this?**
+
 - **Required for production:** Webhooks must be set up before going live
 - **Recommended for development:** While optional for basic testing, webhooks help ensure your subscription flow works end-to-end
 
@@ -108,10 +113,12 @@ You have different options for setting up webhooks depending on whether you're i
 #### Option A: Production Webhook Setup (Deployed App)
 
 **Prerequisites:**
+
 - Your application must be deployed with a public URL
 - You need access to your Stripe dashboard
 
 **Steps:**
+
 1. Get your deployed app URL (e.g., `https://your-app-name.ondigitalocean.app`)
    - For DigitalOcean: Log in to your [dashboard](https://cloud.digitalocean.com/), go to **Apps**, select your app, and copy the URL from **Domains**
 2. Go to the [Stripe dashboard](https://dashboard.stripe.com/test/webhooks) and click **Add endpoint**
@@ -128,10 +135,12 @@ You have different options for setting up webhooks depending on whether you're i
 The Stripe CLI is the easiest way to test webhooks locally. It creates a direct connection between Stripe and your local server without needing a public URL.
 
 **Prerequisites:**
+
 - [Install the Stripe CLI](https://stripe.com/docs/stripe-cli)
 - Your local server running (typically on port 3000)
 
 **Steps:**
+
 1. Log in to your Stripe account via the CLI:
    ```bash
    stripe login
@@ -147,6 +156,7 @@ The Stripe CLI is the easiest way to test webhooks locally. It creates a direct 
    ```
 
 **Benefits of this approach:**
+
 - No manual webhook configuration in the Stripe dashboard
 - No need for a public URL
 - Automatically forwards only the events you specify
@@ -157,10 +167,12 @@ The Stripe CLI is the easiest way to test webhooks locally. It creates a direct 
 If you prefer or can't use the Stripe CLI, you can use ngrok to create a temporary public URL for your local server.
 
 **Prerequisites:**
+
 - [Install ngrok](https://ngrok.com/download)
 - Your local server running (typically on port 3000)
 
 **Steps:**
+
 1. Start ngrok to create a tunnel to your local server:
    ```bash
    ngrok http 3000
@@ -252,44 +264,61 @@ You have two options for creating a new product:
 #### Option A: Using the Setup Script (Recommended)
 
 1. Open `./setup/stripe-config.json` in your editor
-2. Add your new product to the `products` array:
+2. Add the new features to the `features` array:
+
+```json
+{
+  "features": [
+    // Existing features
+    { "key": "real-time-collaboration", "name": "Real-time collaboration" },
+    { "key": "custom-integrations", "name": "Custom integrations" },
+    { "key": "dedicated-account-manager", "name": "Dedicated account manager" }
+  ]
+}
+```
+
+3. Add your new products to the `products` array:
 
 ```json
 {
   "products": [
     // Existing products...
     {
-      "name": "Enterprise Plan",
+      "id": "ENTERPRISE_MONTHLY",
+      "name": "Enterprise Plan Monthly",
       "description": "For large teams with advanced needs",
+      "currency": "usd",
       "features": [
-        "Unlimited notes",
-        "Real-time collaboration",
-        "Priority support",
-        "Custom integrations",
-        "Dedicated account manager"
+        "unlimited-notes",
+        "real-time-collaboration",
+        "priority-support",
+        "custom-integrations",
+        "dedicated-account-manager"
       ],
-      "prices": [
-        {
-          "nickname": "Enterprise Monthly",
-          "unit_amount": 4900,
-          "recurring": {
-            "interval": "month"
-          }
-        },
-        {
-          "nickname": "Enterprise Yearly",
-          "unit_amount": 49000,
-          "recurring": {
-            "interval": "year"
-          }
-        }
-      ]
+      "price": 4900,
+      "interval": "month"
+    },
+    {
+      "id": "ENTERPRISE_YEARLY",
+      "name": "Enterprise Plan Yearly",
+      "description": "For large teams with advanced needs",
+      "currency": "usd",
+      "features": [
+        "unlimited-notes",
+        "real-time-collaboration",
+        "priority-support",
+        "custom-integrations",
+        "dedicated-account-manager"
+      ],
+      "price": 49000,
+      "interval": "year"
     }
   ]
 }
 ```
 
 3. Run the setup script again:
+
 ```bash
 npm run setup:stripe
 ```
@@ -310,6 +339,7 @@ npm run setup:stripe
 6. After creation, click on the price to view its details
 7. Copy the **Price ID** (starts with `price_...`)
 8. Add this ID to your `.env` file with a descriptive name:
+
 ```
 STRIPE_ENTERPRISE_PRICE_ID=price_abc123...
 ```
@@ -320,18 +350,19 @@ Now you need to integrate your new product with your application:
 
 #### 1. Add the Price ID to Your Settings
 
-Open `src/settings.ts` and add your new price ID:
+Open `src/settings.ts` and add your new price ID, for example with the monthly price ID:
 
 ```typescript
 // Add your new price ID
-export const STRIPE_ENTERPRISE_PRICE_ID = process.env.STRIPE_ENTERPRISE_PRICE_ID || '';
+export const STRIPE_ENTERPRISE_MONTHLY_PRICE_ID =
+  process.env.STRIPE_ENTERPRISE_MONTHLY_PRICE_ID || "";
 
 // Then add it to the exported settings
 const settings = {
   // ...existing settings
   stripe: {
     // ...existing stripe settings
-    enterprisePriceId: STRIPE_ENTERPRISE_PRICE_ID,
+    enterpriseMonthlyPriceId: STRIPE_ENTERPRISE_MONTHLY_PRICE_ID,
   },
 };
 ```
@@ -347,19 +378,19 @@ Modify your pricing page component to include the new plan:
 const pricingPlans = [
   // Existing plans...
   {
-    name: 'Enterprise',
-    price: '$49',
-    interval: '/month',
+    name: "Enterprise",
+    price: "$49",
+    interval: "/month",
     features: [
-      'Unlimited notes',
-      'Real-time collaboration',
-      'Priority support',
-      'Custom integrations',
-      'Dedicated account manager'
+      "Unlimited notes",
+      "Real-time collaboration",
+      "Priority support",
+      "Custom integrations",
+      "Dedicated account manager",
     ],
     priceId: settings.stripe.enterprisePriceId,
     highlighted: false,
-  }
+  },
 ];
 ```
 
@@ -372,16 +403,22 @@ If your application has specific features or permissions tied to subscription le
 
 export function hasAccess(user, feature) {
   // Add your new subscription type
-  if (feature === 'priority-support') {
-    return user.subscriptionStatus === 'active' && 
-           (user.subscriptionType === 'pro' || user.subscriptionType === 'enterprise');
+  if (feature === "priority-support") {
+    return (
+      user.subscriptionStatus === "active" &&
+      (user.subscriptionType === "pro" ||
+        user.subscriptionType === "enterprise")
+    );
   }
-  
+
   // Enterprise-only features
-  if (feature === 'dedicated-account-manager') {
-    return user.subscriptionStatus === 'active' && user.subscriptionType === 'enterprise';
+  if (feature === "dedicated-account-manager") {
+    return (
+      user.subscriptionStatus === "active" &&
+      user.subscriptionType === "enterprise"
+    );
   }
-  
+
   // Existing permission checks...
 }
 ```
@@ -404,23 +441,23 @@ If your new product requires special handling in webhooks, update your webhook h
 async function handleSubscriptionCreated(subscription) {
   // Get the price ID from the subscription
   const priceId = subscription.items.data[0].price.id;
-  
+
   // Determine the subscription type based on price ID
-  let subscriptionType = 'free';
+  let subscriptionType = "free";
   if (priceId === settings.stripe.proPriceId) {
-    subscriptionType = 'pro';
+    subscriptionType = "pro";
   } else if (priceId === settings.stripe.enterprisePriceId) {
-    subscriptionType = 'enterprise';
+    subscriptionType = "enterprise";
   }
-  
+
   // Update the user record
   await db.user.update({
     where: { stripeCustomerId: subscription.customer },
     data: {
-      subscriptionStatus: 'active',
+      subscriptionStatus: "active",
       subscriptionType,
       // Add any enterprise-specific fields if needed
-    }
+    },
   });
 }
 ```
@@ -430,20 +467,24 @@ async function handleSubscriptionCreated(subscription) {
 ## Troubleshooting
 
 **Script won't accept my key:**
+
 - Make sure you're using the **Secret Key** (`sk_test_...`), not the Publishable Key (`pk_test_...`)
 - Ensure your Stripe account is in **Test mode**
 
 **Script errors out:**
+
 - Check that your Stripe account has no existing products with the same names
 - Verify your internet connection and try again
 - The script will automatically clean up any partially created objects
 
 **Environment variables not updated:**
+
 - Check the console output for specific error messages
 - Make sure you have write permissions in your project directory
 - Re-run the script after fixing any issues
 
 **Can't view products in Stripe Dashboard:**
+
 - Make sure you're using a modern browser (Chrome, Firefox, Safari, or Edge)
 - Verify you're in Test mode in the Stripe dashboard
 - Check that the script completed successfully without errors
@@ -477,6 +518,7 @@ The script automatically rolls back (deactivates) any Stripe objects it created 
 ## How It Works (Technical Details)
 
 The setup script (`./setup/stripe.mjs`):
+
 - Reads configuration from `./setup/stripe-config.json`
 - Uses the official Stripe Node.js SDK
 - Creates products, prices, and entitlement features via Stripe's API
