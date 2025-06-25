@@ -282,13 +282,13 @@ To enable file uploads, you'll need to set up a DigitalOcean Spaces bucket and a
 
    After creating your Spaces bucket and access key, you'll need to add the following values to your `.env` file:
 
-   - **SPACES_ENDPOINT**: This is the regional endpoint URL for your Spaces bucket. It follows the format `https://REGION.digitaloceanspaces.com` where REGION is your selected datacenter region (e.g., nyc3, sfo2, etc.)
+   - **SPACES_REGION**: This is your selected datacenter region (e.g., nyc3, sfo2, etc.)
 
-   - **SPACES_BUCKET**: This is simply the name you gave your Spaces bucket when you created it
+   - **SPACES_BUCKET_NAME**: This is simply the name you gave your Spaces bucket when you created it
 
-   - **SPACES_KEY**: This is the Access Key ID you received when creating your access key
+   - **SPACES_KEY_ID**: This is the Access Key ID you received when creating your access key
 
-   - **SPACES_SECRET**: This is the Secret Access Key you received when creating your access key
+   - **SPACES_KEY_SECRET**: This is the Secret Access Key you received when creating your access key
 
    The image below shows where to find the Access Key ID and Secret Access Key values after creating them:
 
@@ -298,9 +298,9 @@ To enable file uploads, you'll need to set up a DigitalOcean Spaces bucket and a
    Add these lines (replace with your actual values):
 
    ```
-   SPACES_ENDPOINT=https://nyc3.digitaloceanspaces.com
-   SPACES_BUCKET=your-space-name
-   SPACES_KEY=your-access-key
+   SPACES_REGION=your-space-region (nyc3, sfo2, etc.)
+   SPACES_BUCKET_NAME=your-space-name
+   SPACES_KEY_SECRET=your-access-key
    SPACES_SECRET=your-secret-key
    ```
 
