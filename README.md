@@ -411,4 +411,4 @@ For detailed deployment instructions, see the [DigitalOcean Deployment Guide](do
 
 ## License
 
-This repository is covered under [The MIT License](../LICENSE).
+This repository is covered under [The MIT License](LICENSE).
