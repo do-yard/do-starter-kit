@@ -113,14 +113,7 @@ After your initial deployment, you can use the following command to deploy updat
 
 ### Step 5: Configure Your Deployed Application
 
-1. **Set the `BASE_URL` environment variable**:
-   - After deployment completes, note the URL of your deployed app (e.g., `https://your-app-name.ondigitalocean.app`)
-   - Go to your app in the [DigitalOcean App Platform](https://cloud.digitalocean.com/apps)
-   - Click on your app → Settings → Environment Variables
-   - Add or update the `BASE_URL` variable with your app's URL
-   - Click Save and wait for the app to redeploy
-
-2. **Configure Stripe webhooks** (if using Stripe):
+1. **Configure Stripe webhooks** (if using Stripe):
    - Follow the [Stripe webhook setup instructions](./stripe-integration-guide.md#option-a-production-webhook-setup-deployed-app) using your new app URL
 
 ## Best Practices for Secrets and Environment Variables
