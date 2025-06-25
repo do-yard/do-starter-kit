@@ -3,9 +3,11 @@
 This file contains information to help Claude remember important details about your codebase and preferences.
 
 ## Project Overview
+
 This is a Next.js 15 SaaS starter kit with TypeScript, featuring user authentication, subscription management, and a notes system. The application uses a service-oriented architecture with comprehensive testing coverage.
 
 ## Technology Stack
+
 - **Frontend**: Next.js 15 with TypeScript, Material-UI components
 - **Authentication**: NextAuth.js with role-based access (USER/ADMIN)
 - **Database**: PostgreSQL with Prisma ORM
@@ -15,6 +17,7 @@ This is a Next.js 15 SaaS starter kit with TypeScript, featuring user authentica
 - **Testing**: Jest with React Testing Library
 
 ## Commands
+
 - `npm run dev` - Start development server with Turbopack
 - `npm run build` - Build production application
 - `npm run start` - Start production server
@@ -29,12 +32,14 @@ This is a Next.js 15 SaaS starter kit with TypeScript, featuring user authentica
 - `npm run deploy` - Deploy to DigitalOcean
 
 ## Database
+
 - **ORM**: Prisma with PostgreSQL
 - **Migration Command**: `npx prisma migrate dev`
 - **Schema Location**: `prisma/schema.prisma`
 - **Local Development**: Use `docker compose up` to start PostgreSQL container
 
 ## Code Style Preferences
+
 - **Language**: TypeScript
 - **Framework**: Next.js with App Router
 - **UI Library**: Material-UI (MUI)
@@ -42,6 +47,7 @@ This is a Next.js 15 SaaS starter kit with TypeScript, featuring user authentica
 - **Architecture**: Service factories with dependency injection
 
 ## Codebase Structure
+
 ```
 src/
 ├── app/                    # Next.js App Router pages
@@ -57,6 +63,7 @@ src/
 ```
 
 ## Key Features
+
 - **Authentication**: Email/password with magic link support
 - **User Management**: Profile updates, password changes, email verification
 - **Subscriptions**: Stripe integration with FREE/PRO plans
@@ -66,7 +73,9 @@ src/
 - **Theming**: Multiple UI themes with user selection
 
 ## Environment Variables
+
 Key environment variables (see `env-example`):
+
 - `DATABASE_URL` - PostgreSQL connection string
 - `NEXTAUTH_SECRET` - NextAuth.js secret
 - `STRIPE_SECRET_KEY` - Stripe API key
@@ -74,12 +83,14 @@ Key environment variables (see `env-example`):
 - `SPACES_*` - DigitalOcean Spaces configuration
 
 ## Testing Strategy
+
 - Unit tests for components and services
 - API route testing with mocked dependencies
 - Separate Jest configurations for client and server tests
 - Test files co-located with source files using `.test.ts(x)` extension
 
 ## Deployment
+
 - DigitalOcean App Platform ready
 - Custom deployment scripts in `setup/` directory
 - Docker support with PostgreSQL service
