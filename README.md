@@ -41,7 +41,7 @@ It shows how real-world features are implemented using DO services. It also work
 
 ## Technical Stack
 
-![Architecture Diagram](./images/do-architecture-diagram.drawio.png)
+![Architecture Diagram](./docs/images/do-architecture-diagram.drawio.png)
 
 - **Frontend**: Next.js, React, Material UI
 - **Backend**: Next.js API routes
@@ -62,10 +62,10 @@ It shows how real-world features are implemented using DO services. It also work
 
 ## Get Started
 
-The DigitalOcean SaaS Starter Kit can be run [locally](#quick-start-local-development) or on [DigitalOcean App Platform](#deploy-to-digitalocean-app-platform). Follow the steps for each case below.
+The DigitalOcean SaaS Starter Kit can be run [locally](#quick-start-local-development) or on [DigitalOcean App Platform](#part-5-deploy-to-digitalocean-app-platform). Follow the steps for each case below.
 
 > **Important**: The app works out of the box with basic authentication and signup. However, to enable full functionality:
-> 
+>
 > - Email features (verification emails, password reset, magic links) require [Resend configuration](#part-2-set-up-email-provider-resend)
 > - File uploads require [DigitalOcean Spaces setup](#part-3-set-up-file-storage-digitalocean-spaces)
 > - Subscription features require [Stripe configuration](#part-4-set-up-stripe-for-billing-and-subscriptions)
@@ -100,7 +100,7 @@ If you prefer using Docker for your database, follow these steps:
    ```
    # Local application database configuration
    DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_kit_db
-   
+
    # Docker container initialization (PostgreSQL)
    POSTGRES_USER=postgres
    POSTGRES_PASSWORD=postgres
@@ -138,7 +138,7 @@ If you prefer using Docker for your database, follow these steps:
 
 If you already have a PostgreSQL database hosted in the cloud, you can use that instead:
 
-- [How to create a DigitalOcean database](creating-database-digitalocean.md)
+- [How to create a DigitalOcean database](./docs/creating-database-digitalocean.md)
 - [How to get your DigitalOcean database connection string](https://docs.digitalocean.com/products/databases/postgresql/how-to/connect/)
 
 ### Step 3: Environment Setup
@@ -176,10 +176,12 @@ Visit [http://localhost:3000](http://localhost:3000) in your browser.
 The basic starter kit is now set up locally on your computer! You can start exploring and playing around with the app right away:
 
 1. **Sign up** for a new account
+
    - Fill in your email and password
    - After submitting, you'll see a confirmation message directly on the webpage (not via email)
 
 2. **Log in** with your new credentials
+
    - You'll see a dashboard. This starter kit is built as a simple note-taking app, so you can:
      - **Create notes** (this is the main business logic included)
      - Edit or delete your notes
@@ -216,11 +218,13 @@ This starter kit comes with Resend integration built-in. All you need to do is g
 3. **Configure Sender Address (Two Options)**
 
    **Option A: Use Resend Test Address (Quick Start)**
+
    - Use `delivered@resend.dev` as your sender address
    - Note: This only allows sending emails to the account that created the API key
    - Perfect for initial testing but not for production use
 
    **Option B: Add and Verify Your Own Domain (Recommended for Production)**
+
    - In the Resend dashboard, go to the [Domains](https://resend.com/domains) section
    - Click "Add Domain" and enter your domain name
    - Follow the DNS verification steps provided to verify ownership of your domain
@@ -262,7 +266,6 @@ To enable file uploads, you'll need to set up a DigitalOcean Spaces bucket and a
    - Log in to your [DigitalOcean dashboard](https://cloud.digitalocean.com/spaces)
    - Click "Create a Space"
    - Choose a datacenter region and give your Space a unique name
-   
 2. **Create an Access Key**
 
    - In your DigitalOcean dashboard, go to the **Settings** for the Spaces bucket you just created
@@ -273,23 +276,23 @@ To enable file uploads, you'll need to set up a DigitalOcean Spaces bucket and a
    - Click **Create Access Key**
    - Save the **Access Key** and **Secret Key** somewhere safe—you'll need them for your `.env` file
 
-![Creating Access Key in DigitalOcean](./images/create_access_key_digitalocean.png)
+![Creating Access Key in DigitalOcean](./docs/images/create_access_key_digitalocean.png)
 
 3. **Get Your Spaces Values for Environment Variables**
 
    After creating your Spaces bucket and access key, you'll need to add the following values to your `.env` file:
-   
+
    - **SPACES_ENDPOINT**: This is the regional endpoint URL for your Spaces bucket. It follows the format `https://REGION.digitaloceanspaces.com` where REGION is your selected datacenter region (e.g., nyc3, sfo2, etc.)
-   
+
    - **SPACES_BUCKET**: This is simply the name you gave your Spaces bucket when you created it
-   
+
    - **SPACES_KEY**: This is the Access Key ID you received when creating your access key
-   
+
    - **SPACES_SECRET**: This is the Secret Access Key you received when creating your access key
-   
+
    The image below shows where to find the Access Key ID and Secret Access Key values after creating them:
 
-![Access Key Information](./images/access_key_information_screenshot.png)
+![Access Key Information](./docs/images/access_key_information_screenshot.png)
 
 4. **Update Your `.env` File**
    Add these lines (replace with your actual values):
@@ -335,34 +338,40 @@ This starter kit includes a complete subscription billing system powered by Stri
 ### Quick Setup Steps:
 
 1. **Create a Stripe Account**
+
    - Sign up for a free account at [Stripe](https://dashboard.stripe.com/register)
 
 2. **Get Your API Keys**
+
    - In your Stripe dashboard, switch to Test mode
    - Go to Developers → API keys
    - Copy your Secret Key (starts with `sk_test_...`)
 
 3. **Run the Automated Setup Script**
+
    ```bash
    npm run setup:stripe
    ```
+
    This script will:
+
    - Create subscription products (Free and Pro plans)
    - Set up pricing tiers
    - Configure the customer portal
    - Add all necessary keys to your `.env` file
 
 4. **Configure Webhooks**
+
    - For local development, use the Stripe CLI (recommended) or ngrok
    - For production, set up webhooks in your Stripe dashboard
 
 5. **Test the Integration**
-   
+
    - Try signing up for a paid plan
    - Test upgrading/downgrading subscriptions
    - Verify subscription status changes are reflected in your app
 
-> **Note:** For detailed instructions, including webhook setup, adding custom products, and troubleshooting, see the [Stripe Integration Guide](stripe-integration-guide.md).
+> **Note:** For detailed instructions, including webhook setup, adding custom products, and troubleshooting, see the [Stripe Integration Guide](./docs/stripe-integration-guide.md).
 
 ## Part 5: Deploy to DigitalOcean App Platform
 
@@ -384,11 +393,13 @@ This starter kit is designed to deploy seamlessly to DigitalOcean App Platform. 
 ### Option B: Manual Deployment
 
 1. **Prepare Your Application**
+
    - Make sure all required environment variables are set
    - Ensure your database is properly configured
    - Test your application locally to confirm everything works
 
 2. **Deploy to DigitalOcean**
+
    - Follow the detailed instructions in our [DigitalOcean Deployment Guide](docs/digitalocean-deployment-guide.md)
    - The guide covers creating resources, configuring environment variables, and setting up your app
 
@@ -400,4 +411,4 @@ For detailed deployment instructions, see the [DigitalOcean Deployment Guide](do
 
 ## License
 
-This repository is covered under [The MIT License](LICENSE). 
+This repository is covered under [The MIT License](LICENSE).
