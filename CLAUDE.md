@@ -30,6 +30,7 @@ This is a Next.js 15 SaaS starter kit with TypeScript, featuring user authentica
 - `npm run setup:stripe` - Configure Stripe integration
 - `npm run setup:deploy` - Generate deployment configuration
 - `npm run deploy` - Deploy to DigitalOcean
+- `docker-compose up -d` - Start PostgreSQL container for local development
 
 ## Database
 
