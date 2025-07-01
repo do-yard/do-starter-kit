@@ -14,6 +14,9 @@ This repository contains a complete SaaS Starter Kit for building professional S
 
 Welcome! 👋 This starter kit helps you quickly build and deploy a professional SaaS application. It's designed to get you up and running fast, whether you're developing locally or connecting to a cloud database.
 
+When everything is setup, this is how your application will look like:
+![How the application will look like after deployment](./docs/images/do-starter-kit-example.png)
+
 ## Quick Deploy
 
 Want to try it out right away? Deploy directly to DigitalOcean App Platform with one click:

@@ -37,6 +37,8 @@ Once you have a Stripe account:
    - Or go directly to: [https://dashboard.stripe.com/test](https://dashboard.stripe.com/test)
 2. **Get your API key** - Go to **Developers** → **API keys**
    - Or go directly to: [https://dashboard.stripe.com/test/apikeys](https://dashboard.stripe.com/test/apikeys)
+   This is where you can get your API keys from:
+   ![Getting API keys](./images/stripe-api.png)
 3. **Copy the Secret Key** (starts with `sk_test_...`) - you'll need this for the next step
 
 ### Step 2: Install Dependencies
