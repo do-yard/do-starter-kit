@@ -96,7 +96,7 @@ The App Spec is a YAML file that defines how your application should be deployed
 > - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_FREE_PRICE_ID`, `STRIPE_PRO_PRICE_ID`, `STRIPE_PRO_GIFT_PRICE_ID`, `STRIPE_PORTAL_CONFIG_ID`: Your Stripe configuration
 > - `BASE_URL`: Will be set after deployment (used for callbacks)
 
-* Alternatively, you can also use the console to deploy the application. To do that, you can follow the [steps mentioned in the documentation](https://docs.digitalocean.com/products/app-platform/how-to/create-apps/) and also make sure to add the above [environment variables in the application](https://docs.digitalocean.com/products/app-platform/how-to/use-environment-variables/) from the `Settings` tab. *
+_Alternatively, you can also use the console to deploy the application. To do that, you can follow the [steps mentioned in the documentation](https://docs.digitalocean.com/products/app-platform/how-to/create-apps/) and also make sure to add the above [environment variables in the application](https://docs.digitalocean.com/products/app-platform/how-to/use-environment-variables/) from the `Settings` tab._
 
 ### Step 4: For Subsequent Deployments
 
